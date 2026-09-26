@@ -126,7 +126,7 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
     <span><b>15 人</b>，分 5 組、每組 3 人</span>
     <span>每次 <b>4 小時</b></span>
     <span>期中考 <b>W9</b>、期末考 <b>W18</b></span>
-    <span>單台儀器：<b>自動滴定、水活性儀、凱氏</b>（需輪站）</span>
+    <span>單台儀器：<b>PASCO 自動滴定、水活性儀、凱氏</b>（需輪站）</span>
     <span>拉曼 <b>532 / 785 nm</b></span>
     <span>NIR：<b>Avantes</b>（900–1700、600–1100 nm）、<b>InnoSpectra</b> NIR-S-G1、NIR-M-R14、<b>NeoSpectra</b> 光纖版與 Micro Development Kit、<b>Spectral Engines NIRONE</b></span>
   </div>
@@ -183,10 +183,10 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
       </tr>
       <tr>
         <td class="wk">W4<span class="rot">輪站</span></td>
-        <td class="topic"><b>手動 vs 自動滴定</b><span>以 KHP 標定 NaOH；醋、柳橙汁、優格、紅酒的可滴定酸。同一批樣品兩種方法都做。醋的數據保留到 W13 當 PLS 的 Y 值。</span></td>
-        <td>pH 計 4／7／10 三點校正，檢查斜率是否在儀器規格內；NaOH 以 KHP 標定。</td>
-        <td>配對設計：Bland–Altman、配對 t 檢定、F 檢定比較精密度，不能只看相關係數。終點定義：酚酞變色、pH 8.2、反曲點各有偏差；紅酒示範指示劑失效。</td>
-        <td><div class="chiprow"><span class="c tool">Colab NB04</span><span class="c tool">R</span><span class="c">ch22 投影片</span><span class="c vid">養樂多</span><span class="c vid">優格</span></div></td>
+        <td class="topic"><b>手動 vs 自動滴定（PASCO）</b><span>以 KHP 標定 NaOH；醋、柳橙汁、優格、紅酒的可滴定酸。同一批樣品兩種方法都做：手動用滴定管加酚酞，自動用 PASCO 教學型滴定系統記錄完整的 pH–體積滴定曲線。醋的數據保留到 W13 當 PLS 的 Y 值。</span></td>
+        <td>pH 感測器 4／7／10 三點校正（在 PASCO 軟體內完成），檢查斜率；NaOH 以 KHP 標定。若系統以滴數計算體積，先用 W1 的秤水法校正每滴體積（mL／滴）。</td>
+        <td>配對設計：Bland–Altman、配對 t 檢定、F 檢定比較精密度，不能只看相關係數。終點定義：酚酞變色、pH 8.2、反曲點各有偏差；從匯出的滴定曲線用一次、二次微分找當量點；紅酒示範指示劑失效。</td>
+        <td><div class="chiprow"><span class="c tool">PASCO 軟體匯出 CSV</span><span class="c tool">Colab NB04</span><span class="c tool">R</span><span class="c">ch22 投影片</span><span class="c vid">養樂多</span><span class="c vid">優格</span></div></td>
       </tr>
       <tr>
         <td class="wk">W5<span class="rot">輪站</span></td>
@@ -294,9 +294,9 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
   <p class="sub">5 組、4 小時（240 分鐘）。扣掉開場講解 30 分鐘與收尾 20 分鐘，單台儀器約有 190 分鐘可排。</p>
   <div class="grid2">
     <div class="card">
-      <h3>W4 自動滴定（1 台）</h3>
-      <p>每組約 30 分鐘：醋與紅酒各 2 重複。自動滴定每次約 5–8 分鐘。</p>
-      <p>沒輪到的組在實驗桌做手動滴定，同一批樣品各 3 重複。KHP 標定 NaOH 由各組手動完成，自動滴定儀用全班共用的一瓶已標定 NaOH。</p>
+      <h3>W4 PASCO 自動滴定（1 套）</h3>
+      <p>每組約 30 分鐘：醋與紅酒各 2 重複。教學型系統加液速度較慢，每次約 8–12 分鐘，實際時間請先試跑確認；若排不下，改成每組 1 種樣品、全班合併數據。</p>
+      <p>沒輪到的組在實驗桌做手動滴定，同一批樣品各 3 重複。KHP 標定 NaOH 由各組手動完成，PASCO 用全班共用的一瓶已標定 NaOH。每組把滴定曲線匯出成 CSV，回家用 Colab 找當量點。</p>
     </div>
     <div class="card">
       <h3>W2 水活性儀（1 台）</h3>
