@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>食品分析實驗學期規劃</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --ink:#18221F; --muted:#5B6964; --line:#D5DDD9;
+  --accent:#B3306A; --accent-soft:#F7E3EC; --teal:#1E6B66; --teal-soft:#DDEFEC;
+  --amber:#9A5B00; --amber-soft:#FBEBD2; --exam:#18221F; --exam-ink:#FFFFFF;
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+    --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+    --amber:#E6A94A; --amber-soft:#3A2C16; --exam:#E3EAE7; --exam-ink:#111615;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+  --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+  --amber:#E6A94A; --amber-soft:#3A2C16; --exam:#E3EAE7; --exam-ink:#111615;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.7;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:1180px;margin:0 auto}
+a{color:var(--teal)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{padding-block:36px 8px;display:grid;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--teal)}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,4.4vw,42px);line-height:1.2;margin:0;text-wrap:balance}
+h2{font-family:var(--serif);font-size:24px;margin:0 0 6px;text-wrap:balance}
+h3{font-size:16px;margin:0 0 4px}
+.lede{max-width:70ch;color:var(--muted);margin:0}
+.facts{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13.5px;color:var(--muted)}
+.facts b{color:var(--ink);font-weight:500}
+section{margin-top:44px}
+.sub{color:var(--muted);margin:0 0 14px;max-width:80ch}
+
+/* timeline */
+.timeline{display:grid;grid-template-columns:repeat(18,1fr);gap:3px;margin-top:22px}
+.tl{font-family:var(--mono);font-size:11px;text-align:center;padding:8px 0;border-radius:3px;background:var(--teal-soft);color:var(--teal)}
+.tl.b{background:var(--accent-soft);color:var(--accent)}
+.tl.x{background:var(--exam);color:var(--exam-ink)}
+.tl-legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--muted);margin-top:8px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* strands */
+.strands{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.strand{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.strand p{margin:0;font-size:14px;color:var(--muted)}
+.strand .tag{font-family:var(--mono);font-size:11.5px;color:var(--teal)}
+
+/* week table */
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse}
+th{font-size:12px;font-weight:500;letter-spacing:.04em;text-align:left;color:var(--muted);padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface)}
+td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14px}
+tr:last-child td{border-bottom:0}
+td.wk{font-family:var(--mono);font-size:13px;white-space:nowrap;color:var(--teal);width:54px}
+tr.b td.wk{color:var(--accent)}
+td.wk .rot{display:block;margin-top:6px;font-family:var(--sans);font-size:11px;color:var(--amber);background:var(--amber-soft);border-radius:3px;padding:0 5px;width:max-content}
+td.topic{width:24%}
+td.topic b{display:block;font-size:15px}
+td.topic span{color:var(--muted);font-size:13.5px}
+td ul{margin:0;padding-left:1.1em}
+td li+li{margin-top:2px}
+.lbl{font-size:11.5px;color:var(--muted);display:block}
+.chiprow{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.c{font-size:11.5px;border:1px solid var(--line);border-radius:4px;padding:0 6px;color:var(--muted);white-space:nowrap}
+.c.tool{border-color:var(--teal);color:var(--teal)}
+.c.vid{border-color:var(--accent);color:var(--accent)}
+tr.exam td{background:var(--exam);color:var(--exam-ink)}
+tr.exam td.wk{color:var(--exam-ink)}
+tr.exam td span,tr.exam .lbl{color:var(--exam-ink);opacity:.8}
+tr.part td{background:var(--bg);font-family:var(--serif);font-weight:700;font-size:15px;padding:10px 12px}
+
+/* cards */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px}
+.card p{margin:0 0 8px}
+.card ol,.card ul{margin:0;padding-left:1.2em}
+.card li+li{margin-top:4px}
+.warn{border-left:3px solid var(--amber);background:var(--amber-soft);padding:10px 14px;border-radius:0 6px 6px 0;font-size:14px;margin-top:12px}
+.mini{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+.mini th,.mini td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+.mini td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.g{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.g .pct{font-family:var(--mono);font-size:26px;color:var(--teal)}
+.g .nm{font-size:13.5px}
+.todo li{margin-bottom:6px}
+footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
+
+@media (max-width:760px){
+  .timeline{grid-template-columns:repeat(9,1fr)}
+  .wtable table,.wtable thead,.wtable tbody,.wtable tr,.wtable td{display:block}
+  .wtable thead{display:none}
+  .wtable tr{padding:12px;border-bottom:1px solid var(--line)}
+  .wtable td{border:0;padding:3px 0;width:auto!important}
+  .wtable tr.exam td,.wtable tr.part td{padding:3px 8px}
+  .wtable td.wk{font-size:14px}
+  .wtable td.wk .rot{display:inline-block;margin:0 0 0 8px}
+}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">NIELSEN FOOD ANALYSIS 6e · 實驗課 · 18 週</div>
+  <h1>食品分析實驗學期規劃</h1>
+  <p class="lede">前半學期做一般成分分析、儀器校正與滴定，並從第一週開始用 Colab 做數據品管。後半學期用近紅外與拉曼光譜做化學計量學，最後以代糖混合物的 PLS 定量專題收尾。前半學期的參考方法，就是後半學期光譜模型的 Y 值。</p>
+  <div class="facts">
+    <span><b>15 人</b>，分 5 組、每組 3 人</span>
+    <span>每次 <b>4 小時</b></span>
+    <span>期中考 <b>W9</b>、期末考 <b>W18</b></span>
+    <span>單台儀器：<b>自動滴定、水活性儀、凱氏</b>（需輪站）</span>
+    <span>拉曼 <b>532 / 785 nm</b></span>
+    <span>NIR：<b>Avantes</b>（900–1700、600–1100 nm）、<b>InnoSpectra</b> NIR-S-G1、NIR-M-R14、<b>NeoSpectra</b> 光纖版與 Micro Development Kit、<b>Spectral Engines NIRONE</b></span>
+  </div>
+  <div class="timeline" aria-label="18 週時間軸">
+    <div class="tl">1</div><div class="tl">2</div><div class="tl">3</div><div class="tl">4</div><div class="tl">5</div><div class="tl">6</div><div class="tl">7</div><div class="tl">8</div><div class="tl x">9</div>
+    <div class="tl b">10</div><div class="tl b">11</div><div class="tl b">12</div><div class="tl b">13</div><div class="tl b">14</div><div class="tl b">15</div><div class="tl b">16</div><div class="tl b">17</div><div class="tl x">18</div>
+  </div>
+  <div class="tl-legend">
+    <span><i class="sw" style="background:var(--teal-soft);border:1px solid var(--teal)"></i>一般成分 × 校正 × 品管</span>
+    <span><i class="sw" style="background:var(--accent-soft);border:1px solid var(--accent)"></i>光譜 × 化學計量</span>
+    <span><i class="sw" style="background:var(--exam)"></i>考試</span>
+  </div>
+</header>
+
+<section>
+  <h2>四條主線</h2>
+  <p class="sub">每週的實驗同時推進這四條主線，所以校正與統計不是獨立的講課週，而是跟著當週的數據走。</p>
+  <div class="strands">
+    <div class="strand"><span class="tag">成分</span><h3>一般成分分析</h3><p>水分、灰分、蛋白質、脂肪、碳水化合物、可滴定酸。W2 起全班量同一份共同盲樣，W8 彙整成完整的一般成分表。</p></div>
+    <div class="strand"><span class="tag">校正</span><h3>儀器校正</h3><p>每週一項：天平與容量器具、水活性儀、pH 計、折射計、UV-Vis、拉曼波數、NIR 參考與波長。每項都寫標準品與允收條件。</p></div>
+    <div class="strand"><span class="tag">品管</span><h3>數據品管與統計</h3><p>從平均與 SD 開始，一路到配對檢定、檢量線、管制圖、ANOVA、不確定度。每週一本 Colab notebook，後半學期加 R。</p></div>
+    <div class="strand"><span class="tag">計量</span><h3>化學計量學</h3><p>光譜前處理、相似度比對、PCA、PLS、VIP、PLS-DA、離群值。工具用 Orange、SpectraView、Colab、R。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>每週進度</h2>
+  <p class="sub">標「輪站」的週次只有一台儀器，5 組依時間表輪流使用，其他時間在實驗桌做平行實驗。影片是課前 5 分鐘的導入，內容查證中。</p>
+  <div class="tbl wtable">
+  <table>
+    <thead><tr><th>週</th><th>主題與實驗</th><th>儀器校正</th><th>數據品管／化學計量</th><th>工具、教材、影片</th></tr></thead>
+    <tbody>
+      <tr class="part"><td colspan="5">前半學期　一般成分 × 校正 × 數據品管</td></tr>
+      <tr>
+        <td class="wk">W1</td>
+        <td class="topic"><b>導論與容量器具校正</b><span>實驗安全、實驗紀錄規範；10 mL 吸管與 50 mL 滴定管各重複 10 次秤水。</span></td>
+        <td>標準砝碼檢核天平；秤水重，用水溫對應的密度換算實際體積。</td>
+        <td>平均、SD、RSD、有效位數、信賴區間；系統誤差 vs 隨機誤差。</td>
+        <td><div class="chiprow"><a class="c tool" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB01_volumetric_calibration.ipynb" target="_blank" rel="noopener">Colab NB01 ↗</a><span class="c">FAS CI 模擬器</span></div></td>
+      </tr>
+      <tr>
+        <td class="wk">W2<span class="rot">輪站</span></td>
+        <td class="topic"><b>水分與水活性</b><span>105°C 烘箱法 vs 紅外線水分計；牛肉乾、龍眼乾、洋芋片測水活性。發放全學期共同盲樣（例如奶粉），本週測水分。</span></td>
+        <td>水活性儀用飽和鹽溶液驗證，25°C 參考值：LiCl 0.113、MgCl₂ 0.328、NaCl 0.753、K₂SO₄ 0.973（Greenspan 1977）。允收範圍依儀器原廠規格；鹽溶液提前一週配好。</td>
+        <td>重複性、恆重判定；兩種水分方法比較；水分含量不等於水活性。延伸：NIR Aquagram。<br><span class="lbl">影片挑錯題：牛肉乾影片說 500 g 鮮肉變 100 g，用瘦牛肉約 27% 固形物做質量平衡，算出實際產率並找出矛盾。</span></td>
+        <td><div class="chiprow"><span class="c tool">Colab NB02</span><span class="c tool">Aquagram widget</span><span class="c">ch15 投影片</span><span class="c vid">牛肉乾</span><span class="c vid">柴燒龍眼乾</span></div></td>
+      </tr>
+      <tr>
+        <td class="wk">W3</td>
+        <td class="topic"><b>灰分與鈉離子</b><span>550°C 乾式灰化：黑糖 vs 白糖、糙米 vs 白米、共同盲樣。鈉用 HORIBA LAQUAtwin 筆式鈉離子計（離子選擇電極）測醬油、洋芋片水萃液、湯包、運動飲料，再和營養標示比較。不使用硝酸銀與鉻酸鉀。</span></td>
+        <td>鈉離子計以原廠標準液兩點校正；每 10 個樣品回測一次標準液，確認沒有漂移。量測前後都要清洗感測面。</td>
+        <td>稀釋倍數（醬油要先稀釋到量測範圍內）；以標準添加法做回收率，檢查基質效應；電極測的是活性而非濃度；Na→NaCl 換算 × 2.54，但味精、小蘇打、苯甲酸鈉也含鈉，所以換算出的「鹽」會偏高；實測值與營養標示的差異。</td>
+        <td><div class="chiprow"><span class="c tool">Colab NB03</span><span class="c">ch16、ch21 投影片</span><span class="c vid">食鹽工廠</span><span class="c vid">喜馬拉雅粉鹽</span></div></td>
+      </tr>
+      <tr>
+        <td class="wk">W4<span class="rot">輪站</span></td>
+        <td class="topic"><b>手動 vs 自動滴定</b><span>以 KHP 標定 NaOH；醋、柳橙汁、優格、紅酒的可滴定酸。同一批樣品兩種方法都做。醋的數據保留到 W13 當 PLS 的 Y 值。</span></td>
+        <td>pH 計 4／7／10 三點校正，檢查斜率是否在儀器規格內；NaOH 以 KHP 標定。</td>
+        <td>配對設計：Bland–Altman、配對 t 檢定、F 檢定比較精密度，不能只看相關係數。終點定義：酚酞變色、pH 8.2、反曲點各有偏差；紅酒示範指示劑失效。</td>
+        <td><div class="chiprow"><span class="c tool">Colab NB04</span><span class="c tool">R</span><span class="c">ch22 投影片</span><span class="c vid">養樂多</span><span class="c vid">優格</span></div></td>
+      </tr>
+      <tr>
+        <td class="wk">W5<span class="rot">輪站</span></td>
+        <td class="topic"><b>蛋白質（凱氏法）</b><span>高筋 vs 低筋麵粉、共同盲樣。消化一次上架，蒸餾輪流。</span></td>
+        <td>HCl 標準液標定；硫酸銨回收率檢查；試劑空白。</td>
+        <td>回收率；空白校正；換算係數 6.25／5.7／6.38 的選擇；三聚氰胺怎麼騙過凱氏法。</td>
+        <td><div class="chiprow"><span class="c tool">Colab NB05</span><span class="c">ch18 投影片</span><span class="c vid">奶粉工廠</span><span class="c vid">麵粉工廠</span></div></td>
+      </tr>
+      <tr>
+        <td class="wk">W6</td>
+        <td class="topic"><b>脂肪（Soxhlet 與酸水解）</b><span>洋芋片、共同盲樣；美乃滋示範為何要先酸水解。</span></td>
+        <td>已知脂肪含量的參考樣品；溶劑空白。</td>
+        <td>準確度 vs 精密度；偏差的來源。</td>
+        <td><div class="chiprow"><span class="c tool">Colab NB06</span><span class="c">ch17 投影片</span><span class="c vid">牛奶脂肪標準化</span><span class="c vid">奶油工廠</span></div></td>
+      </tr>
+      <tr>
+        <td class="wk">W7</td>
+        <td class="topic"><b>糖：Brix 與酚硫酸法總糖</b><span>折射計測楓糖漿、果汁、冬瓜茶；酚硫酸法（Nielsen 實驗手冊方法）測柳橙汁、運動飲料的總糖。<br>乙級介紹（不操作）：勞動部食品檢驗分析乙級的索摩基法與 Bertrand 法。兩者都是還原糖把 Cu²⁺ 還原成 Cu₂O，索摩基法再以碘滴定定量，Bertrand 法則把 Cu₂O 溶於硫酸鐵後以過錳酸鉀滴定。講原理、做計算題，並搭配乙級學科題目。</span></td>
+        <td>折射計以純水歸零、蔗糖標準液檢查；UV-Vis 以葡萄糖標準液建立 490 nm 檢量線。</td>
+        <td>檢量線、殘差圖、R² 迷思、LOD／LOQ。比較方法測到的是什麼：酚硫酸法測總糖（含蔗糖），索摩基法與 Bertrand 法屬銅還原法，只測還原糖，蔗糖要先轉化；果糖與葡萄糖在酚硫酸法的呈色強度不同，選哪種糖當標準會造成偏差。<br><span class="lbl">安全：濃硫酸與酚都在抽風櫃內操作，戴面罩與耐酸手套；酚廢液另外回收。</span></td>
+        <td><div class="chiprow"><span class="c tool">Colab NB07</span><span class="c">ch19 投影片</span><span class="c">FAS 檢量線遊戲</span><span class="c">食品檢驗乙級學科參考資料</span><span class="c vid">楓糖漿</span><span class="c vid">甜菜製糖</span></div></td>
+      </tr>
+      <tr>
+        <td class="wk">W8</td>
+        <td class="topic"><b>全班能力試驗與品管總整理</b><span>彙整 5 組的共同盲樣結果，碳水化合物用差減法，完成一般成分表；補做需要重測的項目。</span></td>
+        <td>回顧 W1–W7 的校正紀錄，找出哪一項校正最影響結果。</td>
+        <td>管制圖、Grubbs 異常值、單因子 ANOVA（組間差異）、z-score、不確定度預算、規格放行判定。</td>
+        <td><div class="chiprow"><span class="c tool">Colab NB08</span><span class="c tool">R</span><span class="c">FAS 管制圖、異常值、不確定度、放行官、ANOVA</span></div></td>
+      </tr>
+      <tr class="exam">
+        <td class="wk">W9</td>
+        <td class="topic"><b>期中考</b><span>筆試（一般成分、校正、品管觀念）</span></td>
+        <td colspan="3">實作：給一組滴定或能力試驗數據，在 Colab 完成品管報告（描述統計、異常值檢定、方法比較、結論）。</td>
+      </tr>
+
+      <tr class="part"><td colspan="5">後半學期　近紅外 × 拉曼 × 化學計量學</td></tr>
+      <tr class="b">
+        <td class="wk">W10</td>
+        <td class="topic"><b>振動光譜原理與光譜儀校正</b><span>量純物質：蔗糖、阿斯巴甜、三氯蔗糖、赤藻糖醇、麥芽糊精、乙醇、醋酸。每組固定分到一台 NIR（見下方儀器分配），拉曼兩台輪用。</span></td>
+        <td>拉曼：Si 520.7 cm⁻¹、聚苯乙烯 1001.4 cm⁻¹，532 與 785 nm 都要校正。NIR：白板參考、暗電流、波長檢查；比色槽方向造成的遮光假影。</td>
+        <td>重複掃描的 SD 光譜；532 vs 785 的螢光背景比較（黑糖、食用油）。各組把自己那台 NIR 的波段、量測模式、解析度整理成一張全班共用的儀器表。</td>
+        <td><div class="chiprow"><span class="c tool">SpectraView</span><span class="c">ch8 IR 投影片</span><span class="c">ch6 光譜投影片</span></div></td>
+      </tr>
+      <tr class="b">
+        <td class="wk">W11</td>
+        <td class="topic"><b>前處理與光譜相似度比對</b><span>用 W10 的純物質建光譜庫，指認特徵峰；比對未知粉末與市售代糖的成分。</span></td>
+        <td>拉曼螢光背景用 airPLS 扣除。</td>
+        <td>SNV、MSC、Savitzky–Golay 微分；相關係數與 SAM 相似度；相似度門檻與誤判。</td>
+        <td><div class="chiprow"><span class="c tool">SpectraView</span><span class="c tool">Similarity／Library／Peaks widget</span><span class="c tool">Colab NB09</span></div></td>
+      </tr>
+      <tr class="b">
+        <td class="wk">W12</td>
+        <td class="topic"><b>PCA</b><span>食用油：特級初榨與精製橄欖油、大豆、芥花、椰子、花生油，量拉曼 785 與 NIR；備用資料集 five_sugar。</span></td>
+        <td>每個樣品重複裝填 3 次，評估取樣變異。</td>
+        <td>分數圖、loadings 解讀、scree plot；Orange PCA 要接 Data 輸出，score plot 才能依類別上色。</td>
+        <td><div class="chiprow"><span class="c tool">Orange PCA + Spectra</span><span class="c tool">Colab</span><span class="c tool">R prcomp</span><span class="c vid">橄欖油</span><span class="c vid">芥花油</span><span class="c vid">大豆油</span></div></td>
+      </tr>
+      <tr class="b">
+        <td class="wk">W13</td>
+        <td class="topic"><b>PLS I：醋酸（或乙醇）定量</b><span>用 W4 滴定的醋當 Y，加上稀釋標準系列。液體用可裝比色槽的穿透式配置量測，各組用不同儀器，全班比較 RMSEP；也可比較 600–1100 nm 短波與 900–1700 nm 的模型差異。示範資料：acetic_t1_1mm_0313_2025。</span></td>
+        <td>比色槽光程與方向固定；每天開機先量參考。</td>
+        <td>校正集與驗證集切分、交叉驗證選 LV 數、RMSEC／RMSECV／RMSEP、RPD、偏差；參考方法的誤差會傳進模型。</td>
+        <td><div class="chiprow"><span class="c tool">Orange PLS + Test and Score</span><span class="c tool">R pls</span><span class="c tool">Colab NB10</span><span class="c vid">葡萄酒</span></div></td>
+      </tr>
+      <tr class="b">
+        <td class="wk">W14</td>
+        <td class="topic"><b>PLS II：VIP、PLS-DA、離群值</b><span>定量 PLS 的 VIP 與回歸係數；油種或糖種分類用 PLS-DA；Corn 資料集練 T² 與 Q 殘差，並看三台儀器間的模型轉移問題。</span></td>
+        <td>VIP 高的波段要能對應 W11 指認的化學鍵。</td>
+        <td>VIP 解讀與波段篩選；PLS-DA 的混淆矩陣；T²（模型內）vs Q（模型外）；模型適用範圍。</td>
+        <td><div class="chiprow"><span class="c tool">R／Colab 算 VIP</span><span class="c tool">PLS-DA widget（含 VIP）</span><span class="c">chemometrics-teaching 離群值模組</span></div></td>
+      </tr>
+      <tr class="b">
+        <td class="wk">W15</td>
+        <td class="topic"><b>代糖專題 I：配製與量測</b><span>阿斯巴甜 × 三氯蔗糖 5×5 格點，赤藻糖醇補足；每組配一排 5 個樣品。助教另配 6–8 個不在格點上的盲樣當驗證集。</span></td>
+        <td>秤量用 W1 校正過的天平；研缽研磨、過篩控制粒徑。</td>
+        <td>拉曼每樣品打 5 點取平均，NIR 用漫反射重複裝填 3 次；把取樣變異當成品管數據。25 個樣品在多台 NIR 上都量，W16 可比較儀器。</td>
+        <td><div class="chiprow"><span class="c tool">拉曼 785</span><span class="c tool">NIR</span></div></td>
+      </tr>
+      <tr class="b">
+        <td class="wk">W16</td>
+        <td class="topic"><b>代糖專題 II：建模與預測</b><span>兩個 Y 各建 PLS 模型，預測盲樣與市售代糖；再用 Mixture（NNLS）以純物質光譜直接回推比例，比較兩種做法。</span></td>
+        <td>確認兩個 Y 的相關係數接近 0（設計正確的證據）。</td>
+        <td>PLS vs 經典最小平方法（CLS／NNLS）；市售品低於 LOD 時該怎麼報告。</td>
+        <td><div class="chiprow"><span class="c tool">Orange PLS</span><span class="c tool">Mixture widget</span><span class="c tool">R／Colab VIP</span></div></td>
+      </tr>
+      <tr class="b">
+        <td class="wk">W17</td>
+        <td class="topic"><b>專題發表與同儕審查</b><span>每組交一份模型成績單並口頭報告。</span></td>
+        <td>報告必須附上本組儀器的校正紀錄。</td>
+        <td>成績單欄位：LV 數、RMSEP、偏差、RPD、VIP 對應的特徵峰、適用範圍、LOD 限制。</td>
+        <td><div class="chiprow"><span class="c">同儕評分表</span></div></td>
+      </tr>
+      <tr class="exam">
+        <td class="wk">W18</td>
+        <td class="topic"><b>期末考</b><span>筆試（光譜原理、校正、化學計量觀念）</span></td>
+        <td colspan="3">實作：給一組光譜與參考值，在 Orange 完成 PCA 與 PLS，在 R 或 Colab 算 VIP，寫出模型結論。</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>單台儀器的輪站安排</h2>
+  <p class="sub">5 組、4 小時（240 分鐘）。扣掉開場講解 30 分鐘與收尾 20 分鐘，單台儀器約有 190 分鐘可排。</p>
+  <div class="grid2">
+    <div class="card">
+      <h3>W4 自動滴定（1 台）</h3>
+      <p>每組約 30 分鐘：醋與紅酒各 2 重複。自動滴定每次約 5–8 分鐘。</p>
+      <p>沒輪到的組在實驗桌做手動滴定，同一批樣品各 3 重複。KHP 標定 NaOH 由各組手動完成，自動滴定儀用全班共用的一瓶已標定 NaOH。</p>
+    </div>
+    <div class="card">
+      <h3>W2 水活性儀（1 台）</h3>
+      <p>開場由助教示範 4 種飽和鹽驗證，全班共用結果。</p>
+      <p>每組只量 3 個樣品，每次約 5–10 分鐘，每組約 30 分鐘；其他時間做烘箱法與紅外線水分計。</p>
+    </div>
+    <div class="card">
+      <h3>W5 凱氏法（1 套）</h3>
+      <p>5 組 × 2 樣品 + 2 個空白 + 1 個回收率 = 13 管，消化一次上架（需確認消化爐管數）。</p>
+      <p>消化約 2 小時，空檔講解換算係數與三聚氰胺案例；蒸餾輪流，每管約 8–10 分鐘。</p>
+    </div>
+    <div class="card">
+      <h3>光譜週（W10–W16）</h3>
+      <p>拉曼 2 台（532、785）加上 7 台 NIR 配置，5 組同時量測不需輪站。</p>
+      <p>每組固定一台 NIR，整學期不換，W13 與 W16 就能比較不同儀器建出的模型。分配時看量測模式：液體（W13）用能裝比色槽的穿透式配置，粉末（W15）用漫反射配置；波段與模式請依各儀器規格表核對。</p>
+    </div>
+  </div>
+  <p class="warn">W6 Soxhlet 在 4 小時內偏緊：建議萃取 3 小時，或由助教提前開始、學生接手收尾。</p>
+</section>
+
+<section>
+  <h2>代糖專題設計</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>配方格點（% w/w，赤藻糖醇補足）</h3>
+      <table class="mini">
+        <thead><tr><th>變因</th><th>水準</th></tr></thead>
+        <tbody>
+          <tr><td>阿斯巴甜</td><td class="num">0, 2.5, 5, 7.5, 10</td></tr>
+          <tr><td>三氯蔗糖</td><td class="num">0, 2.5, 5, 7.5, 10</td></tr>
+          <tr><td>校正集</td><td class="num">25 個（5 組 × 5）</td></tr>
+          <tr><td>驗證集</td><td class="num">6–8 個盲樣</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px">兩種甜味劑的濃度各自獨立變化，兩個 Y 才不會互相混淆，VIP 也才分得出各自的特徵峰。</p>
+    </div>
+    <div class="card">
+      <h3>可行性限制</h3>
+      <ol>
+        <li><b>不用溶液：</b>飲用濃度遠低於 NIR 與拉曼的偵測能力，阿斯巴甜的水溶解度又只有約 1%，所以改用固體混合物。</li>
+        <li><b>Y 值來自秤重：</b>市售產品不標示甜味劑含量，沒有標示值可以對照。</li>
+        <li><b>市售代糖只當挑戰組：</b>含量可能接近或低於 LOD，教學重點是模型的適用範圍。</li>
+        <li><b>先做預試：</b>開學前由助教量 0、5、10% 三個點，確認兩台拉曼與各台 NIR 看得到訊號，再決定格點範圍。</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>評分建議</h2>
+  <div class="grade">
+    <div class="g"><div class="pct">35%</div><div class="nm">實驗報告</div></div>
+    <div class="g"><div class="pct">15%</div><div class="nm">每週 Colab 品管作業</div></div>
+    <div class="g"><div class="pct">15%</div><div class="nm">期中考（筆試＋實作）</div></div>
+    <div class="g"><div class="pct">15%</div><div class="nm">期末考（筆試＋實作）</div></div>
+    <div class="g"><div class="pct">20%</div><div class="nm">代糖專題（成績單＋發表＋同儕審查）</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>開學前待準備</h2>
+  <div class="card">
+    <ul class="todo">
+      <li><b>Colab notebook NB01–NB10：</b>建議共用一份資料格式（組別、樣品、重複、數值），前後期可以沿用同一套讀檔與畫圖程式。</li>
+      <li><b>定量 PLS 的 VIP：</b>Orange 內建的 PLS 沒有 VIP。先用 R 或 Colab 計算（可參考醋酸資料夾的 <code>pls_analysis.py</code>），或在 orange-spectra 加一個 PLS 迴歸 VIP widget。</li>
+      <li><b>代糖預試</b>與原料採購：阿斯巴甜、三氯蔗糖、赤藻糖醇、麥芽糊精。</li>
+      <li><b>儀器確認：</b>凱氏消化爐管數、Soxhlet 組數；W2 飽和鹽溶液提前一週配製；W3 鈉離子計台數、原廠標準液存量，並依說明書確認量測範圍與鉀離子干擾。</li>
+      <li><b>共同盲樣：</b>選一種一般成分分布完整的樣品，例如全脂奶粉，W2 分裝發放。</li>
+      <li><b>工廠影片：</b>三顆星影片的字幕查證完成後，更新本頁的影片欄。</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  相關資源：
+  <a href="https://tai-shengyeh.github.io/food-analysis-decks/" target="_blank" rel="noopener">Nielsen 各章投影片</a>、
+  <a href="https://tai-shengyeh.github.io/food-analysis-statistics/" target="_blank" rel="noopener">食品分析統計網站（FAS）</a>、
+  <a href="https://tai-shengyeh.github.io/chemometrics-teaching/" target="_blank" rel="noopener">chemometrics-teaching</a>、
+  <a href="https://github.com/Tai-ShengYeh/spectraview" target="_blank" rel="noopener">SpectraView</a>、
+  <a href="video-map.html" target="_blank" rel="noopener">實驗影片對照表</a>。
+  水活性參考值：Greenspan, L. (1977) J. Res. Natl. Bur. Stand. 81A, 89–96。
+</footer>
+</div>
+
+</body>
+</html>

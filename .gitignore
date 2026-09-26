@@ -1,0 +1,5 @@
+teacher/
+*_TEACHER.ipynb
+build_*.py
+__pycache__/
+.ipynb_checkpoints/

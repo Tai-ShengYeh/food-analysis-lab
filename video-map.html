@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>食品分析實驗影片對照表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --ink:#18221F; --muted:#5B6964; --line:#D5DDD9;
+  --accent:#B3306A; --accent-soft:#F7E3EC; --teal:#1E6B66; --teal-soft:#DDEFEC;
+  --star:#C07A12; --row-hover:#F7FAF8; --amber:#9A5B00; --amber-soft:#FBEBD2;
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+    --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+    --star:#E6A94A; --row-hover:#1F2625; --amber:#E6A94A; --amber-soft:#3A2C16;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+  --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+  --star:#E6A94A; --row-hover:#1F2625; --amber:#E6A94A; --amber-soft:#3A2C16;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1180px;margin:0 auto}
+header{padding-block:36px 20px;display:grid;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--teal)}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,4.4vw,42px);line-height:1.2;margin:0;text-wrap:balance}
+.lede{max-width:68ch;color:var(--muted);margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.legend b{color:var(--ink);font-weight:500}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;font-size:13.5px;max-width:78ch;border-radius:0 6px 6px 0}
+
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:4px 11px;border-radius:999px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip .n{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+.chip[aria-pressed="true"] .n{color:var(--surface);opacity:.8}
+.chip:focus-visible,.toggle input:focus-visible,#q:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row2{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+#q{font:inherit;font-size:14px;flex:1 1 220px;min-width:0;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.toggle{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer}
+.count{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:auto}
+
+section.exp{margin-top:34px}
+.exp-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin-bottom:4px}
+.exp-head h2{font-family:var(--serif);font-size:22px;margin:0}
+.ch{font-family:var(--mono);font-size:12px;color:var(--teal);background:var(--teal-soft);padding:1px 8px;border-radius:4px}
+.method{color:var(--muted);font-size:13.5px;margin:0 0 10px;max-width:90ch}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse}
+th{font-size:12px;font-weight:500;letter-spacing:.04em;text-align:left;color:var(--muted);padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--row-hover)}
+td.pri{font-size:13px;color:var(--star);white-space:nowrap;letter-spacing:1px;width:56px}
+td.vid{width:30%}
+td.vid a{color:var(--ink);font-weight:700;text-decoration:none;border-bottom:1px solid var(--line)}
+td.vid a:hover{color:var(--accent);border-color:var(--accent)}
+.src{display:inline-block;font-size:11.5px;margin-top:4px;padding:0 7px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+.src.local{border-color:var(--teal);color:var(--teal)}
+td.hook{width:27%;font-size:14px}
+.vd{display:inline-block;font-size:11.5px;padding:0 7px;border-radius:4px;margin-top:6px;margin-right:4px}
+.vd.ok{background:var(--teal-soft);color:var(--teal)}
+.vd.fix{background:var(--amber-soft);color:var(--amber)}
+.seg{font-family:var(--mono);font-size:12px;color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+.fixnote{display:block;margin-top:4px;font-size:12.5px;color:var(--muted)}
+td.use{font-size:14px}
+td.use .q{display:block;margin-top:4px;color:var(--accent)}
+td.seen{width:52px;text-align:center}
+td.seen input{width:17px;height:17px;accent-color:var(--teal);cursor:pointer}
+tr.is-seen td.vid a{color:var(--muted)}
+.empty{padding:40px 0;color:var(--muted);text-align:center}
+footer{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:80ch}
+
+@media (max-width:720px){
+  table,thead,tbody,tr,td{display:block}
+  thead{display:none}
+  tr{padding:12px 12px 10px;border-bottom:1px solid var(--line);position:relative}
+  tr:last-child{border-bottom:0}
+  td{border:0;padding:2px 0;width:auto!important}
+  td.pri{position:absolute;right:12px;top:12px}
+  td.vid{padding-right:56px}
+  td.seen{text-align:left;margin-top:6px}
+  td.seen::after{content:" 已預看";font-size:12px;color:var(--muted)}
+  td.hook::before{content:"影片鉤子　";font-size:11.5px;color:var(--muted)}
+  td.use::before{content:"課堂連結　";font-size:11.5px;color:var(--muted)}
+  .count{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">NIELSEN FOOD ANALYSIS 6e · 實驗課導入素材</div>
+  <h1>食品分析實驗影片對照表</h1>
+  <p class="lede">從四個 YouTube 工廠紀錄清單中，挑出能直接接上實驗量測的影片。每一列寫出影片中可當鉤子的數字或事件，以及回到實驗室時要問學生的問題。</p>
+  <div class="legend">
+    <span><b>★★★</b> 首選，影片主題就是該實驗在量的東西</span>
+    <span><b>★★</b> 好用的樣品或延伸</span>
+    <span><b>★</b> 補充</span>
+    <span><b style="color:var(--teal)">台灣在地</b> 可買到同款樣品帶進實驗室</span>
+  </div>
+  <p class="note">目前依影片標題篩選，影片內容與標題中的數字尚未逐一查證（超級後廚的數字偏聳動）。上課前請先看過，看完勾選「已預看」；勾選狀態只存在這台瀏覽器。播放請用連結，不下載、不剪輯。</p>
+</header>
+
+<div class="controls">
+  <div class="chips" id="chips" role="group" aria-label="依實驗篩選"></div>
+  <div class="row2">
+    <input id="q" type="search" placeholder="搜尋影片、樣品或方法，例如：酸價、蜂蜜、凱氏" aria-label="搜尋">
+    <label class="toggle"><input id="top" type="checkbox"> 只看 ★★★</label>
+    <label class="toggle"><input id="local" type="checkbox"> 只看台灣在地</label>
+    <label class="toggle"><input id="unseen" type="checkbox"> 只看未預看</label>
+    <span class="count" id="count"></span>
+  </div>
+</div>
+
+<main id="main"></main>
+
+<footer>
+  影片來源：超級後廚《食品工廠大揭秘》《蔬菜水果的工業之旅》、Lemon Films 檸檬職人《Taiwan Mass Production Food Factory》、凱特食旅《Mass Production Factory》。章次依 Nielsen's Food Analysis 6th ed.。
+</footer>
+</div>
+
+<script>
+const EXP = [
+  {k:"protein", name:"蛋白質", ch:"Ch 18", method:"凱氏定氮法（總氮 × 換算係數）、杜馬斯燃燒法；延伸：胺基態氮。"},
+  {k:"fat", name:"脂肪", ch:"Ch 17", method:"Soxhlet 溶劑萃取、Mojonnier／酸水解法、Babcock／Gerber 乳脂測定。"},
+  {k:"oil", name:"油脂特性", ch:"Ch 23", method:"酸價（游離脂肪酸）、過氧化價、碘價、皂化價；精煉與氧化。"},
+  {k:"moisture", name:"水分與水活性", ch:"Ch 15", method:"烘箱乾燥失重、真空烘箱、折射計、水活性。"},
+  {k:"carb", name:"碳水化合物與糖", ch:"Ch 19", method:"Brix 折射計、酚硫酸法總糖、還原糖（索摩基法、Bertrand 法）、旋光法、果膠與澱粉。"},
+  {k:"ash", name:"灰分與礦物質", ch:"Ch 16 · 21", method:"乾式灰化、鈉離子選擇電極、EDTA 硬度、多元素分析與產地判別。"},
+  {k:"acid", name:"pH 與可滴定酸", ch:"Ch 22", method:"NaOH 滴定（以乳酸、檸檬酸、醋酸計）、pH 測定、糖酸比。"},
+  {k:"vit", name:"維他命", ch:"Ch 20", method:"維他命 C 靛酚滴定、氧化降解；生物可利用率。"},
+  {k:"add", name:"添加物、色素與真實性", ch:"TFDA 公告方法", method:"SO₂ 定量、亞硝酸鹽比色、天然色素吸光測定、摻偽與標示。"}
+];
+const SRC = {sh:"超級後廚", lm:"檸檬職人", ct:"凱特食旅"};
+// [實驗, 星等, 來源, videoId, 影片, 影片鉤子, 課堂連結, 提問]
+const ROWS = [
+ ["protein",3,"sh","lNDuk_JpkV8","奶粉工廠","8–10 L 鮮奶濃縮成 1 kg 粉；三聚氰胺為何能騙過蛋白質檢測","凱氏法量的是總氮，不是蛋白質。","三聚氰胺含氮約 66.6%，每加 1 g 會讓「蛋白質」虛增幾克？（× 6.38）"],
+ ["protein",3,"sh","01xiYD63EAc","麵粉工廠","蛋白質 8%–13% 決定做麵包或蛋糕","小麥換算係數用 5.7；高筋與低筋麵粉凱氏結果比較。","同一份麵粉用 6.25 和 5.7 換算，差多少？標示該用哪個？"],
+ ["protein",2,"sh","Vl4LB-K8PVs","醬油工廠","釀造醬油 vs 酸水解醬油","醬油分級看胺基態氮；酸水解會產生 3-MCPD。","總氮高就代表醬油品質好嗎？"],
+ ["protein",2,"sh","vTsLcwyreXM","乳清蛋白粉","做起司剩下的乳清，膜過濾後噴霧乾燥","加入廉價胺基酸（amino spiking）同樣能墊高凱氏結果。","哪一種分析能分辨「完整蛋白」與「游離胺基酸」？"],
+ ["protein",2,"sh","n0NlUxg4bSI","植物肉","酵母製造血紅素、植物蛋白擠出肉纖維","植物蛋白換算係數的選擇；標示宣稱的驗證。",""],
+ ["protein",2,"sh","R5uOdClCsjY","豆腐工廠","一天 5.7 噸黃豆：泡豆、磨漿、點漿、壓榨","豆漿與豆腐的蛋白質定量；凝固劑種類也影響灰分。",""],
+ ["protein",1,"sh","AVTmmuSm_vQ","高湯塊","植物蛋白水解出肉湯味","水解蛋白 → 游離胺基酸；甲醛滴定測胺基態氮。",""],
+ ["protein",1,"sh","YMv9RJ4qJjI","螺旋藻","蛋白質 60%–70%","高蛋白樣品做凱氏法時取樣量要下修。",""],
+
+ ["fat",3,"sh","8w5JsOxgVoU","牛奶脂肪標準化","先脫脂再加回乳脂，一批奶調出 3 種脂肪規格","Gerber／Babcock 乳脂測定是產線上的品管動作。","要把 3.8% 原乳調成 2.0%，脫脂乳與原乳怎麼配？"],
+ ["fat",3,"sh","WXIhEyi5eSs","奶油工廠","20 kg 牛奶做 1 kg 奶油；乳脂 ≥80% 才能叫奶油","以法規下限驗證產品；脂肪、水分、非脂固形物質量平衡。",""],
+ ["fat",2,"sh","PXjBEpEoArY","樂事洋芋片","每天 750 噸馬鈴薯、350°F 油炸、充氮包裝","洋芋片是很好的 Soxhlet 樣品。",""],
+ ["fat",2,"ct","VfMMpYVP2lE","台灣洋芋片（煌輝）","台灣特有馬鈴薯做洋芋片","在地同款樣品，可與進口品牌比較粗脂肪。",""],
+ ["fat",2,"sh","3MtXKQUQtEI","品客","含 42% 馬鈴薯的配方爭議、薯粉壓片油炸","成型薯片 vs 切片薯片的脂肪含量比較。",""],
+ ["fat",2,"sh","4ciYrqZ-OfA","香蕉脆片","2 mm 切片、油炸後脫油、充氮","脫油前後脂肪差多少；高脂乾燥品的酸敗風險。",""],
+ ["fat",2,"sh","ikuRLziGHsY","美乃滋","65% 植物油乳化成白色濃醬","乳化樣品不能直接 Soxhlet，要先酸水解或用 Mojonnier。","為什麼直接萃取美乃滋會低估脂肪？"],
+ ["fat",2,"sh","6m2j5G0VafY","香腸熱狗","70% 瘦肉、30% 脂肪打成肉漿","肉製品脂肪測定；同一支影片也可接亞硝酸鹽。",""],
+ ["fat",1,"sh","swomuTlXvww","花生醬","160°C 烘焙、兩道研磨、脂肪結晶防分層","高脂樣品（約 50%）的 Soxhlet 取樣量。",""],
+
+ ["oil",3,"sh","Tomgd54vjl0","橄欖油","特級初榨酸度須低於 0.8%；最容易被摻假的食用油之一","酸價（游離脂肪酸）滴定就是分級依據。","特級初榨與精製橄欖油，酸價和過氧化價誰高？"],
+ ["oil",3,"sh","ipJHaWYolCs","芥花油","壓榨、正己烷浸出、220°C 脫臭","工業溶劑萃取原理與 Soxhlet 相同；精煉前後酸價變化。",""],
+ ["oil",3,"sh","VwHaRjH4KGU","大豆油","含油僅 18%、己烷萃取率 >99%、230°C 真空脫臭","用含油率算每噸大豆出油量；高碘價與氧化穩定性。",""],
+ ["oil",2,"sh","F35of9Csp_I","椰子油","毛油 60°C 脫膠、白土脫色、250°C 脫臭；冷壓貴 2–3 倍","飽和脂肪高 → 碘價低；冷壓與精煉椰子油比較。",""],
+ ["oil",2,"sh","m8rMQPahi9A","棕櫚油","鮮果 24 小時內必須進廠；精煉分提","放久了脂解酶讓游離脂肪酸上升，酸價就是鮮度指標。","為什麼棕櫚果不能等？"],
+ ["oil",2,"sh","2okfl3cgLVw","葵花籽油","脫殼、冷榨、精煉、灌裝","過氧化價；食安事件後的油品檢驗。",""],
+ ["oil",2,"ct","s5axI-0fyrU","虎尾花生油","農會在地榨油","在地樣品：自榨花生油 vs 市售精製油的酸價、過氧化價。",""],
+ ["oil",1,"sh","YJtpmDm2WdM","薯條工廠","先炸半熟再凍到 -25°C","延伸：炸油劣化與極性化合物管理。",""],
+
+ ["moisture",3,"sh","BCKpajZY5QY","牛肉乾","500 g 鮮肉變成 100 g、常溫保存 15 個月","乾燥失重計算；水分含量 vs 水活性。","失重 80% 代表牛肉乾水分是多少？還差什麼資料？"],
+ ["moisture",3,"ct","I3mimhdwGmg","柴燒龍眼乾","連續日夜顧火 7 天","在地樣品；烘箱法 vs 紅外線水分計；乾燥曲線。",""],
+ ["moisture",2,"sh","AQg6wQQ5Xjg","蜂蜜工廠","切蠟、離心、過濾、靜置、灌裝","蜂蜜水分用折射計（規格 ≤20%），不用烘箱。","為什麼蜂蜜不適合 105°C 烘乾？"],
+ ["moisture",2,"sh","NLR-b8V3-9A","爆米花","一粒承受 9 大氣壓、100 毫秒膨脹 50 倍","爆裂靠的是種子內的水分；水分過高或過低都爆不好。",""],
+ ["moisture",2,"sh","lNDuk_JpkV8","奶粉工廠","200°C 噴霧乾燥","低水分樣品（<5%）改用真空烘箱或 Karl Fischer。",""],
+ ["moisture",2,"sh","yPn0n5KFWwg","即溶咖啡","熱風噴乾 vs -50°C 真空凍乾","吸濕性樣品的秤量操作。",""],
+ ["moisture",2,"sh","WfR3tp7Kwcc","義大利麵","慢速烘乾 12 小時，可放好幾年","乾麵的水分規格與保存性。",""],
+ ["moisture",2,"lm","aRlrXWkwAOE","菜脯工廠","一天 20 噸","高鹽樣品烘乾時鹽不揮發但會吸濕，要注意冷卻與秤量。",""],
+ ["moisture",1,"sh","QPuJFYOi6as","冷凍披薩","半烤定型、低水分奶酪、-35°C 速凍","起司的水分規格；冷凍與乾燥是兩條保存路線。",""],
+
+ ["carb",3,"sh","GxPFViYRsjM","楓糖漿","40 加侖含糖 2% 的樹液熬成 1 加侖 66% 糖漿","Brix 質量平衡計算題。","用 2% 與 66% 驗算 40：1 這個比例合不合理。"],
+ ["carb",3,"sh","fXiG20TBmA4","甜菜製糖","66 把刀切絲、浸糖塔、石灰淨化、12.5 小時結晶","旋光法測蔗糖；Brix 與純度。",""],
+ ["carb",3,"sh","-KE_HInz4Pk","草莓果醬","原料先冷凍、高溫熬煮、不加防腐劑保存 2 年","果醬 Brix 與果膠；高糖如何抑菌。",""],
+ ["carb",2,"sh","853gncDLDuo","椰棗","沒加糖含糖近 70%","還原糖定量：椰棗糖多為葡萄糖與果糖。",""],
+ ["carb",2,"sh","wM9Vt5QcpYQ","煉乳","蒸發掉 6 成水、再加 45% 糖","總固形物與蔗糖含量。",""],
+ ["carb",2,"lm","rAUrltBk-ac","冬瓜茶磚","一天 2 萬塊","在地樣品；溶解後測 Brix，計算加水倍數。",""],
+
+ ["ash",3,"sh","zL21V3NrFC4","食鹽工廠","純度 99% 的原鹽還要溶掉重做：去鈣鎂、真空結晶、加碘","鈉離子計（離子選擇電極）測鈉；Na→NaCl 換算；EDTA 測 Ca、Mg；碘含量。",""],
+ ["ash",3,"sh","4TqLgLQz37o","喜馬拉雅粉鹽","「84 種礦物質」、價格是普通鹽 20 倍","灰分與元素分析驗證宣稱；產地判別可接茶葉多元素 PCA。","粉鹽每天吃 5 g，微量礦物質攝取量有意義嗎？"],
+ ["ash",2,"lm","3fxu-8YOPKE","黑糖工廠","大量黑糖加工","黑糖 vs 白砂糖灰分差距大，是很好做的對照灰分實驗。",""],
+ ["ash",2,"sh","qFiw_UrRqWE","瓶裝水","先過濾到幾乎零礦物質，再加回去","導電度、TDS、EDTA 總硬度。",""],
+ ["ash",2,"sh","xQp2qfoNNYw","碾米工廠","1 噸稻穀只剩約 680 kg 白米；砷殘留","碾白去掉糠層，灰分、脂肪、纖維一起下降。",""],
+ ["ash",1,"ct","TRX1VpfpLYo","玉山碾米廠","台灣稻米收穫與碾米","在地對照：糙米 vs 白米灰分。",""],
+ ["ash",1,"sh","Sf-eyyKiZMU","抹茶","遮光 30 天、石磨慢磨","茶葉多元素分析與產地（TFDAF0032）的導入。",""],
+
+ ["acid",3,"sh","ZCKqbXU0uYs","養樂多","37°C 繁殖活菌、工廠要「養」7 天","以乳酸計的可滴定酸；pH 與可滴定酸的差別。",""],
+ ["acid",3,"sh","zFI6oTQLxhM","優格","85°C 殺菌、46°C 發酵 10 小時","發酵曲線：每小時取樣測 pH 與酸度。","pH 停在 4.6 附近時，可滴定酸還在上升嗎？"],
+ ["acid",2,"sh","yv6_Xj2tVDI","醃黃瓜","鹽水池泡 3 週 vs 超市速醃 3 天","發酵產酸 vs 直接加醋：以乳酸或醋酸計。",""],
+ ["acid",2,"sh","QlK9yvYNeck","番茄醬","加州番茄 6 小時內濃縮","酸性食品 pH 4.6 界線與殺菌條件。",""],
+ ["acid",2,"sh","jwZ9Xl79dNE","柳橙汁","3 顆橙子榨 1 杯、巴氏殺菌","糖酸比（Brix／酸度）是果汁品質指標。",""],
+ ["acid",2,"lm","L054aRvu320","黃金泡菜","在地發酵泡菜","熟成度就是酸度：不同天數泡菜比較。",""],
+ ["acid",1,"ct","BsYawpge7QY","酸菜處理","1000 份酸菜","在地發酵樣品。",""],
+ ["acid",1,"lm","QGMLDAMIJos","辣豆瓣醬","70 年古法釀造","發酵醬料的 pH 與鹽度。",""],
+
+ ["vit",3,"sh","jwZ9Xl79dNE","柳橙汁","脫氧儲存近一年，裝盒前再加回香氣與果肉","維他命 C 氧化降解；靛酚滴定比較鮮榨與市售。","儲存一年的果汁，維他命 C 還剩多少？怎麼設計實驗？"],
+ ["vit",3,"sh","t_RlMWSPtLU","多力多滋","石灰水煮玉米釋放維他命 B3；歐洲少了這步爆發糙皮病","分析測到的「總量」不等於身體能利用的量。",""],
+
+ ["add",3,"sh","xriGDw1CIuI","葡萄酒工廠","破碎、發酵、橡木桶陳釀、低氧灌裝","SO₂ 定量（接 SO₂ 滴定與 GC-MS 教材）；標示「含亞硫酸鹽」。",""],
+ ["add",3,"sh","6m2j5G0VafY","香腸熱狗","煮熟還是粉紅色；亞硝酸鹽抑制肉毒桿菌","亞硝酸鹽比色（Griess）與殘留限量。",""],
+ ["add",2,"sh","oRt7cl1Oi58","培根","五花肉注射醃製、50–70°C 熱燻","醃漬肉品的亞硝酸鹽。",""],
+ ["add",2,"sh","gDy5Z5wQR6Q","午餐肉","常溫放 5 年、粉紅色從哪來","亞硝酸鹽與商業殺菌。",""],
+ ["add",2,"ct","dGWZsPxm1Mc","鴨賞","甘蔗煙燻保存鴨肉","在地煙燻肉品：亞硝酸鹽；延伸多環芳香烴。",""],
+ ["add",2,"sh","YMv9RJ4qJjI","螺旋藻藍色素","一池綠水做成藥片與天然藍色素","藻藍蛋白 620 nm 吸光測定。",""],
+ ["add",1,"sh","-KE_HInz4Pk","草莓果醬","熬煮褪色後用甜菜汁補紅","天然色素與標示。",""],
+ ["add",1,"sh","YVHQFQmQtJM","藍莓","藍莓其實沒有藍色色素；AI 掃描甜度","花青素 pH 示差法。",""],
+ ["add",1,"sh","_MUv0idAdNc","蟹肉棒","白肉魚調蟹味、甜椒染色","魚漿製品的標示與真實性。",""],
+ ["add",1,"sh","yetMyXauMC0","帕瑪森起司","15 L 牛奶做 1 kg；假貨年賺 20 億歐元","原產地與真實性檢驗。",""]
+];
+
+// 查證結果：{videoId: [判定, 片段起, 片段迄, 補充說明]}
+/*VERIFY_START*/const VERIFY = {};/*VERIFY_END*/
+const toSec = t => t.split(":").reduce((a, b) => a * 60 + Number(b), 0);
+function verifyHtml(id){
+  const v = VERIFY[id]; if(!v) return "";
+  const ok = v[0] === "可直接用";
+  const seg = v[1] ? `<a class="seg" href="https://www.youtube.com/watch?v=${id}&t=${toSec(v[1])}s" target="_blank" rel="noopener">▶ ${v[1]}–${v[2]}</a>` : "";
+  return `<br><span class="vd ${ok ? "ok" : "fix"}">${v[0]}</span>${seg}${v[3] ? `<span class="fixnote">${esc(v[3])}</span>` : ""}`;
+}
+
+let seen = {};
+try { seen = JSON.parse(localStorage.getItem("labVideoSeen") || "{}"); } catch(e) {}
+const saveSeen = () => { try { localStorage.setItem("labVideoSeen", JSON.stringify(seen)); } catch(e) {} };
+
+let active = "all";
+try { active = localStorage.getItem("labVideoExp") || "all"; } catch(e) {}
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+
+function buildChips(){
+  const counts = {};
+  ROWS.forEach(r => counts[r[0]] = (counts[r[0]]||0) + 1);
+  const all = [{k:"all", name:"全部"}].concat(EXP);
+  $("#chips").innerHTML = all.map(e =>
+    `<button class="chip" data-k="${e.k}" aria-pressed="${e.k===active}">${e.name}<span class="n">${e.k==="all"?ROWS.length:counts[e.k]}</span></button>`).join("");
+  $("#chips").onclick = ev => {
+    const b = ev.target.closest(".chip"); if(!b) return;
+    active = b.dataset.k;
+    try { localStorage.setItem("labVideoExp", active); } catch(e) {}
+    document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.k===active));
+    render();
+  };
+}
+
+function render(){
+  const q = $("#q").value.trim().toLowerCase();
+  const top = $("#top").checked, local = $("#local").checked, unseen = $("#unseen").checked;
+  let shown = 0, html = "";
+  EXP.forEach(e => {
+    if(active !== "all" && active !== e.k) return;
+    const rows = ROWS.filter(r => r[0]===e.k)
+      .filter(r => !top || r[1]===3)
+      .filter(r => !local || r[2]!=="sh")
+      .filter(r => !unseen || !seen[r[0]+r[3]])
+      .filter(r => !q || (r[4]+r[5]+r[6]+r[7]+e.name+e.method+SRC[r[2]]).toLowerCase().includes(q))
+      .sort((a,b) => b[1]-a[1]);
+    if(!rows.length) return;
+    shown += rows.length;
+    html += `<section class="exp" id="${e.k}">
+      <div class="exp-head"><h2>${e.name}</h2><span class="ch">${e.ch}</span></div>
+      <p class="method">${e.method}</p>
+      <div class="tbl"><table>
+        <thead><tr><th>優先</th><th>影片</th><th>影片鉤子</th><th>課堂連結與提問</th><th>已預看</th></tr></thead>
+        <tbody>${rows.map(r => {
+          const key = r[0]+r[3], isLocal = r[2]!=="sh";
+          return `<tr class="${seen[key]?"is-seen":""}">
+            <td class="pri" aria-label="${r[1]} 星">${"★".repeat(r[1])}</td>
+            <td class="vid"><a href="https://www.youtube.com/watch?v=${r[3]}" target="_blank" rel="noopener">${esc(r[4])}</a><br><span class="src ${isLocal?"local":""}">${SRC[r[2]]}${isLocal?" · 台灣在地":""}</span></td>
+            <td class="hook">${esc(r[5])}${verifyHtml(r[3])}</td>
+            <td class="use">${esc(r[6])}${r[7]?`<span class="q">問：${esc(r[7])}</span>`:""}</td>
+            <td class="seen"><input type="checkbox" id="s-${key}" data-key="${key}" ${seen[key]?"checked":""} aria-label="已預看 ${esc(r[4])}"></td>
+          </tr>`;}).join("")}</tbody>
+      </table></div></section>`;
+  });
+  $("#main").innerHTML = html || `<p class="empty">沒有符合條件的影片，請放寬篩選。</p>`;
+  $("#count").textContent = `顯示 ${shown} ／ ${ROWS.length} 部`;
+}
+
+document.addEventListener("change", ev => {
+  const k = ev.target.dataset && ev.target.dataset.key;
+  if(k){ if(ev.target.checked) seen[k]=1; else delete seen[k]; saveSeen();
+    ev.target.closest("tr").classList.toggle("is-seen", ev.target.checked);
+    if($("#unseen").checked) render(); return; }
+  if(["top","local","unseen"].includes(ev.target.id)) render();
+});
+$("#q").addEventListener("input", render);
+buildChips(); render();
+</script>
+
+</body>
+</html>
