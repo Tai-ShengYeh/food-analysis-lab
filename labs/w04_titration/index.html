@@ -1,0 +1,419 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W4 手動 vs 自動滴定 · 食品分析實驗</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto;white-space:nowrap}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">食品分析實驗 · W4</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食品分析實驗 · W4</div><h1>手動滴定 <span style='color:var(--accent-2)'>vs</span> PASCO 自動滴定</h1><div class="en">Manual vs Automated Titration — Titratable Acidity</div><div class="meta">食品分析實驗　·　4 小時課程　·　15 位學生 · 5 組（每組 3 人）<br>可滴定酸度 · KHP 標定 · 滴定曲線反曲點 · 方法比較 QC</div><div style="margin-top:24px"><span class="pill">0.1 N NaOH</span><span class="pill">KHP 標定</span><span class="pill">酚酞 pH 8.2</span><span class="pill">PASCO 即時曲線</span><span class="pill">Bland–Altman</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">開始前，先看兩支工廠影片</div>
+  <div class="hook">飲料工廠怎麼<span class="hi">同時</span>盯著 pH 又盯著可滴定酸？</div>
+  <p class="subtitle" style="max-width:900px;margin:18px auto 0">
+    <a href="https://www.youtube.com/watch?v=ZCKqbXU0uYs&t=596s" target="_blank" style="color:var(--accent);font-weight:800">
+      養樂多產線 QC（09:56–11:25，看可滴定酸度＋Brix）</a>
+    <a href="https://www.youtube.com/watch?v=zFI6oTQLxhM&t=758s" target="_blank" style="color:var(--accent);font-weight:800">
+      優格產線 QC（12:38–13:39，看 pH 4.4、可滴定酸度 0.9%）</a>
+  </p>
+  <div class="note" style="max-width:900px;margin:18px auto 0;text-align:left">
+    <strong>影片裡的小提醒：</strong>養樂多影片把 130–150 °C 的處理稱為「殺菌（pasteurization）」，
+    但那個溫度其實是<strong>滅菌（sterilization）</strong>——先看影片，等一下上課我們會回來討論這個用詞差異。
+  </div>
+  <p class="subtitle" style="max-width:900px;margin:14px auto 0"><strong>今天的問題：</strong>
+    為什麼工廠品管要<span class="hi">同時</span>量 pH 和可滴定酸度？只量一個不行嗎？</p>
+</div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W4，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>動手做一次<strong>手動滴定</strong>（酚酞終點）與一次 <strong>PASCO 電位滴定</strong>，並比較兩者</li><li>用 <strong>KHP</strong> 標定 0.1 N NaOH 的真實濃度，理解為什麼要標定</li><li>看懂滴定曲線的<strong>緩衝區、半當量點、當量點</strong>，以及一階導數如何找<strong>反曲點</strong></li></ul><ul class='clean'><li>用 N×V×當量重/(W×1000)×100 算出 <strong>% 酸</strong>，並知道要用哪一種主要酸表示</li><li>用 <strong>Bland–Altman</strong> 圖比較手動與 PASCO 兩種方法是否一致（而不是只看相關係數 r）</li><li>遵守 NaOH／酚酞相關<strong>安全</strong>規範，並完成 4 小時的分工與輪站</li></ul></div><p class="subtitle" style="margin-top:10px">理論複習：pH 與可滴定酸度的定義、原理，本課不重複——完整內容在 <a href="https://tai-shengyeh.github.io/food-analysis-decks/ch22_acidity_soil/index.html" target="_blank" style="color:var(--accent);font-weight:800">Ch22 pH 與可滴定酸度</a> 那份教材。</p></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">手動滴定 vs PASCO 自動滴定：優點在哪？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個敘述分到「手動滴定」或「PASCO 自動滴定」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意" data-chart="titration"><div class="slide-inner"><div class="kicker">模擬曲線・複習</div><h2 class="slide-title">滴定曲線原理：<span class='hi'>0.075 M 醋酸</span>／0.1 M NaOH</h2><div class="chartbox" style="height:42vh"><canvas id="chart_titration"></canvas></div><div class="cap">模擬曲線（Python 電荷平衡式計算，非手繪）。半當量點 pH=pKa≈4.76；當量點 V≈18.75 mL，pH≈8.69；酚酞 pH 8.2 落在 V≈18.744 mL，跟當量點只差 0.006 mL（比一滴還小）。完整原理見 Ch22 教材連結。</div></div></section><section class="slide" data-slide="6" data-section="維持注意" data-chart="titration_deriv"><div class="slide-inner"><div class="kicker">模擬曲線・導數</div><h2 class="slide-title">電位滴定怎麼找終點：<span class='hi'>dpH/dV</span> 峰值＝反曲點</h2><div class="chartbox" style="height:42vh"><canvas id="chart_titration_deriv"></canvas></div><div class="cap">同一組模擬資料，以 0.25 mL 間距算差分；峰值在 V≈18.62 mL，dpH/dV≈8.3，跟理論當量點 18.75 mL 幾乎重合。實際儀器峰會更矮更寬，但位置一樣可用——好處是不受顏色影響，深色樣品也能客觀判終點。</div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">滴定前的校正</div><h2 class="slide-title">NaOH 標定 · 去 CO₂ 水 · pH 感測器校正</h2><div class="svgwrap" style="margin-top:2px">
+<svg viewBox="0 0 600 200" style="max-height:190px;width:auto">
+ <text x="300" y="20" text-anchor="middle" class="lblb" font-size="15">使用前：pH 感測器兩/三點校正（軟體內完成）</text>
+ <g>
+  <rect x="40" y="60" width="70" height="90" rx="8" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="75" y="110" text-anchor="middle" class="lblb" fill="#d9822b">pH 4</text>
+  <rect x="150" y="60" width="70" height="90" rx="8" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="185" y="110" text-anchor="middle" class="lblb" fill="#1f6feb">pH 7</text>
+  <rect x="260" y="60" width="70" height="90" rx="8" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="295" y="110" text-anchor="middle" class="lblb" fill="#1f9d6b">pH 10</text>
+ </g>
+ <text x="185" y="172" text-anchor="middle" class="lbl">標準緩衝液，涵蓋樣品 pH 範圍</text>
+ <path d="M360 100 h40" stroke="#48597a" stroke-width="2" marker-end="url(#arrow)"/>
+ <rect x="410" y="55" width="150" height="90" rx="10" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+ <text x="485" y="85" text-anchor="middle" class="lblb" font-size="13">校正完成 ✓</text>
+ <text x="485" y="108" text-anchor="middle" class="lbl">同時做溫度補償</text>
+ <text x="485" y="128" text-anchor="middle" class="lbl">才能開始滴定</text>
+ <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#48597a"/></marker></defs>
+</svg></div><div class="note" style="margin-top:10px"><strong>NaOH 用 KHP 標定：</strong>鄰苯二甲酸氫鉀(KHP，MW 204.22，須先乾燥)純、不吸濕，是理想的一級標準酸——NaOH 強吸濕又吸空氣中 CO₂，每批都要重新標定。<br><strong>試劑與探棒：</strong>配製 NaOH 用<strong>去 CO₂ 水</strong>(煮沸或通氮)；pH 感測器要在 PASCO 軟體內用 <strong>pH 4/7/10</strong> 緩衝液做兩/三點校正並做溫度補償，才能開始滴定。<br><strong>若系統以滴數計量體積：</strong>要先用秤重法校正「每滴等於多少 mL」（沿用 W1 的方法），滴數本身不是體積單位。</div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">滴定操作</div><h2 class="slide-title">手動滴定 <span class='hi'>vs</span> PASCO 自動滴定</h2><p class="subtitle">手動：滴定管滴加 0.1 N NaOH，酚酞持續粉紅為終點，每樣品三重複。PASCO：電動滴定管＋pH 探棒，無線即時把 pH–體積曲線傳到筆電並投影，全班同步看曲線成形。</p><div class="svgwrap" style="margin-top:8px">
+<svg viewBox="0 0 620 260" style="max-height:230px;width:auto">
+ <text x="310" y="20" text-anchor="middle" class="lblb" font-size="15">PASCO 教學型自動滴定：無線即時傳輸、全班同步看曲線</text>
+ <rect x="40" y="60" width="26" height="130" rx="5" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <text x="53" y="204" text-anchor="middle" class="lbl">電動滴定管</text>
+ <path d="M150 150 h120 v40 a10 10 0 0 1 -10 10 h-100 a10 10 0 0 1 -10 -10 Z" fill="#e7f0fe" stroke="#48597a" stroke-width="2"/>
+ <text x="210" y="220" text-anchor="middle" class="lbl">樣品 + 酚酞</text>
+ <rect x="190" y="90" width="20" height="70" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="200" y="80" text-anchor="middle" class="lbl">pH 探棒</text>
+ <path d="M66 90 q40 -10 84 20" fill="none" stroke="#48597a" stroke-width="1.6"/>
+ <g stroke="#1f9d6b" stroke-width="2" fill="none">
+  <path d="M330 90 q10 -14 20 0"/><path d="M330 96 q16 -22 32 0"/><path d="M330 102 q22 -30 44 0"/>
+ </g>
+ <text x="370" y="70" text-anchor="middle" class="lbl" fill="#1f9d6b">無線傳輸</text>
+ <rect x="400" y="60" width="180" height="120" rx="10" fill="#f6f9fd" stroke="#1f6feb" stroke-width="2"/>
+ <text x="490" y="80" text-anchor="middle" class="lblb" font-size="12">筆電 + 投影</text>
+ <polyline points="415,150 435,130 455,140 475,100 495,150 515,95 535,150 555,120"
+   fill="none" stroke="#1f6feb" stroke-width="2.4"/>
+ <text x="490" y="172" text-anchor="middle" class="lbl">pH–體積 即時曲線</text>
+ <text x="310" y="245" text-anchor="middle" class="lbl">教學重點：全班同時看到同一條曲線成形，比較滴定終點與反曲點</text>
+</svg></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">4 小時課程時間表</div><h2 class="slide-title">分工與 PASCO 輪站</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:30</td><td>講解＋示範：PASCO 即時曲線怎麼看，酚酞終點 vs 反曲點</td></tr>
+    <tr><td class="c">0:30–1:15</td><td>各組以 KHP 標定自己的 0.1 N NaOH（手動滴定，算出實際 N）</td></tr>
+    <tr><td class="c">1:15–3:45</td><td>手動滴定 4 樣品（醋／柳橙汁／優格／紅酒）× 3 重複；PASCO 站輪流進行</td></tr>
+    <tr><td class="c">3:45–4:00</td><td>PASCO 匯出 CSV、各組數據輸入彙整表</td></tr>
+    </tbody></table>
+    <div class="note" style="margin-top:12px"><strong>PASCO 輪站（5 組，每組約 30 分鐘）：</strong>
+    每組輪到時做「醋 1 次＋紅酒 1 次」的自動滴定（每次約 8–12 分鐘＋沖洗換樣），
+    其餘時間該組同步進行手動滴定。<strong>請 TA 開課前務必先試跑計時</strong>——
+    若單次滴定明顯快於預期，可讓該組多做一次重複。</div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">課堂活動</div><h2 class="slide-title">預測 → 觀察 → 解釋（Predict–Observe–Explain）</h2><div class="grid2" style="margin-top:10px"><div><ul class="clean"><li>PASCO 開始滴定<strong>前</strong>，每組先在紙上<strong>畫出預測</strong>的 pH–體積曲線</li><li>在 PASCO 的燒杯裡<strong>也加幾滴酚酞</strong>——滴定過程中，肉眼看到變粉紅的那一刻，在投影的即時曲線上<strong>做記號</strong></li><li>比較這個記號跟軟體算出的<strong>反曲點</strong>位置，是否重合？</li></ul></div><div class="note"><strong>醋（乾淨的弱酸）：</strong>當量點附近曲線幾乎垂直上升，酚酞變色點跟反曲點<strong>幾乎重合</strong>（理論上只差不到一滴）。<br><br><strong>紅酒（多種有機酸＋顏色）：</strong>曲線爬升較平緩、當量點不明顯，紅色又<strong>蓋住</strong>酚酞的粉紅，肉眼終點會比反曲點<strong>更難判斷、更晚看到</strong>——這正是深色樣品要靠電位滴定的原因。</div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">安全守則</div><h2 class="slide-title">NaOH · 酚酞 · 玻璃器材</h2><div class="grid2" style="margin-top:14px"><div class="card a"><div class="ic">🥽</div><div class="ct">NaOH 具腐蝕性</div><div class="cb">全程配戴<strong>護目鏡與手套</strong>；不慎沾到皮膚或眼睛立即大量清水沖洗並通知助教</div></div><div class="card b"><div class="ic">🧴</div><div class="ct">滴定管使用後沖洗</div><div class="cb">NaOH 會腐蝕/卡住旋塞，滴定結束立即用水徹底沖洗滴定管與旋塞</div></div><div class="card g"><div class="ic">🔥</div><div class="ct">酚酞溶於乙醇</div><div class="cb">屬<strong>易燃液體</strong>，遠離火源、小量取用，用完立即蓋緊瓶蓋</div></div><div class="card a"><div class="ic">⚠️</div><div class="ct">PASCO 電動滴定管</div><div class="cb">轉動中勿觸碰滴定針頭與探棒接頭，結束才拆卸清洗</div></div></div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">手動滴定操作流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把可滴定酸度手動滴定的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">計算：從滴定量到 % 酸</div><h2 class="slide-title">先標定 NaOH，再算樣品的 % 酸</h2><div class="grid2" style="margin-top:10px"><div class="eq">N<sub>NaOH</sub> = <span class="frac"><b>m(KHP)</b><span>204.22 × V(L)</span></span></div><div class="eq" style="margin-top:14px">% 酸 = <span class="frac"><b>N × V × 當量重</b><span>W × 1000</span></span> × 100</div></div><div class="grid2" style="margin-top:14px"><div class="note"><strong>KHP 標定範例：</strong>秤 0.5105 g KHP，滴定用去 24.85 mL NaOH<br>N = 0.5105 / (204.22 × 0.02485) = <b>0.1006 M</b></div><div class="note"><strong>醋的範例：</strong>取醋 2.00 mL，用去 0.1006 M NaOH 15.1 mL（以醋酸當量重 60.05 計）<br>% 酸 = 0.1006×15.1×60.05/(2.00×1000)×100 ≈ <b>4.56%</b></div></div><p class="subtitle" style="margin-top:10px"><strong>優格是秤重取樣</strong>（非量體積）——公式一樣，只是 W 用樣品「克數」，結果報告為 % (w/w) 而不是 % (w/v)；乳酸當量重 90.08。柑橘/紅酒→檸檬酸(64.04)/酒石酸(75.04)，都以<strong>主要酸</strong>表示。</p><p class="subtitle"><strong>醋的結果留著別丟：</strong>本週手動滴定的醋酸度數據，W13 做 NIR–PLS 時會拿來當參考值(reference value)。</p></div></section><section class="slide" data-slide="14" data-section="維持注意" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：標定 NaOH 濃度</span><span class="score" id="g6score">未作答</span></div><div class="game-q">秤 <b>0.5105 g</b> 已乾燥的 KHP（MW=204.22），滴定到終點用去 <b>24.85 mL</b> NaOH。求 NaOH 的 <b>N（M）</b>。公式：N = m/(204.22×V<sub>L</sub>)。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">M</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">方法比較 QC</div><h2 class="slide-title">手動 vs PASCO：<span class='hi'>Bland–Altman</span> 圖</h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap"><svg viewBox="0 0 620 320"><text x="310" y="18" text-anchor="middle" class="lblb" font-size="14">Bland–Altman：差異 (PASCO－手動) vs 平均值（示意資料，n=12）</text><line x1="64.0" y1="176.0" x2="590.0" y2="176.0" stroke="#8493ad" stroke-width="1.4"/><line x1="64.0" y1="28.0" x2="64.0" y2="274.0" stroke="#8493ad" stroke-width="1.4"/><line x1="64.0" y1="176.0" x2="590.0" y2="176.0" stroke="#dde5f0" stroke-width="1"/><line x1="64.0" y1="149.7" x2="590.0" y2="149.7" stroke="#1f6feb" stroke-width="2.2"/><text x="472.0" y="141.7" class="lblb" fill="#1f6feb" font-size="12">偏差 bias=0.036%</text><line x1="64.0" y1="50.3" x2="590.0" y2="50.3" stroke="#d9822b" stroke-width="1.6" stroke-dasharray="6,5"/><text x="68.0" y="45.3" class="lbl" fill="#d9822b" font-size="11">+1.96SD=0.170</text><line x1="64.0" y1="249.1" x2="590.0" y2="249.1" stroke="#d9822b" stroke-width="1.6" stroke-dasharray="6,5"/><text x="68.0" y="244.1" class="lbl" fill="#d9822b" font-size="11">-1.96SD=-0.099</text><circle cx="545.0" cy="160.3" r="6" fill="#1f6feb" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="556.4" cy="129.3" r="6" fill="#1f6feb" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="541.6" cy="154.0" r="6" fill="#1f6feb" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="153.8" cy="148.3" r="6" fill="#d9822b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="150.2" cy="144.8" r="6" fill="#d9822b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="161.1" cy="95.3" r="6" fill="#d9822b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="147.3" cy="134.8" r="6" fill="#1f9d6b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="145.1" cy="70.2" r="6" fill="#1f9d6b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="140.2" cy="112.9" r="6" fill="#1f9d6b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="99.7" cy="251.7" r="6" fill="#8b2f4b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="97.6" cy="228.5" r="6" fill="#8b2f4b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="114.5" cy="166.0" r="6" fill="#8b2f4b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="70.0" cy="38.0" r="5" fill="#1f6feb"/><text x="80.0" y="42.0" class="lbl" font-size="11">白醋</text><circle cx="170.0" cy="38.0" r="5" fill="#d9822b"/><text x="180.0" y="42.0" class="lbl" font-size="11">柳橙汁</text><circle cx="270.0" cy="38.0" r="5" fill="#1f9d6b"/><text x="280.0" y="42.0" class="lbl" font-size="11">優格</text><circle cx="370.0" cy="38.0" r="5" fill="#8b2f4b"/><text x="380.0" y="42.0" class="lbl" font-size="11">紅酒</text><text x="310" y="312" text-anchor="middle" class="lbl" font-size="12">平均值 (兩法平均, % 酸)</text><text x="14" y="160" text-anchor="middle" class="lbl" font-size="12" transform="rotate(-90 14 160)">差異 (%)</text></svg></div><div><ul class="clean"><li>配對設計：同一樣品，手動與 PASCO <strong>各測一次</strong>，畫「差異 vs 平均值」</li><li>偏差 bias = 平均差異 = <b>0.036%</b>（示意資料，PASCO－手動）</li><li>一致界線 LoA = bias ± 1.96×SD = <b>[-0.099, 0.170]</b>（SD=0.068，n=12）</li><li>配對 t 檢定：t=1.80（df=11）——沒有顯著的系統性偏差；但<strong>紅酒</strong>那幾點明顯散得比較開</li></ul></div></div><div class="note" style="margin-top:6px"><strong>為什麼不能只看相關係數 r？</strong>這組示意資料的 r=0.999（幾乎完美相關！），但兩法仍可能有偏差、且紅酒的一致性明顯較差——r 只看「兩者是否同增同減」，不看「差多少、差得穩不穩」，這正是 Bland–Altman 存在的理由。（F 檢定比較的是<strong>各方法自己重複測定的變異數</strong>，不是這裡的配對差異：F≈2.63）</div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">pH 與可滴定酸度 即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">樣品配對它的主要酸</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個樣品分到它應該用來表示結果的「主要酸」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="18" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：滴定方法判斷</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">課後作業</div><h2 class="slide-title">Colab NB04（即將上線）</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📥</div><div class="ct">讀入 PASCO CSV</div><div class="cb">載入本組匯出的 PASCO pH–體積原始資料</div></div><div class="card a"><div class="ic">📈</div><div class="ct">用導數找當量點</div><div class="cb">計算一階導數，找峰值位置＝電位滴定終點</div></div><div class="card g"><div class="ic">🆚</div><div class="ct">跟手動滴定比較</div><div class="cb">同一樣品：手動 % 酸 vs PASCO 反推的 % 酸</div></div><div class="card b"><div class="ic">📊</div><div class="ct">Bland–Altman ＋ 配對 t 檢定</div><div class="cb">畫差異 vs 平均值圖，檢定兩法是否存在系統性偏差</div></div></div><p class="subtitle" style="margin-top:12px">NB04 連結<strong>即將上線</strong>，屆時公告在課程網頁。別忘了：你的醋酸度手動滴定數據，W13 NIR–PLS 建模會用到，請確實記錄與保留。</p></div></section><section class="slide" data-slide="20" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出為什麼工廠要同時量 pH 和可滴定酸度</li><li data-k><span class="bx">✓</span>解釋滴定曲線的半當量點(pH=pKa)、當量點，以及一階導數峰值＝反曲點</li><li data-k><span class="bx">✓</span>完成 NaOH 的 KHP 標定，並算出正確的 N</li><li data-k><span class="bx">✓</span>說出 pH 感測器校正、去 CO₂ 水、滴數校正 mL 的用意</li><li data-k><span class="bx">✓</span>動手完成手動滴定與 PASCO 自動滴定各一次，並比較結果</li><li data-k><span class="bx">✓</span>用 N×V×當量重/(W×1000)×100 算出樣品的 % 酸</li><li data-k><span class="bx">✓</span>解釋為什麼比較兩種方法時，Bland–Altman 比單看相關係數 r 更可靠</li><li data-k><span class="bx">✓</span>遵守 NaOH／酚酞相關的安全守則</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><script>window.CFG={"charts": {"titration": {"type": "line", "yTitle": "pH（x軸：NaOH 體積 mL）", "zero": true, "labels": ["0", "0.5", "1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11", "11.5", "12", "12.5", "13", "13.5", "14", "14.5", "15", "15.5", "16", "16.5", "17", "17.5", "18", "18.5", "19", "19.5", "20", "20.5", "21", "21.5", "22", "22.5", "23", "23.5", "24", "24.5", "25", "25.5", "26", "26.5", "27", "27.5", "28", "28.5", "29", "29.5", "30"], "datasets": [{"label": "模擬曲線（0.075 M 醋酸 25 mL + 0.1 M NaOH）", "data": [2.95, 3.3, 3.54, 3.71, 3.84, 3.95, 4.04, 4.12, 4.19, 4.26, 4.32, 4.38, 4.43, 4.48, 4.53, 4.58, 4.63, 4.68, 4.72, 4.77, 4.82, 4.86, 4.91, 4.96, 5.01, 5.06, 5.11, 5.17, 5.23, 5.29, 5.36, 5.44, 5.52, 5.62, 5.74, 5.9, 6.14, 6.63, 10.75, 11.23, 11.44, 11.59, 11.69, 11.77, 11.84, 11.9, 11.95, 11.99, 12.03, 12.07, 12.1, 12.13, 12.15, 12.18, 12.2, 12.22, 12.24, 12.26, 12.28, 12.3, 12.31], "color": "#1f6feb"}]}, "titration_deriv": {"type": "line", "yTitle": "dpH/dV（x軸：NaOH 體積 mL）", "zero": true, "labels": ["15.1", "15.4", "15.6", "15.9", "16.1", "16.4", "16.6", "16.9", "17.1", "17.4", "17.6", "17.9", "18.1", "18.4", "18.6", "18.9", "19.1", "19.4", "19.6", "19.9", "20.1", "20.4", "20.6", "20.9", "21.1", "21.4", "21.6", "21.9"], "datasets": [{"label": "一階導數（0.25 mL 間距，模擬）", "data": [0.149, 0.157, 0.167, 0.178, 0.192, 0.21, 0.231, 0.258, 0.293, 0.342, 0.412, 0.524, 0.728, 1.228, 8.273, 8.24, 1.194, 0.695, 0.49, 0.378, 0.307, 0.258, 0.222, 0.195, 0.174, 0.156, 0.142, 0.13], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["手動滴定", "PASCO 自動滴定"], "items": [{"t": "設備成本低，各組都能同時操作", "c": "手動滴定"}, {"t": "不需額外電源與電腦", "c": "手動滴定"}, {"t": "可多組同時平行進行，產能高", "c": "手動滴定"}, {"t": "訓練基本滴定操作與終點判讀能力", "c": "手動滴定"}, {"t": "即時繪出 pH–體積曲線，全班可見", "c": "PASCO 自動滴定"}, {"t": "用反曲點(電位法)判終點，不受顏色影響", "c": "PASCO 自動滴定"}, {"t": "資料無線傳輸並可匯出 CSV，方便後續分析", "c": "PASCO 自動滴定"}, {"t": "重複性高，減少人眼判讀變異", "c": "PASCO 自動滴定"}], "ok": "🎉 全對！手動滴定門檻低、產能高；PASCO 客觀、可重現、方便留存數據。", "tip": "提示：跟『便宜、多組同時、練基本功』有關→手動；跟『即時曲線、電位終點、無線匯出』有關→PASCO。"}, "g3": {"cats": ["醋酸 Acetic", "檸檬酸 Citric", "乳酸 Lactic", "酒石酸 Tartaric"], "items": [{"t": "白醋", "c": "醋酸 Acetic"}, {"t": "工研醋／穀物醋", "c": "醋酸 Acetic"}, {"t": "柳橙汁", "c": "檸檬酸 Citric"}, {"t": "檸檬", "c": "檸檬酸 Citric"}, {"t": "優格", "c": "乳酸 Lactic"}, {"t": "紅酒", "c": "酒石酸 Tartaric"}], "ok": "🎉 正確！醋→醋酸；柑橘類→檸檬酸；發酵乳品→乳酸；葡萄／酒→酒石酸。", "tip": "提示：發酵醋類是醋酸；柑橘類是檸檬酸；乳品發酵是乳酸；葡萄/酒是酒石酸。"}}, "mcq": {"g2": [{"q": "滴定到「半當量點」時，pH 大約等於？", "o": ["0", "pKa", "7", "14"], "a": 1, "e": "半當量點時 [HA]=[A⁻]，由 Henderson–Hasselbalch，pH = pKa（醋酸 pKa≈4.76）。"}, {"q": "為什麼 0.1 N NaOH 每批都要用 KHP 標定？", "o": ["KHP 比較便宜", "NaOH 強吸濕又吸收空氣中 CO₂，濃度不準", "KHP 顏色漂亮好判讀", "為了加快滴定速度"], "a": 1, "e": "NaOH 不是一級標準品，濃度會隨吸濕/吸 CO₂ 而改變，需用純淨穩定的 KHP 標定其真實濃度。"}, {"q": "本模擬曲線中，酚酞終點(pH 8.2)與真正當量點的體積差距大約是？", "o": ["差 5 mL 以上", "差不到一滴（< 0.01 mL）", "完全沒有差", "無法比較"], "a": 1, "e": "計算得知只差約 0.006 mL，遠小於一滴的體積——對乾淨的醋酸而言，酚酞終點幾乎等於當量點。"}, {"q": "電位滴定判定終點的方法是？", "o": ["肉眼看顏色變化", "找 dpH/dV(一階導數)的最大值", "固定滴定 20 mL 就停", "量溶液的顏色深淺"], "a": 1, "e": "反曲點＝一階導數的峰值，PASCO 軟體用這個方法客觀地找終點，不受顏色影響。"}, {"q": "紅酒的可滴定酸度結果，應以哪一種酸表示？", "o": ["檸檬酸", "蘋果酸", "酒石酸", "乳酸"], "a": 2, "e": "葡萄／紅酒的主要有機酸是酒石酸，依慣例以酒石酸(當量重75.04)表示結果。"}], "g5": [{"q": "紅酒顏色深、滴定看不清酚酞的粉紅色，最好怎麼處理？", "o": ["多加幾滴酚酞", "改用 PASCO 電位滴定找反曲點", "稀釋到完全無色再滴定", "改用更濃的 NaOH"], "a": 1, "e": "深色樣品用電位滴定，靠曲線形狀(導數峰值)客觀判終點，不受顏色干擾。"}, {"q": "兩個方法的 Bland–Altman 顯示 r=0.999，但 LoA 很寬，這代表？", "o": ["兩法完全一致，可放心互換", "相關係數高不代表一致性好，仍要看偏差與 LoA", "r 高一定代表沒有偏差", "這組資料有誤"], "a": 1, "e": "r 只反映『同增同減』的趨勢，即使趨勢一致，兩法仍可能有系統性偏差或分散的差異——這正是本組『r=0.999 但紅酒分散大』的情境。"}, {"q": "若 Bland–Altman 算出的 bias 是負值（PASCO－手動 < 0），代表？", "o": ["PASCO 讀值系統性偏低於手動", "PASCO 讀值系統性偏高於手動", "兩法完全沒有差異", "資料一定有誤"], "a": 0, "e": "bias 定義為 PASCO－手動，負值表示 PASCO 的平均讀值比手動法低。"}, {"q": "PASCO 若是用「滴數」而非連續體積來記錄加液量，開課前最該先做什麼？", "o": ["先校正每滴對應的 mL 數(秤重法)", "直接開始滴定", "只用手動滴定就好", "把滴數乘以 2 估計 mL"], "a": 0, "e": "滴數不是體積單位，需先用 W1 的秤重法建立『每滴對應多少 mL』的換算，否則體積讀值不可信。"}, {"q": "PASCO 輪站發現單次滴定比預期久很多，導致 30 分鐘排不下，該怎麼辦？", "o": ["跳過該組，之後再說", "縮短滴定時間，提早停止讀值", "TA 開課前先試跑計時，必要時減少每組重複次數", "整堂課延長到超時"], "a": 2, "e": "時間表設計時就該讓 TA 先試跑計時抓實際單次時間，再決定每組能做幾次重複，避免臨時排不下。"}]}, "sort": {"g4": {"steps": ["以 KHP 標定 0.1 N NaOH 的真實濃度", "精確量取(或秤取)定量樣品置於錐形瓶", "以去 CO₂ 水適量稀釋樣品", "加入 2–3 滴酚酞指示劑(深色樣品改用 pH 計)", "以 0.1 N NaOH 緩慢滴定並搖盪，滴到持續粉紅不退色為終點", "以 N×V×當量重/(W×1000)×100 算出 % 酸"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！標定鹼 → 取樣 → 稀釋 → 加指示劑 → 滴定到終點 → 計算。", "tip": "提示：先標定鹼濃度；取樣、稀釋、加指示劑都在滴定之前；算 % 酸是最後一步。"}}, "calc": {"g6": {"answer": 0.1006, "tol": 0.0005, "ok": "🎉 正確！N = 0.5105 / (204.22 × 0.02485) ≈ <b>0.1006 M<\/b>。", "bad": "再算算：N = m(KHP) / (204.22 × V(L))，V 記得換算成公升。", "hint": "提示：204.22 × 0.02485 ≈ 5.0749；0.5105 / 5.0749 ≈ 0.1006。"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

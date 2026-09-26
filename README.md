@@ -1,9 +1,10 @@
 # 食品分析實驗（Food Analysis Lab）
 
-大學部食品分析實驗課的公開教材：學期規劃、工廠影片導入對照表，以及每週的 Google Colab 數據品管筆記本。教材以 Nielsen's *Food Analysis* 6th ed. 為主軸。
+大學部食品分析實驗課的公開教材：每週實驗投影片、Google Colab 數據品管筆記本，以及工廠影片導入對照表。教材以 Nielsen's *Food Analysis* 6th ed. 為主軸。
 
-- 課程入口（學期規劃）：https://tai-shengyeh.github.io/food-analysis-lab/
+- 課程入口（每週教材）：https://tai-shengyeh.github.io/food-analysis-lab/
 - 實驗影片對照表：https://tai-shengyeh.github.io/food-analysis-lab/video-map.html
+- 學期規劃：https://tai-shengyeh.github.io/food-analysis-lab/plan.html
 
 ## Colab 筆記本
 

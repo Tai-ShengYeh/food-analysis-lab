@@ -1,0 +1,383 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 灰分與鈉離子 · 食品分析實驗</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto;white-space:nowrap}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">食品分析實驗 · W3</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食品分析實驗 · W3</div><h1>灰分 與 <span style='color:var(--accent-2)'>鈉離子</span> 測定</h1><div class="en">Ash Content &amp; Sodium Ion (Na&#8314;) Determination</div><div class="meta">食品分析實驗 · W3　·　4 小時課程　·　含 6 個互動小遊戲<br>乾式灰化 550°C　·　HORIBA LAQUAtwin 筆式 Na⁺ 離子計</div><div style="margin-top:24px"><span class="pill">乾式灰化</span><span class="pill">Na⁺ ISE</span><span class="pill">Nernst 59.2 mV</span><span class="pill">標準添加回收</span><span class="pill">Na→NaCl 換算</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">喜馬拉雅<span class="hi">粉鹽</span>廣告說有「84 種礦物質」<br>賣得比一般食鹽貴約 <span class="hi">20 倍</span>——這是真的嗎？</div>
+  <p class="subtitle" style="max-width:840px;margin:20px auto 0">粉鹽其實 <strong>96–99% 是 NaCl</strong>，微量礦物質在每天約 5 g 的食鹽攝取量下，貢獻幾乎可忽略；而且粉鹽通常<strong>不加碘</strong>。<br>
+  今天的<strong>灰分</strong>與<strong>鈉離子</strong>測定，正好可以拿來檢驗這類行銷說法。</p>
+  <div class="note" style="text-align:left;max-width:760px;margin:18px auto 0">🎥 參考影片(可點開，新分頁)：<br>
+  <a href="https://www.youtube.com/watch?v=4TqLgLQz37o" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">喜馬拉雅粉鹽廣告(84種礦物質說法) →</a><br>
+  <a href="https://www.youtube.com/watch?v=zL21V3NrFC4" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">食鹽工廠精製流程(除鈣鎂、真空結晶、加碘) →</a></div>
+  <p class="subtitle" style="margin-top:14px"><strong>想一想：</strong>如果你測了粉鹽的灰分與鈉離子，你預期會看到什麼數字？這能不能證明或推翻「84 種礦物質」的說法？</p>
+  </div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">W3 學習目標</div><h2 class="slide-title">今天課堂結束時，你應該能…</h2><div class="grid2" style="margin-top:16px"><ul class="clean"><li>說明乾式灰化原理，理解灰分是<strong>總無機殘留物</strong>、不是單一礦物質</li><li>操作馬弗爐灰化、坩堝前處理與<strong>恆重</strong>秤量</li><li>說明 Na⁺ ISE 的 Nernst 原理、<strong>活性 vs 濃度</strong>、離子選擇性與限制</li></ul><ul class="clean"><li>執行兩點校正、樣品稀釋、量測與<strong>標準添加回收</strong></li><li>計算灰分 %、Na → NaCl <strong>當量換算</strong></li><li>比較量測值與營養標示，並批判性思考「粉鹽」案例</li></ul></div></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">灰分能回答什麼問題？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個敘述分到「灰分能回答」或「灰分不能回答」的問題。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="引起動機"><div class="slide-inner"><div class="kicker">原理 (1)：乾式灰化 (Dry Ashing)</div><h2 class="slide-title">灰分 = <span class='hi'>總礦物質殘留量</span></h2><div class="grid2" style="margin-top:14px"><div><ul class="clean"><li>樣品先在<strong>熱板(hot plate)</strong>預碳化(pre-char)，趕走大量有機物，避免進爐後<strong>噴濺或起火</strong></li><li>移入<strong>馬弗爐(muffle furnace)</strong>，於 <strong>550°C</strong>(常見範圍 525–600°C)灰化至呈<strong>白色或淺灰色</strong></li><li>灰分是樣品中<strong>所有無機殘留物</strong>(氧化物、碳酸鹽…等混合物)的總重，<em>不是</em>單一礦物質的量</li><li>降溫需在<strong>乾燥器(desiccator)</strong>中，避免吸潮增重；反覆灰化＋秤重至<strong>恆重(constant weight)</strong></li></ul></div><div class="note"><strong>延伸閱讀(完整理論，可點開)：</strong><br><a href="https://tai-shengyeh.github.io/food-analysis-decks/ch16_ash_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Ch16 灰分分析完整教學 →</a><br><a href="https://tai-shengyeh.github.io/food-analysis-decks/ch21_mineral_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Ch21 礦物質分析完整教學 →</a></div></div></div></section><section class="slide" data-slide="6" data-section="引起動機"><div class="slide-inner"><div class="kicker">原理 (2)：Na⁺ 離子選擇電極 (ISE)</div><h2 class="slide-title">電位法量的是『活性』，不是直接秤重</h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 560 260">
+ <text x="280" y="20" text-anchor="middle" class="lblb" font-size="15">筆式 Na⁺ ISE：離子選擇膜感測電位，換算成活性(近似濃度)</text>
+ <rect x="26" y="42" width="150" height="46" rx="8" fill="#15233f"/>
+ <text x="101" y="71" text-anchor="middle" fill="#7ed957" font-family="JetBrains Mono" font-size="16">Na 1100 ppm</text>
+ <text x="101" y="102" text-anchor="middle" class="lbl">筆式讀數顯示</text>
+ <rect x="228" y="46" width="30" height="120" rx="6" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
+ <ellipse cx="243" cy="182" rx="26" ry="14" fill="#e7f0fe" stroke="#48597a" stroke-width="1.6"/>
+ <circle cx="243" cy="168" r="8" fill="#1f6feb" opacity=".65"/>
+ <text x="243" y="206" text-anchor="middle" class="lbl">Na⁺選擇性感應膜</text>
+ <text x="243" y="238" text-anchor="middle" class="lbl">樣品液滴</text>
+ <rect x="330" y="86" width="204" height="104" rx="10" fill="#f6f9fd" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="432" y="112" text-anchor="middle" class="lblb" fill="#1f9d6b" font-size="13">Nernst 響應</text>
+ <text x="432" y="136" text-anchor="middle" class="lbl">ΔE ≈ 59.2 mV</text>
+ <text x="432" y="154" text-anchor="middle" class="lbl">每變化 10 倍濃度(25°C)</text>
+ <text x="432" y="176" text-anchor="middle" class="lbl">量的是離子『活性』，非濃度</text>
+ <text x="280" y="256" text-anchor="middle" class="lbl">使用前：以原廠附的兩種標準液做「兩點校正」</text>
+</svg></div><div class="note" style="margin-top:8px"><strong>量的是活性、有干擾、範圍有限：</strong> ISE 量測 Na⁺ <strong>活性(activity)</strong> 而非濃度，高離子強度樣品(如醬油)讀數會受影響；K⁺ 等其他陽離子可能造成<strong>干擾</strong>(選擇性有限)；量測範圍有限，超出範圍需<strong>稀釋</strong>(實際範圍請查儀器操作手冊)。<br><strong>為什麼今年不用 Mohr 滴定(AgNO₃)？</strong> AgNO₃ 具腐蝕性/氧化性、會染色皮膚；指示劑 K₂CrO₄ 含<strong>六價鉻(致癌物)</strong>，還會產生鉻/銀廢液；改用筆式 Na⁺ ISE 更安全、更快。且 Mohr 滴定測的是 <strong>Cl⁻</strong>，ISE 測的是 <strong>Na⁺</strong>——味精(MSG)、小蘇打(NaHCO₃)、苯甲酸鈉等添加物也含鈉，若直接把 Na 換算成「鹽」會<strong>高估</strong> NaCl 含量。</div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">校正：兩點法＋監控飄移</div><h2 class="slide-title">量測前後都要照規矩來</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>用<strong>原廠附的兩種標準液</strong>做<strong>兩點校正(two-point calibration)</strong></li><li>每量測約 <strong>10 個樣品</strong>，重新測一次標準液，確認讀數沒有<strong>飄移(drift)</strong></li><li>每次換樣品前，電極要<strong>沖洗</strong>並以拭鏡紙<strong>輕輕吸乾(blot)</strong>，避免殘留交叉污染</li><li>盡量在<strong>相同溫度</strong>下量測(溫度會影響離子活性與電位)</li></ul></div><div class="note"><strong>為什麼要監控飄移？</strong><br>電極長時間使用或膜面污染會使讀數慢慢偏移；若重測標準液發現偏差過大，應重新校正，並回頭檢視『飄移後』量測的樣品數據是否需要重量。</div></div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">今天的操作流程</div><h2 class="slide-title">兩條路線：灰分 與 Na⁺</h2><div class="svgwrap" style="margin-top:2px"><svg viewBox="0 0 620 210" style="max-height:160px"><text x="10" y="26" class="lblb" fill="#1f6feb" font-size="13">灰分(乾式灰化)</text><rect x="30" y="40" width="100" height="42" rx="7" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.6"/><text x="80" y="65" text-anchor="middle" class="lbl" font-size="11">坩堝預熱/冷卻</text><rect x="145" y="40" width="100" height="42" rx="7" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.6"/><text x="195" y="65" text-anchor="middle" class="lbl" font-size="11">秤重＋秤樣品</text><rect x="260" y="40" width="100" height="42" rx="7" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.6"/><text x="310" y="65" text-anchor="middle" class="lbl" font-size="11">熱板預碳化</text><rect x="375" y="40" width="100" height="42" rx="7" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.6"/><text x="425" y="65" text-anchor="middle" class="lbl" font-size="11">馬弗爐550°C</text><rect x="490" y="40" width="100" height="42" rx="7" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.6"/><text x="540" y="65" text-anchor="middle" class="lbl" font-size="11">冷卻秤恆重</text><text x="137" y="66" text-anchor="middle" fill="#8493ad" font-size="16">▶</text><text x="252" y="66" text-anchor="middle" fill="#8493ad" font-size="16">▶</text><text x="367" y="66" text-anchor="middle" fill="#8493ad" font-size="16">▶</text><text x="482" y="66" text-anchor="middle" fill="#8493ad" font-size="16">▶</text><text x="10" y="114" class="lblb" fill="#d9822b" font-size="13">Na⁺(ISE)</text><rect x="30" y="128" width="100" height="42" rx="7" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/><text x="80" y="153" text-anchor="middle" class="lbl" font-size="11">兩點校正</text><rect x="145" y="128" width="100" height="42" rx="7" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/><text x="195" y="153" text-anchor="middle" class="lbl" font-size="11">樣品稀釋入範圍</text><rect x="260" y="128" width="100" height="42" rx="7" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/><text x="310" y="153" text-anchor="middle" class="lbl" font-size="11">電極沖洗/吸乾</text><rect x="375" y="128" width="100" height="42" rx="7" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/><text x="425" y="153" text-anchor="middle" class="lbl" font-size="11">量測讀數</text><rect x="490" y="128" width="100" height="42" rx="7" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/><text x="540" y="153" text-anchor="middle" class="lbl" font-size="11">每10樣重測標準液</text><text x="137" y="154" text-anchor="middle" fill="#8493ad" font-size="16">▶</text><text x="252" y="154" text-anchor="middle" fill="#8493ad" font-size="16">▶</text><text x="367" y="154" text-anchor="middle" fill="#8493ad" font-size="16">▶</text><text x="482" y="154" text-anchor="middle" fill="#8493ad" font-size="16">▶</text><text x="310" y="196" text-anchor="middle" class="lbl">詳細步驟順序見小遊戲 ④ 排序</text></svg></div><table class="cmp" style="margin-top:10px"><thead><tr><th>時間</th><th>活動</th></tr></thead><tbody><tr><td class='c'>0:00–0:30</td><td>講解(原理、安全、流程)</td></tr><tr><td class='c'>0:30–1:30</td><td>樣品秤量＋預碳化上爐</td></tr><tr><td class='c'>1:30–3:15</td><td>鈉離子計：校正→樣品稀釋→量測→標準添加回收</td></tr><tr><td class='c'>3:15–4:00</td><td>秤量助教預先灰化的坩堝、數據輸入</td></tr></tbody></table><p class="subtitle" style="margin-top:8px">灰化本身需 <strong>≥ 4 小時</strong>(常隔夜)，助教會<strong>提前起爐</strong>；今天課堂秤的是「前一輪」的灰化結果。若鈉離子計只有一台，各組<strong>輪流量測</strong>(約 20 分鐘/組)。</p></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">安全守則</div><h2 class="slide-title">高溫、坩堝、無銀鉻廢液</h2><div class="grid2" style="margin-top:16px"><div class="card a"><div class="ic">🔥</div><div class="ct">馬弗爐</div><div class="cb">高溫 550°C，只能用長柄坩堝夾夾取，戴耐熱手套，開爐時佩戴面罩/護目鏡</div></div><div class="card b"><div class="ic">🧊</div><div class="ct">坩堝降溫</div><div class="cb">灰化後的坩堝先放乾燥器降溫再取出秤重，勿直接用手接觸高溫坩堝</div></div><div class="card b"><div class="ic">🧪</div><div class="ct">熱板預碳化</div><div class="cb">在通風櫥(fume hood)內進行，避免燒焦煙霧堆積</div></div><div class="card g"><div class="ic">✅</div><div class="ct">今年沒有銀/鉻廢液</div><div class="cb">改用 Na⁺ ISE，不再使用 AgNO₃ 與 K₂CrO₄，降低腐蝕性化學品與致癌性重金屬廢液風險</div></div></div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">Na⁺ ISE 量測步驟排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把 Na⁺ 離子選擇電極量測的 6 個操作步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">灰分計算：實例</div><h2 class="slide-title">灰分 % = 灰分重 ÷ 樣品重 × 100</h2><div class="grid2" style="margin-top:12px"><div class="eq">灰分 % = <span class="frac"><b>灰分重</b><span>樣品重</span></span> × 100</div><div><ul class="clean"><li>坩堝空重 W₀ = <strong>26.184 g</strong></li><li>坩堝＋樣品 = 28.696 g → 樣品重 = <strong>2.512 g</strong></li><li>灰化後坩堝＋灰分(恆重) = 26.221 g → 灰分重 = <strong>0.037 g</strong></li><li>灰分 % = 0.037 ÷ 2.512 × 100 ≈ <strong>1.47%</strong></li></ul></div></div><p class="subtitle" style="margin-top:8px">請用你自己組別秤得的三個重量計算，並與同組黑糖 vs 白糖、糙米 vs 白米、共同盲樣(全脂奶粉)的結果比較。</p></div></section><section class="slide" data-slide="12" data-section="維持注意"><div class="slide-inner"><div class="kicker">Na 計算：從讀數到換算</div><h2 class="slide-title">C = 讀數 × 稀釋倍數；NaCl 當量 = Na × 2.542</h2><div class="grid2" style="margin-top:12px"><div><div class="eq" style="margin-bottom:14px">C<sub>樣品</sub> = 讀數 × 稀釋倍數</div><div class="eq">NaCl 當量 = Na × 2.542<br><span style="font-size:.68em;color:var(--ink-3)">(58.44 ÷ 22.99 ≈ 2.542)</span></div></div><div><ul class="clean"><li><strong>洋芋片前處理：</strong>磨碎 5.00 g ＋ 100 mL 熱去離子水，攪拌 10 分鐘、過濾、定量</li><li>過濾液(未再稀釋)以 ISE 直接量得 <strong>380 ppm(mg/L) Na</strong></li><li>100 mL 濾液中 Na 總量 = 380 × 0.1 = <strong>38 mg</strong></li><li>換算回 5.00 g 樣品 → 每 100 g 樣品 Na = 38 ÷ 5.00 × 100 = <strong>760 mg/100 g</strong></li><li>與包裝營養標示的『鈉 mg/每份』比較，討論差異可能原因</li></ul></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：NaCl 當量</span><span class="score" id="g6score">未作答</span></div><div class="game-q">醬油以去離子水稀釋 <b>1:50</b> 後，用 Na⁺ ISE 測得讀數為 <b>1100 ppm(mg/L)</b>。求原醬油中 <b>NaCl 當量濃度(g/100 mL)</b>。(Na → NaCl 當量因子 = 58.44/22.99 ≈ 2.542)</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">g/100mL</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="14" data-section="維持注意" data-chart="qc"><div class="slide-inner"><div class="kicker">品管 (QC)：標準添加回收、飄移、稀釋誤差、空白</div><h2 class="slide-title">怎麼確認今天的數據可信？</h2><div class="grid2" style="margin-top:12px"><div><div class="eq">回收率 % = <span class="frac"><b>C<sub>加標</sub> − C<sub>未加標</sub></b><span>C<sub>加標量</sub></span></span> × 100</div><p class="subtitle" style="margin-top:10px">加入已知量的 Na⁺ 標準液到樣品中重新測一次，比較加標前後讀數，檢查方法準確性；教學上常以 <strong>90–110%</strong> 作為可接受範圍。</p></div><div class="note"><strong>其他品管重點：</strong><br>• <strong>飄移(drift)：</strong>每 10 樣重測標準液<br>• <strong>稀釋倍數誤差：</strong>移液/定量瓶要準確，換算時勿用錯倍數<br>• <strong>空白(blank)：</strong>以去離子水確認基線接近 0</div></div><div class="chartbox" style="margin-top:12px;height:30vh"><canvas id="chart_qc"></canvas></div><div class="cap">示意數據(非實際批次結果)：4 項產品的標示鈉 vs 量測鈉(mg/份)，供課堂討論標示與量測落差的可能原因。</div></div></section><section class="slide" data-slide="15" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">灰分與 Na⁺ 觀念測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">含鈉添加物 vs NaCl 來源</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個項目分到「NaCl 來源」或「含鈉但不是 NaCl 的添加物」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="17" data-section="喚起行動" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：實驗判斷</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動"><div class="slide-inner"><div class="kicker">課後與報告</div><h2 class="slide-title">把今天的數據變成結論</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">💻</div><div class="ct">課後作業</div><div class="cb">Colab NB03 互動筆記本(即將上線)：灰分與 Na⁺ 換算練習、標準添加回收率計算</div></div><div class="card a"><div class="ic">📝</div><div class="ct">實驗報告</div><div class="cb">① 各樣品(含共同盲樣)的灰分 %　② 各 Na 樣品的量測值 vs 標示值、回收率　③ 對『喜馬拉雅粉鹽 84 種礦物質』行銷說法的討論——用你自己的灰分/Na 數據支持或反駁</div></div></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說明乾式灰化原理，並知道灰分是『總無機殘留物』而非單一礦物質</li><li data-k><span class="bx">✓</span>操作馬弗爐灰化流程：預碳化 → 550°C 灰化 → 乾燥器冷卻 → 恆重秤量</li><li data-k><span class="bx">✓</span>說明 Na⁺ ISE 的 Nernst 原理、活性 vs 濃度、離子選擇性與量測範圍限制</li><li data-k><span class="bx">✓</span>執行 Na⁺ ISE 兩點校正、樣品稀釋、飄移監控與電極沖洗/吸乾</li><li data-k><span class="bx">✓</span>計算灰分 % = 灰分重 ÷ 樣品重 × 100</li><li data-k><span class="bx">✓</span>換算 Na 讀數為 NaCl 當量(× 2.542)，並知道 Na 不等於 NaCl</li><li data-k><span class="bx">✓</span>執行標準添加回收率計算，判斷是否在 90–110% 可接受範圍</li><li data-k><span class="bx">✓</span>用今天的數據評估『喜馬拉雅粉鹽 84 種礦物質』的行銷說法是否合理</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><script>window.CFG={"charts": {"qc": {"type": "bar", "yTitle": "鈉 (mg/份)", "labels": ["醬油", "洋芋片", "即食湯粉", "運動飲料"], "datasets": [{"label": "標示鈉(label)", "data": [850, 180, 750, 110], "color": "#1f6feb"}, {"label": "量測鈉(measured)", "data": [905, 165, 780, 102], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["灰分能回答", "灰分不能回答"], "items": [{"t": "樣品的總礦物質(灰分)含量是多少 %", "c": "灰分能回答"}, {"t": "灰化後殘留物占樣品的比例", "c": "灰分能回答"}, {"t": "是否適合作為粗略的礦物質篩選指標", "c": "灰分能回答"}, {"t": "樣品是否含有高量的無機殘留物", "c": "灰分能回答"}, {"t": "灰分中『鈉』確切有多少 mg(需另做 ISE 或其他分析)", "c": "灰分不能回答"}, {"t": "是哪一種礦物質(鈣？鉀？鈉？)", "c": "灰分不能回答"}, {"t": "食品中的鈉是天然食材還是額外添加(如味精、小蘇打)的", "c": "灰分不能回答"}, {"t": "食品的『含鹽量』或 NaCl 含量是多少", "c": "灰分不能回答"}], "ok": "🎉 全對！灰分只告訴你『總無機殘留物有多少』，不能告訴你是哪一種礦物質、更不能告訴你鈉或鹽的量。", "tip": "提示：跟『總量、百分比、有沒有』有關 → 能回答；跟『哪一種、確切多少鈉/鹽、來源』有關 → 不能回答。"}, "g3": {"cats": ["NaCl 來源", "含鈉但不是 NaCl 的添加物"], "items": [{"t": "食鹽(精鹽)", "c": "NaCl 來源"}, {"t": "醬油(主要鹹味來源)", "c": "NaCl 來源"}, {"t": "洋芋片表面調味鹽", "c": "NaCl 來源"}, {"t": "味精 MSG(麩胺酸鈉)", "c": "含鈉但不是 NaCl 的添加物"}, {"t": "小蘇打(NaHCO₃，膨鬆劑)", "c": "含鈉但不是 NaCl 的添加物"}, {"t": "苯甲酸鈉(防腐劑)", "c": "含鈉但不是 NaCl 的添加物"}], "ok": "🎉 正確！食鹽、醬油、調味鹽的鈉主要來自 NaCl；味精、小蘇打、苯甲酸鈉則是『有鈉、但不是鹽』。", "tip": "提示：直接嚐得到『鹹味』且用途是調味鹽分的 → NaCl 來源；作為膨鬆劑/防腐劑/鮮味劑加入的鈉鹽 → 不是 NaCl。"}}, "mcq": {"g2": [{"q": "灰化前為什麼要先在熱板上『預碳化(pre-char)』？", "o": ["讓灰分變重", "避免樣品在爐內噴濺或突然起火", "縮短灰化時間", "讓顏色變白"], "a": 1, "e": "有機物快速燃燒會噴濺、起火，先在熱板上緩慢碳化可避免這個危險，也保護馬弗爐。"}, {"q": "『灰分』代表的是什麼？", "o": ["樣品中鈉的總量", "樣品中所有無機殘留物(氧化物、碳酸鹽…)的總重", "樣品中鈣的總量", "樣品的含鹽量"], "a": 1, "e": "灰分是灼燒後留下的『總無機殘留物』，是多種礦物質混合物的總重，不等於任何單一礦物質或鹽。"}, {"q": "為什麼 Na⁺ ISE 量測結果可能和營養標示的『鈉』不完全一致？", "o": ["儀器一定壞了", "還可能有其他鈉來源(味精、小蘇打…)，且 ISE 測的是活性、受基質影響", "營養標示都是錯的", "因為樣品太甜"], "a": 1, "e": "食品中的鈉不只來自 NaCl；且 ISE 測的是離子活性而非濃度，高離子強度基質會影響讀數。"}, {"q": "為什麼每測完一個樣品，電極要沖洗並輕輕吸乾(blot)？", "o": ["讓電極比較好看", "避免殘留樣品交叉污染，影響下一個讀數", "電極需要保濕", "只是習慣動作，沒有必要"], "a": 1, "e": "殘留在電極表面的前一個樣品會污染下一次量測，造成讀數偏差(carry-over)。"}, {"q": "把 Na 讀數換算成『鹽(NaCl)』時，正確的乘數約是多少？", "o": ["1.00", "2.54(=58.44/22.99)", "22.99", "58.44"], "a": 1, "e": "NaCl 分子量 58.44 ÷ Na 原子量 22.99 ≈ 2.54，這是 Na 換算成 NaCl 當量的乘數。"}], "g5": [{"q": "今年的實驗課為什麼用 Na⁺ ISE、不再做 Mohr 滴定(AgNO₃)？", "o": ["AgNO₃ 比較貴", "AgNO₃ 具腐蝕/氧化性，指示劑 K₂CrO₄ 含六價鉻(致癌物)，且會產生鉻/銀廢液", "AgNO₃ 滴定比較慢", "沒有特別原因"], "a": 1, "e": "安全考量：AgNO₃ 腐蝕性強會染色皮膚，K₂CrO₄ 含致癌性的六價鉻，還會產生需特別處理的鉻/銀廢液；筆式 ISE 更安全快速。"}, {"q": "醬油為什麼要先稀釋(如 1:50)才能用 Na⁺ ISE 測？", "o": ["為了省樣品", "原液鈉濃度/離子強度太高，超出電極的線性量測範圍", "醬油顏色太深", "為了節省時間"], "a": 1, "e": "ISE 的量測範圍有限，高濃度樣品需稀釋到範圍內才能得到準確、線性的讀數。"}, {"q": "洋芋片為什麼要先磨碎、用熱水萃取、過濾才能測 Na？", "o": ["讓味道變淡", "把可溶性 Na 萃取進溶液，並移除會弄髒電極的固體顆粒", "增加甜度", "純粹是為了美觀"], "a": 1, "e": "固態食品需先萃取出可溶性鈉成溶液，並過濾掉固體顆粒，才能用電極準確量測、避免弄髒感應膜。"}, {"q": "如果直接假設食品中的鈉『全部來自 NaCl』去換算含鹽量，會怎樣？", "o": ["剛好準確", "通常會高估 NaCl 含量(因為部分鈉來自味精、小蘇打等)", "會低估 NaCl 含量", "跟事實完全無關"], "a": 1, "e": "味精、小蘇打、苯甲酸鈉等也貢獻鈉但不是 NaCl，把全部鈉當作鹽計算會高估真正的 NaCl(鹽)含量。"}, {"q": "重測標準液時發現讀數已明顯飄移(drift)超出可接受範圍，應該怎麼做？", "o": ["忽略，繼續測下去", "重新校正，並檢視飄移之後量測的樣品是否需要重測", "直接把之前的數據除以2", "換一台儀器就好，不用管數據"], "a": 1, "e": "飄移代表電極狀態已改變、數據可能不可靠，應重新校正並回頭檢視受影響的樣品數據。"}]}, "sort": {"g4": {"steps": ["以原廠兩種標準液進行兩點校正", "樣品依需要稀釋到量測範圍內(如醬油 1:50)", "沖洗電極並以拭鏡紙輕輕吸乾(blot)", "將電極置入樣品溶液，讀取穩定讀數", "記錄讀數並計算 C樣品 = 讀數 × 稀釋倍數", "每測 10 個樣品重新量一次標準液，確認無飄移(drift)"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！校正 → 稀釋 → 沖洗吸乾 → 量測 → 記錄換算 → 定期重測標準液。", "tip": "提示：先校正才能測樣品；每個樣品之間都要沖洗吸乾；量到一半要回頭檢查飄移。"}}, "calc": {"g6": {"answer": 13.98, "tol": 0.1, "ok": "🎉 正確！1100×50=55000 mg/L=55 g/L=5.5 g/100mL(Na)；5.5×2.542≈<b>13.98 g/100mL<\/b>(NaCl當量)。", "bad": "再算算：先把讀數乘上稀釋倍數還原成原液的 Na 濃度，再乘以 2.542 換算成 NaCl 當量。", "hint": "提示：1100 ppm × 50 = 55000 mg/L = 5.5 g/100mL(Na)；5.5 × 2.542 ≈ 13.98。"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

@@ -1,0 +1,392 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>水分與水活性 · 食品分析實驗 W2</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto;white-space:nowrap}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">食品分析實驗 · W2</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">NIELSEN'S FOOD ANALYSIS · LAB W2</div><h1>水分與<span style='color:var(--accent-2)'>水活性</span></h1><div class="en">Moisture Content and Water Activity</div><div class="meta">食品分析實驗 W2　·　4 小時課程　·　含 6 個互動小遊戲<br>烘箱法 · 紅外線水分計 · 水活性 aw · 恆重 · 全學期共同盲樣</div><div style="margin-top:24px"><span class="pill">105°C 恆重</span><span class="pill">紅外線水分計</span><span class="pill">aw = p/p₀</span><span class="pill">飽和鹽校正</span><span class="pill">共同盲樣</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div class="kicker">先抓錯誤</div><h2 class="slide-title">牛肉乾工廠影片說：<br>500 g 鮮肉 → <span class='hi' style='color:var(--accent-2)'>100 g</span> 牛肉乾？</h2><div class="grid2" style="margin-top:14px;align-items:start"><div><p class="lead">影片：<a href="https://www.youtube.com/watch?v=BCKpajZY5QY" target="_blank" style="color:var(--accent)">牛肉乾工廠影片 →</a></p><p class="subtitle" style="margin-top:10px">在動手做實驗前，先用<strong>質量平衡(mass balance)</strong>檢查這個數字合不合理——這是練習，不是嘲笑影片。</p><div class="note" style="margin-top:14px"><strong>你的任務：</strong>瘦牛肉約 <b>73% 水分</b>(約 27% 固形物)；<br>若成品牛肉乾約 <b>20% 水分</b>，產率該是多少？500 g 鮮肉大概能得到幾克牛肉乾？</div></div><div class="note" style="background:var(--accent-soft);border-left-color:var(--accent)"><strong>質量平衡：</strong><br>固形物幾乎不隨乾燥流失，是「不變量」。<br>產率 = 固形物比例(鮮肉) ÷ 固形物比例(成品)<br>= 0.27 ÷ 0.80 ≈ <b>34%</b><br>500 g × 34% ≈ <b>170 g</b>，不是 100 g。<br><br><strong>還有一個矛盾：</strong>100 g 的產率(20%)意味著幾乎把水全部烘乾，也很難同時撐得住影片自稱「>30 g 蛋白質/100 g」的說法。</div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">學習目標</div><h2 class="slide-title">今天 4 小時，你要做到</h2><div class="grid2" style="margin-top:16px"><ul class="clean"><li>用<strong>烘箱法(105°C)</strong>測定水分含量(wet basis)，並判斷「恆重」</li><li>操作<strong>紅外線水分計</strong>，並與烘箱法結果互相比對(bias 的前置練習)</li><li>用<strong>飽和鹽溶液</strong>校正 aw 計，理解 aw 與微生物安定性的關係</li></ul><ul class="clean"><li>分辨 <strong>wet basis</strong> 與 <strong>dry basis</strong> 的計算方式</li><li>完成<strong>全學期共同盲樣</strong>(如全脂奶粉)的第一次水分測定，供 W3/W5/W6/W8 追蹤</li><li>完成質量平衡的批判性思考練習</li></ul></div></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">水分含量 vs 水活性：誰受誰影響</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個敘述分到「影響水分含量」或「影響水活性 aw」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理 1</div><h2 class="slide-title">水分含量怎麼定義、怎麼測</h2><div class="grid2" style="margin-top:14px"><div class="eq">濕基(wet basis) % = <span class="frac"><b>W<sub>濕</sub> − W<sub>乾</sub></b><span>W<sub>濕</sub></span></span> × 100</div><div class="eq">乾基(dry basis) % = <span class="frac"><b>水分重</b><span>乾固形物重</span></span> × 100</div></div><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">🔥</div><div class="ct">105°C 常壓烘箱</div><div class="cb">乾燥至<strong>恆重</strong>(constant weight)才代表水分已充分去除；最常用、最基準的方法</div></div><div class="card a"><div class="ic">🌡️</div><div class="ct">真空烘箱</div><div class="cb">糖分高/受熱易褐變(梅納反應)、易分解的樣品，改用較低溫、低氧的真空烘箱</div></div></div><div class="note" style="margin-top:14px"><strong>紅外線(IR)水分計：</strong>加熱燈+內建天平，數分鐘出結果，速度快，但<strong>必須先用烘箱法驗證(校正)</strong>才能信任其讀值。　<a href="https://tai-shengyeh.github.io/food-analysis-decks/ch15_moisture_soil/index.html" target="_blank" style="color:var(--accent);font-weight:700">📖 完整原理 deck (Nielsen Ch15) →</a></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理 2</div><h2 class="slide-title">水活性 aw：不是<span class='hi'>水分 %</span></h2><div class="grid2" style="margin-top:12px"><div><div class="eq">a<sub>w</sub> = p / p₀ <span style="font-size:.7em;color:var(--ink-3)">(＝平衡相對濕度 ÷ 100)</span></div><p class="subtitle" style="margin-top:12px">同樣的水分含量(%)，<strong>不代表</strong>同樣的水活性——水可能是<strong>自由水(free water)</strong>，也可能被<strong>束縛(bound water)</strong>在溶質或結構中，束縛越多、aw 越低。(概念上對應吸附等溫線 sorption isotherm)</p></div><div class="note"><strong>典型微生物生長下限(教材值)</strong><ul class="clean" style="margin-top:6px"><li>🦠 多數細菌：a<sub>w</sub> ≈ <b>0.91</b></li><li>🍞 多數酵母菌：a<sub>w</sub> ≈ <b>0.88</b></li><li>🍄 多數黴菌：a<sub>w</sub> ≈ <b>0.80</b></li><li>⚠️ 嗜旱性黴菌：a<sub>w</sub> ≈ <b>0.61</b></li></ul></div></div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">校正</div><h2 class="slide-title">開始前，先校正</h2><table class="cmp" style="margin-top:10px"><thead><tr><th>飽和鹽溶液</th><th>a<sub>w</sub>(25°C，Greenspan 1977)</th></tr></thead><tbody><tr><td class="c">LiCl</td><td>0.113</td></tr><tr><td class="c">MgCl₂</td><td>0.328</td></tr><tr><td class="c">NaCl</td><td>0.753</td></tr><tr><td class="c">K₂SO₄</td><td>0.973</td></tr></tbody></table><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">✅</div><div class="ct">接受範圍</div><div class="cb">讀值與標準值的差要在<strong>儀器廠商規格</strong>內才算通過；樣品與儀器要在<strong>同一溫度</strong></div></div><div class="card a"><div class="ic">🌡️</div><div class="ct">烘箱溫度查核</div><div class="cb">用<strong>獨立溫度計</strong>另外量測烘箱實際溫度，不能只信面板顯示</div></div><div class="card g"><div class="ic">⚖️</div><div class="ct">天平查核</div><div class="cb">以已知砝碼(或標準重物)確認天平準確，再開始正式秤重</div></div></div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">流程與時間</div><h2 class="slide-title">4 小時怎麼分配</h2><div class="grid2" style="margin-top:10px;align-items:start"><div class="svgwrap">
+<svg viewBox="0 0 620 300">
+ <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">烘箱法操作流程</text>
+ <!-- row1: 3 boxes -->
+ <rect x="14" y="42" width="180" height="66" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="104" y="68" text-anchor="middle" class="lblb" font-size="12">① 預烘鋁盤+蓋</text>
+ <text x="104" y="86" text-anchor="middle" class="lbl" font-size="11">乾燥器冷卻→秤空盤重</text>
+ <rect x="220" y="42" width="180" height="66" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="310" y="68" text-anchor="middle" class="lblb" font-size="12">② 秤入樣品</text>
+ <text x="310" y="86" text-anchor="middle" class="lbl" font-size="11">2–3 g，精確至 0.1 mg</text>
+ <rect x="426" y="42" width="180" height="66" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="516" y="68" text-anchor="middle" class="lblb" font-size="12">③ 105°C 烘箱</text>
+ <text x="516" y="86" text-anchor="middle" class="lbl" font-size="11">第一次乾燥約 3 小時</text>
+ <path d="M194 75 h26" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <path d="M400 75 h26" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <!-- row2: 3 boxes -->
+ <rect x="426" y="140" width="180" height="66" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="516" y="166" text-anchor="middle" class="lblb" font-size="12">④ 乾燥器冷卻</text>
+ <text x="516" y="184" text-anchor="middle" class="lbl" font-size="11">滑開蓋子，勿掀起</text>
+ <rect x="220" y="140" width="180" height="66" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="310" y="166" text-anchor="middle" class="lblb" font-size="12">⑤ 秤重、記錄</text>
+ <text x="310" y="184" text-anchor="middle" class="lbl" font-size="11">與前次重量比較</text>
+ <rect x="14" y="140" width="180" height="66" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="104" y="163" text-anchor="middle" class="lblb" font-size="12">⑥ 再烘 1 小時</text>
+ <text x="104" y="181" text-anchor="middle" class="lbl" font-size="11">冷卻→秤重，重複至恆重</text>
+ <path d="M516 108 v22" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <path d="M426 173 h-26" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <path d="M220 173 h-26" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <path d="M104 140 v-4" stroke="none"/>
+ <path d="M104 206 v10 h206 v-10" fill="none" stroke="#48597a" stroke-width="2" stroke-dasharray="4 3"/>
+ <text x="207" y="232" text-anchor="middle" class="lbl" font-size="11">差值 ≤ 2 mg（或依 SOP）→ 恆重，否則回到⑥</text>
+ <rect x="150" y="250" width="320" height="40" rx="10" fill="#f6f9fd" stroke="#8493ad" stroke-width="1.6"/>
+ <text x="310" y="275" text-anchor="middle" class="lblb" font-size="12">⑦ 同批樣品另做紅外線水分計，互相比對</text>
+ <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
+</svg></div><div><table class="cmp"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody><tr><td class="c">0:00–0:30</td><td>講解＋TA 示範 4 個鹽標準(全班共用結果)</td></tr><tr><td class="c">0:30–3:30</td><td>烘箱乾燥(平行進行) + a<sub>w</sub> 計輪替(5 組 × 30 分) + IR 水分計測定</td></tr><tr><td class="c">3:30–4:00</td><td>恆重秤量、數據輸入、收拾</td></tr></tbody></table><div class="note" style="margin-top:12px">⚠️ 全班只有<strong>一台 a<sub>w</sub> 計</strong>：每組輪流約 30 分鐘、量 3 個樣品(牛肉乾/龍眼乾/洋芋片)。沒輪到的時間做烘箱操作與 IR 水分計，別讓儀器閒置。</div></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">安全</div><h2 class="slide-title">今天要注意的三件事</h2><div class="grid2" style="margin-top:16px"><div class="card a"><div class="ic">🔥</div><div class="ct">熱鋁盤用夾子夾</div><div class="cb">剛出爐的鋁盤/樣品很燙，一律用坩堝夾，不要徒手拿</div></div><div class="card b"><div class="ic">🧊</div><div class="ct">乾燥器蓋子用滑開的</div><div class="cb">蓋子是磨砂密合，要<strong>橫向滑開</strong>，不要直接掀起，避免碰破或吸入濕氣</div></div><div class="card g"><div class="ic">♨️</div><div class="ct">IR 水分計加熱面很燙</div><div class="cb">測定中與剛測完的加熱室/樣品盤都高溫，等待冷卻再觸碰</div></div></div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">烘箱法操作步驟排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把烘箱法水分測定的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">數據處理</div><h2 class="slide-title">wet basis vs dry basis：實例演練</h2><div class="grid2" style="margin-top:10px"><div><p class="lead">空盤重 <b>25.1234 g</b>；盤+樣品 <b>28.1234 g</b>；乾燥後(盤+乾樣品) <b>27.9734 g</b></p><ul class="clean" style="margin-top:10px"><li>樣品重 = 28.1234 − 25.1234 = <b>3.0000 g</b></li><li>水分重 = 28.1234 − 27.9734 = <b>0.1500 g</b></li><li>乾固形物重 = 3.0000 − 0.1500 = <b>2.8500 g</b></li></ul></div><div class="eq" style="text-align:left">濕基 % = 0.1500 / 3.0000 × 100 = <b>5.00%</b><br><br>乾基 % = 0.1500 / 2.8500 × 100 = <b>5.26%</b></div></div><p class="subtitle" style="margin-top:12px">兩者分母不同：濕基除以「原始濕重」，乾基除以「乾固形物重」——同一批數據，兩個%不會一樣。</p></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：牛肉乾濕基水分 %</span><span class="score" id="g6score">未作答</span></div><div class="game-q">牛肉乾樣品：空盤 <b>22.4050 g</b>；空盤+樣品 <b>26.4050 g</b>；乾燥後(盤+乾樣品) <b>25.6050 g</b>。求<strong>濕基水分含量(%)</strong>。公式：(W濕−W乾)/W濕 × 100。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-chart="moistureaw"><div class="slide-inner"><div class="kicker">品管 QC · 示意數據</div><h2 class="slide-title">同水分％，不同<span class='hi'>a<sub>w</sub></span></h2><div class="chartbox" style="height:50vh"><canvas id="chart_moistureaw"></canvas></div><div class="cap">示意數據(非實測值，僅供教學)。注意牛肉乾與龍眼乾水分同為 20%，a<sub>w</sub> 卻不同(0.75 vs 0.60)——水分「量」相同不代表水的「有效性」相同，這正是烘箱法測水分、卻不能直接告訴你微生物安不安全的原因。</div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">品管 QC</div><h2 class="slide-title">數據可信嗎？三個檢查點</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">📊</div><div class="ct">重複性 RSD</div><div class="cb">同一樣品做三重複(triplicate)，看相對標準差(RSD)是否在可接受範圍</div></div><div class="card a"><div class="ic">⚖️</div><div class="ct">恆重判準</div><div class="cb">連續兩次秤重差 ≤ 2 mg(或依實驗室 SOP)才算恆重，否則要繼續烘</div></div><div class="card g"><div class="ic">🆚</div><div class="ct">烘箱 vs IR 的差異</div><div class="cb">兩法對同一樣品的差值視為<strong>偏差(bias)</strong>的初步線索，W4 會做配對比較的正式統計</div></div></div></div></section><section class="slide" data-slide="15" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">操作觀念即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">這個樣品適合哪種烘箱</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 種樣品分到「適合常壓烘箱法」或「適合真空烘箱法」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：方法怎麼選</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動"><div class="slide-inner"><div class="kicker">課後作業</div><h2 class="slide-title">今天結束後要交什麼</h2><div class="grid2" style="margin-top:16px"><ul class="clean"><li>Colab 筆記本 <strong>NB02</strong>(即將上線)</li><li>報告：3 個樣品 + 共同盲樣的水分含量(平均值 ± SD，n=3)</li><li>烘箱法與 IR 水分計的差異討論</li></ul><ul class="clean"><li>a<sub>w</sub> 測定結果表 + 討論(哪個樣品最容易腐敗？)</li><li>開場「牛肉乾質量平衡」問題的完整計算與答案</li><li>選讀延伸：NIR Aquagram(後半學期再談)</li></ul></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說明濕基(wet basis)與乾基(dry basis)水分％的差別與計算</li><li data-k><span class="bx">✓</span>操作烘箱法並判斷樣品是否已達「恆重」</li><li data-k><span class="bx">✓</span>操作紅外線水分計，並知道為何要先用烘箱法驗證它</li><li data-k><span class="bx">✓</span>說明水活性 aw 的定義(p/p₀)，並解釋為何同水分％可以有不同 aw</li><li data-k><span class="bx">✓</span>說出細菌／酵母菌／黴菌／嗜旱性黴菌的大致 aw 生長下限</li><li data-k><span class="bx">✓</span>用飽和鹽溶液(LiCl/MgCl₂/NaCl/K₂SO₄)校正 aw 計</li><li data-k><span class="bx">✓</span>判斷什麼樣品該用常壓烘箱、什麼該用真空烘箱</li><li data-k><span class="bx">✓</span>用質量平衡檢驗一個「聽起來怪怪的」加工產率說法</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="20" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">下一步 · NEXT</div><h1>共同盲樣的故事<br><span style='color:var(--accent-2)'>才剛開始</span></h1><div class="en"></div><div class="meta">📌 今天測的<strong>全學期共同盲樣</strong>(如全脂奶粉)水分數據，會在 <strong>W3 / W5 / W6 / W8</strong> 繼續用到，記得留存原始數據<br>🔜 銜接：<strong>W4 成對比較統計</strong>(烘箱 vs IR 的偏差是否顯著)、灰分/蛋白質/脂肪分析都要先扣掉水分<br>🧪 思考：如果 IR 水分計跟烘箱法差了 1%，那 1% 從哪裡來？</div><div style="margin-top:24px"><span class="pill">共同盲樣</span><span class="pill">W4 配對比較</span><span class="pill">偏差 bias</span><span class="pill">恆重</span><span class="pill">aw 安定性</span></div></div></div></section><script>window.CFG={"charts": {"moistureaw": {"type": "scatter", "yTitle": "水活性 aₐ", "zero": true, "datasets": [{"label": "蜂蜜 17% / 0.60", "data": [{"x": 17, "y": 0.6}], "color": "#1f6feb"}, {"label": "牛肉乾 20% / 0.75", "data": [{"x": 20, "y": 0.75}], "color": "#d9822b"}, {"label": "麵包 35% / 0.95", "data": [{"x": 35, "y": 0.95}], "color": "#1f9d6b"}, {"label": "龍眼乾 20% / 0.60", "data": [{"x": 20, "y": 0.6}], "color": "#d94f4f"}, {"label": "奶粉 3% / 0.25", "data": [{"x": 3, "y": 0.25}], "color": "#8493ad"}, {"label": "洋芋片 2% / 0.20", "data": [{"x": 2, "y": 0.2}], "color": "#d9a32b"}]}}, "bucket": {"g1": {"cats": ["影響水分含量", "影響水活性 aₐ"], "items": [{"t": "烘箱溫度與加熱時間是否足夠", "c": "影響水分含量"}, {"t": "秤重前是否確實達到恆重", "c": "影響水分含量"}, {"t": "樣品磨碎/切細的均勻程度", "c": "影響水分含量"}, {"t": "稱重容器秤重前是否已在乾燥器中冷卻", "c": "影響水分含量"}, {"t": "溶質(糖、鹽)與水結合的強弱(束縛水比例)", "c": "影響水活性 aₐ"}, {"t": "水在食品中是自由水還是結合水", "c": "影響水活性 aₐ"}, {"t": "測定時的溫度(同一食品，溫度不同 aₐ 可能不同)", "c": "影響水活性 aₐ"}, {"t": "食品的組成與微觀孔隙結構", "c": "影響水活性 aₐ"}], "ok": "🎉 全對！跟『重量、乾燥、稱重』有關→水分含量；跟『水被綁得多緊、能不能被微生物利用』有關→aw。", "tip": "提示：能直接用天平秤出差異的→水分含量；決定水『有效性』的化學/物理狀態→aw。"}, "g3": {"cats": ["適合常壓烘箱法", "適合真空烘箱法"], "items": [{"t": "一般穀物粉", "c": "適合常壓烘箱法"}, {"t": "低糖乾燥蔬菜片", "c": "適合常壓烘箱法"}, {"t": "米粉", "c": "適合常壓烘箱法"}, {"t": "蜂蜜", "c": "適合真空烘箱法"}, {"t": "楓糖漿", "c": "適合真空烘箱法"}, {"t": "高糖果泥/果醬", "c": "適合真空烘箱法"}], "ok": "🎉 正確！低糖、耐熱的用常壓烘箱；高糖、易褐變分解的改用真空烘箱(低溫低氧)。", "tip": "提示：想到『105°C 會不會讓它焦化/分解』——會的話就是真空烘箱。"}}, "mcq": {"g2": [{"q": "樣品烘乾後，為什麼要放進乾燥器冷卻才能秤重？", "o": ["讓它降溫比較快", "避免從空氣中吸濕、影響重量", "讓樣品變乾淨", "加速化學反應"], "a": 1, "e": "熱樣品在空氣中冷卻會吸收水氣，也會有熱對流影響天平讀數；乾燥器能隔絕濕氣。"}, {"q": "高糖分樣品(如蜂蜜、果乾漿)為什麼不適合用常壓 105°C 烘箱？", "o": ["太貴", "高溫下易梅納反應(褐變)並分解，改用真空烘箱", "糖不會被烘乾", "没有差別"], "a": 1, "e": "常壓高溫會讓高糖樣品焦化、分解，改用較低溫、低氧的真空烘箱較準確。"}, {"q": "為什麼不能秤仍然溫熱的乾燥皿？", "o": ["會燙傷天平", "熱對流會讓秤重不準確、且尚未平衡吸濕", "比較快", "沒有影響"], "a": 1, "e": "溫熱物體造成空氣對流、天平讀數不穩，也還沒完成與環境的濕度平衡。"}, {"q": "下列何者正確描述水活性(aₐ)與水分含量(%)的關係？", "o": ["兩者永遠相等", "同樣的水分％不一定有相同的 aₐ", "aₐ 一定比水分％大", "水分％無法測量"], "a": 1, "e": "水分％是水的『總量』，aₐ 是水的『有效性』(自由水比例)，兩者不是同一件事。"}, {"q": "食品的水活性 aₐ = 0.85，下列何者最可能在此環境生長？", "o": ["一般細菌(需≥0.91)", "多數酵母菌(需≥0.88)", "多數黴菌(需≥0.80)", "都不會生長"], "a": 2, "e": "0.85 低於細菌與酵母菌的下限，但高於多數黴菌的下限(約0.80)，所以黴菌最可能生長。"}], "g5": [{"q": "想用紅外線水分計快速篩選奶粉水分，但要先做什麼才能信任讀值？", "o": ["直接使用即可", "先用烘箱法(參考法)驗證 IR 水分計的準確度", "調高溫度", "跳過校正"], "a": 1, "e": "IR 水分計快但間接，正式使用前必須以烘箱法(基準法)驗證其偏差(bias)。"}, {"q": "樣品是高糖的龍眼乾，測水分該選哪種烘箱？", "o": ["常壓 105°C 烘箱", "真空烘箱", "不用烘箱", "冷凍乾燥機"], "a": 1, "e": "高糖樣品在常壓高溫下易焦化分解，改用真空烘箱(低溫低氧)較準確。"}, {"q": "aₐ 計正式使用前，第一步該做什麼？", "o": ["直接量樣品", "用已知 aₐ 的飽和鹽標準液校正", "先關機", "加水稀釋樣品"], "a": 1, "e": "要先用 LiCl/MgCl₂/NaCl/K₂SO₄ 等已知 aₐ 的飽和鹽溶液確認儀器讀值準確。"}, {"q": "判斷樣品是否已達『恆重』的依據是？", "o": ["烘了 3 小時就好", "連續兩次秤重差 ≤ 2 mg(或依 SOP)", "樣品變白色", "秤重歸零"], "a": 1, "e": "恆重看的是『連續兩次乾燥後秤重差異很小』，不是固定烘多久。"}, {"q": "為什麼水分含量都約 20% 的牛肉乾與龍眼乾，aₐ 可能不同？", "o": ["秤重誤差", "束縛水/自由水比例與基質結構不同，水的有效性不同", "一定是量錯了", "糖分不影響 aₐ"], "a": 1, "e": "水分％只算『水的總量』，aₐ 看『水能不能被微生物利用』，兩種食品的基質(糖、纖維、結構)不同，束縛水比例也不同。"}]}, "sort": {"g4": {"steps": ["預烘鋁盤與蓋，於乾燥器冷卻後秤空盤重", "精確秤入 2–3 g 樣品(精確至 0.1 mg)", "置 105°C 烘箱乾燥(第一次約 3 小時)", "取出，置乾燥器冷卻至室溫", "秤重，記錄數值", "再乾燥 1 小時、冷卻、秤重，重複至恆重(連續兩次差 ≤ 2 mg)"], "shuffle": [3, 5, 0, 4, 1, 2], "ok": "🎉 順序正確！預烘空盤→秤樣品→烘乾→冷卻→秤重→重複至恆重。", "tip": "提示：要先有『乾淨恆重的空盤』，才能秤樣品；烘完一定要冷卻才能秤。"}}, "calc": {"g6": {"answer": 20.0, "tol": 0.3, "ok": "🎉 正確！樣品重 = 26.4050−22.4050 = 4.0000 g；水分重 = 26.4050−25.6050 = 0.8000 g；濕基水分 % = 0.8000/4.0000×100 = <b>20.00%<\/b>。", "bad": "再算算：樣品重 = 盤+樣品 − 空盤；水分重 = 乾燥前總重 − 乾燥後總重；濕基% = 水分重/樣品重×100。", "hint": "提示：樣品重 = 26.4050−22.4050 = 4.0000 g；水分重 = 26.4050−25.6050 = 0.8000 g；0.8000/4.0000×100 = 20.00%。"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

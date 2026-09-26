@@ -1,0 +1,456 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W1 容量器具校正 · 食品分析實驗</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto;white-space:nowrap}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">食品分析實驗 · W1</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食品分析實驗 · LAB WEEK 1</div><h1>容量器具校正<span style='color:var(--accent-2)'>（秤重法）</span></h1><div class="en">Volumetric Glassware Calibration by Gravimetry</div><div class="meta">食品分析實驗　·　4 小時課程　·　5 組 × 3 人　·　含 6 個互動小遊戲<br>ISO 4787 秤重法 · Tanaka 密度方程式 · 浮力校正 · 數據品管入門</div><div style="margin-top:24px"><span class="pill">TC vs TD</span><span class="pill">Class A ±0.02 mL</span><span class="pill">浮力校正</span><span class="pill">RSD% / 95% CI</span><span class="pill">ISO/IEC 17025</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">先想一想</div>
+  <div class="hook">你手上的 <span class="hi">10 mL 吸管</span>，<br>真的放出 <span class="hi">10 mL</span> 嗎？</div>
+  <p class="subtitle" style="max-width:860px;margin:22px auto 0">檢驗實驗室依 <strong>ISO/IEC 17025</strong> 必須定期校正容量器具；
+  國際標準 <strong>ISO 4787</strong> 規範了用「秤重法(gravimetric calibration)」校正玻璃量器的做法。<br>
+  今天，你將親手驗證自己那支吸管與滴定管，是否真的「準」。</p>
+  <div style="margin-top:24px"><span class="pill">實驗室認證</span><span class="pill">量測不確定度</span>
+  <span class="pill">數據品管 QC</span><span class="pill">正確記錄</span></div></div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">四件事，做完這堂課你就會</h2><div class="grid2" style="margin-top:22px"><div class="card b"><div class="ic">⚖️</div><div class="ct">操作秤重法校正</div><div class="cb">正確操作分析天平與容量器具，完成 10 重複的秤重法校正</div></div><div class="card a"><div class="ic">🧮</div><div class="ct">算出真正的體積</div><div class="cb">用浮力校正公式 V=m×F_b/ρ_w，把表觀質量換算成實際體積</div></div><div class="card g"><div class="ic">📊</div><div class="ct">判斷合格與否</div><div class="cb">用平均、SD、RSD%、95% CI 判斷數據品質，並與 Class A 公差比較</div></div><div class="card b"><div class="ic">📝</div><div class="ct">看懂準確度 vs 精密度</div><div class="cb">分辨系統誤差與隨機誤差，知道『準』和『穩』不是同一件事</div></div></div></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">系統誤差 vs 隨機誤差</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個情境分到「系統誤差(systematic)」或「隨機誤差(random)」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="引起動機"><div class="slide-inner"><div class="kicker">原理 1／2</div><h2 class="slide-title">TC vs TD、Class A 公差</h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 620 260">
+ <text x="310" y="20" text-anchor="middle" class="lblb" font-size="15">TC（量入式）vs TD（量出式）—— 校正方法不同</text>
+ <!-- TC volumetric flask -->
+ <path d="M255 40 h20 v34 l-34 78 a10 10 0 0 0 9 14 h60 a10 10 0 0 0 9 -14 l-34 -78 v-34 Z"
+   fill="#e7f0fe" stroke="#1f6feb" stroke-width="2.2"/>
+ <line x1="230" y1="130" x2="300" y2="130" stroke="#1f6feb" stroke-width="2" stroke-dasharray="3 3"/>
+ <text x="305" y="134" class="lbl" fill="#1f6feb">刻度線(標線)</text>
+ <text x="265" y="180" text-anchor="middle" class="lblb" fill="#1f6feb" font-size="13">容量瓶</text>
+ <text x="265" y="198" text-anchor="middle" class="lbl">TC — 裝滿到刻度＝該體積</text>
+ <text x="265" y="215" text-anchor="middle" class="lbl">配製標準溶液用</text>
+ <!-- TD pipette -->
+ <path d="M420 36 h14 v18 l7 10 v120 l-14 30 l-14 -30 v-120 l7 -10 Z"
+   fill="#fbeede" stroke="#d9822b" stroke-width="2.2"/>
+ <line x1="405" y1="66" x2="455" y2="66" stroke="#d9822b" stroke-width="2" stroke-dasharray="3 3"/>
+ <text x="460" y="70" class="lbl" fill="#d9822b">刻度線</text>
+ <text x="427" y="200" text-anchor="middle" class="lblb" fill="#d9822b" font-size="13">吸量管 / 滴定管</text>
+ <text x="427" y="218" text-anchor="middle" class="lbl">TD — 放出的體積＝該體積</text>
+ <text x="427" y="235" text-anchor="middle" class="lbl">留在管壁的殘液本來就不算</text>
+ <!-- eye level meniscus -->
+ <rect x="140" y="150" width="60" height="10" fill="none"/>
+ <circle cx="130" cy="150" r="9" fill="#f6f9fd" stroke="#48597a" stroke-width="1.5"/>
+ <text x="130" y="154" text-anchor="middle" font-size="11">👁</text>
+ <line x1="140" y1="150" x2="200" y2="150" stroke="#1f9d6b" stroke-width="1.6"/>
+ <text x="170" y="140" text-anchor="middle" class="lbl" fill="#1f9d6b">視線與彎月面等高</text>
+ <text x="170" y="168" text-anchor="middle" class="lbl">才不會有視差(parallax)</text>
+</svg></div><table class="cmp" style="margin-top:10px"><thead><tr><th>器具</th><th>等級</th><th>公差</th><th>標準</th></tr></thead><tbody><tr><td class="c">10 mL 吸量管</td><td>Class A</td><td class="c">±0.02 mL</td><td>ASTM E969</td></tr><tr><td class="c">50 mL 滴定管</td><td>Class A</td><td class="c">±0.05 mL(全管)</td><td>ASTM E287</td></tr><tr><td>同容量器具</td><td>Class B</td><td>公差約為 Class A 的 2 倍</td><td>—</td></tr></tbody></table></div></section><section class="slide" data-slide="6" data-section="引起動機"><div class="slide-inner"><div class="kicker">原理 2／2</div><h2 class="slide-title">讀數、放液與溫度的眉角</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">👁️</div><div class="ct">視差 parallax</div><div class="cb">彎月面(meniscus)要與視線等高讀取，由上往下看會誤判體積</div></div><div class="card a"><div class="ic">⏱️</div><div class="ct">放液時間與貼壁</div><div class="cb">滴定管/吸量管放液要有固定等待時間，出口尖端最後要靠壁去除最後一滴(tip touch-off)，但 TD 器具『不可』吹出殘液</div></div><div class="card g"><div class="ic">🌡️</div><div class="ct">溫度會變密度</div><div class="cb">水的密度隨溫度改變，量出的『質量』要換算回『體積』時必須知道當時水溫</div></div><div class="card b"><div class="ic">🎈</div><div class="ct">空氣浮力校正</div><div class="cb">天平在空氣中秤重，砝碼與水的浮力不同，需做浮力校正，量級約 <b>0.1%</b></div></div></div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">開始前：儀器校正</div><h2 class="slide-title">天平、溫度計、水都要『準備好』</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">⚖️</div><div class="ct">分析天平每日檢查</div><div class="cb">上課前用標準砝碼(standard weights)檢查天平；確認水平氣泡(level bubble)置中；關好防風罩(draft shield)</div></div><div class="card a"><div class="ic">🌡️</div><div class="ct">溫度計</div><div class="cb">用於量測水溫，需與天平放在同一環境，讀數精確到 0.1 °C</div></div><div class="card g"><div class="ic">💧</div><div class="ct">水先平衡室溫</div><div class="cb">蒸餾水/去離子水應提前放在實驗室，使其溫度與室溫一致，避免秤重時因溫度漂移造成誤差</div></div><div class="card b"><div class="ic">📋</div><div class="ct">器具需知</div><div class="cb">確認吸量管/滴定管型號、量測範圍、是否為 Class A</div></div></div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">核心操作</div><h2 class="slide-title">秤重法怎麼做 + 四小時時程</h2><div class="grid2-1" style="margin-top:2px"><div class="svgwrap">
+<svg viewBox="0 0 560 220">
+ <text x="280" y="20" text-anchor="middle" class="lblb" font-size="14">秤重法校正：核心流程</text>
+ <rect x="20" y="40" width="120" height="54" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="80" y="62" text-anchor="middle" class="lblb" font-size="12">秤重瓶</text>
+ <text x="80" y="80" text-anchor="middle" class="lbl">加蓋、歸零(空瓶)</text>
+ <path d="M140 67 h35" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <rect x="180" y="40" width="120" height="54" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="240" y="62" text-anchor="middle" class="lblb" font-size="12">量取水</text>
+ <text x="240" y="80" text-anchor="middle" class="lbl">吸管/滴定管放出</text>
+ <path d="M300 67 h35" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <rect x="340" y="40" width="120" height="54" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="400" y="62" text-anchor="middle" class="lblb" font-size="12">加蓋秤重</text>
+ <text x="400" y="80" text-anchor="middle" class="lbl">記錄表觀質量 m</text>
+ <path d="M460 67 h35" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <rect x="500" y="40" width="50" height="54" rx="10" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+ <text x="525" y="62" text-anchor="middle" class="lbl" font-size="11">記錄</text>
+ <text x="525" y="78" text-anchor="middle" class="lbl" font-size="11">水溫</text>
+ <path d="M80 94 v20" stroke="#48597a" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#ar2)"/>
+ <rect x="20" y="118" width="480" height="60" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="260" y="140" text-anchor="middle" class="lblb" fill="#1f9d6b" font-size="13">V = m_app × F_b / ρ_w　　( Tanaka 方程式查 ρ_w )</text>
+ <text x="260" y="160" text-anchor="middle" class="lbl">每個器具重複 10 次 → 平均、SD、95% CI</text>
+ <defs>
+  <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker>
+  <marker id="ar2" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto"><path d="M0 0 L8 0 L4 8 Z" fill="#48597a"/></marker>
+ </defs>
+</svg></div><div><ul class="clean"><li><strong>吸量管：</strong>秤重瓶加蓋歸零 → 吸取 10.00 mL 水放入瓶中 → 立即加蓋秤重(精確到 0.1 mg) → 記錄水溫 → 重複 10 次</li><li><strong>滴定管：</strong>裝滿、讀初始刻度 → 放液到 25.00 mL → 秤重 → 重複 10 次</li><li>所有數據以「長格式」輸入共用 Google Sheet：<span class="mono" style="font-size:.82em">group, student, item, rep, value, unit, temp_C, note</span></li></ul></div></div><div class="grid2" style="margin-top:8px"><div class="card b"><div class="ic">🕐 0:00–0:30</div><div class="ct">講解與示範</div><div class="cb">天平操作、秤重法步驟、如何記錄長格式數據</div></div><div class="card a"><div class="ic">🕑 0:30–2:00</div><div class="ct">吸管 10 重複</div><div class="cb">每人操作 10 mL 吸量管，量水、秤重、記溫度</div></div><div class="card g"><div class="ic">🕓 2:00–3:30</div><div class="ct">滴定管 10 重複</div><div class="cb">操作 50 mL 滴定管，放液到 25.00 mL、秤重</div></div><div class="card b"><div class="ic">🕟 3:30–4:00</div><div class="ct">數據輸入與檢查</div><div class="cb">把數據存入共用表單，標記(flag)看起來像打字錯誤的異常值</div></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">安全與廢棄物</div><h2 class="slide-title">三個必須遵守的規則</h2><div class="grid3" style="margin-top:20px"><div class="card a"><div class="ic">🚫</div><div class="ct">絕不用嘴吸</div><div class="cb">一律使用吸球(pipette bulb)或吸管輔助器(pump)，嚴禁口吸</div></div><div class="card b"><div class="ic">🧹</div><div class="ct">碎玻璃回收</div><div class="cb">破損的玻璃器皿丟入專用的碎玻璃回收箱(broken glass box)，不可丟一般垃圾桶</div></div><div class="card g"><div class="ic">🧽</div><div class="ct">隨手清潔天平</div><div class="cb">秤重完畢擦拭天平秤盤與周圍，避免水漬影響下一位同學的讀數</div></div></div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">秤重法校正步驟排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把秤重法校正的 6 個操作步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">數據處理</div><h2 class="slide-title">從表觀質量到真正體積</h2><div class="grid2" style="margin-top:10px"><div class="eq">V = m<sub>app</sub> × F<sub>b</sub> / ρ<sub>w</sub></div><div class="eq" style="font-size:clamp(.8rem,1.3vw,1.05rem)">F<sub>b</sub> = 1 + ρ<sub>air</sub>(1/ρ<sub>w</sub> − 1/ρ<sub>weights</sub>)<br><span class="lbl" style="font-family:inherit;color:var(--ink-2);font-size:.85em">ρ<sub>air</sub>=0.0012 g/mL　ρ<sub>weights</sub>=8.0 g/mL　ρ<sub>w</sub> 由 Tanaka(2001) 方程式求得</span></div></div><div class="note" style="margin-top:14px"><strong>範例：</strong>吸量管放出的水，秤得表觀質量 <b>9.9700 g</b>，水溫 <b>25.0 °C</b>。ρ<sub>w</sub>(25.0°C) = <b>0.997047 g/mL</b>，F<sub>b</sub> ≈ <b>1.00105</b> → V ≈ <b>10.010 mL</b>。</div><table class="cmp" style="margin-top:14px"><thead><tr><th>水溫 (°C)</th><th>ρ_w (g/mL)</th></tr></thead><tbody><tr><td class="c">20</td><td>0.998207</td></tr><tr><td class="c">22</td><td>0.997773</td></tr><tr><td class="c">24</td><td>0.997299</td></tr><tr><td class="c">25</td><td>0.997047</td></tr><tr><td class="c">26</td><td>0.996786</td></tr><tr><td class="c">28</td><td>0.996235</td></tr></tbody></table></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：滴定管實際體積</span><span class="score" id="g6score">未作答</span></div><div class="game-q">滴定管放出水的表觀質量 <b>m_app = 24.9215 g</b>，水溫 <b>23.0 °C</b>（ρ_w = 0.997541 g/mL，F_b ≈ 1.00105）。求實際體積 V(mL)，取 3 位小數。公式：V = m_app × F_b / ρ_w。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">mL</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner">
+<div class="kicker">數據品管 QC</div>
+<h2 class="slide-title">平均、SD、RSD%、95% CI 與<span class="hi">偏差</span></h2>
+<div class="grid2" style="margin-top:14px">
+<ul class="clean">
+<li><strong>平均、SD</strong>：10 次重複的集中趨勢與離散程度</li>
+<li><strong>RSD% = SD/平均 × 100</strong>：相對離散程度，越小代表越『精密』</li>
+<li><strong>95% CI = 平均 ± t×SD/√n</strong>（n=10，t=2.262）</li>
+<li><strong>bias = 平均 − 標稱值(10.00 或 25.00 mL)</strong>：越接近 0 代表越『準確』</li>
+<li>有效數字：報告 CI 取 1–2 位有效數字，平均取到同一小數位</li>
+</ul>
+<div class="chartbox"><canvas id="qcChart"></canvas></div>
+</div>
+<p class="cap" style="margin-top:10px">5 位示意學生的平均偏差(bias)、95% CI 範圍(浮動長條)，虛線為 ±0.02 mL 公差線——示意數據，非真實量測值。</p>
+<script>
+(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('qcChart'); if(!el||el._done) return; el._done=1;
+    var labels=['學生A(準且穩)','學生B(穩但偏)','學生C(不穩但準)','學生D(合格)','學生E(CI含0但偏差超標)'];
+    var bias=[0.005,0.028,-0.006,-0.012,0.024];
+    var ci=[0.010,0.008,0.035,0.015,0.030];
+    var range=bias.map(function(b,i){return [b-ci[i], b+ci[i]]});
+    new Chart(el,{
+      data:{labels:labels,datasets:[
+        {type:'bar',label:'平均偏差 ±95% CI (mL)',data:range,
+          backgroundColor:'rgba(31,111,235,.35)',borderColor:'#1f6feb',borderWidth:1.5,borderRadius:4},
+        {type:'line',label:'+0.02 mL 公差上限',data:[0.02,0.02,0.02,0.02,0.02],
+          borderColor:'#d94f4f',borderDash:[6,4],pointRadius:0,borderWidth:2,fill:false},
+        {type:'line',label:'-0.02 mL 公差下限',data:[-0.02,-0.02,-0.02,-0.02,-0.02],
+          borderColor:'#d94f4f',borderDash:[6,4],pointRadius:0,borderWidth:2,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:14,font:{size:10}}}},
+        scales:{y:{title:{display:true,text:'偏差 bias (mL)'}}}}
+    });
+  }
+  draw();
+})();
+</script>
+</div></section><section class="slide" data-slide="14" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">常見錯誤即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="15" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">TC 量入式 vs TD 量出式</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 種容量器具/敘述分到「TC 量入式」或「TD 量出式」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：準確度與精密度判斷</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="17" data-section="喚起行動"><div class="slide-inner"><div class="kicker">課後作業</div><h2 class="slide-title">打開 Colab、換上班級數據</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>打開 <a class="no-nav" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB01_volumetric_calibration.ipynb" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">NB01_volumetric_calibration.ipynb ↗</a></li><li>把範例數據換成<strong>本班共用 Google Sheet</strong> 的實測數據</li><li>完成 Notebook 中的 <strong>5 道練習題</strong>（浮力校正、平均/SD/CI、與公差比較…）</li></ul></div><div class="card a"><div class="ic">📄</div><div class="ct">報告要求</div><div class="cb">每位同學：一張『平均 ± CI』表(吸管、滴定管各一列)；標示 bias 是否超出公差；一段討論可能的誤差來源(系統/隨機)</div></div></div><div class="note" style="margin-top:14px">延伸閱讀：<a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">食品分析統計網站 ↗</a>（信賴區間章節）</div></div></section><section class="slide" data-slide="18" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>分辨 TC(量入式)與 TD(量出式)器具、說出 Class A 公差(10 mL 吸管 ±0.02 mL、50 mL 滴定管 ±0.05 mL)</li><li data-k><span class="bx">✓</span>正確讀取彎月面、知道視差(parallax)怎麼發生</li><li data-k><span class="bx">✓</span>完整操作秤重法：秤重瓶歸零→量水→秤重→記溫度→重複10次</li><li data-k><span class="bx">✓</span>說出為什麼要做空氣浮力校正、大約影響多少(~0.1%)</li><li data-k><span class="bx">✓</span>用 V = m_app × F_b / ρ_w 算出實際體積</li><li data-k><span class="bx">✓</span>計算平均、SD、RSD%、95% CI，並判斷 bias 是否超出公差</li><li data-k><span class="bx">✓</span>分辨系統誤差與隨機誤差，理解『精密』不等於『準確』</li><li data-k><span class="bx">✓</span>把數據正確輸入長格式共用表單，並標記可疑數據</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><section class="slide" data-slide="19" data-section="喚起行動" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">下一步 · NEXT</div><h1>把校正數據<br><span style='color:var(--accent-2)'>變成報告</span></h1><div class="en"></div><div class="meta">📌 課後：完成 Colab NB01 的 5 道練習、上傳報告<br>🔜 銜接：後續實驗週的每一次量測，都建立在『你信任自己的量器』之上<br>🧪 思考：如果 bias 超出公差，是系統誤差還是隨機誤差？該怎麼處理？</div><div style="margin-top:24px"><span class="pill">秤重法</span><span class="pill">浮力校正</span><span class="pill">95% CI</span><span class="pill">TC/TD</span><span class="pill">QC</span></div></div></div></section><script>window.CFG={"bucket": {"g1": {"cats": ["系統誤差 systematic", "隨機誤差 random"], "items": [{"t": "忘記做空氣浮力校正", "c": "系統誤差 systematic"}, {"t": "把水溫 25°C 誤記成 30°C", "c": "系統誤差 systematic"}, {"t": "吹出量出式(TD)吸管管壁殘留的液體", "c": "系統誤差 systematic"}, {"t": "使用未校正、本身偏輕的砝碼", "c": "系統誤差 systematic"}, {"t": "每次讀彎月面時眼睛角度略有差異", "c": "隨機誤差 random"}, {"t": "天平讀數最後一位數字略微跳動", "c": "隨機誤差 random"}, {"t": "環境輕微震動造成秤重瞬間飄移", "c": "隨機誤差 random"}, {"t": "每次判斷滴定終點的時間點略有落差", "c": "隨機誤差 random"}], "ok": "🎉 全對！系統誤差固定偏向一方(可校正消除)；隨機誤差忽大忽小(只能用統計描述)。", "tip": "提示：『每次都偏同一邊、有原因』→系統誤差；『忽大忽小、說不出固定原因』→隨機誤差。"}, "g3": {"cats": ["TC 量入式", "TD 量出式"], "items": [{"t": "容量瓶(volumetric flask)", "c": "TC 量入式"}, {"t": "配製標準溶液，加水到刻度線", "c": "TC 量入式"}, {"t": "標示『TC 20°C』的量器", "c": "TC 量入式"}, {"t": "吸量管(pipette)", "c": "TD 量出式"}, {"t": "滴定管(burette)", "c": "TD 量出式"}, {"t": "管壁殘留的最後一滴本來就不算在體積內", "c": "TD 量出式"}], "ok": "🎉 正確！TC＝裝滿到刻度就是該體積；TD＝放出的液體量才是該體積。", "tip": "提示：『裝、配製』相關→TC；『量出、滴定、放液』相關→TD。"}}, "mcq": {"g2": [{"q": "校正時忘記做空氣浮力校正，算出來的體積會怎樣？", "o": ["偏高約10%", "偏低約0.1%", "不受影響", "偏高約1%"], "a": 1, "e": "忽略浮力校正會少乘 F_b(≈1.001)，使算出的體積偏低約 0.1%。"}, {"q": "把水溫 25°C 誤記成 20°C 會發生什麼？", "o": ["完全沒影響", "查錯 ρ_w，體積算錯", "天平會自動修正", "滴定終點改變"], "a": 1, "e": "ρ_w 隨溫度而變，溫度記錄錯誤會導致查表/代入錯誤的 ρ_w，使體積計算不準。"}, {"q": "用『量出式(TD)』吸量管時，最後管壁的液體應該怎麼處理？", "o": ["用力吹出", "留在管壁，不要吹出", "用水沖出", "加熱蒸發"], "a": 1, "e": "TD 器具校正時已把管壁殘留量算進去，吹出殘液會使放出體積偏多，造成系統誤差。"}, {"q": "從上往下看彎月面讀數(視差)，通常會造成什麼結果？", "o": ["讀數與真值一致", "讀數方向依角度而系統性偏移", "天平提示錯誤", "無法讀出刻度"], "a": 1, "e": "視差(parallax)使讀數依觀察角度系統性偏高或偏低，須讓視線與液面等高。"}, {"q": "某同學 10 次讀數彼此非常接近(SD 很小)，但平均值離標稱值很遠，這代表？", "o": ["精密且準確", "精密但不準確(有系統誤差)", "準確但不精密", "數據無效"], "a": 1, "e": "『精密』描述重複性(SD小)，『準確』描述是否接近真值；兩者是獨立的概念。"}], "g5": [{"q": "報告 95% CI 時，建議的有效數字原則是？", "o": ["盡量寫多位小數", "CI 取 1–2 位有效數字，平均取到同一小數位", "CI 只寫整數", "不需要對齊小數位"], "a": 1, "e": "CI 本身精度有限，取 1–2 位有效數字即可，平均值小數位要與 CI 對齊。"}, {"q": "某組數據的 95% CI 涵蓋標稱值(bias 的 CI 含 0)，但平均偏差本身已超出 ±0.02 mL 公差，該怎麼解讀？", "o": ["一定合格", "統計上不能排除『無偏差』，但點估計已超出實務公差，仍須留意", "一定不合格且是隨機誤差", "可以忽略不管"], "a": 1, "e": "CI 含 0 代表『統計上不顯著』，但公差是實務規範；兩者標準不同，需要一起看，不能只看其中一個。"}, {"q": "要判斷『bias 是否顯著偏離標稱值』，該用哪個統計工具？", "o": ["只看RSD%", "95% CI 搭配 t 值", "只看樣品重", "看滴定終點顏色"], "a": 1, "e": "用平均±t×SD/√n 建立 95% CI，看是否涵蓋標稱值，來判斷偏差是否顯著。"}, {"q": "RSD% 主要反映的是？", "o": ["準確度", "精密度(重複性)", "公差大小", "浮力校正量"], "a": 1, "e": "RSD%=SD/平均×100，是相對離散程度，反映精密度而非準確度。"}, {"q": "若一組數據 SD 大、平均值卻剛好接近標稱值，這是？", "o": ["準確但不精密", "精密且準確", "不準確也不精密", "無法判斷"], "a": 0, "e": "平均接近真值代表準確；但 SD 大代表重複性差，即不精密。"}]}, "sort": {"g4": {"steps": ["秤重瓶加蓋，在分析天平歸零(記錄空瓶重)", "用待校正的吸量管/滴定管量取定量水", "將水放入秤重瓶並立即加蓋，秤重(記錄表觀質量 m_app)", "記錄當時水溫(°C)", "以 Tanaka 方程式求該溫度的 ρ_w，計算浮力校正 F_b", "以 V = m_app × F_b / ρ_w 求出實際體積，重複10次後取平均與SD"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！歸零→量水→秤重→記溫度→查密度算浮力校正→算體積。", "tip": "提示：先秤空瓶歸零，量水秤重後才記溫度；算體積要在查到 ρ_w 之後。"}}, "calc": {"g6": {"answer": 25.009, "tol": 0.002, "ok": "🎉 正確！V = 24.9215 × 1.00105 / 0.997541 ≈ <b>25.009 mL<\/b>。", "bad": "再算算：V = m_app × F_b / ρ_w = 24.9215 × 1.00105 / 0.997541。", "hint": "提示：24.9215 × 1.00105 ≈ 24.9477；24.9477 / 0.997541 ≈ 25.009 mL。"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>
