@@ -16,7 +16,7 @@
 | W4 | NB04 滴定：KHP 標定、微分找當量點、Bland–Altman 方法比較 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB04_titration.ipynb) |
 | W5 | NB05 凱氏法：%N、換算係數、回收率、三聚氰胺 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB05_kjeldahl_protein.ipynb) |
 | W6 | NB06 脂肪：粗脂肪、濕基換算、Soxhlet 偏差、Pearson square | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB06_fat_soxhlet.ipynb) |
-| W7 | NB07 糖：檢量線、殘差與缺適性、LOD／LOQ、Brix vs 總糖 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB07_sugar_phenolsulfuric.ipynb) |
+| W7 | NB07 糖：檢量線、殘差與缺適性、LOD／LOQ、Brix vs 總醣 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB07_sugar_phenolsulfuric.ipynb) |
 | W8 | NB08 能力試驗：Grubbs、ANOVA、z-score、管制圖、不確定度、放行判定 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB08_proficiency_qc.ipynb) |
 | W11 | NB09 光譜前處理與相似度：基線、SNV、微分、光譜庫比對、NNLS | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB09_preprocess_similarity.ipynb) |
 | W12 | NB10 PCA：食用油分類、分數圖、loadings、離群值 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB10_pca.ipynb) |
