@@ -201,7 +201,25 @@ function show(i){
   secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
   var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
   var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 function next(){show(cur+1)} function prev(){show(cur-1)}
 function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
 document.addEventListener('keydown',function(e){

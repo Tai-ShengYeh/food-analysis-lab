@@ -1,0 +1,27 @@
+group,student,item,rep,value,unit,temp_C,conc_ug_mL,dilution_factor,note
+0,class_curve,std_curve,1,0.021,AU,,0.0,,標準曲線第 1 重複，本班的正式檢量線
+0,class_curve,std_curve,1,0.233,AU,,20.0,,標準曲線第 1 重複，本班的正式檢量線
+0,class_curve,std_curve,1,0.447,AU,,40.0,,標準曲線第 1 重複，本班的正式檢量線
+0,class_curve,std_curve,1,0.64,AU,,60.0,,標準曲線第 1 重複，本班的正式檢量線
+0,class_curve,std_curve,1,0.847,AU,,80.0,,標準曲線第 1 重複，本班的正式檢量線
+0,class_curve,std_curve,1,1.029,AU,,100.0,,標準曲線第 1 重複，本班的正式檢量線
+0,class_curve,std_curve,2,0.0227,AU,,0.0,,標準曲線第 2 重複，用於示範 lack-of-fit 檢定（需要重複才能估計純誤差）
+0,class_curve,std_curve,2,0.2268,AU,,20.0,,標準曲線第 2 重複，用於示範 lack-of-fit 檢定（需要重複才能估計純誤差）
+0,class_curve,std_curve,2,0.4496,AU,,40.0,,標準曲線第 2 重複，用於示範 lack-of-fit 檢定（需要重複才能估計純誤差）
+0,class_curve,std_curve,2,0.6532,AU,,60.0,,標準曲線第 2 重複，用於示範 lack-of-fit 檢定（需要重複才能估計純誤差）
+0,class_curve,std_curve,2,0.8259,AU,,80.0,,標準曲線第 2 重複，用於示範 lack-of-fit 檢定（需要重複才能估計純誤差）
+0,class_curve,std_curve,2,1.0205,AU,,100.0,,標準曲線第 2 重複，用於示範 lack-of-fit 檢定（需要重複才能估計純誤差）
+0,class_blank,reagent_blank_490nm,1,0.0205,AU,,,,試劑空白重複讀值，用於估計 blank SD（LOD 的另一種算法）
+0,class_blank,reagent_blank_490nm,2,0.0187,AU,,,,試劑空白重複讀值，用於估計 blank SD（LOD 的另一種算法）
+0,class_blank,reagent_blank_490nm,3,0.0199,AU,,,,試劑空白重複讀值，用於估計 blank SD（LOD 的另一種算法）
+0,class_blank,reagent_blank_490nm,4,0.0166,AU,,,,試劑空白重複讀值，用於估計 blank SD（LOD 的另一種算法）
+0,class_blank,reagent_blank_490nm,5,0.0235,AU,,,,試劑空白重複讀值，用於估計 blank SD（LOD 的另一種算法）
+0,class_blank,reagent_blank_490nm,6,0.0231,AU,,,,試劑空白重複讀值，用於估計 blank SD（LOD 的另一種算法）
+0,class_blank,reagent_blank_490nm,7,0.0203,AU,,,,試劑空白重複讀值，用於估計 blank SD（LOD 的另一種算法）
+0,class_blank,reagent_blank_490nm,8,0.0245,AU,,,,試劑空白重複讀值，用於估計 blank SD（LOD 的另一種算法）
+1,G1,unknown_sports_drink,1,0.637,AU,,,1000.0,運動飲料，已知標準曲線範例（W7 課堂計算闖關）
+2,G2,unknown_orange_juice_phenol,1,0.5109,AU,,,2000.0,柳橙汁，酚硫酸法總糖
+2,G2,orange_juice_brix,1,11.5,degBrix,,,,柳橙汁，折射計 Brix 讀值（20°C 對照，未做溫度校正）
+3,G3,unknown_maple_syrup,1,0.5378,AU,,,17500.0,楓糖漿，酚硫酸法總糖，稀釋倍數很大(原液濃度高)
+4,G4,unknown_winter_melon_tea,1,0.5306,AU,,,2000.0,冬瓜茶，樣品本身顏色深，讀值含顏色干擾(尚未扣除樣品空白)
+4,G4,winter_melon_tea_sample_blank,1,0.045,AU,,,2000.0,冬瓜茶樣品本身的顏色空白(同稀釋倍數，不加酚/硫酸或以水代替糖反應)，用於扣除色素干擾

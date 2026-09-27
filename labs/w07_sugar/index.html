@@ -167,27 +167,51 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
     楓糖漿影片講的「40：1」聽起來像順口溜，<span class="hi">用質量平衡驗算得出來嗎？</span>（待會在「數據」段落回來解答）</p>
 </div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W7，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>操作<strong>折射計</strong>測 Brix，並知道 Brix 測的是「可溶性固形物」而不是「純糖」</li><li>完成<strong>酚硫酸法(DuBois)</strong>總糖標準曲線，並算出未知樣品的總糖(g/100mL 葡萄糖當量)</li><li>看懂為什麼標準品選<strong>葡萄糖 vs 果糖</strong>會造成系統性偏差(bias)</li></ul><ul class='clean'><li>區分<strong>還原糖 vs 非還原糖</strong>，理解糖醇為何在酚硫酸法中不顯色</li><li>認識勞動部乙級的<strong>索摩基法／Bertrand法</strong>(銅還原＋滴定)，並分辨它跟 Nielsen 教材「Somogyi–Nelson」比色法的不同</li><li>遵守濃硫酸／酚的安全規範，完成 4 小時分工與數據 QC(標準曲線、殘差、LOD/LOQ)</li></ul></div><p class="subtitle" style="margin-top:10px">理論複習：本課不重複 Brix、還原糖、總糖的完整定義與課本 vs 乙級方法比較——完整內容在 <a href="https://tai-shengyeh.github.io/food-analysis-decks/ch19_carb_soil/index.html" target="_blank" style="color:var(--accent);font-weight:700">📖 完整原理 deck（Nielsen Ch19，含「課本 vs 乙級」比較）→</a>。</p></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">還原糖 vs 非還原糖：這 8 種糖分到哪一邊？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 種糖分到「還原糖」或「非還原糖」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理 1</div><h2 class="slide-title">折射計 Brix：<span class='hi'>折射率</span> ↔ 可溶性固形物</h2><div class="svgwrap" style="margin-top:4px">
 <svg viewBox="0 0 620 260">
- <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">光線經樣品折射後，肉眼從明暗交界線讀出刻度</text>
- <rect x="60" y="90" width="150" height="90" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
- <text x="135" y="80" text-anchor="middle" class="lbl">稜鏡 (prism)</text>
- <ellipse cx="135" cy="86" rx="30" ry="7" fill="#d9822b" fill-opacity=".75"/>
- <text x="135" y="200" text-anchor="middle" class="lbl">樣品液滴</text>
- <path d="M20 220 L60 140" stroke="#8493ad" stroke-width="1.6" stroke-dasharray="3 3"/>
- <path d="M60 140 L230 100" stroke="#1f9d6b" stroke-width="2"/>
- <text x="150" y="118" text-anchor="middle" class="lbl" fill="#1f9d6b" font-size="11">折射光路</text>
- <rect x="260" y="60" width="110" height="150" rx="8" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
- <text x="315" y="50" text-anchor="middle" class="lblb" font-size="12">目鏡刻度</text>
- <rect x="270" y="70" width="90" height="70" fill="#ffffff" stroke="#dde5f0"/>
- <rect x="270" y="140" width="90" height="60" fill="#48597a" fill-opacity=".85"/>
- <line x1="270" y1="118" x2="360" y2="118" stroke="#d94f4f" stroke-width="2.4"/>
- <text x="366" y="122" class="lblb" fill="#d94f4f" font-size="12">讀值</text>
- <text x="315" y="88" text-anchor="middle" class="lbl" font-size="10">亮區(bright field)</text>
- <text x="315" y="180" text-anchor="middle" class="lbl" font-size="10" fill="#eef2f8">暗區(dark field)</text>
- <rect x="410" y="90" width="180" height="90" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <text x="500" y="120" text-anchor="middle" class="lblb" font-size="16" fill="#d9822b">11.5 °Brix</text>
- <text x="500" y="145" text-anchor="middle" class="lbl" font-size="11">明暗交界線＝讀數</text>
- <text x="500" y="163" text-anchor="middle" class="lbl" font-size="11">溫度需靠 ATC 自動補償</text>
- <text x="310" y="240" text-anchor="middle" class="lbl">酸、鹽等其他可溶物也會提高折射率 → 果汁 Brix ≈ 可溶性固形物，不等於「純糖」</text>
+ <text x="310" y="20" text-anchor="middle" class="lblb" style="font-size:14px">光線經樣品折射後，肉眼從明暗交界線讀出刻度</text>
+ <defs>
+  <marker id="arBx" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#d9822b"/></marker>
+  <clipPath id="eyeClip"><circle cx="372" cy="140" r="74"/></clipPath>
+ </defs>
+ <!-- incident daylight -->
+ <g stroke="#d9822b" stroke-width="1.8" marker-end="url(#arBx)">
+  <line x1="84" y1="38" x2="100" y2="72"/><line x1="134" y1="38" x2="150" y2="72"/><line x1="184" y1="38" x2="200" y2="72"/>
+ </g>
+ <text x="214" y="50" class="lbl" style="font-size:11px">入射光</text>
+ <!-- daylight plate, sample film, prism (cross-section) -->
+ <rect x="60" y="76" width="180" height="10" fill="#f6f9fd" stroke="#48597a" stroke-width="1.4"/>
+ <rect x="60" y="86" width="180" height="6" fill="#1f9d6b" fill-opacity=".45"/>
+ <polygon points="60,92 240,92 210,170 90,170" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <polygon points="80,92 225,130 210,170 90,170" fill="#d9822b" fill-opacity=".16"/>
+ <polygon points="80,92 240,92 225,130" fill="#48597a" fill-opacity=".22"/>
+ <line x1="80" y1="92" x2="225" y2="130" stroke="#1f9d6b" stroke-width="2.4"/>
+ <line x1="225" y1="130" x2="262" y2="140" stroke="#1f9d6b" stroke-width="2.4"/>
+ <text x="246" y="84" class="lbl" style="font-size:11px">採光蓋板</text>
+ <text x="246" y="100" class="lbl" style="font-size:11px">樣品薄層</text>
+ <text x="104" y="124" class="lbl" style="font-size:11px;fill:#1f9d6b">臨界角光線</text>
+ <text x="150" y="160" text-anchor="middle" class="lbl" style="font-size:11px">有光區</text>
+ <text x="150" y="188" text-anchor="middle" class="lbl" style="font-size:11px">稜鏡(高折射率玻璃)</text>
+ <text x="150" y="208" text-anchor="middle" class="lbl" style="font-size:11px">樣品折射率↑ → 臨界角↑ → 交界線移向暗區</text>
+ <ellipse cx="266" cy="140" rx="5" ry="18" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.4"/>
+ <line x1="271" y1="140" x2="296" y2="140" stroke="#1f9d6b" stroke-width="2" stroke-dasharray="3 2"/>
+ <!-- eyepiece field of view -->
+ <text x="372" y="58" text-anchor="middle" class="lblb" style="font-size:12px">目鏡視野(示意)</text>
+ <g clip-path="url(#eyeClip)">
+  <rect x="298" y="66" width="148" height="148" fill="#ffffff"/>
+  <rect x="298" y="66" width="148" height="83.4" fill="#48597a" fill-opacity=".85"/>
+  <g stroke="#15233f" stroke-width="1"><line x1="386" y1="200.0" x2="396" y2="200.0"/><line x1="386" y1="195.6" x2="391" y2="195.6"/><line x1="386" y1="191.2" x2="391" y2="191.2"/><line x1="386" y1="186.8" x2="391" y2="186.8"/><line x1="386" y1="182.4" x2="391" y2="182.4"/><line x1="386" y1="178.0" x2="396" y2="178.0"/><line x1="386" y1="173.6" x2="391" y2="173.6"/><line x1="386" y1="169.2" x2="391" y2="169.2"/><line x1="386" y1="164.8" x2="391" y2="164.8"/><line x1="386" y1="160.4" x2="391" y2="160.4"/><line x1="386" y1="156.0" x2="396" y2="156.0"/><line x1="386" y1="151.6" x2="391" y2="151.6"/><line x1="386" y1="147.2" x2="391" y2="147.2"/><line x1="386" y1="142.8" x2="391" y2="142.8"/><line x1="386" y1="138.4" x2="391" y2="138.4"/><line x1="386" y1="134.0" x2="396" y2="134.0"/><line x1="386" y1="129.6" x2="391" y2="129.6"/><line x1="386" y1="125.2" x2="391" y2="125.2"/><line x1="386" y1="120.8" x2="391" y2="120.8"/><line x1="386" y1="116.4" x2="391" y2="116.4"/><line x1="386" y1="112.0" x2="396" y2="112.0"/><line x1="386" y1="107.6" x2="391" y2="107.6"/><line x1="386" y1="103.2" x2="391" y2="103.2"/><line x1="386" y1="98.8" x2="391" y2="98.8"/><line x1="386" y1="94.4" x2="391" y2="94.4"/><line x1="386" y1="90.0" x2="396" y2="90.0"/></g>
+  <line x1="298" y1="149.4" x2="446" y2="149.4" stroke="#d94f4f" stroke-width="2.4"/>
+ </g>
+ <circle cx="372" cy="140" r="74" fill="none" stroke="#48597a" stroke-width="2.4"/>
+ <text x="400" y="203.5" class="lbl" style="font-size:10px;fill:#15233f">0</text><text x="400" y="181.5" class="lbl" style="font-size:10px;fill:#15233f">5</text><text x="400" y="159.5" class="lbl" style="font-size:10px;fill:#15233f">10</text><text x="400" y="137.5" class="lbl" style="font-size:10px;fill:#ffffff">15</text><text x="400" y="115.5" class="lbl" style="font-size:10px;fill:#ffffff">20</text><text x="400" y="93.5" class="lbl" style="font-size:10px;fill:#ffffff">25</text>
+ <text x="340" y="110" text-anchor="middle" class="lbl" style="font-size:11px;fill:#ffffff">暗區</text>
+ <text x="340" y="182" text-anchor="middle" class="lbl" style="font-size:11px">亮區</text>
+ <text x="372" y="232" text-anchor="middle" class="lbl" style="font-size:11px">刻度：°Brix(往暗區方向變大)</text>
+ <line x1="448" y1="149.4" x2="468" y2="149.4" stroke="#d94f4f" stroke-width="1.6"/>
+ <rect x="470" y="96" width="140" height="92" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="540" y="124" text-anchor="middle" class="lblb" style="font-size:16px;fill:#b5651d">11.5 °Brix</text>
+ <text x="540" y="148" text-anchor="middle" class="lbl" style="font-size:11px">明暗交界線＝讀數</text>
+ <text x="540" y="168" text-anchor="middle" class="lbl" style="font-size:11px">溫度靠 ATC 自動補償</text>
+ <text x="310" y="252" text-anchor="middle" class="lbl" style="font-size:12px">酸、鹽等其他可溶物也會提高折射率 → 果汁 Brix ≈ 可溶性固形物，不等於「純糖」</text>
 </svg></div><div class="note" style="margin-top:10px"><strong>定義：</strong>Brix 是以 20°C 下折射率對應「蔗糖 % (w/w)」所建立的刻度。果汁、糖漿裡除了糖，還有<strong>酸、鹽</strong>等其他可溶物也會提高折射率——所以樣品的 °Brix ≈ <b>可溶性固形物</b>總量，不完全等於「純糖含量」，這也是待會要拿柳橙汁跟酚硫酸法總糖互相比較的原因。<br><strong>溫度補償：</strong>現代手持/桌上型折射計多有 ATC(自動溫度補償)，但仍建議在建議溫度範圍內操作。</div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理 2</div><h2 class="slide-title">酚硫酸法 (DuBois, 1956)：<span class='hi'>總糖</span>比色定量</h2><div class="grid2" style="margin-top:10px"><div><ul class="clean"><li>濃硫酸使醣類<strong>水解＋脫水</strong>，生成呋喃醛衍生物(furfural derivatives)</li><li>此衍生物與<strong>酚</strong>縮合，產生穩定的橙黃色產物，於 <b>490 nm</b> 比色</li><li>可測<strong>總糖</strong>，包含蔗糖與寡糖(不像銅還原法只測還原糖)</li><li><strong>糖醇不反應</strong>(sorbitol、erythritol 等)——待會 g3 遊戲會驗證</li><li>不同糖(如果糖 vs 葡萄糖)的<strong>莫耳顯色率不同</strong>，換標準品會有系統性偏差</li><li>顯色<strong>非嚴格化學計量</strong>，因此一定要有自己的<strong>標準曲線</strong></li></ul></div><div class='svgwrap'>
 <svg viewBox="0 0 620 300">
  <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">酚硫酸法（DuBois）操作流程</text>
@@ -239,7 +263,25 @@ function show(i){
   secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
   var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
   var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
 }
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
 function next(){show(cur+1)} function prev(){show(cur-1)}
 function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
 document.addEventListener('keydown',function(e){
