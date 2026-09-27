@@ -1,0 +1,409 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W5 蛋白質（凱氏法） · 食品分析實驗</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto;white-space:nowrap}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">食品分析實驗 · W5</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食品分析實驗 · W5</div><h1>蛋白質 <span style='color:var(--accent-2)'>凱氏定氮法</span></h1><div class="en">Protein — The Kjeldahl Method</div><div class="meta">食品分析實驗　·　4 小時課程　·　15 位學生 · 5 組（每組 3 人）<br>消化 · 蒸餾 · 滴定 · 換算係數 · 三聚氰胺事件 · 回收率 QC</div><div style="margin-top:24px"><span class="pill">濃 H₂SO₄ 消化</span><span class="pill">40% NaOH 蒸餾</span><span class="pill">4% 硼酸捕氨</span><span class="pill">係數 5.7/6.25/6.38</span><span class="pill">三聚氰胺事件</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div class="no-nav" style="text-align:center">
+  <div class="kicker" style="justify-content:center">開始前，先看兩支工廠影片</div>
+  <div class="hook">凱氏法量的到底是<span class="hi">氮</span>，還是<span class="hi">蛋白質</span>？</div>
+  <p class="subtitle" style="max-width:920px;margin:18px auto 0">
+    <a href="https://www.youtube.com/watch?v=lNDuk_JpkV8&t=1014s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">
+      奶粉工廠（16:54–18:08，三聚氰胺事件——蛋白質檢測是怎麼被騙的）</a>
+    <a href="https://www.youtube.com/watch?v=01xiYD63EAc&t=911s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">
+      麵粉工廠（15:11–16:14，NIR 同時測蛋白質/水分/灰分，8–13% 蛋白質決定做麵包還是蛋糕）</a>
+  </p>
+  <div class="note" style="max-width:920px;margin:18px auto 0;text-align:left">
+    <strong>今天的關鍵問題：</strong>凱氏法（跟後面會提到的 Dumas 燃燒法一樣）其實只測得到<strong>「總氮量」</strong>，
+    再用一個<strong>換算係數</strong>把氮換成「蛋白質」——這個假設什麼時候會出錯？
+    三聚氰胺（melamine）事件就是最有名的一次。
+  </div>
+  <p class="subtitle" style="max-width:920px;margin:14px auto 0"><strong>先算一個數字記在心裡：</strong>
+    三聚氰胺 %N ≈ 66.6%，若混入 <b>1 g / 100 g</b> 樣品，表觀蛋白質(以乳品係數 6.38 計)會虛增約
+    <b>4.25</b> 個百分點——等一下我們一起重新算一次。</p>
+</div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W5，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>說出凱氏定氮法的<strong>三個階段</strong>：消化、蒸餾、滴定，以及各自的目的</li><li>分辨<strong>蛋白質氮</strong>與<strong>非蛋白氮(NPN)</strong>，並解釋為什麼三聚氰胺能騙過凱氏法</li><li>選對<strong>換算係數</strong>（一般 6.25／小麥穀類 5.7／乳品 6.38），並知道選錯會造成多大誤差</li></ul><ul class='clean'><li>用 %N=(V<sub>樣品</sub>−V<sub>空白</sub>)×N<sub>HCl</sub>×14.007/W×100 算出樣品的 <strong>%N 與蛋白質%</strong></li><li>說出蒸餾回收標準品(硫酸銨)與消化效率標準品(胺基酸)分別在檢查什麼</li><li>遵守濃硫酸／NaOH 相關<strong>安全</strong>規範，並完成 4 小時的分工與輪站</li></ul></div><p class="subtitle" style="margin-top:10px">理論複習：蛋白質定性/定量方法的完整原理，本課不重複——完整內容在 <a href="https://tai-shengyeh.github.io/food-analysis-decks/ch18_protein_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 完整原理 deck (Nielsen Ch18) →</a> 那份教材。</p></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">這個氮，算不算「蛋白質氮」？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個氮的來源分到「蛋白質氮」或「非蛋白氮 (NPN)」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理：三階段</div><h2 class="slide-title">消化 → 蒸餾 → 滴定</h2><div class="svgwrap" style="margin-top:2px">
+<svg viewBox="0 0 640 260">
+ <text x="320" y="20" text-anchor="middle" class="lblb" font-size="14">凱氏定氮法三階段</text>
+ <rect x="14" y="42" width="190" height="120" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="109" y="66" text-anchor="middle" class="lblb" font-size="13">① 消化 Digestion</text>
+ <text x="109" y="86" text-anchor="middle" class="lbl" font-size="11">濃 H₂SO₄ ＋ K₂SO₄/CuSO₄ 觸媒錠</text>
+ <text x="109" y="102" text-anchor="middle" class="lbl" font-size="11">加熱至 ~420°C，至澄清</text>
+ <text x="109" y="120" text-anchor="middle" class="lbl" font-size="11">有機氮 → (NH₄)₂SO₄</text>
+ <text x="109" y="144" text-anchor="middle" class="lbl" font-size="10" fill="#d9822b">釋出 SO₂/SO₃ 白煙</text>
+ <path d="M208 100 h24" stroke="#48597a" stroke-width="2" marker-end="url(#ar5)"/>
+ <rect x="236" y="42" width="190" height="120" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="331" y="66" text-anchor="middle" class="lblb" font-size="13">② 蒸餾 Distillation</text>
+ <text x="331" y="86" text-anchor="middle" class="lbl" font-size="11">加入過量 40% NaOH</text>
+ <text x="331" y="102" text-anchor="middle" class="lbl" font-size="11">水蒸氣蒸餾釋出 NH₃</text>
+ <text x="331" y="120" text-anchor="middle" class="lbl" font-size="11">收集於 4% 硼酸</text>
+ <text x="331" y="144" text-anchor="middle" class="lbl" font-size="10" fill="#1f6feb">溴甲酚綠–甲基紅混合指示劑</text>
+ <path d="M430 100 h24" stroke="#48597a" stroke-width="2" marker-end="url(#ar5)"/>
+ <rect x="458" y="42" width="168" height="120" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="542" y="66" text-anchor="middle" class="lblb" font-size="13">③ 滴定 Titration</text>
+ <text x="542" y="86" text-anchor="middle" class="lbl" font-size="11">標準化 HCl 滴定</text>
+ <text x="542" y="102" text-anchor="middle" class="lbl" font-size="11">滴到指示劑變色終點</text>
+ <text x="542" y="120" text-anchor="middle" class="lbl" font-size="11">V(HCl) 換算成 N</text>
+ <text x="542" y="144" text-anchor="middle" class="lbl" font-size="10" fill="#1f9d6b">硼酸本身不需標定</text>
+ <text x="320" y="200" text-anchor="middle" class="lbl" font-size="12">量到的是「總氮」——蛋白質氮 ＋ 非蛋白氮(NPN)都算進去</text>
+ <text x="320" y="222" text-anchor="middle" class="lbl" font-size="12">蛋白質 % = %N × 換算係數（一般 6.25／小麥 5.7／乳品 6.38）</text>
+ <defs><marker id="ar5" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
+</svg></div><div class="note" style="margin-top:8px"><strong>關鍵一句：</strong><strong>硼酸本身不需要標定</strong>——它只負責「捕捉」NH₃，真正用來定量的是後面已<strong>標準化</strong>的 HCl。　<a href="https://tai-shengyeh.github.io/food-analysis-decks/ch18_protein_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 完整原理 deck (Nielsen Ch18) →</a></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">蛋白質 = %N × 換算係數</div><h2 class="slide-title">凱氏法量的是「總氮」，不是「蛋白質」</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>換算係數</th><th>適用</th><th>理由(簡述)</th></tr></thead><tbody><tr><td class="c">6.25</td><td>一般食品(通用值)</td><td>假設蛋白質平均含氮 16%（1/0.16=6.25）</td></tr><tr><td class="c">5.7</td><td>小麥／穀類</td><td>穀類蛋白麩質含氮比例較高，需用較小係數</td></tr><tr><td class="c">6.38</td><td>乳品</td><td>酪蛋白等乳蛋白含氮比例較低，需用較大係數</td></tr></tbody></table><div class="note" style="margin-top:12px"><strong>凱氏法(與 Dumas 燃燒法一樣)量的是「總氮」</strong>，包含蛋白質氮，也包含<strong>非蛋白氮(non-protein nitrogen, NPN)</strong>——例如三聚氰胺、尿素、游離胺基酸、核酸等。換算係數是「假設氮全部來自蛋白質」下的近似值，一旦樣品混了高氮的非蛋白物質，算出來的「蛋白質%」就會被<strong>虛增</strong>。<br><strong>Dumas 燃燒法：</strong>把樣品在高溫下完全燃燒，直接測氮氣量，比凱氏法快(數分鐘 vs 數小時)，但一樣測的是總氮、一樣會被 NPN 干擾——本次實驗不做，僅供比較認識。</div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">重新算一次</div><h2 class="slide-title">三聚氰胺事件：為什麼凱氏法會被騙？</h2><div class="grid2" style="margin-top:10px"><div><p class="lead">三聚氰胺 (melamine, C₃H₆N₆)：MW=126.12，含氮量高達 <b>66.63%</b></p><ul class="clean" style="margin-top:10px"><li>正常牛奶的氮幾乎全來自<strong>酪蛋白等乳蛋白</strong>(蛋白質氮)</li><li>不肖業者把水稀釋過的奶粉，故意加入三聚氰胺——它<strong>不是蛋白質</strong>，但氮含量極高</li><li>凱氏法只看「總氮」，分不出這個氮是蛋白質來的還是三聚氰胺來的</li></ul></div><div class="note"><strong>算給你看：</strong>每混入 <b>1 g 三聚氰胺 / 100 g 樣品</b>(即 1% w/w)：<br>貢獻的 %N = 1% × 66.63% ≈ <b>0.6663 個百分點</b><br>以乳品係數 6.38 換算，虛增的表觀蛋白質 ≈ 0.6663 × 6.38 ≈ <b>4.25 個百分點</b><br><br>也就是說：只要摻入約 1% 的三聚氰胺，凱氏法測出的「蛋白質%」就能被拉高 <b>~4.3</b> 個百分點——足以把稀釋摻水、蛋白質本來不足的奶粉，偽裝成「合格」。</div></div></div></section><section class="slide" data-slide="8" data-section="維持注意" data-chart="melamine"><div class="slide-inner"><div class="kicker">事件重建・示意數據</div><h2 class="slide-title">摻偽曲線：三聚氰胺混入比例 vs <span class='hi'>表觀蛋白質</span></h2><div class="chartbox" style="height:46vh"><canvas id="chart_melamine"></canvas></div><div class="cap">示意數據：以全脂奶粉(真實蛋白質約 26.0%)為基準，x 軸為三聚氰胺混入比例(% w/w，等距)，y 軸為凱氏法測出的表觀蛋白質%。曲線之所以是直線上升，是因為凱氏法無法分辨氮的來源。</div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">校正與品管 (QC)</div><h2 class="slide-title">開始前／過程中要確認的 4 件事</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">⚗️</div><div class="ct">HCl 標定</div><div class="cb">滴定用的 HCl 須先用 Na₂CO₃ 或 THAM 等一級標準品標定出精確濃度，才能拿來換算 %N</div></div><div class="card a"><div class="ic">🧪</div><div class="ct">試劑空白 (blank)</div><div class="cb">空管走完整套消化＋蒸餾＋滴定流程(不加樣品)，扣除試劑本身帶入的微量氮</div></div></div><div class="grid2" style="margin-top:14px"><div class="card g"><div class="ic">♻️</div><div class="ct">蒸餾回收標準品</div><div class="cb">用已知氮量的<strong>硫酸銨</strong>(理論 %N=21.20%)走蒸餾＋滴定，檢查 NH₃ 有沒有被完全蒸出、捕捉</div></div><div class="card b"><div class="ic">🔬</div><div class="ct">消化效率標準品</div><div class="cb">用<strong>離胺酸鹽酸鹽或色胺酸</strong>等有機氮標準品走全流程，檢查消化階段是否把有機氮完全轉化</div></div></div><div class="note" style="margin-top:12px"><strong>算給你看(蒸餾回收)：</strong>秤 0.0500 g 硫酸銨(理論%N=21.20%)，走蒸餾＋滴定測得 %N=21.01%，回收率 = 21.01/21.20×100 ≈ <b>99.1%</b>（依方法可接受範圍通常需 ≥97%）。<br><strong>算給你看(消化效率)：</strong>離胺酸鹽酸鹽理論%N=15.34%，走全流程測得%N=15.10%，回收率≈<b>98.4%</b>。這兩個標準品本學期先由 TA 示範一管，讓全班理解原理，未列入下方 12 管的分組排程。<br><strong>指示劑終點一致性：</strong>全班用同一批 4% 硼酸＋混合指示劑，滴定終點顏色(粉紅→灰藍/綠)要一致，避免組間判讀落差。</div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">樣品與輪站分工</div><h2 class="slide-title">一套凱氏設備（消化爐 + 蒸餾儀），全班共用</h2><div class="grid2" style="margin-top:10px"><div><ul class="clean"><li>樣品：<strong>高筋麵粉</strong>、<strong>低筋(蛋糕)麵粉</strong>，以及全學期共同<strong>盲樣</strong>——同一份全脂奶粉，W2 測過水分、W3 測過灰分，本週測蛋白質</li><li>5 組分兩批：<strong>3 組</strong>測「高筋麵粉＋盲樣奶粉」、<strong>2 組</strong>測「低筋麵粉＋盲樣奶粉」——每組固定 2 管，全班盲樣結果可湊到 <b>n=5</b> 做平均值 ± SD</li><li>加上 1 管試劑空白、1 管蒸餾回收標準品(硫酸銨)：<b>5×2 ＋ 1 ＋ 1 = 12 管</b></li></ul></div><div class="note"><strong>⚠️ 請 TA 開課前務必確認：</strong>消化爐與蒸餾儀是否<strong>至少能容納 12 管</strong>同時排程，否則需分批消化，或縮減每組重複數。<br><br><strong>只有一套設備：</strong>所有管子<strong>一起消化</strong>，再依序輪流蒸餾＋滴定，每管約 8–10 分鐘。</div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">4 小時課程時間表</div><h2 class="slide-title">消化集中進行，蒸餾滴定輪站</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:20</td><td>講解＋安全：濃硫酸、NaOH 危害與應變</td></tr>
+    <tr><td class="c">0:20–0:50</td><td>各組秤樣，加入催化錠與濃硫酸(於通風櫃內操作)</td></tr>
+    <tr><td class="c">0:50–2:20</td><td>消化(全部 12 管一起加熱至澄清)——空檔進行換算係數討論、三聚氰胺案例、計算練習</td></tr>
+    <tr><td class="c">2:20–2:35</td><td>冷卻、加水稀釋(務必<strong>酸入水</strong>，不可水入酸)</td></tr>
+    <tr><td class="c">2:35–4:00</td><td>蒸餾＋滴定輪站(每管約 8–10 分鐘)，各組記錄自己樣品的滴定體積</td></tr>
+    </tbody></table>
+    <div class="note" style="margin-top:12px"><strong>若時間不夠：</strong>已消化完成的管子可加蓋暫存，
+    由 TA 於課後或下週協助完成蒸餾與滴定，不影響消化階段已完成的化學反應。</div></div></section><section class="slide" data-slide="12" data-section="維持注意"><div class="slide-inner"><div class="kicker">安全守則</div><h2 class="slide-title">濃硫酸 · NaOH · 廢液</h2><div class="grid2" style="margin-top:14px"><div class="card a"><div class="ic">🥽</div><div class="ct">濃硫酸高溫＋白煙</div><div class="cb">消化產生 SO₂/SO₃ 刺激性氣體，<strong>全程在通風櫃/洗滌塔下</strong>操作；配戴面罩與耐酸手套</div></div><div class="card b"><div class="ic">💧</div><div class="ct">稀釋一定酸入水</div><div class="cb">冷卻後才能加水稀釋，且務必<strong>將酸緩慢倒入水中</strong>，絕不可把水倒入濃酸——否則會噴濺灼傷</div></div><div class="card a"><div class="ic">⚠️</div><div class="ct">40% NaOH 具強腐蝕性</div><div class="cb">蒸餾時加入的 NaOH 濃度高，沾到皮膚/眼睛立即大量清水沖洗並通知助教</div></div><div class="card g"><div class="ic">♻️</div><div class="ct">銅觸媒廢液分開收集</div><div class="cb">消化後含銅廢液屬重金屬廢液，須依規定<strong>分開收集</strong>，不可與一般廢液混合</div></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">凱氏定氮法操作流程排序</span><span class="score" id="g4score">— / 7</span></div><div class="game-q">用 ▲▼ 把凱氏定氮法的 7 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="14" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">食品配對它的換算係數</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 種食品分到它應該使用的「換算係數」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">計算：從滴定量到 % 蛋白質</div><h2 class="slide-title">先扣空白，再乘換算係數</h2><div class="eq" style="margin-top:10px">%N = <span class="frac"><b>(V<sub>樣品</sub> − V<sub>空白</sub>) × N<sub>HCl</sub> × 14.007</b><span>W<sub>樣品</sub>(g) × 1000</span></span> × 100　　蛋白質% = %N × 換算係數</div><div class="grid2" style="margin-top:14px"><div class="note"><strong>全脂奶粉(盲樣)範例：</strong>秤 0.5000 g，空白 0.30 mL，滴定用去 14.86 mL，0.1000 N HCl<br>%N = (14.86−0.30)×0.1000×14.007/(0.5000×1000)×100 ≈ <b>4.079%</b><br>蛋白質% = 4.079 × 6.38 ≈ <b>26.02%</b>（乳品係數）</div><div class="note"><strong>高筋麵粉範例：</strong>秤 1.0000 g，空白 0.30 mL，滴定用去 16.58 mL，0.1000 N HCl<br>%N ≈ <b>2.280%</b>；蛋白質%(係數5.7) = 2.280×5.7 ≈ <b>13.00%</b></div></div><div class="note" style="margin-top:10px"><strong>⚠️ 係數選錯的代價：</strong>同一份高筋麵粉的 %N，若誤用一般係數 6.25 而非小麥係數 5.7，算出的蛋白質% 會從 13.00% 變成 14.25%——<strong>虛高約 9.6%</strong>（相對誤差），這是一種<strong>系統性誤差(systematic error)</strong>，跟三聚氰胺一樣，都跟「氮不等於蛋白質」這個假設有關，只是原因不同(選錯係數 vs 樣品被摻偽)。<br>低筋(蛋糕)麵粉%N≈1.404%，蛋白質%(係數5.7)≈<b>8.00%</b>——比高筋麵粉低，這正是烘焙時「高筋做麵包、低筋做蛋糕」的依據。</div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：全脂奶粉的蛋白質 %</span><span class="score" id="g6score">未作答</span></div><div class="game-q">秤 <b>0.5020 g</b> 全脂奶粉，試劑空白 <b>0.32 mL</b>，滴定用去 <b>15.02 mL</b> 的 <b>0.1000 N</b> HCl。求蛋白質 %（乳品換算係數 6.38）。公式：%N=(V樣品−V空白)×N×14.007/(W×1000)×100，蛋白質%=%N×6.38。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">凱氏法原理 即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="18" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：QC 與判讀</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">課後作業</div><h2 class="slide-title">Colab NB05（即將上線）</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📥</div><div class="ct">讀入滴定紀錄</div><div class="cb">載入本組與全班的滴定體積、樣品重量原始資料</div></div><div class="card a"><div class="ic">🧮</div><div class="ct">算 %N 與蛋白質%</div><div class="cb">兩種麵粉＋盲樣：計算 %N、蛋白質%，並彙整全班盲樣的平均值 ± SD(n=5)</div></div><div class="card g"><div class="ic">♻️</div><div class="ct">回收率與係數討論</div><div class="cb">討論蒸餾回收率、消化效率標準品的意義，以及選錯換算係數/遇到 NPN 的影響</div></div></div><p class="subtitle" style="margin-top:12px">NB05 連結<strong>即將上線</strong>，屆時公告在課程網頁。<br>報告需包含：兩種麵粉與盲樣的 %N、蛋白質%（盲樣為全班平均值 ± SD）、蒸餾回收率、以及對「換算係數」與「非蛋白氮」的討論。<br><strong>盲樣結果留著別丟：</strong>本週測得的全脂奶粉蛋白質%，將在 <strong>W8</strong> 與水分(W2)、灰分(W3) 一起彙整回顧。</p></div></section><section class="slide" data-slide="20" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出凱氏定氮法的三個階段：消化、蒸餾、滴定，以及各自的目的</li><li data-k><span class="bx">✓</span>解釋為什麼凱氏法量到的是「總氮」而不是「蛋白質」，並區分蛋白質氮與非蛋白氮(NPN)</li><li data-k><span class="bx">✓</span>重新計算三聚氰胺事件：混入多少比例會虛增多少表觀蛋白質</li><li data-k><span class="bx">✓</span>選對換算係數(一般6.25／小麥穀類5.7／乳品6.38)，並說出選錯的後果</li><li data-k><span class="bx">✓</span>用 %N 公式從滴定體積算出樣品的 %N 與蛋白質%</li><li data-k><span class="bx">✓</span>說出蒸餾回收標準品(硫酸銨)與消化效率標準品(胺基酸)分別在檢查什麼</li><li data-k><span class="bx">✓</span>完成一次凱氏定氮法的分組操作(消化＋蒸餾＋滴定)</li><li data-k><span class="bx">✓</span>遵守濃硫酸／NaOH 相關的安全守則</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><script>window.CFG={"charts": {"melamine": {"type": "line", "yTitle": "表觀蛋白質 %（x軸：三聚氰胺混入比例 % w/w）", "zero": false, "labels": ["0", "0.2", "0.4", "0.6", "0.8", "1"], "datasets": [{"label": "全脂奶粉基準 26.0%＋三聚氰胺(示意數據)", "data": [26.02, 26.87, 27.72, 28.57, 29.42, 30.27], "color": "#d94f4f"}]}}, "bucket": {"g1": {"cats": ["蛋白質氮", "非蛋白氮 (NPN)"], "items": [{"t": "酪蛋白 (casein，乳品主要蛋白)", "c": "蛋白質氮"}, {"t": "麥穀蛋白 (gluten，小麥蛋白)", "c": "蛋白質氮"}, {"t": "肌肉蛋白 (肌動蛋白/肌凝蛋白)", "c": "蛋白質氮"}, {"t": "酵素蛋白 (enzyme protein)", "c": "蛋白質氮"}, {"t": "三聚氰胺 (melamine)", "c": "非蛋白氮 (NPN)"}, {"t": "尿素 (urea)", "c": "非蛋白氮 (NPN)"}, {"t": "游離胺基酸 (free amino acids)", "c": "非蛋白氮 (NPN)"}, {"t": "核酸 (nucleic acids，DNA/RNA)", "c": "非蛋白氮 (NPN)"}], "ok": "🎉 全對！真正組成蛋白質胜肽鏈的氮→蛋白質氮；沒有形成蛋白質結構、卻含氮的小分子→非蛋白氮。", "tip": "提示：想想這個分子是不是胺基酸「串起來」形成的蛋白質——不是的話，通常就是 NPN。"}, "g3": {"cats": ["一般 6.25", "小麥/穀類 5.7", "乳品 6.38"], "items": [{"t": "高筋麵粉", "c": "小麥/穀類 5.7"}, {"t": "低筋(蛋糕)麵粉", "c": "小麥/穀類 5.7"}, {"t": "全脂奶粉", "c": "乳品 6.38"}, {"t": "鮮奶", "c": "乳品 6.38"}, {"t": "黃豆(大豆)", "c": "一般 6.25"}, {"t": "雞蛋", "c": "一般 6.25"}], "ok": "🎉 正確！小麥/穀類製品用 5.7；乳品用 6.38；其餘一般食品用通用值 6.25。", "tip": "提示：先問「是不是小麥/穀類做的」→5.7；再問「是不是乳品」→6.38；都不是→用一般值 6.25。"}}, "mcq": {"g2": [{"q": "消化階段加入 K₂SO₄/CuSO₄ 觸媒錠的主要目的是？", "o": ["讓溶液變色方便觀察", "K₂SO₄ 提高硫酸沸點、CuSO₄ 加速有機質氧化分解", "降低反應溫度", "中和多餘的酸"], "a": 1, "e": "K₂SO₄ 讓硫酸能加熱到更高溫(~420°C)，CuSO₄ 則作為觸媒加速有機氮氧化成銨鹽，兩者合力縮短消化時間。"}, {"q": "為什麼捕捉 NH₃ 用的硼酸不需要事先標定濃度？", "o": ["硼酸太便宜不值得標定", "硼酸只負責捕捉 NH₃，真正定量靠後面標準化的 HCl 滴定", "硼酸濃度本來就固定不變", "因為 NH₃ 不會跟硼酸反應"], "a": 1, "e": "硼酸捕捉 NH₃ 只需過量即可，最後是用已知濃度的 HCl 去滴定捕捉到的氨，所以硼酸本身的精確濃度不影響結果。"}, {"q": "試劑空白 (reagent blank) 主要在修正什麼？", "o": ["樣品秤重的誤差", "試劑本身(硫酸、觸媒、水等)帶入的微量氮，避免高估樣品的 %N", "滴定管刻度的誤差", "室溫變化造成的體積誤差"], "a": 1, "e": "空白管不加樣品、走完整流程，測到的滴定量代表試劑本身的背景氮，須從樣品讀值中扣除。"}, {"q": "三聚氰胺事件中，凱氏法測出的蛋白質%被虛增，根本原因是？", "o": ["三聚氰胺會讓滴定管故障", "凱氏法只測「總氮」，無法分辨氮是蛋白質來的還是三聚氰胺來的", "三聚氰胺本身就是一種蛋白質", "滴定用的HCl濃度不對"], "a": 1, "e": "凱氏法(及Dumas法)的假設是「氮都來自蛋白質」；三聚氰胺氮含量高卻不是蛋白質，混入後會被誤算成蛋白質，虛增結果。"}, {"q": "分析小麥麵粉與全脂奶粉時，應分別使用哪一組換算係數？", "o": ["都用 6.25", "小麥用 5.7，乳品用 6.38", "小麥用 6.38，乳品用 5.7", "隨意選一個都可以"], "a": 1, "e": "小麥/穀類慣例用 5.7，乳品慣例用 6.38，都是依各類蛋白質的實際平均含氮比例訂出的係數，非通用的 6.25。"}], "g5": [{"q": "消化結束後，燒瓶內溶液仍呈深褐色、不透明，不是預期的澄清狀態，代表？", "o": ["消化已完成，可以進入蒸餾", "消化不完全，有機質尚未完全氧化，繼續加熱至澄清", "樣品完全沒有氮", "應立即加水稀釋"], "a": 1, "e": "消化終點的判斷是溶液轉為澄清(通常帶淡藍綠色，來自CuSO₄)，不澄清代表氧化不完全，會低估後續測得的氮量。"}, {"q": "蒸餾回收標準品(硫酸銨)測得的回收率明顯偏低(如85%)，最可能的問題出在？", "o": ["消化階段的觸媒配方", "蒸餾階段：NaOH 加得不夠、蒸氣量不足或冷凝端漏氣，NH₃ 沒被完全捕捉", "樣品秤重的天平校正", "滴定管的刻度誤差"], "a": 1, "e": "硫酸銨本身已是無機銨鹽、不需消化，直接測試的是蒸餾(釋出並捕捉NH₃)這一步是否完整，回收率低通常指向蒸餾條件或裝置密合度。"}, {"q": "想快速篩選大量樣品的總氮量，且不需要區分氮的來源，可以考慮改用哪個方法？", "o": ["Dumas 燃燒法", "只測水分含量", "只測灰分含量", "肉眼判斷"], "a": 0, "e": "Dumas 燃燒法把樣品完全燃燒直接測氮氣量，比凱氏法快很多，但一樣測總氮、一樣會被NPN干擾，是常見的替代/互補方法。"}, {"q": "同一批高筋麵粉的 %N 不變，若誤用一般係數 6.25 而非小麥係數 5.7 去換算，結果會？", "o": ["蛋白質% 被低估", "蛋白質% 被高估，且是系統性的換算誤差", "結果完全不受影響", "%N 本身也會跟著改變"], "a": 1, "e": "6.25 比 5.7 大，用較大的係數乘同一個 %N，換算出的蛋白質% 會系統性地偏高(約9.6%的相對誤差)，這跟儀器準確度無關，是選錯係數造成的誤差。"}, {"q": "報告全脂奶粉(全班共同盲樣)的蛋白質%時，比較嚴謹的做法是？", "o": ["只取自己這一組的單一數值", "彙整全班 5 組的重複結果，報告平均值 ± 標準差(SD)", "隨便挑一組看起來最漂亮的數字", "取最大值當作代表值"], "a": 1, "e": "同一盲樣由5組各測一次，等於有n=5的重複，彙整平均值±SD比單一組的數字更能反映真實變異與可信度。"}]}, "sort": {"g4": {"steps": ["精確秤取定量樣品，置於消化管", "加入催化錠與濃硫酸", "加熱消化至溶液澄清(有機氮轉為銨鹽)", "冷卻，加水稀釋(酸入水)", "加入 40% NaOH，蒸餾使 NH₃ 釋出並收集於硼酸", "以標準化 HCl 滴定至指示劑終點", "以 %N 公式計算，再乘以換算係數得蛋白質%"], "shuffle": [4, 1, 6, 0, 5, 2, 3], "ok": "🎉 順序正確！秤樣→加催化劑與硫酸→消化至澄清→冷卻稀釋→蒸餾至硼酸→HCl滴定→計算。", "tip": "提示：一定要先消化到澄清才能蒸餾；滴定要在蒸餾收集完成之後；計算是最後一步。"}}, "calc": {"g6": {"answer": 26.17, "tol": 0.3, "ok": "🎉 正確！%N = (15.02−0.32)×0.1000×14.007/(0.5020×1000)×100 ≈ 4.102%；蛋白質% = 4.102×6.38 ≈ <b>26.17%<\/b>。", "bad": "再算算：先算 %N=(V樣品−V空白)×N×14.007/(W×1000)×100，再乘以乳品係數 6.38 才是蛋白質%。", "hint": "提示：(15.02−0.32)=14.70 mL；14.70×0.1000×14.007≈20.5903；除以(0.5020×1000)再×100≈4.102%；×6.38≈26.17%。"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>
