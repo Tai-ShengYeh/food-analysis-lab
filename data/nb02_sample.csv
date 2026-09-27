@@ -1,0 +1,137 @@
+group,student,item,rep,value,unit,temp_C,note,sample
+1,G1_S1,oven_dish_g,1,18.8698,g,103.4,,beef_jerky
+1,G1_S1,oven_wet_g,1,21.8178,g,103.4,,beef_jerky
+1,G1_S1,oven_dry1_g,1,21.2171,g,103.4,,beef_jerky
+1,G1_S1,oven_dry2_g,1,21.2158,g,103.4,第2次與第1次秤重差 ≤ 2 mg，達恆重,beef_jerky
+1,G1_S1,ir_moisture_pct,1,19.63,%,25.5,,beef_jerky
+1,G1_S2,oven_dish_g,1,18.9303,g,105.6,,beef_jerky
+1,G1_S2,oven_wet_g,1,21.9295,g,105.6,,beef_jerky
+1,G1_S2,oven_dry1_g,1,21.3425,g,105.6,,beef_jerky
+1,G1_S2,oven_dry2_g,1,21.3418,g,105.6,第2次與第1次秤重差 ≤ 2 mg，達恆重,beef_jerky
+1,G1_S2,ir_moisture_pct,1,19.22,%,25.6,,beef_jerky
+1,G1_S3,oven_dish_g,1,17.2171,g,105.7,,beef_jerky
+1,G1_S3,oven_wet_g,1,20.1741,g,105.7,,beef_jerky
+1,G1_S3,oven_dry1_g,1,19.5772,g,105.7,,beef_jerky
+1,G1_S3,oven_dry2_g,1,19.577,g,105.7,第2次與第1次秤重差 ≤ 2 mg，達恆重,beef_jerky
+1,G1_S3,ir_moisture_pct,1,19.78,%,25.5,,beef_jerky
+2,G2_S1,oven_dish_g,1,16.7726,g,104.7,,dried_longan
+2,G2_S1,oven_wet_g,1,19.8337,g,104.7,,dried_longan
+2,G2_S1,oven_dry1_g,1,19.2238,g,104.7,,dried_longan
+2,G2_S1,oven_dry2_g,1,19.2224,g,104.7,第2次與第1次秤重差 ≤ 2 mg，達恆重,dried_longan
+2,G2_S1,ir_moisture_pct,1,19.73,%,24.1,,dried_longan
+2,G2_S2,oven_dish_g,1,15.7714,g,104.6,,dried_longan
+2,G2_S2,oven_wet_g,1,18.7929,g,104.6,,dried_longan
+2,G2_S2,oven_dry1_g,1,18.1562,g,104.6,,dried_longan
+2,G2_S2,oven_dry2_g,1,18.1545,g,104.6,第2次與第1次秤重差 ≤ 2 mg，達恆重,dried_longan
+2,G2_S2,ir_moisture_pct,1,20.48,%,24.9,,dried_longan
+2,G2_S3,oven_dish_g,1,15.9474,g,105.5,,dried_longan
+2,G2_S3,oven_wet_g,1,18.9417,g,105.5,,dried_longan
+2,G2_S3,oven_dry1_g,1,18.3554,g,105.5,,dried_longan
+2,G2_S3,oven_dry2_g,1,18.3549,g,105.5,第2次與第1次秤重差 ≤ 2 mg，達恆重,dried_longan
+2,G2_S3,ir_moisture_pct,1,19.42,%,25.7,,dried_longan
+3,G3_S1,oven_dish_g,1,18.5013,g,105.1,,white_bread
+3,G3_S1,oven_wet_g,1,21.5285,g,105.1,,white_bread
+3,G3_S1,oven_dry1_g,1,20.4791,g,105.1,,white_bread
+3,G3_S1,oven_dry2_g,1,20.4776,g,105.1,第2次與第1次秤重差 ≤ 2 mg，達恆重,white_bread
+3,G3_S1,ir_moisture_pct,1,34.38,%,25.4,,white_bread
+3,G3_S2,oven_dish_g,1,15.6988,g,103.8,,white_bread
+3,G3_S2,oven_wet_g,1,18.7327,g,103.8,,white_bread
+3,G3_S2,oven_dry1_g,1,17.6698,g,103.8,,white_bread
+3,G3_S2,oven_dry2_g,1,17.6634,g,103.8,第2次與第1次秤重差 > 2 mg，尚未恆重，需再烘1小時,white_bread
+3,G3_S2,oven_dry3_g,1,17.6623,g,103.8,第3次與第2次秤重差 ≤ 2 mg，達恆重,white_bread
+3,G3_S2,ir_moisture_pct,1,34.79,%,24.9,,white_bread
+3,G3_S3,oven_dish_g,1,17.8437,g,105.8,,white_bread
+3,G3_S3,oven_wet_g,1,20.8299,g,105.8,,white_bread
+3,G3_S3,oven_dry1_g,1,19.7624,g,105.8,,white_bread
+3,G3_S3,oven_dry2_g,1,19.7612,g,105.8,第2次與第1次秤重差 ≤ 2 mg，達恆重,white_bread
+3,G3_S3,ir_moisture_pct,1,34.88,%,25.5,,white_bread
+4,G4_S1,oven_dish_g,1,18.1736,g,104.7,,potato_chips
+4,G4_S1,oven_wet_g,1,21.2029,g,104.7,,potato_chips
+4,G4_S1,oven_dry1_g,1,21.1315,g,104.7,,potato_chips
+4,G4_S1,oven_dry2_g,1,21.1309,g,104.7,第2次與第1次秤重差 ≤ 2 mg，達恆重,potato_chips
+4,G4_S1,ir_moisture_pct,1,1.84,%,24.4,,potato_chips
+4,G4_S2,oven_dish_g,1,17.0426,g,105.4,,potato_chips
+4,G4_S2,oven_wet_g,1,19.9788,g,105.4,,potato_chips
+4,G4_S2,oven_dry1_g,1,19.9367,g,105.4,,potato_chips
+4,G4_S2,oven_dry2_g,1,19.9365,g,105.4,第2次與第1次秤重差 ≤ 2 mg，達恆重,potato_chips
+4,G4_S2,ir_moisture_pct,1,1.08,%,25.3,,potato_chips
+4,G4_S3,oven_dish_g,1,17.7852,g,105.4,,potato_chips
+4,G4_S3,oven_wet_g,1,20.7931,g,105.4,,potato_chips
+4,G4_S3,oven_dry1_g,1,20.7235,g,105.4,,potato_chips
+4,G4_S3,oven_dry2_g,1,20.7227,g,105.4,第2次與第1次秤重差 ≤ 2 mg，達恆重,potato_chips
+4,G4_S3,ir_moisture_pct,1,1.74,%,24.0,,potato_chips
+5,G5_S1,oven_dish_g,1,15.4502,g,105.0,,milk_powder
+5,G5_S1,oven_wet_g,1,18.3904,g,105.0,,milk_powder
+5,G5_S1,oven_dry1_g,1,18.295,g,105.0,,milk_powder
+5,G5_S1,oven_dry2_g,1,18.2946,g,105.0,第2次與第1次秤重差 ≤ 2 mg，達恆重,milk_powder
+5,G5_S1,ir_moisture_pct,1,3.0,%,25.4,,milk_powder
+5,G5_S2,oven_dish_g,1,17.2308,g,103.7,,milk_powder
+5,G5_S2,oven_wet_g,1,20.2259,g,103.7,,milk_powder
+5,G5_S2,oven_dry1_g,1,20.1424,g,103.7,,milk_powder
+5,G5_S2,oven_dry2_g,1,20.1412,g,103.7,第2次與第1次秤重差 ≤ 2 mg，達恆重,milk_powder
+5,G5_S2,ir_moisture_pct,1,1.99,%,24.2,,milk_powder
+5,G5_S3,oven_dish_g,1,19.8095,g,106.0,,milk_powder
+5,G5_S3,oven_wet_g,1,22.8295,g,106.0,,milk_powder
+5,G5_S3,oven_dry1_g,1,22.7526,g,106.0,,milk_powder
+5,G5_S3,oven_dry2_g,1,22.752,g,106.0,第2次與第1次秤重差 ≤ 2 mg，達恆重,milk_powder
+5,G5_S3,ir_moisture_pct,1,2.06,%,25.4,,milk_powder
+1,G1_S1,moisture_pct_survey,1,19.07,%,24.2,,beef_jerky
+1,G1_S1,aw_reading,1,0.747,aw,24.2,,beef_jerky
+1,G1_S1,moisture_pct_survey,1,19.66,%,24.4,,dried_longan
+1,G1_S1,aw_reading,1,0.613,aw,24.4,,dried_longan
+1,G1_S1,moisture_pct_survey,1,35.76,%,24.4,,white_bread
+1,G1_S1,aw_reading,1,0.954,aw,24.4,,white_bread
+1,G1_S1,moisture_pct_survey,1,1.28,%,25.4,,potato_chips
+1,G1_S1,aw_reading,1,0.201,aw,25.4,,potato_chips
+1,G1_S1,moisture_pct_survey,1,3.12,%,25.2,,milk_powder
+1,G1_S1,aw_reading,1,0.25,aw,25.2,,milk_powder
+1,G1_S1,moisture_pct_survey,1,16.8,%,24.8,蜂蜜以紅外線水分計量測(不適用常壓烘箱),honey
+1,G1_S1,aw_reading,1,0.585,aw,24.8,,honey
+2,G2_S1,moisture_pct_survey,1,20.22,%,24.7,,beef_jerky
+2,G2_S1,aw_reading,1,0.77,aw,24.7,,beef_jerky
+2,G2_S1,moisture_pct_survey,1,20.36,%,25.2,,dried_longan
+2,G2_S1,aw_reading,1,0.622,aw,25.2,,dried_longan
+2,G2_S1,moisture_pct_survey,1,33.88,%,25.2,,white_bread
+2,G2_S1,aw_reading,1,0.936,aw,25.2,,white_bread
+2,G2_S1,moisture_pct_survey,1,1.31,%,24.0,,potato_chips
+2,G2_S1,aw_reading,1,0.21,aw,24.0,,potato_chips
+2,G2_S1,moisture_pct_survey,1,2.26,%,25.6,,milk_powder
+2,G2_S1,aw_reading,1,0.235,aw,25.6,,milk_powder
+2,G2_S1,moisture_pct_survey,1,17.71,%,25.0,蜂蜜以紅外線水分計量測(不適用常壓烘箱),honey
+2,G2_S1,aw_reading,1,0.63,aw,25.0,,honey
+3,G3_S1,moisture_pct_survey,1,20.41,%,24.9,,beef_jerky
+3,G3_S1,aw_reading,1,0.735,aw,24.9,,beef_jerky
+3,G3_S1,moisture_pct_survey,1,20.27,%,25.0,,dried_longan
+3,G3_S1,aw_reading,1,0.588,aw,25.0,,dried_longan
+3,G3_S1,moisture_pct_survey,1,33.93,%,25.7,,white_bread
+3,G3_S1,aw_reading,1,0.948,aw,25.7,,white_bread
+3,G3_S1,moisture_pct_survey,1,2.08,%,25.1,,potato_chips
+3,G3_S1,aw_reading,1,0.198,aw,25.1,,potato_chips
+3,G3_S1,moisture_pct_survey,1,2.16,%,24.6,,milk_powder
+3,G3_S1,aw_reading,1,0.243,aw,24.6,,milk_powder
+3,G3_S1,moisture_pct_survey,1,17.24,%,25.5,蜂蜜以紅外線水分計量測(不適用常壓烘箱),honey
+3,G3_S1,aw_reading,1,0.627,aw,25.5,,honey
+4,G4_S1,moisture_pct_survey,1,20.98,%,24.5,,beef_jerky
+4,G4_S1,aw_reading,1,0.743,aw,24.5,,beef_jerky
+4,G4_S1,moisture_pct_survey,1,19.03,%,24.7,,dried_longan
+4,G4_S1,aw_reading,1,0.589,aw,24.7,,dried_longan
+4,G4_S1,moisture_pct_survey,1,33.56,%,24.6,,white_bread
+4,G4_S1,aw_reading,1,0.963,aw,24.6,,white_bread
+4,G4_S1,moisture_pct_survey,1,2.47,%,25.0,,potato_chips
+4,G4_S1,aw_reading,1,0.206,aw,25.0,,potato_chips
+4,G4_S1,moisture_pct_survey,1,2.98,%,24.3,,milk_powder
+4,G4_S1,aw_reading,1,0.24,aw,24.3,,milk_powder
+4,G4_S1,moisture_pct_survey,1,16.61,%,26.0,蜂蜜以紅外線水分計量測(不適用常壓烘箱),honey
+4,G4_S1,aw_reading,1,0.582,aw,26.0,,honey
+5,G5_S1,moisture_pct_survey,1,20.17,%,25.8,,beef_jerky
+5,G5_S1,aw_reading,1,0.774,aw,25.8,,beef_jerky
+5,G5_S1,moisture_pct_survey,1,19.88,%,24.6,,dried_longan
+5,G5_S1,aw_reading,1,0.604,aw,24.6,,dried_longan
+5,G5_S1,moisture_pct_survey,1,35.38,%,24.7,,white_bread
+5,G5_S1,aw_reading,1,0.944,aw,24.7,,white_bread
+5,G5_S1,moisture_pct_survey,1,2.21,%,24.5,,potato_chips
+5,G5_S1,aw_reading,1,0.223,aw,24.5,,potato_chips
+5,G5_S1,moisture_pct_survey,1,2.39,%,24.2,,milk_powder
+5,G5_S1,aw_reading,1,0.229,aw,24.2,,milk_powder
+5,G5_S1,moisture_pct_survey,1,18.47,%,24.4,蜂蜜以紅外線水分計量測(不適用常壓烘箱),honey
+5,G5_S1,aw_reading,1,0.597,aw,24.4,,honey

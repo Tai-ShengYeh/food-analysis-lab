@@ -182,25 +182,57 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <text x="485" y="128" text-anchor="middle" class="lbl">才能開始滴定</text>
  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#48597a"/></marker></defs>
 </svg></div><div class="note" style="margin-top:10px"><strong>NaOH 用 KHP 標定：</strong>鄰苯二甲酸氫鉀(KHP，MW 204.22，須先乾燥)純、不吸濕，是理想的一級標準酸——NaOH 強吸濕又吸空氣中 CO₂，每批都要重新標定。<br><strong>試劑與探棒：</strong>配製 NaOH 用<strong>去 CO₂ 水</strong>(煮沸或通氮)；pH 感測器要在 PASCO 軟體內用 <strong>pH 4/7/10</strong> 緩衝液做兩/三點校正並做溫度補償，才能開始滴定。<br><strong>若系統以滴數計量體積：</strong>要先用秤重法校正「每滴等於多少 mL」（沿用 W1 的方法），滴數本身不是體積單位。</div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">滴定操作</div><h2 class="slide-title">手動滴定 <span class='hi'>vs</span> PASCO 自動滴定</h2><p class="subtitle">手動：滴定管滴加 0.1 N NaOH，酚酞持續粉紅為終點，每樣品三重複。PASCO：電動滴定管＋pH 探棒，無線即時把 pH–體積曲線傳到筆電並投影，全班同步看曲線成形。</p><div class="svgwrap" style="margin-top:8px">
-<svg viewBox="0 0 620 260" style="max-height:230px;width:auto">
+<svg viewBox="0 0 620 290" style="max-height:250px;width:auto">
  <text x="310" y="20" text-anchor="middle" class="lblb" font-size="15">PASCO 教學型自動滴定：無線即時傳輸、全班同步看曲線</text>
- <rect x="40" y="60" width="26" height="130" rx="5" fill="#cfe0f6" stroke="#1f6feb" stroke-width="2"/>
- <text x="53" y="204" text-anchor="middle" class="lbl">電動滴定管</text>
- <path d="M150 150 h120 v40 a10 10 0 0 1 -10 10 h-100 a10 10 0 0 1 -10 -10 Z" fill="#e7f0fe" stroke="#48597a" stroke-width="2"/>
- <text x="210" y="220" text-anchor="middle" class="lbl">樣品 + 酚酞</text>
- <rect x="190" y="90" width="20" height="70" rx="4" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <text x="200" y="80" text-anchor="middle" class="lbl">pH 探棒</text>
- <path d="M66 90 q40 -10 84 20" fill="none" stroke="#48597a" stroke-width="1.6"/>
- <g stroke="#1f9d6b" stroke-width="2" fill="none">
-  <path d="M330 90 q10 -14 20 0"/><path d="M330 96 q16 -22 32 0"/><path d="M330 102 q22 -30 44 0"/>
+ <!-- stand + clamp -->
+ <rect x="22" y="270" width="150" height="8" rx="2" fill="#cfd8e6"/>
+ <rect x="36" y="36" width="5" height="236" fill="#9aa8bf"/>
+ <rect x="38" y="62" width="56" height="5" rx="2" fill="#9aa8bf"/>
+ <!-- burette: straight graduated tube, 0 at top, stopcock, tip into beaker -->
+ <rect x="92" y="40" width="12" height="140" fill="#ffffff" stroke="#1f6feb" stroke-width="2"/>
+ <rect x="93" y="70" width="10" height="109" fill="#e7f0fe"/>
+ <g stroke="#1f6feb" stroke-width="1">
+  <line x1="92" y1="50" x2="100" y2="50"/><line x1="92" y1="76" x2="100" y2="76"/><line x1="92" y1="102" x2="100" y2="102"/>
+  <line x1="92" y1="128" x2="100" y2="128"/><line x1="92" y1="154" x2="100" y2="154"/>
+  <line x1="92" y1="63" x2="96" y2="63"/><line x1="92" y1="89" x2="96" y2="89"/><line x1="92" y1="115" x2="96" y2="115"/><line x1="92" y1="141" x2="96" y2="141"/><line x1="92" y1="167" x2="96" y2="167"/>
  </g>
- <text x="370" y="70" text-anchor="middle" class="lbl" fill="#1f9d6b">無線傳輸</text>
- <rect x="400" y="60" width="180" height="120" rx="10" fill="#f6f9fd" stroke="#1f6feb" stroke-width="2"/>
- <text x="490" y="80" text-anchor="middle" class="lblb" font-size="12">筆電 + 投影</text>
- <polyline points="415,150 435,130 455,140 475,100 495,150 515,95 535,150 555,120"
+ <text x="110" y="54" class="lbl" font-size="10" fill="#1f6feb">0</text>
+ <rect x="84" y="182" width="28" height="4" rx="2" fill="#1f6feb"/>
+ <path d="M95 180 H101 L99.5 204 H96.5 Z" fill="#ffffff" stroke="#1f6feb" stroke-width="1.5"/>
+ <text x="118" y="112" class="lbl" font-size="11">滴定管</text>
+ <text x="118" y="127" class="lbl" font-size="11">NaOH</text>
+ <!-- beaker on stir plate -->
+ <path d="M58 200 V258 a6 6 0 0 0 6 6 H138 a6 6 0 0 0 6 -6 V200" fill="none" stroke="#48597a" stroke-width="2"/>
+ <path d="M59 222 H143 V258 a5 5 0 0 1 -5 5 H64 a5 5 0 0 1 -5 -5 Z" fill="#f7d6e6"/>
+ <rect x="86" y="256" width="24" height="5" rx="2.5" fill="#48597a"/>
+ <rect x="48" y="266" width="106" height="6" rx="2" fill="#48597a"/>
+ <text x="100" y="288" text-anchor="middle" class="lbl" font-size="11">樣品＋酚酞，磁石攪拌</text>
+ <!-- pH probe + wireless sensor -->
+ <rect x="122" y="160" width="8" height="90" rx="3" fill="#fbeede" stroke="#d9822b" stroke-width="1.8"/>
+ <circle cx="126" cy="248" r="4" fill="#d9822b"/>
+ <path d="M126 160 C 126 140, 150 140, 168 146" fill="none" stroke="#48597a" stroke-width="1.5"/>
+ <rect x="168" y="136" width="66" height="24" rx="5" fill="#fbeede" stroke="#d9822b" stroke-width="1.8"/>
+ <text x="201" y="152" text-anchor="middle" class="lbl" font-size="10">pH 感測器</text>
+ <!-- wireless -->
+ <g stroke="#1f9d6b" stroke-width="2" fill="none">
+  <path d="M244 140 q8 8 0 16"/><path d="M252 134 q14 14 0 28"/><path d="M260 128 q20 20 0 40"/>
+ </g>
+ <text x="290" y="152" class="lbl" fill="#1f9d6b">無線傳輸</text>
+ <!-- laptop with S-shaped weak-acid titration curve -->
+ <rect x="390" y="60" width="200" height="120" rx="8" fill="#f6f9fd" stroke="#1f6feb" stroke-width="2"/>
+ <path d="M372 180 H608 L596 192 H384 Z" fill="#cfd8e6" stroke="#48597a" stroke-width="1.5"/>
+ <line x1="405" y1="160" x2="572" y2="160" stroke="#48597a" stroke-width="1.2"/>
+ <line x1="405" y1="160" x2="405" y2="84" stroke="#48597a" stroke-width="1.2"/>
+ <text x="400" y="80" class="lbl" font-size="10" text-anchor="middle">pH</text>
+ <text x="545" y="173" class="lbl" font-size="10" text-anchor="middle">V NaOH (mL)</text>
+ <line x1="405" y1="122.8" x2="572" y2="122.8" stroke="#d9822b" stroke-width="1" stroke-dasharray="3 3"/>
+ <polyline points="405,154.6 410.5,149.8 421.5,146.8 438,145 454.5,143.2 471,141.4 487.5,139 498.5,136 504,133 506.8,128.8 508.1,119.8 509.5,109.6 512.3,106 520.5,102.4 537,100 570,98.2"
    fill="none" stroke="#1f6feb" stroke-width="2.4"/>
- <text x="490" y="172" text-anchor="middle" class="lbl">pH–體積 即時曲線</text>
- <text x="310" y="245" text-anchor="middle" class="lbl">教學重點：全班同時看到同一條曲線成形，比較滴定終點與反曲點</text>
+ <circle cx="508" cy="122.8" r="4" fill="#e0569b"/>
+ <text x="516" y="150" class="lbl" font-size="10" fill="#e0569b">酚酞 pH 8.2</text>
+ <text x="440" y="136" class="lbl" font-size="10" fill="#48597a">緩衝區</text>
+ <text x="490" y="210" text-anchor="middle" class="lbl">筆電＋投影：pH–體積 即時曲線（示意）</text>
+ <text x="440" y="236" text-anchor="middle" class="lbl">教學重點：全班同時看曲線成形，比較酚酞終點與反曲點</text>
 </svg></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">4 小時課程時間表</div><h2 class="slide-title">分工與 PASCO 輪站</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody>
     <tr><td class="c">0:00–0:30</td><td>講解＋示範：PASCO 即時曲線怎麼看，酚酞終點 vs 反曲點</td></tr>
     <tr><td class="c">0:30–1:15</td><td>各組以 KHP 標定自己的 0.1 N NaOH（手動滴定，算出實際 N）</td></tr>
