@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="W8 全班能力試驗：組間比較（ANOVA）" description="用箱形圖比較 5 組的盲樣結果；Box Plot 會自動做 ANOVA。Pivot Table 做成一般成分表。">
+	<nodes>
+		<node id="0" name="File" qualified_name="Orange.widgets.data.owfile.OWFile" project_name="Orange3" version="" title="File 讀入全班盲樣" position="(60, 280)" />
+		<node id="1" name="Select Rows" qualified_name="Orange.widgets.data.owselectrows.OWSelectRows" project_name="Orange3" version="" title="Select Rows 選一個成分" position="(320, 180)" />
+		<node id="2" name="Box Plot" qualified_name="Orange.widgets.visualize.owboxplot.OWBoxPlot" project_name="Orange3" version="" title="Box Plot 各組比較（ANOVA）" position="(580, 180)" />
+		<node id="3" name="Pivot Table" qualified_name="Orange.widgets.data.owpivot.OWPivot" project_name="Orange3" version="" title="Pivot Table 一般成分表" position="(320, 420)" />
+		<node id="4" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWTable" project_name="Orange3" version="" title="Data Table" position="(580, 420)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+		<link id="1" source_node_id="0" sink_node_id="3" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+		<link id="2" source_node_id="1" sink_node_id="2" source_channel="Matching Data" sink_channel="Data" enabled="true" source_channel_id="matching_data" sink_channel_id="data" />
+		<link id="3" source_node_id="3" sink_node_id="4" source_channel="Pivot Table" sink_channel="Data" enabled="true" source_channel_id="pivot_table" sink_channel_id="data" />
+	</links>
+	<annotations>
+		<text id="0" type="text/plain" rect="(20.0, 20.0, 260.0, 150.0)" font-family="Microsoft JhengHei" font-size="13">① File 讀入 W8 全班的盲樣數據（長格式：group、item、value）。
+換成本班數據：在 File 選你們的 CSV。</text>
+		<text id="1" type="text/plain" rect="(540.0, 10.0, 360.0, 130.0)" font-family="Microsoft JhengHei" font-size="13">② Select Rows 選一個成分（預設 ash 灰分，可改成 moisture、fat；protein 每組只有 1 管，不能做 ANOVA）。
+③ Box Plot 依 group 分組：圖下方會顯示 ANOVA 的 F 與 p。p &lt; 0.05 表示至少有一組和別組不同。</text>
+		<text id="2" type="text/plain" rect="(20.0, 520.0, 420.0, 100.0)" font-family="Microsoft JhengHei" font-size="13">④ Pivot Table：列＝組別、欄＝成分、值＝平均與 SD，就是一般成分表。
+Grubbs、z-score、管制圖與不確定度請用 Excel EX08 或 Colab NB08。</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="pickle">gASVYAMAAAAAAAB9lCiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjAxyZWNlbnRfcGF0aHOUXZSMHm9y
+YW5nZXdpZGdldC51dGlscy5maWxlZGlhbG9nc5SMClJlY2VudFBhdGiUk5QpgZR9lCiMB2Fic3Bh
+dGiUjBRvcjA4X3Byb2ZpY2llbmN5LmNzdpSMBnByZWZpeJSMB2Jhc2VkaXKUjAdyZWxwYXRolGgK
+jAV0aXRsZZSMAJSMBXNoZWV0lGgPjAtmaWxlX2Zvcm1hdJROdWJhjAtyZWNlbnRfdXJsc5RdlIwT
+c2F2ZWRXaWRnZXRHZW9tZXRyeZROjAtzaGVldF9uYW1lc5R9lIwGc291cmNllEsAjAN1cmyUaA+M
+DWRvbWFpbl9lZGl0b3KUfZSMC19fdmVyc2lvbl9flEsBjBBjb250ZXh0X3NldHRpbmdzlF2UjBVv
+cmFuZ2V3aWRnZXQuc2V0dGluZ3OUjAdDb250ZXh0lJOUKYGUfZQojAZ2YWx1ZXOUfZQojAl2YXJp
+YWJsZXOUXZRoGX2UaCVdlChdlCiMBWdyb3VwlIwUT3JhbmdlLmRhdGEudmFyaWFibGWUjBBEaXNj
+cmV0ZVZhcmlhYmxllJOUSwCMGkcxLCBHMiwgRzMsIEc0LCBHNSwgUUMsIFRBlIllXZQojARpdGVt
+lGgtSwCMQGFzaCwgZmF0LCBmYXRfcWNfY2hlY2ssIG1vaXN0dXJlLCBwcm90ZWluLCBwcm90ZWlu
+X3JlcGVhdGFiaWxpdHmUiWVdlCiMBXZhbHVllGgrjBJDb250aW51b3VzVmFyaWFibGWUk5RLAGgP
+iGVdlCiMBG5vdGWUaCuMDlN0cmluZ1ZhcmlhYmxllJOUSwJoD4llZXNoG0sBdYwKYXR0cmlidXRl
+c5RoKl2UKIwCRzGUjAJHMpSMAkczlIwCRzSUjAJHNZSMAlFDlIwCVEGUZYaUaDBdlCiMA2FzaJSM
+A2ZhdJSMDGZhdF9xY19jaGVja5SMCG1vaXN0dXJllIwHcHJvdGVpbpSMFXByb3RlaW5fcmVwZWF0
+YWJpbGl0eZRlhpRoM0sChpSHlIwFbWV0YXOUaDdLA4aUhZSMCmNsYXNzX3ZhcnOUKYwSbW9kaWZp
+ZWRfdmFyaWFibGVzlF2UdWJhdS4=
+</properties>
+		<properties node_id="1" format="pickle">gASVRgEAAAAAAAB9lCiMC2F1dG9fY29tbWl0lIiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjBBwdXJn
+ZV9hdHRyaWJ1dGVzlImMDXB1cmdlX2NsYXNzZXOUiYwTc2F2ZWRXaWRnZXRHZW9tZXRyeZROjBB1
+cGRhdGVfb25fY2hhbmdllIiMC19fdmVyc2lvbl9flEsCjBBjb250ZXh0X3NldHRpbmdzlF2UjBVv
+cmFuZ2V3aWRnZXQuc2V0dGluZ3OUjAdDb250ZXh0lJOUKYGUfZQojAZ2YWx1ZXOUfZQojApjb25k
+aXRpb25zlF2UKIwEaXRlbZRLAUsAXZSMA2FzaJRhdJRhaAdLAnWMCmF0dHJpYnV0ZXOUfZQojAVn
+cm91cJRLAYwEaXRlbZRLAYwFdmFsdWWUSwJ1jAVtZXRhc5R9lIwEbm90ZZRLA3N1YmF1Lg==
+</properties>
+		<properties node_id="2" format="pickle">gASVtgEAAAAAAAB9lCiMB2NvbXBhcmWUSwKMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjBNvcmRlcl9i
+eV9pbXBvcnRhbmNllImMHG9yZGVyX2dyb3VwaW5nX2J5X2ltcG9ydGFuY2WUiYwTc2F2ZWRXaWRn
+ZXRHZW9tZXRyeZROjBBzaG93X2Fubm90YXRpb25zlIiMC3Nob3dfbGFiZWxzlIiMDXNpZ190aHJl
+c2hvbGSURz+pmZmZmZmajApzb3J0X2ZyZXFzlImMCHN0YXR0ZXN0lEsAjAlzdHJldGNoZWSUiIwL
+X192ZXJzaW9uX1+USwGMEGNvbnRleHRfc2V0dGluZ3OUXZSMFW9yYW5nZXdpZGdldC5zZXR0aW5n
+c5SMB0NvbnRleHSUk5QpgZR9lCiMBnZhbHVlc5R9lCiMCWF0dHJpYnV0ZZSMBXZhbHVllEtmhpSM
+CWdyb3VwX3ZhcpSMBWdyb3VwlEtlhpSMCXNlbGVjdGlvbpQpSv7///+GlGgMSwF1jAphdHRyaWJ1
+dGVzlH2UKGgaSwGMBGl0ZW2USwFoF0sCdYwFbWV0YXOUfZSMBG5vdGWUSwNzdWJhdS4=
+</properties>
+		<properties node_id="3" format="pickle">gASVXQEAAAAAAAB9lCiMC2F1dG9fY29tbWl0lIiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjBNzYXZl
+ZFdpZGdldEdlb21ldHJ5lE6MEXNlbF9hZ2dfZnVuY3Rpb25zlI+UKEsASwOQjAlzZWxlY3Rpb26U
+j5SMC19fdmVyc2lvbl9flEsCjBBjb250ZXh0X3NldHRpbmdzlF2UjBVvcmFuZ2V3aWRnZXQuc2V0
+dGluZ3OUjAdDb250ZXh0lJOUKYGUfZQojAZ2YWx1ZXOUfZQojAtjb2xfZmVhdHVyZZSMBGl0ZW2U
+S2WGlIwLcm93X2ZlYXR1cmWUjAVncm91cJRLZYaUjAt2YWxfZmVhdHVyZZSMBXZhbHVllEtmhpRo
+CEsCdYwKYXR0cmlidXRlc5R9lCiMBWdyb3VwlEsBjARpdGVtlEsBjAV2YWx1ZZRLAnWMBW1ldGFz
+lH2UjARub3RllEsDc3ViYXUu
+</properties>
+		<properties node_id="4" format="literal">{'auto_commit': True, 'color_by_class': True, 'controlAreaVisible': True, 'savedWidgetGeometry': None, 'select_rows': True, 'show_attribute_labels': True, 'show_distributions': False, 'stored_selection': {'rows': [], 'columns': []}, 'stored_sort': [], '__version__': 1}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>學習成效評量</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --ink:#18221F; --muted:#5B6964; --line:#D5DDD9;
+  --accent:#B3306A; --accent-soft:#F7E3EC; --teal:#1E6B66; --teal-soft:#DDEFEC;
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+    --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+  --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+}
+*{box-sizing:border-box}
+img{max-width:100%;height:auto}
+.ladder>*,.grid2>*,.principles>*{min-width:0}
+html,body{overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.7;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:1040px;margin:0 auto}
+a{color:var(--teal)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{padding-block:36px 12px;display:grid;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--teal)}
+.eyebrow a{color:inherit}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin:0}
+.lede{max-width:70ch;color:var(--muted);margin:0}
+h2{font-family:var(--serif);font-size:21px;margin:40px 0 12px}
+h3{font-size:16px;margin:18px 0 6px}
+p{margin:8px 0}
+.dl{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.dl a{font-size:14px;text-decoration:none;border:1px solid var(--teal);background:var(--teal);color:var(--surface);padding:6px 14px;border-radius:999px;font-weight:500}
+.dl a.alt{background:var(--surface);color:var(--teal)}
+.principles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pr{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.pr b{display:block;font-family:var(--serif);font-size:16px;margin-bottom:4px}
+.pr span{font-size:13.5px;color:var(--muted)}
+.tbl{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:700;background:var(--bg);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.n{font-family:var(--mono);white-space:nowrap;color:var(--teal)}
+.tag{display:inline-block;font-size:12px;border-radius:4px;padding:0 7px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.f{border-color:var(--teal);color:var(--teal)}
+.tag.s{border-color:var(--accent);color:var(--accent)}
+.note{background:var(--teal-soft);border-radius:8px;padding:12px 16px;font-size:14px;margin:14px 0}
+.formula{font-family:var(--mono);font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0;overflow-x:auto}
+.weights{display:flex;height:34px;border-radius:6px;overflow:hidden;margin:10px 0 4px;font-size:12.5px;color:#fff}
+.weights div{display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+.card h3{margin-top:0}
+ol,ul{padding-left:22px}
+li{margin:3px 0}
+details{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0}
+summary{cursor:pointer;font-weight:500}
+.q{margin:10px 0;font-size:14px}
+.q .opt{color:var(--muted)}
+.q .ans{color:var(--teal);font-weight:500}
+footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
+@media (max-width:760px){.principles,.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow"><a href="index.html">食品分析實驗</a> · 教師用</div>
+  <h1>學習成效評量</h1>
+  <p class="lede">學生用的工具不同（Excel、Orange、Colab），評量就要看「判斷與結論」，不看軟體操作。這一頁是一套可以直接用的評量設計：前後測看整學期學到多少，每週的出場券與作業回饋看哪裡卡住，實作考與專題看能不能獨立分析沒看過的數據。</p>
+  <div class="dl">
+    <a href="assessment/assessment_toolkit.xlsx" download>下載評量工具包（Excel）</a>
+    <a class="alt" href="tools.html">數據分析工具指南</a>
+    <a class="alt" href="plan.html">學期規劃</a>
+  </div>
+</header>
+
+<h2>四個原則</h2>
+<div class="principles">
+  <div class="pr"><b>對齊目標</b><span>每個學習目標至少要有兩種不同的證據，評量題目直接對應目標。</span></div>
+  <div class="pr"><b>工具中立</b><span>同一份規準評三種工具的作業；Excel 做對的同學拿滿分，Colab 只是加分。</span></div>
+  <div class="pr"><b>先形成、後總結</b><span>每週的小回饋不計分或低分數，讓學生敢錯；計分集中在報告、實作考、專題。</span></div>
+  <div class="pr"><b>數據回饋教學</b><span>前後測與試題分析找出全班沒學會的觀念，下學期調整。</span></div>
+</div>
+
+<h2>學習目標與證據</h2>
+<div class="tbl"><table>
+<thead><tr><th>目標</th><th>學生能夠…</th><th>主要證據</th></tr></thead>
+<tbody>
+<tr><td class="n">CLO1</td><td>正確操作一般成分分析並完成計算（濕基／乾基、%N × 係數、回收率、稀釋倍數）</td><td>實驗報告、每週數據作業、期中實作、前後測</td></tr>
+<tr><td class="n">CLO2</td><td>用統計判斷數據品質並下結論（SD、CI、檢定、檢量線、z-score、管制圖、不確定度）</td><td>每週數據作業、期中實作、前後測</td></tr>
+<tr><td class="n">CLO3</td><td>建立與評估光譜化學計量模型（前處理、PCA、PLS、RMSECV／RMSEP、適用範圍）</td><td>期末實作、代糖專題成績單、前後測</td></tr>
+<tr><td class="n">CLO4</td><td>依問題選擇合適的工具，並用第二個工具核對結果</td><td>實作考的「交叉核對」項、自我效能問卷第 9 題</td></tr>
+<tr><td class="n">CLO5</td><td>以書面與口頭清楚溝通數據</td><td>實驗報告、W17 發表與同儕審查</td></tr>
+</tbody></table></div>
+
+<h2>一學期的評量安排</h2>
+<div class="tbl"><table>
+<thead><tr><th>評量</th><th>時間</th><th>怎麼做</th><th>性質</th></tr></thead>
+<tbody>
+<tr><td>概念前後測</td><td>W1、W18</td><td>15 題選擇題（工具包「2_前後測題庫」），同一份卷前後各考一次，15 分鐘，用 Google 表單測驗模式。</td><td><span class="tag">不計分</span></td></tr>
+<tr><td>自我效能問卷</td><td>W1、W9、W18</td><td>10 題 1–5 分（例：「我能判斷一個結果是否準確、是否精密」）。和前後測對照：信心高卻答錯，就是迷思。</td><td><span class="tag">不計分</span></td></tr>
+<tr><td>出場券</td><td>每週最後 3 分鐘</td><td>1 題觀念題＋「今天最不懂的一點」。老師隔週開場花 5 分鐘回應最多人不懂的那一點。</td><td><span class="tag f">形成性</span></td></tr>
+<tr><td>每週數據作業</td><td>W1–W8、W11–W16</td><td>用 Excel、Orange 或 Colab 任一種完成練習題；依規準評分，每份附一句具體建議。</td><td><span class="tag f">形成性</span> 15%</td></tr>
+<tr><td>實驗報告</td><td>每個實驗</td><td>依「評分規準」五個面向評分：計算、品管判斷、圖表、結論與誤差、紀錄。</td><td><span class="tag s">總結性</span> 35%</td></tr>
+<tr><td>期中實作考</td><td>W9</td><td>給一組沒看過的方法比較或能力試驗數據，Excel 或 Colab 任選，完成品管報告。</td><td><span class="tag s">總結性</span> 15%（含筆試）</td></tr>
+<tr><td>期末實作考</td><td>W18</td><td>給一組光譜與參考值，Orange 或 Colab 任選，完成 PCA 與 PLS 並寫模型結論。</td><td><span class="tag s">總結性</span> 15%（含筆試）</td></tr>
+<tr><td>代糖專題</td><td>W15–W17</td><td>模型成績單（LV、RMSECV、RMSEP、RPD、適用範圍）＋口頭發表＋同儕審查。</td><td><span class="tag s">總結性</span> 20%</td></tr>
+<tr><td>進階加分</td><td>全學期</td><td>用 Colab／Jupyter 完成進階題（例如 VIP、T² 與 Q、NNLS），或用兩種工具核對同一結果並說明差異。</td><td><span class="tag">最多 +5</span></td></tr>
+</tbody></table></div>
+<div class="weights" role="img" aria-label="成績權重：實驗報告 35%、每週數據作業 15%、期中 15%、期末 15%、代糖專題 20%">
+  <div style="width:35%;background:#1E6B66">實驗報告 35%</div>
+  <div style="width:15%;background:#2F7D46">每週作業 15%</div>
+  <div style="width:15%;background:#C4661F">期中 15%</div>
+  <div style="width:15%;background:#3A5F9E">期末 15%</div>
+  <div style="width:20%;background:#B3306A">代糖專題 20%</div>
+</div>
+<p style="font-size:13px;color:var(--muted)">沿用學期規劃的權重，只把「每週 Colab 作業」改成工具任選。前後測與問卷不計分，學生才會照實作答。</p>
+
+<h2>評分規準：評判斷，不評軟體</h2>
+<div class="tbl"><table>
+<thead><tr><th>面向（權重）</th><th>4 優秀</th><th>3 良好</th><th>2 待加強</th><th>1 不足</th></tr></thead>
+<tbody>
+<tr><td>計算正確（25%）</td><td>數值、單位、有效位數都對；和對答案表一致</td><td>1 處小錯，不影響結論</td><td>錯誤影響部分結論</td><td>主要數值錯或缺</td></tr>
+<tr><td>品管判斷（25%）</td><td>每個判斷都引用數據與門檻</td><td>大致正確，少數缺依據</td><td>只有結論沒有依據，或方法用錯</td><td>沒有判斷</td></tr>
+<tr><td>圖表（15%）</td><td>圖種恰當，軸、單位、誤差線完整</td><td>缺部分標示</td><td>圖不恰當或誤差線不明</td><td>沒有圖</td></tr>
+<tr><td>結論與誤差討論（25%）</td><td>分出系統與隨機誤差，指出最大來源並提出改進</td><td>有討論但未區分或未提改進</td><td>只寫「人為誤差」</td><td>沒有討論</td></tr>
+<tr><td>紀錄與可重現（10%）</td><td>附原始數據、校正紀錄、檔案，別人能重算</td><td>齊全但命名不清</td><td>缺原始數據或校正紀錄</td><td>無法追溯</td></tr>
+</tbody></table></div>
+<p>總分 = Σ(等級 × 權重) ÷ 4。工具包「8_評分規準」有試算表，也有實作考的規準（多一項「交叉核對」：用第二種方式驗證 1 個數值）。學期第一週就把規準發給學生。</p>
+
+<h2>實作考怎麼出</h2>
+<div class="grid2">
+  <div class="card"><h3>W9 期中：方法比較或能力試驗</h3>
+    <ol>
+      <li>給一份沒看過的長格式數據（例如 6 組的醋酸手動 vs 自動滴定，或 5 組的盲樣灰分）。</li>
+      <li>任務：描述統計 → 找異常值 → 選對檢定（配對 t／Bland–Altman 或 ANOVA）→ 寫 3 句結論。</li>
+      <li>評分重點：<strong>選對方法並說出理由</strong>，數值正確，結論回答題目。</li>
+      <li>工具：Excel（開卷，可用自己的 EX04、EX08）或 Colab。</li>
+    </ol></div>
+  <div class="card"><h3>W18 期末：光譜建模</h3>
+    <ol>
+      <li>給一組光譜與參考值，已標好校正集與測試集。</li>
+      <li>任務：前處理 → PCA 分數圖並解釋一個分群 → PLS 選 LV → 報告 RMSECV、RMSEP、RPD → 說明適用範圍。</li>
+      <li>評分重點：<strong>分組交叉驗證</strong>、用 RMSEP 而不是 R² 下結論、指出模型限制。</li>
+      <li>工具：Orange（可用 OR13、OR16 改）或 Colab。</li>
+    </ol></div>
+</div>
+<div class="note">同一份考題可以出兩個版本的數據（A 卷、B 卷），相鄰座位拿不同版本；答案用 Colab 筆記本先算好，閱卷時對照工具包的規準。</div>
+
+<h2>怎麼判斷學生有沒有進步</h2>
+<h3>1. 標準化增益 g</h3>
+<div class="formula">g = (後測 − 前測) ÷ (滿分 − 前測)　　全班：&lt;g&gt; = (後測平均 − 前測平均) ÷ (滿分 − 前測平均)</div>
+<p>意思是「還沒學會的部分，學會了多少」。Hake (1998) 的分級：g &lt; 0.3 低、0.3–0.7 中、&gt; 0.7 高。用全班的 &lt;g&gt; 和往年比較，看教學調整有沒有效；同時看配對 t 檢定的 p 值與效果量（Cohen's d），確認進步不是偶然。</p>
+<h3>2. 試題分析</h3>
+<ul>
+<li><strong>答對率 P</strong>：後測仍低於 0.5 的題目，就是全班還沒學會的觀念，下學期那一週要加強。</li>
+<li><strong>鑑別度 r</strong>（該題對錯與總分的相關）：低於 0.2 的題目可能題意不清，要改題。</li>
+<li>依學習目標彙整（CLO1–CLO3），看哪一條主線最弱。</li>
+</ul>
+<h3>3. 信心與能力對照</h3>
+<p>自我效能高、但對應的前後測題目答錯，代表學生「以為自己會」，這類迷思最需要在課堂上直接處理。</p>
+<h3>4. 期末檢討</h3>
+<p>學期結束後花 30 分鐘看工具包的「5_學習成效」與「6_試題分析」，寫下下學期要調整的 3 件事（例如「W7 殘差圖要多一個練習」），放進學期規劃。</p>
+
+<h2>前後測題目範例</h2>
+<p>完整 15 題（W1–W16 各主題）在工具包「2_前後測題庫」，含答案與對應目標，可直接貼到 Google 表單。題目只考觀念，用哪個工具的學生都能作答。</p>
+<details><summary>看 5 題範例</summary>
+<div class="q"><b>1.（W1）</b>同一支吸管重複 10 次：SD 很小，但平均比標稱值低 0.03 mL（Class A 公差 ±0.02 mL）。這代表？<br><span class="ans">精密但不準確</span> <span class="opt">／準確且精密／準確但不精密／既不準確也不精密</span></div>
+<div class="q"><b>2.（W2/W4）</b>兩種方法測同一批樣品，要比較兩種方法時應該用？<br><span class="ans">配對 t 檢定或 Bland–Altman 圖</span> <span class="opt">／兩個獨立樣本的 t 檢定／只看相關係數 r／只比較兩者的 SD</span></div>
+<div class="q"><b>3.（W7）</b>檢量線 R² = 0.999，代表什麼？<br><span class="ans">殘差圖仍可能有彎曲，還要檢查殘差</span> <span class="opt">／一定是直線關係／LOD 一定很低／樣品濃度一定準確</span></div>
+<div class="q"><b>4.（W8）</b>規格為蛋白質 ≥ 25.0%，測得 25.2 ± 0.4%（U，k = 2），應判定？<br><span class="ans">無法判斷：區間跨過規格限</span> <span class="opt">／放行／不放行／再測一次取平均就可以放行</span></div>
+<div class="q"><b>5.（W13）</b>交叉驗證時把同一樣品的 3 次重複拆到訓練集與驗證集，RMSECV 會？<br><span class="ans">偏低（過度樂觀）</span> <span class="opt">／偏高／不變／無法計算</span></div>
+</details>
+
+<h2>評量工具包內容</h2>
+<div class="tbl"><table>
+<thead><tr><th>工作表</th><th>用途</th></tr></thead>
+<tbody>
+<tr><td>1_目標與證據</td><td>學習目標 × 評量對應表（可修改）</td></tr>
+<tr><td>2_前後測題庫</td><td>15 題概念題、答案、對應週次與目標</td></tr>
+<tr><td>3_前測作答、4_後測作答</td><td>貼上學生 A/B/C/D 答案，自動改分（最多 60 人）</td></tr>
+<tr><td>5_學習成效</td><td>個人與全班標準化增益、配對 t 檢定、效果量、前後測長條圖</td></tr>
+<tr><td>6_試題分析</td><td>每題答對率、進步、鑑別度，依目標彙整，自動標出待加強題</td></tr>
+<tr><td>7_自我效能問卷</td><td>10 題問卷與 W1／W9／W18 平均比較圖</td></tr>
+<tr><td>8_評分規準</td><td>作業／報告規準與實作考規準，含評分試算</td></tr>
+<tr><td>9_成績總表</td><td>依權重算學期成績，含進階加分與等第</td></tr>
+</tbody></table></div>
+<p style="font-size:13px;color:var(--muted)">工具包內的學生資料是模擬的示範數據，正式使用前請清空黃色的學生資料區。</p>
+
+<footer>參考：Hake, R. R. (1998). Interactive-engagement versus traditional methods. <i>American Journal of Physics</i>, 66, 64–74。<a href="index.html">回課程首頁</a></footer>
+</div>
+</body>
+</html>

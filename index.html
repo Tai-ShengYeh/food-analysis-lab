@@ -54,6 +54,11 @@ h2{font-family:var(--serif);font-size:21px;margin:34px 0 12px}
 .links a,.links span{font-size:12.5px;border:1px solid var(--line);border-radius:4px;padding:1px 8px;text-decoration:none;color:var(--muted);white-space:nowrap}
 .links a.main{background:var(--teal);border-color:var(--teal);color:var(--surface);font-weight:500}
 .links a.nb{border-color:var(--teal);color:var(--teal)}
+.links a.xl{border-color:#2F7D46;color:#2F7D46}
+.links a.or{border-color:#C4661F;color:#C4661F}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .links a.xl{border-color:#7CC48F;color:#7CC48F}:root:not([data-theme="light"]) .links a.or{border-color:#F0A56A;color:#F0A56A}}
+:root[data-theme="dark"] .links a.xl{border-color:#7CC48F;color:#7CC48F}
+:root[data-theme="dark"] .links a.or{border-color:#F0A56A;color:#F0A56A}
 .links a:hover{border-color:var(--accent);color:var(--accent)}
 .links a.main:hover{color:var(--surface);background:var(--accent);border-color:var(--accent)}
 .st{font-size:12px;white-space:nowrap;padding-top:2px}
@@ -76,8 +81,10 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 <header>
   <div class="eyebrow">FOOD ANALYSIS LAB · 每週 4 小時</div>
   <h1>食品分析實驗</h1>
-  <p class="lede">每週上課前先打開當週的實驗投影片，課後用 Colab 筆記本處理數據、完成報告。原理細節請看各章的 Nielsen 投影片。</p>
+  <p class="lede">每週上課前先打開當週的實驗投影片。課後數據分析分兩級：入門用 Excel 練習檔（W1–W8）與 Orange 流程（光譜週），不用寫程式；進階用 Colab 或下載到 Jupyter 跑 Python。原理細節請看各章的 Nielsen 投影片。</p>
   <div class="quick">
+    <a href="tools.html">數據分析工具指南（Excel／Orange／Colab）</a>
+    <a href="assessment.html">學習成效評量</a>
     <a href="video-map.html">工廠影片對照表</a>
     <a href="https://tai-shengyeh.github.io/food-analysis-decks/" target="_blank" rel="noopener">Nielsen 各章投影片 ↗</a>
     <a href="https://tai-shengyeh.github.io/food-analysis-statistics/" target="_blank" rel="noopener">食品分析統計 ↗</a>
@@ -87,12 +94,15 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 
 <main id="weeks"></main>
 
-<footer>投影片標示「準備中」的週次會陸續上線。筆記本內建的是模擬教學資料，做作業時請換成全班的實際數據。</footer>
+<footer>投影片標示「準備中」的週次會陸續上線。Excel 練習檔、Orange 流程與筆記本內建的都是模擬教學資料，做作業時請換成全班的實際數據。Jupyter 使用者可下載<a href="downloads/food-analysis-notebooks.zip">全部筆記本＋資料（zip）</a>。</footer>
 </div>
 
 <script>
 const DECKS = "https://tai-shengyeh.github.io/food-analysis-decks/";
 const COLAB = "https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/";
+// 入門工具：Excel 練習檔（W1–W8）與 Orange 流程（說明在 tools.html）
+const XL = {1:"EX01_volumetric_calibration.xlsx",2:"EX02_moisture_aw.xlsx",3:"EX03_ash_sodium.xlsx",4:"EX04_titration.xlsx",5:"EX05_kjeldahl_protein.xlsx",6:"EX06_fat_soxhlet.xlsx",7:"EX07_sugar_calibration.xlsx",8:"EX08_proficiency_qc.xlsx"};
+const ORG = {1:"OR01",8:"OR08",11:"OR11",12:"OR12",13:"OR13",14:"OR14",16:"OR16"};
 // [週, 標題, 說明, 投影片路徑(空=準備中), 筆記本檔名, 理論章節[名稱, 路徑], 類型 a/b/x]
 const W = [
   [1,"容量器具校正","吸管與滴定管秤重法校正；平均、SD、信賴區間、準確度與精密度","labs/w01_volumetric/index.html","NB01_volumetric_calibration.ipynb",null,"a"],
@@ -103,7 +113,7 @@ const W = [
   [6,"脂肪（Soxhlet 與酸水解）","溶劑萃取；奶粉為何偏低；Pearson square","labs/w06_fat/index.html","NB06_fat_soxhlet.ipynb",["Ch17 脂肪","ch17_fat_soil/index.html"],"a"],
   [7,"糖：Brix 與酚硫酸法","折射計與非破壞近紅外 Brix；酚硫酸法檢量線；乙級索摩基法與 Bertrand 法介紹","labs/w07_sugar/index.html","NB07_sugar_phenolsulfuric.ipynb",["Ch19 碳水化合物","ch19_carb_soil/index.html"],"a"],
   [8,"全班能力試驗","共同盲樣彙整；管制圖、異常值、ANOVA、不確定度","labs/w08_proficiency/index.html","NB08_proficiency_qc.ipynb",null,"a"],
-  [9,"期中考","筆試＋ Colab 實作","","",null,"x"],
+  [9,"期中考","筆試＋實作（Excel 或 Colab 任選）","","",null,"x"],
   [10,"振動光譜與光譜儀校正","拉曼 532／785 nm 與 NIR 的校正；純物質光譜","labs/w10_spectro_calib/index.html","",["Ch8 紅外光譜","ch8_ir/index.html"],"b"],
   [11,"前處理與光譜相似度","基線、SNV、微分；光譜庫比對","labs/w11_preprocess_similarity/index.html","NB09_preprocess_similarity.ipynb",null,"b"],
   [12,"PCA","食用油分類；分數圖與 loadings","labs/w12_pca/index.html","NB10_pca.ipynb",null,"b"],
@@ -112,7 +122,7 @@ const W = [
   [15,"代糖專題 I","阿斯巴甜 × 三氯蔗糖格點配製與量測","labs/w15_sweetener_prep/index.html","",null,"b"],
   [16,"代糖專題 II","PLS 與 NNLS 建模、預測市售代糖","labs/w16_sweetener_model/index.html","NB13_sweetener_model.ipynb",null,"b"],
   [17,"專題發表","模型成績單與同儕審查","labs/w17_presentation/index.html","",null,"b"],
-  [18,"期末考","筆試＋ Orange 實作","","",null,"x"]
+  [18,"期末考","筆試＋實作（Orange 或 Colab 任選）","","",null,"x"]
 ];
 let html = "";
 W.forEach(w => {
@@ -121,7 +131,10 @@ W.forEach(w => {
   if (n === 10) html += `<div class="part">後半學期　近紅外 × 拉曼 × 化學計量學</div>`;
   const links = [];
   if (deck) links.push(`<a class="main" href="${deck}">實驗投影片</a>`);
+  if (XL[n]) links.push(`<a class="xl" href="excel/${XL[n]}" download>Excel 練習檔 ⬇</a>`);
+  if (ORG[n]) links.push(`<a class="or" href="tools.html#${ORG[n]}">Orange 流程 ${ORG[n]}</a>`);
   if (nb) links.push(`<a class="nb" href="${COLAB}${nb}" target="_blank" rel="noopener">Colab 筆記本 ↗</a>`);
+  if (nb) links.push(`<a href="notebooks/${nb}" download>Jupyter .ipynb ⬇</a>`);
   if (ch) links.push(`<a href="${DECKS}${ch[1]}" target="_blank" rel="noopener">${ch[0]} ↗</a>`);
   const st = k === "x" ? "" : (deck ? `<span class="st ok">已上線</span>` : `<span class="st soon">準備中</span>`);
   html += `<div class="wk ${k === "b" ? "b" : ""} ${k === "x" ? "exam" : ""}" id="w${n}">

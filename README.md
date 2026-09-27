@@ -1,10 +1,49 @@
 # 食品分析實驗（Food Analysis Lab）
 
-大學部食品分析實驗課的公開教材：每週實驗投影片、Google Colab 數據品管筆記本，以及工廠影片導入對照表。教材以 Nielsen's *Food Analysis* 6th ed. 為主軸。
+大學部食品分析實驗課的公開教材：每週實驗投影片、數據分析教材（入門：Excel 練習檔與 Orange 流程；進階：Google Colab／Jupyter 筆記本）、學習成效評量工具，以及工廠影片導入對照表。教材以 Nielsen's *Food Analysis* 6th ed. 為主軸。
 
 - 課程入口（每週教材）：https://tai-shengyeh.github.io/food-analysis-lab/
 - 實驗影片對照表：https://tai-shengyeh.github.io/food-analysis-lab/video-map.html
 - 學期規劃：https://tai-shengyeh.github.io/food-analysis-lab/plan.html
+- 數據分析工具指南（Excel／Orange／Colab）：https://tai-shengyeh.github.io/food-analysis-lab/tools.html
+- 學習成效評量（教師用）：https://tai-shengyeh.github.io/food-analysis-lab/assessment.html
+
+## 入門：Excel 練習檔（不用寫程式）
+
+`excel/` 每週一份，和同週的 Colab 筆記本做同樣的計算。每份都有「0_說明」（含和 Colab 對答案的表）、「1_原始數據」（與 Colab 相同的長格式，貼上班級數據即自動重算）、逐步計算工作表與「練習題」。公式只用 Excel 2016 以後、Google 試算表與 LibreOffice 都支援的函式。
+
+| 週 | 檔案 |
+|---|---|
+| W1 | [EX01 容量器具校正](excel/EX01_volumetric_calibration.xlsx) |
+| W2 | [EX02 水分與水活性](excel/EX02_moisture_aw.xlsx) |
+| W3 | [EX03 灰分與鈉離子](excel/EX03_ash_sodium.xlsx) |
+| W4 | [EX04 滴定](excel/EX04_titration.xlsx) |
+| W5 | [EX05 凱氏法](excel/EX05_kjeldahl_protein.xlsx) |
+| W6 | [EX06 脂肪](excel/EX06_fat_soxhlet.xlsx) |
+| W7 | [EX07 糖與檢量線](excel/EX07_sugar_calibration.xlsx) |
+| W8 | [EX08 能力試驗與品管](excel/EX08_proficiency_qc.xlsx) |
+
+## 入門：Orange 流程
+
+`orange/` 內的 `.ows` 流程檔與 Orange 用資料（標題已設好 target／meta）要放在同一資料夾；整包下載：[orange_workflows.zip](orange/orange_workflows.zip)。光譜流程需安裝 Orange 的 Spectroscopy 外掛。以 Orange 3.40、Spectroscopy 0.9 製作與測試。
+
+| 週 | 流程 |
+|---|---|
+| W1 | OR01 入門：箱形圖找異常值 |
+| W8 | OR08 組間 ANOVA 與一般成分表 |
+| W11 | OR11 前處理與光譜庫比對 |
+| W12 | OR12 PCA（食用油） |
+| W13 | OR13 PLS 醋酸定量（分組交叉驗證、測試集） |
+| W14 | OR14 分類模型與離群樣品 |
+| W16 | OR16 代糖 PLS 定量 |
+
+## 進階：Jupyter 離線版
+
+所有筆記本也能在本機 Jupyter（Anaconda）執行：[food-analysis-notebooks.zip](downloads/food-analysis-notebooks.zip)（筆記本＋資料）。
+
+## 學習成效評量
+
+[assessment/assessment_toolkit.xlsx](assessment/assessment_toolkit.xlsx)：概念前後測題庫與自動改分、標準化增益、試題分析、自我效能問卷、評分規準、成績總表。說明見 assessment.html。
 
 ## Colab 筆記本
 

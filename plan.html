@@ -121,7 +121,7 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
 <header>
   <div class="eyebrow">NIELSEN FOOD ANALYSIS 6e · 實驗課 · 18 週</div>
   <h1>食品分析實驗學期規劃</h1>
-  <p class="lede">前半學期做一般成分分析、儀器校正與滴定，並從第一週開始用 Colab 做數據品管。後半學期用近紅外與拉曼光譜做化學計量學，最後以代糖混合物的 PLS 定量專題收尾。前半學期的參考方法，就是後半學期光譜模型的 Y 值。</p>
+  <p class="lede">前半學期做一般成分分析、儀器校正與滴定，並從第一週開始做數據品管：入門用 Excel，進階用 Colab。後半學期用近紅外與拉曼光譜做化學計量學，最後以代糖混合物的 PLS 定量專題收尾。前半學期的參考方法，就是後半學期光譜模型的 Y 值。</p>
   <div class="facts">
     <span><b>15 人</b>，分 5 組、每組 3 人</span>
     <span>每次 <b>4 小時</b></span>
@@ -147,7 +147,7 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
   <div class="strands">
     <div class="strand"><span class="tag">成分</span><h3>一般成分分析</h3><p>水分、灰分、蛋白質、脂肪、碳水化合物、可滴定酸。W2 起全班量同一份共同盲樣，W8 彙整成完整的一般成分表。</p></div>
     <div class="strand"><span class="tag">校正</span><h3>儀器校正</h3><p>每週一項：天平與容量器具、水活性儀、pH 計、折射計、UV-Vis、拉曼波數、NIR 參考與波長。每項都寫標準品與允收條件。</p></div>
-    <div class="strand"><span class="tag">品管</span><h3>數據品管與統計</h3><p>從平均與 SD 開始，一路到配對檢定、檢量線、管制圖、ANOVA、不確定度。每週一本 Colab notebook，後半學期加 R。</p></div>
+    <div class="strand"><span class="tag">品管</span><h3>數據品管與統計</h3><p>從平均與 SD 開始，一路到配對檢定、檢量線、管制圖、ANOVA、不確定度。每週一份 Excel 練習檔（入門）與 Colab 筆記本（進階）；後半學期改用 Orange 流程，進階用 Colab 或 R。</p></div>
     <div class="strand"><span class="tag">計量</span><h3>化學計量學</h3><p>光譜前處理、相似度比對、PCA、PLS、VIP、PLS-DA、離群值。工具用 Orange、SpectraView、Colab、R。</p></div>
   </div>
 </section>
@@ -165,61 +165,61 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
         <td class="topic"><b>導論與容量器具校正</b><span>實驗安全、實驗紀錄規範；10 mL 吸管與 50 mL 滴定管各重複 10 次秤水。</span></td>
         <td>標準砝碼檢核天平；秤水重，用水溫對應的密度換算實際體積。</td>
         <td>平均、SD、RSD、有效位數、信賴區間；系統誤差 vs 隨機誤差。</td>
-        <td><div class="chiprow"><a class="c tool" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB01_volumetric_calibration.ipynb" target="_blank" rel="noopener">Colab NB01 ↗</a><span class="c">FAS CI 模擬器</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="excel/EX01_volumetric_calibration.xlsx" download>Excel EX01</a><a class="c tool" href="tools.html#OR01">Orange OR01</a><a class="c tool" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB01_volumetric_calibration.ipynb" target="_blank" rel="noopener">Colab NB01 ↗</a><span class="c">FAS CI 模擬器</span></div></td>
       </tr>
       <tr>
         <td class="wk">W2<span class="rot">輪站</span></td>
         <td class="topic"><b>水分與水活性</b><span>105°C 烘箱法 vs 紅外線水分計；牛肉乾、龍眼乾、洋芋片測水活性。發放全學期共同盲樣（例如奶粉），本週測水分。</span></td>
         <td>水活性儀用飽和鹽溶液驗證，25°C 參考值：LiCl 0.113、MgCl₂ 0.328、NaCl 0.753、K₂SO₄ 0.973（Greenspan 1977）。允收範圍依儀器原廠規格；鹽溶液提前一週配好。</td>
         <td>重複性、恆重判定；兩種水分方法比較；水分含量不等於水活性。延伸：NIR Aquagram。<br><span class="lbl">影片挑錯題：牛肉乾影片說 500 g 鮮肉變 100 g，用瘦牛肉約 27% 固形物做質量平衡，算出實際產率並找出矛盾。</span></td>
-        <td><div class="chiprow"><span class="c tool">Colab NB02</span><span class="c tool">Aquagram widget</span><span class="c">ch15 投影片</span><span class="c vid">牛肉乾</span><span class="c vid">柴燒龍眼乾</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="excel/EX02_moisture_aw.xlsx" download>Excel EX02</a><span class="c tool">Colab NB02</span><span class="c tool">Aquagram widget</span><span class="c">ch15 投影片</span><span class="c vid">牛肉乾</span><span class="c vid">柴燒龍眼乾</span></div></td>
       </tr>
       <tr>
         <td class="wk">W3</td>
         <td class="topic"><b>灰分與鈉離子</b><span>550°C 乾式灰化：黑糖 vs 白糖、糙米 vs 白米、共同盲樣。鈉用 HORIBA LAQUAtwin 筆式鈉離子計（離子選擇電極）測醬油、洋芋片水萃液、湯包、運動飲料，再和營養標示比較。不使用硝酸銀與鉻酸鉀。</span></td>
         <td>鈉離子計以原廠標準液兩點校正；每 10 個樣品回測一次標準液，確認沒有漂移。量測前後都要清洗感測面。</td>
         <td>稀釋倍數（醬油要先稀釋到量測範圍內）；以標準添加法做回收率，檢查基質效應；電極測的是活性而非濃度；Na→NaCl 換算 × 2.54，但味精、小蘇打、苯甲酸鈉也含鈉，所以換算出的「鹽」會偏高；實測值與營養標示的差異。</td>
-        <td><div class="chiprow"><span class="c tool">Colab NB03</span><span class="c">ch16、ch21 投影片</span><span class="c vid">食鹽工廠</span><span class="c vid">喜馬拉雅粉鹽</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="excel/EX03_ash_sodium.xlsx" download>Excel EX03</a><span class="c tool">Colab NB03</span><span class="c">ch16、ch21 投影片</span><span class="c vid">食鹽工廠</span><span class="c vid">喜馬拉雅粉鹽</span></div></td>
       </tr>
       <tr>
         <td class="wk">W4<span class="rot">輪站</span></td>
         <td class="topic"><b>手動 vs 自動滴定（PASCO）</b><span>以 KHP 標定 NaOH；醋、柳橙汁、優格、紅酒的可滴定酸。同一批樣品兩種方法都做：手動用滴定管加酚酞，自動用 PASCO 教學型滴定系統記錄完整的 pH–體積滴定曲線。醋的數據保留到 W13 當 PLS 的 Y 值。</span></td>
         <td>pH 感測器 4／7／9 三點校正（在 PASCO 軟體內完成），檢查斜率；NaOH 以 KHP 標定。若系統以滴數計算體積，先用 W1 的秤水法校正每滴體積（mL／滴）。</td>
         <td>配對設計：Bland–Altman、配對 t 檢定、F 檢定比較精密度，不能只看相關係數。終點定義：酚酞變色、pH 8.2、反曲點各有偏差；從匯出的滴定曲線用一次、二次微分找當量點；紅酒示範指示劑失效。<br><span class="lbl">即時曲線投影：PASCO 以無線傳到筆電，把滴定曲線投影給全班。開跑前先讓學生畫出預測的曲線形狀，跑完再對照。醋酸可在半當量點讀出 pH ≈ pKa（約 4.76）；紅酒含多種有機酸，看不到單一明顯躍升。在 PASCO 的燒杯裡也加幾滴酚酞，變色那一刻在即時曲線上標記：醋酸的躍升很陡，酚酞終點與反曲點相差不到一滴；紅酒的躍升較平緩、顏色又遮住酚酞，差距才明顯。</span></td>
-        <td><div class="chiprow"><span class="c tool">PASCO 軟體匯出 CSV</span><span class="c tool">Colab NB04</span><span class="c tool">R</span><span class="c">ch22 投影片</span><span class="c vid">養樂多</span><span class="c vid">優格</span></div></td>
+        <td><div class="chiprow"><span class="c tool">PASCO 軟體匯出 CSV</span><a class="c tool" href="excel/EX04_titration.xlsx" download>Excel EX04</a><span class="c tool">Colab NB04</span><span class="c tool">R</span><span class="c">ch22 投影片</span><span class="c vid">養樂多</span><span class="c vid">優格</span></div></td>
       </tr>
       <tr>
         <td class="wk">W5<span class="rot">輪站</span></td>
         <td class="topic"><b>蛋白質（凱氏法）</b><span>共同盲樣（每組 1 管）＋全班共用 1 管高筋麵粉；低筋麵粉數據由助教提供。消化爐 8 管一次上架，蒸餾輪流。</span></td>
         <td>HCl 標準液標定；硫酸銨回收率檢查；試劑空白。</td>
         <td>回收率；空白校正；換算係數 6.25／5.7／6.38 的選擇；三聚氰胺怎麼騙過凱氏法。</td>
-        <td><div class="chiprow"><span class="c tool">Colab NB05</span><span class="c">ch18 投影片</span><span class="c vid">奶粉工廠</span><span class="c vid">麵粉工廠</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="excel/EX05_kjeldahl_protein.xlsx" download>Excel EX05</a><span class="c tool">Colab NB05</span><span class="c">ch18 投影片</span><span class="c vid">奶粉工廠</span><span class="c vid">麵粉工廠</span></div></td>
       </tr>
       <tr>
         <td class="wk">W6</td>
         <td class="topic"><b>脂肪（Soxhlet 與酸水解）</b><span>洋芋片、共同盲樣；美乃滋示範為何要先酸水解。</span></td>
         <td>已知脂肪含量的參考樣品；溶劑空白。</td>
         <td>準確度 vs 精密度；偏差的來源。</td>
-        <td><div class="chiprow"><span class="c tool">Colab NB06</span><span class="c">ch17 投影片</span><span class="c vid">牛奶脂肪標準化</span><span class="c vid">奶油工廠</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="excel/EX06_fat_soxhlet.xlsx" download>Excel EX06</a><span class="c tool">Colab NB06</span><span class="c">ch17 投影片</span><span class="c vid">牛奶脂肪標準化</span><span class="c vid">奶油工廠</span></div></td>
       </tr>
       <tr>
         <td class="wk">W7</td>
         <td class="topic"><b>糖：Brix 與酚硫酸法總醣</b><span>折射計測楓糖漿、果汁、冬瓜茶；酚硫酸法（Nielsen 實驗手冊方法）測柳橙汁、運動飲料的總醣。<br>乙級介紹（不操作）：勞動部食品檢驗分析乙級的索摩基法與 Bertrand 法。兩者都是還原糖把 Cu²⁺ 還原成 Cu₂O，索摩基法再以碘滴定定量，Bertrand 法則把 Cu₂O 溶於硫酸鐵後以過錳酸鉀滴定。講原理、做計算題，並搭配乙級學科題目。</span></td>
         <td>折射計以純水歸零、蔗糖標準液檢查；UV-Vis 以葡萄糖標準液建立 490 nm 檢量線。</td>
         <td>檢量線、殘差圖、R² 迷思、LOD／LOQ。比較方法測到的是什麼：酚硫酸法測總醣（含蔗糖），索摩基法與 Bertrand 法屬銅還原法，只測還原糖，蔗糖要先轉化；果糖與葡萄糖在酚硫酸法的呈色強度不同，選哪種糖當標準會造成偏差。<br><span class="lbl">安全：濃硫酸與酚都在抽風櫃內操作，戴面罩與耐酸手套；酚廢液另外回收。</span></td>
-        <td><div class="chiprow"><span class="c tool">Colab NB07</span><span class="c">ch19 投影片</span><span class="c">FAS 檢量線遊戲</span><span class="c">食品檢驗乙級學科參考資料</span><span class="c vid">楓糖漿</span><span class="c vid">甜菜製糖</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="excel/EX07_sugar_calibration.xlsx" download>Excel EX07</a><span class="c tool">Colab NB07</span><span class="c">ch19 投影片</span><span class="c">FAS 檢量線遊戲</span><span class="c">食品檢驗乙級學科參考資料</span><span class="c vid">楓糖漿</span><span class="c vid">甜菜製糖</span></div></td>
       </tr>
       <tr>
         <td class="wk">W8</td>
         <td class="topic"><b>全班能力試驗與品管總整理</b><span>彙整 5 組的共同盲樣結果，碳水化合物用差減法，完成一般成分表；補做需要重測的項目。</span></td>
         <td>回顧 W1–W7 的校正紀錄，找出哪一項校正最影響結果。</td>
         <td>管制圖、Grubbs 異常值、單因子 ANOVA（組間差異）、z-score、不確定度預算、規格放行判定。</td>
-        <td><div class="chiprow"><span class="c tool">Colab NB08</span><span class="c tool">R</span><span class="c">FAS 管制圖、異常值、不確定度、放行官、ANOVA</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="excel/EX08_proficiency_qc.xlsx" download>Excel EX08</a><a class="c tool" href="tools.html#OR08">Orange OR08</a><span class="c tool">Colab NB08</span><span class="c tool">R</span><span class="c">FAS 管制圖、異常值、不確定度、放行官、ANOVA</span></div></td>
       </tr>
       <tr class="exam">
         <td class="wk">W9</td>
         <td class="topic"><b>期中考</b><span>筆試（一般成分、校正、品管觀念）</span></td>
-        <td colspan="3">實作：給一組滴定或能力試驗數據，在 Colab 完成品管報告（描述統計、異常值檢定、方法比較、結論）。</td>
+        <td colspan="3">實作：給一組滴定或能力試驗數據，在 Excel 或 Colab（任選）完成品管報告（描述統計、異常值檢定、方法比較、結論）。</td>
       </tr>
 
       <tr class="part"><td colspan="5">後半學期　近紅外 × 拉曼 × 化學計量學</td></tr>
@@ -235,28 +235,28 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
         <td class="topic"><b>前處理與光譜相似度比對</b><span>用 W10 的純物質建光譜庫，指認特徵峰；比對未知粉末與市售代糖的成分。</span></td>
         <td>拉曼螢光背景用 airPLS 扣除。</td>
         <td>SNV、MSC、Savitzky–Golay 微分；相關係數與 SAM 相似度；相似度門檻與誤判。</td>
-        <td><div class="chiprow"><span class="c tool">SpectraView</span><span class="c tool">Similarity／Library／Peaks widget</span><span class="c tool">Colab NB09</span></div></td>
+        <td><div class="chiprow"><span class="c tool">SpectraView</span><span class="c tool">Similarity／Library／Peaks widget</span><a class="c tool" href="tools.html#OR11">Orange OR11</a><span class="c tool">Colab NB09</span></div></td>
       </tr>
       <tr class="b">
         <td class="wk">W12</td>
         <td class="topic"><b>PCA</b><span>食用油：特級初榨與精製橄欖油、大豆、芥花、椰子、花生油，量拉曼 785 與 NIR；備用資料集 five_sugar。</span></td>
         <td>每個樣品重複裝填 3 次，評估取樣變異。</td>
         <td>分數圖、loadings 解讀、scree plot；Orange PCA 要接 Data 輸出，score plot 才能依類別上色。</td>
-        <td><div class="chiprow"><span class="c tool">Orange PCA + Spectra</span><span class="c tool">Colab</span><span class="c tool">R prcomp</span><span class="c vid">橄欖油</span><span class="c vid">芥花油</span><span class="c vid">大豆油</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="tools.html#OR12">Orange OR12</a><span class="c tool">Orange PCA + Spectra</span><span class="c tool">Colab NB10</span><span class="c tool">R prcomp</span><span class="c vid">橄欖油</span><span class="c vid">芥花油</span><span class="c vid">大豆油</span></div></td>
       </tr>
       <tr class="b">
         <td class="wk">W13</td>
         <td class="topic"><b>PLS I：醋酸（或乙醇）定量</b><span>用 W4 滴定的醋當 Y，加上稀釋標準系列。液體用可裝比色槽的穿透式配置量測，各組用不同儀器，全班比較 RMSEP；也可比較短波（600–1100 nm）、900–1700 nm 與長波（1350–2500 nm，需排除約 1940 nm 水吸收飽和區）的模型差異。示範資料：acetic_t1_1mm_0313_2025。延伸：W7 在水果上量的 Brix 光譜（Avantes 300–1100 nm vs NIR-S-G1 900–1700 nm），以折射計 Brix 為 Y 建模，比較兩台儀器。</span></td>
         <td>比色槽光程與方向固定；每天開機先量參考。</td>
         <td>校正集與驗證集切分、交叉驗證選 LV 數、RMSEC／RMSECV／RMSEP、RPD、偏差；參考方法的誤差會傳進模型。</td>
-        <td><div class="chiprow"><span class="c tool">Orange PLS + Test and Score</span><span class="c tool">R pls</span><span class="c tool">Colab NB10</span><span class="c vid">葡萄酒</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="tools.html#OR13">Orange OR13</a><span class="c tool">Orange PLS + Test and Score</span><span class="c tool">R pls</span><span class="c tool">Colab NB11</span><span class="c vid">葡萄酒</span></div></td>
       </tr>
       <tr class="b">
         <td class="wk">W14</td>
         <td class="topic"><b>PLS II：VIP、PLS-DA、離群值</b><span>定量 PLS 的 VIP 與回歸係數；油種或糖種分類用 PLS-DA；Corn 資料集練 T² 與 Q 殘差，並看三台儀器間的模型轉移問題。</span></td>
         <td>VIP 高的波段要能對應 W11 指認的化學鍵。</td>
         <td>VIP 解讀與波段篩選；PLS-DA 的混淆矩陣；T²（模型內）vs Q（模型外）；模型適用範圍。</td>
-        <td><div class="chiprow"><span class="c tool">R／Colab 算 VIP</span><span class="c tool">PLS-DA widget（含 VIP）</span><span class="c">chemometrics-teaching 離群值模組</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="tools.html#OR14">Orange OR14</a><span class="c tool">R／Colab 算 VIP</span><span class="c tool">PLS-DA widget（含 VIP）</span><span class="c">chemometrics-teaching 離群值模組</span></div></td>
       </tr>
       <tr class="b">
         <td class="wk">W15</td>
@@ -270,7 +270,7 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
         <td class="topic"><b>代糖專題 II：建模與預測</b><span>兩個 Y 各建 PLS 模型，預測盲樣與市售代糖；再用 Mixture（NNLS）以純物質光譜直接回推比例，比較兩種做法。</span></td>
         <td>確認兩個 Y 的相關係數接近 0（設計正確的證據）。</td>
         <td>PLS vs 經典最小平方法（CLS／NNLS）；市售品低於 LOD 時該怎麼報告。</td>
-        <td><div class="chiprow"><span class="c tool">Orange PLS</span><span class="c tool">Mixture widget</span><span class="c tool">R／Colab VIP</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="tools.html#OR16">Orange OR16</a><span class="c tool">Orange PLS</span><span class="c tool">Mixture widget</span><span class="c tool">R／Colab VIP</span></div></td>
       </tr>
       <tr class="b">
         <td class="wk">W17</td>
@@ -282,7 +282,7 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
       <tr class="exam">
         <td class="wk">W18</td>
         <td class="topic"><b>期末考</b><span>筆試（光譜原理、校正、化學計量觀念）</span></td>
-        <td colspan="3">實作：給一組光譜與參考值，在 Orange 完成 PCA 與 PLS，在 R 或 Colab 算 VIP，寫出模型結論。</td>
+        <td colspan="3">實作：給一組光譜與參考值，在 Orange 或 Colab（任選）完成 PCA 與 PLS，寫出模型結論；在 R 或 Colab 算 VIP 列為進階加分。</td>
       </tr>
     </tbody>
   </table>
@@ -349,18 +349,19 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
   <h2>評分建議</h2>
   <div class="grade">
     <div class="g"><div class="pct">35%</div><div class="nm">實驗報告</div></div>
-    <div class="g"><div class="pct">15%</div><div class="nm">每週 Colab 品管作業</div></div>
+    <div class="g"><div class="pct">15%</div><div class="nm">每週數據作業（Excel／Orange／Colab 任選）</div></div>
     <div class="g"><div class="pct">15%</div><div class="nm">期中考（筆試＋實作）</div></div>
     <div class="g"><div class="pct">15%</div><div class="nm">期末考（筆試＋實作）</div></div>
     <div class="g"><div class="pct">20%</div><div class="nm">代糖專題（成績單＋發表＋同儕審查）</div></div>
   </div>
+  <p style="font-size:13.5px;color:var(--muted);margin-top:10px">前後測、自我效能問卷、每週出場券與評分規準的做法，見<a href="assessment.html">學習成效評量</a>；用 Colab／Jupyter 完成進階題最多加 5 分。</p>
 </section>
 
 <section>
   <h2>開學前待準備</h2>
   <div class="card">
     <ul class="todo">
-      <li><b>Colab notebook NB01–NB10：</b>建議共用一份資料格式（組別、樣品、重複、數值），前後期可以沿用同一套讀檔與畫圖程式。</li>
+      <li><b>數據分析工具：</b>Excel 練習檔 EX01–EX08、Orange 流程 OR01–OR16、Colab／Jupyter 筆記本 NB01–NB13 都共用同一種長格式（組別、樣品、重複、數值），見<a href="tools.html">數據分析工具指南</a>。電腦教室請先裝好 Orange 與 Spectroscopy 外掛。</li>
       <li><b>定量 PLS 的 VIP：</b>Orange 內建的 PLS 沒有 VIP。先用 R 或 Colab 計算（可參考醋酸資料夾的 <code>pls_analysis.py</code>），或在 orange-spectra 加一個 PLS 迴歸 VIP widget。</li>
       <li><b>代糖預試</b>與原料採購：阿斯巴甜、三氯蔗糖、赤藻糖醇、麥芽糊精。</li>
       <li><b>儀器確認：</b>凱氏消化爐管數、Soxhlet 組數；W2 飽和鹽溶液提前一週配製；W3 鈉離子計台數、原廠標準液存量，並依說明書確認量測範圍與鉀離子干擾。</li>
