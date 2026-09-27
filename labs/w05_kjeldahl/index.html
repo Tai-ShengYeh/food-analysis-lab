@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -167,29 +171,29 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
     <b>4.25</b> 個百分點——等一下我們一起重新算一次。</p>
 </div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W5，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>說出凱氏定氮法的<strong>三個階段</strong>：消化、蒸餾、滴定，以及各自的目的</li><li>分辨<strong>蛋白質氮</strong>與<strong>非蛋白氮(NPN)</strong>，並解釋為什麼三聚氰胺能騙過凱氏法</li><li>選對<strong>換算係數</strong>（一般 6.25／小麥穀類 5.7／乳品 6.38），並知道選錯會造成多大誤差</li></ul><ul class='clean'><li>用 %N=(V<sub>樣品</sub>−V<sub>空白</sub>)×N<sub>HCl</sub>×14.007/W×100 算出樣品的 <strong>%N 與蛋白質%</strong></li><li>說出蒸餾回收標準品(硫酸銨)與消化效率標準品(胺基酸)分別在檢查什麼</li><li>遵守濃硫酸／NaOH 相關<strong>安全</strong>規範，並完成 4 小時的分工與輪站</li></ul></div><p class="subtitle" style="margin-top:10px">理論複習：蛋白質定性/定量方法的完整原理，本課不重複——完整內容在 <a href="https://tai-shengyeh.github.io/food-analysis-decks/ch18_protein_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 完整原理 deck (Nielsen Ch18) →</a> 那份教材。</p></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">這個氮，算不算「蛋白質氮」？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把 8 個氮的來源分到「蛋白質氮」或「非蛋白氮 (NPN)」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理：三階段</div><h2 class="slide-title">消化 → 蒸餾 → 滴定</h2><div class="svgwrap" style="margin-top:2px">
 <svg viewBox="0 0 640 260">
- <text x="320" y="20" text-anchor="middle" class="lblb" font-size="14">凱氏定氮法三階段</text>
+ <text x="320" y="20" text-anchor="middle" class="lblb" style="font-size:14px">凱氏定氮法三階段</text>
  <rect x="14" y="42" width="190" height="120" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <text x="109" y="66" text-anchor="middle" class="lblb" font-size="13">① 消化 Digestion</text>
- <text x="109" y="86" text-anchor="middle" class="lbl" font-size="11">濃 H₂SO₄ ＋ K₂SO₄/CuSO₄ 觸媒錠</text>
- <text x="109" y="102" text-anchor="middle" class="lbl" font-size="11">加熱至 ~420°C，至澄清</text>
- <text x="109" y="120" text-anchor="middle" class="lbl" font-size="11">有機氮 → (NH₄)₂SO₄</text>
- <text x="109" y="144" text-anchor="middle" class="lbl" font-size="10" fill="#d9822b">釋出 SO₂/SO₃ 白煙</text>
+ <text x="109" y="66" text-anchor="middle" class="lblb" style="font-size:13px">① 消化 Digestion</text>
+ <text x="109" y="86" text-anchor="middle" class="lbl" style="font-size:11px">濃 H₂SO₄ ＋ K₂SO₄/CuSO₄ 觸媒錠</text>
+ <text x="109" y="102" text-anchor="middle" class="lbl" style="font-size:11px">加熱至 ~420°C，至澄清</text>
+ <text x="109" y="120" text-anchor="middle" class="lbl" style="font-size:11px">有機氮 → (NH₄)₂SO₄</text>
+ <text x="109" y="144" text-anchor="middle" class="lbl" style="font-size:10px" fill="#d9822b">釋出 SO₂/SO₃ 白煙</text>
  <path d="M208 100 h24" stroke="#48597a" stroke-width="2" marker-end="url(#ar5)"/>
  <rect x="236" y="42" width="190" height="120" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
- <text x="331" y="66" text-anchor="middle" class="lblb" font-size="13">② 蒸餾 Distillation</text>
- <text x="331" y="86" text-anchor="middle" class="lbl" font-size="11">加入過量 40% NaOH</text>
- <text x="331" y="102" text-anchor="middle" class="lbl" font-size="11">水蒸氣蒸餾釋出 NH₃</text>
- <text x="331" y="120" text-anchor="middle" class="lbl" font-size="11">收集於 4% 硼酸</text>
- <text x="331" y="144" text-anchor="middle" class="lbl" font-size="10" fill="#1f6feb">溴甲酚綠–甲基紅混合指示劑</text>
+ <text x="331" y="66" text-anchor="middle" class="lblb" style="font-size:13px">② 蒸餾 Distillation</text>
+ <text x="331" y="86" text-anchor="middle" class="lbl" style="font-size:11px">加入過量 40% NaOH</text>
+ <text x="331" y="102" text-anchor="middle" class="lbl" style="font-size:11px">水蒸氣蒸餾釋出 NH₃</text>
+ <text x="331" y="120" text-anchor="middle" class="lbl" style="font-size:11px">收集於 4% 硼酸</text>
+ <text x="331" y="144" text-anchor="middle" class="lbl" style="font-size:10px" fill="#1f6feb">溴甲酚綠–甲基紅混合指示劑</text>
  <path d="M430 100 h24" stroke="#48597a" stroke-width="2" marker-end="url(#ar5)"/>
  <rect x="458" y="42" width="168" height="120" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
- <text x="542" y="66" text-anchor="middle" class="lblb" font-size="13">③ 滴定 Titration</text>
- <text x="542" y="86" text-anchor="middle" class="lbl" font-size="11">標準化 HCl 滴定</text>
- <text x="542" y="102" text-anchor="middle" class="lbl" font-size="11">滴到指示劑變色終點</text>
- <text x="542" y="120" text-anchor="middle" class="lbl" font-size="11">V(HCl) 換算成 N</text>
- <text x="542" y="144" text-anchor="middle" class="lbl" font-size="10" fill="#1f9d6b">硼酸本身不需標定</text>
- <text x="320" y="200" text-anchor="middle" class="lbl" font-size="12">量到的是「總氮」——蛋白質氮 ＋ 非蛋白氮(NPN)都算進去</text>
- <text x="320" y="222" text-anchor="middle" class="lbl" font-size="12">蛋白質 % = %N × 換算係數（一般 6.25／小麥 5.7／乳品 6.38）</text>
+ <text x="542" y="66" text-anchor="middle" class="lblb" style="font-size:13px">③ 滴定 Titration</text>
+ <text x="542" y="86" text-anchor="middle" class="lbl" style="font-size:11px">標準化 HCl 滴定</text>
+ <text x="542" y="102" text-anchor="middle" class="lbl" style="font-size:11px">滴到指示劑變色終點</text>
+ <text x="542" y="120" text-anchor="middle" class="lbl" style="font-size:11px">V(HCl) 換算成 N</text>
+ <text x="542" y="144" text-anchor="middle" class="lbl" style="font-size:10px" fill="#1f9d6b">硼酸本身不需標定</text>
+ <text x="320" y="200" text-anchor="middle" class="lbl" style="font-size:12px">量到的是「總氮」——蛋白質氮 ＋ 非蛋白氮(NPN)都算進去</text>
+ <text x="320" y="222" text-anchor="middle" class="lbl" style="font-size:12px">蛋白質 % = %N × 換算係數（一般 6.25／小麥 5.7／乳品 6.38）</text>
  <defs><marker id="ar5" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
    <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
 </svg></div><div class="note" style="margin-top:8px"><strong>關鍵一句：</strong><strong>硼酸本身不需要標定</strong>——它只負責「捕捉」NH₃，真正用來定量的是後面已<strong>標準化</strong>的 HCl。　<a href="https://tai-shengyeh.github.io/food-analysis-decks/ch18_protein_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 完整原理 deck (Nielsen Ch18) →</a></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">蛋白質 = %N × 換算係數</div><h2 class="slide-title">凱氏法量的是「總氮」，不是「蛋白質」</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>換算係數</th><th>適用</th><th>理由(簡述)</th></tr></thead><tbody><tr><td class="c">6.25</td><td>一般食品(通用值)</td><td>假設蛋白質平均含氮 16%（1/0.16=6.25）</td></tr><tr><td class="c">5.7</td><td>小麥／穀類</td><td>穀類蛋白麩質含氮比例較高，需用較小係數</td></tr><tr><td class="c">6.38</td><td>乳品</td><td>酪蛋白等乳蛋白含氮比例較低，需用較大係數</td></tr></tbody></table><div class="note" style="margin-top:12px"><strong>凱氏法(與 Dumas 燃燒法一樣)量的是「總氮」</strong>，包含蛋白質氮，也包含<strong>非蛋白氮(non-protein nitrogen, NPN)</strong>——例如三聚氰胺、尿素、游離胺基酸、核酸等。換算係數是「假設氮全部來自蛋白質」下的近似值，一旦樣品混了高氮的非蛋白物質，算出來的「蛋白質%」就會被<strong>虛增</strong>。<br><strong>Dumas 燃燒法：</strong>把樣品在高溫下完全燃燒，直接測氮氣量，比凱氏法快(數分鐘 vs 數小時)，但一樣測的是總氮、一樣會被 NPN 干擾——本次實驗不做，僅供比較認識。</div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">重新算一次</div><h2 class="slide-title">三聚氰胺事件：為什麼凱氏法會被騙？</h2><div class="grid2" style="margin-top:10px"><div><p class="lead">三聚氰胺 (melamine, C₃H₆N₆)：MW=126.12，含氮量高達 <b>66.63%</b></p><ul class="clean" style="margin-top:10px"><li>正常牛奶的氮幾乎全來自<strong>酪蛋白等乳蛋白</strong>(蛋白質氮)</li><li>不肖業者把水稀釋過的奶粉，故意加入三聚氰胺——它<strong>不是蛋白質</strong>，但氮含量極高</li><li>凱氏法只看「總氮」，分不出這個氮是蛋白質來的還是三聚氰胺來的</li></ul></div><div class="note"><strong>算給你看：</strong>每混入 <b>1 g 三聚氰胺 / 100 g 樣品</b>(即 1% w/w)：<br>貢獻的 %N = 1% × 66.63% ≈ <b>0.6663 個百分點</b><br>以乳品係數 6.38 換算，虛增的表觀蛋白質 ≈ 0.6663 × 6.38 ≈ <b>4.25 個百分點</b><br><br>也就是說：只要摻入約 1% 的三聚氰胺，凱氏法測出的「蛋白質%」就能被拉高 <b>~4.3</b> 個百分點——足以把稀釋摻水、蛋白質本來不足的奶粉，偽裝成「合格」。</div></div></div></section><section class="slide" data-slide="8" data-section="維持注意" data-chart="melamine"><div class="slide-inner"><div class="kicker">事件重建・示意數據</div><h2 class="slide-title">摻偽曲線：三聚氰胺混入比例 vs <span class='hi'>表觀蛋白質</span></h2><div class="chartbox" style="height:46vh"><canvas id="chart_melamine"></canvas></div><div class="cap">示意數據：以全脂奶粉(真實蛋白質約 26.0%)為基準，x 軸為三聚氰胺混入比例(% w/w，等距)，y 軸為凱氏法測出的表觀蛋白質%。曲線之所以是直線上升，是因為凱氏法無法分辨氮的來源。</div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">校正與品管 (QC)</div><h2 class="slide-title">開始前／過程中要確認的 4 件事</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">⚗️</div><div class="ct">HCl 標定</div><div class="cb">滴定用的 HCl 須先用 Na₂CO₃ 或 THAM 等一級標準品標定出精確濃度，才能拿來換算 %N</div></div><div class="card a"><div class="ic">🧪</div><div class="ct">試劑空白 (blank)</div><div class="cb">空管走完整套消化＋蒸餾＋滴定流程(不加樣品)，扣除試劑本身帶入的微量氮</div></div></div><div class="grid2" style="margin-top:14px"><div class="card g"><div class="ic">♻️</div><div class="ct">蒸餾回收標準品</div><div class="cb">用已知氮量的<strong>硫酸銨</strong>(理論 %N=21.20%)走蒸餾＋滴定，檢查 NH₃ 有沒有被完全蒸出、捕捉</div></div><div class="card b"><div class="ic">🔬</div><div class="ct">消化效率標準品</div><div class="cb">用<strong>離胺酸鹽酸鹽或色胺酸</strong>等有機氮標準品走全流程，檢查消化階段是否把有機氮完全轉化</div></div></div><div class="note" style="margin-top:12px"><strong>算給你看(蒸餾回收)：</strong>秤 0.0500 g 硫酸銨(理論%N=21.20%)，走蒸餾＋滴定測得 %N=21.01%，回收率 = 21.01/21.20×100 ≈ <b>99.1%</b>（依方法可接受範圍通常需 ≥97%）。<br><strong>算給你看(消化效率)：</strong>離胺酸鹽酸鹽理論%N=15.34%，走全流程測得%N=15.10%，回收率≈<b>98.4%</b>。這兩個標準品本學期先由 TA 示範一管，讓全班理解原理，未列入下方 8 管的分組排程。<br><strong>指示劑終點一致性：</strong>全班用同一批 4% 硼酸＋混合指示劑，滴定終點顏色(粉紅→灰藍/綠)要一致，避免組間判讀落差。</div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">樣品與輪站分工</div><h2 class="slide-title">一套凱氏設備（消化爐 + 蒸餾儀），只能容納 8 管</h2><div class="grid2" style="margin-top:10px"><div><ul class="clean"><li><strong>盲樣：</strong>全學期共同的全脂奶粉——W2 測過水分、W3 測過灰分，本週測蛋白質。<strong>5 組各消化 1 管</strong>盲樣，全班湊成 <b>n=5</b>（每組貢獻一個值），彙整成平均值 ± SD</li><li><strong>另外 3 管為品管與比較用：</strong>1 管試劑空白、1 管蒸餾回收標準品(硫酸銨)、1 管<strong>高筋麵粉</strong>——高筋麵粉這管由 1 組代表操作，結果全班共用</li><li><strong>低筋(蛋糕)麵粉</strong>的結果由<strong>助教提供</strong>(前一次操作的數據)，用來跟高筋麵粉比較——本次消化爐排程已滿 8 管，無法再現場加測</li><li>消化效率標準品(離胺酸鹽酸鹽)仍由 TA 示範一管，不占用班級排程</li><li>合計：<b>5(盲樣) ＋ 1(空白) ＋ 1(回收標準品) ＋ 1(高筋麵粉) = 8 管</b></li></ul></div><div class="note"><strong>⚠️ 請 TA 開課前務必確認：</strong>消化爐與蒸餾儀確實<strong>能容納 8 管</strong>同時排程——本排程剛好把 8 管的容量用滿，沒有多餘空間，若設備容量不足 8 管，需提前調整分組或分批消化。<br><br><strong>只有一套設備：</strong>所有管子<strong>一起消化</strong>，再依序輪流蒸餾＋滴定，每管約 8–10 分鐘。</div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">4 小時課程時間表</div><h2 class="slide-title">消化集中進行，蒸餾滴定輪站</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody>

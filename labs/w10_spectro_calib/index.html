@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -165,53 +169,49 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
     再量出一批<strong>純物質光譜</strong>——這些光譜會變成整個班級共用的<strong>光譜庫</strong>，
     也是 W15–16 甜味劑專題的參考資料。</p>
 </div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W10，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>說出 <strong>NIR</strong> 訊號來自 X–H 鍵的<strong>倍頻與合頻(overtone/combination)</strong>，為什麼寬又重疊、需要化學計量學</li><li>說出 <strong>Raman</strong> 訊號來自<strong>非彈性散射</strong>，理解 Raman shift(cm⁻¹) 的定義，以及為什麼圖譜像指紋一樣尖銳</li><li>解釋為什麼<strong>水</strong>是 NIR 的強吸收體，卻是 Raman 很弱的散射體</li></ul><ul class='clean'><li>完成 <strong>Raman x 軸校正</strong>(矽晶圓、聚苯乙烯)與 <strong>NIR 暗電流／白參考／波長檢查</strong></li><li>認出 <strong>InnoSpectra 卡匣正反裝</strong>造成的基線異常，並知道用「先量已知光譜」把關</li><li>完成 5 次重複掃描，看懂平均光譜與 SD 光譜、判斷雜訊最大的位置</li><li>遵守<strong>雷射安全</strong>與溶劑操作規範，量出本組的純物質光譜並依規則命名上傳</li></ul></div><p class="subtitle" style="margin-top:10px">理論複習：本課不重複紅外光譜、光譜學的完整原理——完整內容在 <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-decks/ch8_ir/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 完整原理 deck（Nielsen Ch8，紅外光譜）→</a> 與 <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-decks/ch6_spectroscopy/ch6_spectroscopy.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 完整原理 deck（Nielsen Ch6，光譜學總覽）→</a>。</p></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">這個特性屬於 NIR 還是 Raman？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把下面 8 個敘述，分到「NIR 特性」或「Raman 特性」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理（簡述）</div><h2 class="slide-title">NIR：<span class='hi'>倍頻/合頻</span>　vs　Raman：<span class='hi'>非彈性散射</span></h2><div class="grid2" style="margin-top:6px"><div><ul class="clean"><li><strong>NIR</strong>：訊號來自 O–H、C–H、N–H 等 X–H 鍵的<strong>倍頻/合頻</strong>——如 O–H(~1450、~1940 nm)、C–H(~1150–1210、~1700–1760 nm)。峰<strong>寬又重疊</strong>，一定要靠<strong>化學計量學</strong>才能定量；<strong>水</strong>是很強的吸收體，常主導光譜</li><li><strong>Raman</strong>：雷射照射樣品後的<strong>非彈性散射</strong>，出射光與入射光的波數差就是 <strong>Raman shift(cm⁻¹)</strong>，圖譜<strong>尖銳如指紋</strong>，可直接比對資料庫辨識物質</li><li><strong>水是很弱的 Raman 散射體</strong>，幾乎不干擾——這是量水溶液樣品的一大優勢；最大的敵人是<strong>螢光背景</strong>：785nm 較不易引發螢光，但 532nm 散射訊號本身較強(∝ 1/λ⁴)</li></ul></div><div class='svgwrap'>
-<svg viewBox="0 0 620 270">
- <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">彈性散射(Rayleigh) vs 非彈性散射(Stokes Raman)：能階示意圖</text>
- <line x1="40" y1="40" x2="580" y2="40" stroke="#8493ad" stroke-width="1.6" stroke-dasharray="5 4"/>
- <text x="586" y="44" class="lbl" font-size="11">虛擬態 virtual state</text>
- <line x1="40" y1="180" x2="580" y2="180" stroke="#48597a" stroke-width="2"/>
- <text x="586" y="184" class="lbl" font-size="11">v=1(振動激發)</text>
- <line x1="40" y1="225" x2="580" y2="225" stroke="#15233f" stroke-width="2.2"/>
- <text x="586" y="229" class="lbl" font-size="11">v=0(基態)</text>
- <path d="M150 225 L150 40" stroke="#48597a" stroke-width="2.4" marker-end="url(#arE)"/>
- <text x="126" y="150" class="lblb" font-size="12" fill="#48597a">hν₀</text>
- <path d="M190 40 L190 225" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#arE)"/>
- <text x="196" y="150" class="lblb" font-size="12" fill="#1f6feb">hν₀</text>
- <text x="170" y="248" text-anchor="middle" class="lblb" font-size="12" fill="#1f6feb">Rayleigh（彈性，同能量）</text>
- <path d="M400 225 L400 40" stroke="#48597a" stroke-width="2.4" marker-end="url(#arE)"/>
- <text x="376" y="150" class="lblb" font-size="12" fill="#48597a">hν₀</text>
- <path d="M440 40 L440 180" stroke="#d9822b" stroke-width="2.4" marker-end="url(#arE)"/>
- <text x="446" y="120" class="lblb" font-size="12" fill="#d9822b">hν₀−Δν̃</text>
- <text x="420" y="248" text-anchor="middle" class="lblb" font-size="12" fill="#d9822b">Stokes Raman（非彈性，分子留在 v=1）</text>
- <text x="310" y="265" text-anchor="middle" class="lbl" font-size="11">Raman shift Δν̃ = 入射與散射光的波數差(cm⁻¹)，只跟分子振動有關、與雷射波長無關</text>
- <defs><marker id="arE" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-   <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
+<svg viewBox="0 0 620 275">
+ <text x="310" y="20" text-anchor="middle" class="lblb" style="font-size:14px">彈性散射(Rayleigh) vs 非彈性散射(Stokes Raman)：能階示意圖</text>
+ <line x1="40" y1="40" x2="466" y2="40" stroke="#8493ad" stroke-width="1.6" stroke-dasharray="5 4"/>
+ <text x="474" y="44" class="lbl" style="font-size:12px">虛擬態 virtual state</text>
+ <line x1="40" y1="180" x2="466" y2="180" stroke="#48597a" stroke-width="2"/>
+ <text x="474" y="184" class="lbl" style="font-size:12px">v=1(振動激發態)</text>
+ <line x1="40" y1="225" x2="466" y2="225" stroke="#15233f" stroke-width="2.2"/>
+ <text x="474" y="229" class="lbl" style="font-size:12px">v=0(基態)</text>
+ <path d="M130 225 L130 40" stroke="#48597a" stroke-width="2.4" marker-end="url(#arE)"/>
+ <text x="124" y="150" text-anchor="end" class="lblb" style="font-size:12px">hν<tspan baseline-shift="sub" style="font-size:9px">0</tspan></text>
+ <path d="M170 40 L170 225" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#arEb)"/>
+ <text x="176" y="150" class="lblb" style="font-size:12px;fill:#1f6feb">hν<tspan baseline-shift="sub" style="font-size:9px">0</tspan></text>
+ <text x="150" y="250" text-anchor="middle" class="lblb" style="font-size:12px;fill:#1f6feb">Rayleigh（彈性，同能量）</text>
+ <path d="M330 225 L330 40" stroke="#48597a" stroke-width="2.4" marker-end="url(#arE)"/>
+ <text x="324" y="150" text-anchor="end" class="lblb" style="font-size:12px">hν<tspan baseline-shift="sub" style="font-size:9px">0</tspan></text>
+ <path d="M370 40 L370 180" stroke="#d9822b" stroke-width="2.4" marker-end="url(#arEo)"/>
+ <text x="376" y="116" class="lblb" style="font-size:12px;fill:#b5651d">h(ν<tspan baseline-shift="sub" style="font-size:9px">0</tspan> − ν<tspan baseline-shift="sub" style="font-size:9px">vib</tspan>)</text>
+ <path d="M392 180 V225" stroke="#48597a" stroke-width="1.2"/>
+ <text x="398" y="207" class="lbl" style="font-size:11px">hν<tspan baseline-shift="sub" style="font-size:9px">vib</tspan></text>
+ <text x="350" y="250" text-anchor="middle" class="lblb" style="font-size:12px;fill:#b5651d">Stokes Raman（非彈性，分子留在 v=1）</text>
+ <text x="310" y="270" text-anchor="middle" class="lbl" style="font-size:11px">Raman shift Δν̃ = 入射與散射光的波數差(cm⁻¹)＝振動能階差，與雷射波長無關</text>
+ <defs>
+  <marker id="arE" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker>
+  <marker id="arEb" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#1f6feb"/></marker>
+  <marker id="arEo" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#d9822b"/></marker>
+ </defs>
 </svg></div></div></div></section><section class="slide" data-slide="6" data-section="維持注意" data-chart="ramanfl"><div class="slide-inner"><div class="kicker">數據・模擬光譜</div><h2 class="slide-title">模擬拉曼光譜：<span class='hi'>532nm vs 785nm</span>，同一組峰位置</h2><div class="chartbox" style="height:42vh"><canvas id="chart_ramanfl"></canvas></div><div class="cap">示意數據/模擬光譜（非本班實測），x 軸為等間距的 Raman shift(cm⁻¹)。532nm 的散射訊號本身較強，但螢光背景也大幅升高、把小峰蓋掉；785nm 背景平坦，峰形清楚——這就是有色/易螢光樣品常改用 785nm 的原因。</div></div></section><section class="slide" data-slide="7" data-section="維持注意" data-chart="nirwe"><div class="slide-inner"><div class="kicker">數據・模擬光譜</div><h2 class="slide-title">模擬 NIR 吸收光譜：<span class='hi'>水 vs 乙醇</span></h2><div class="chartbox" style="height:42vh"><canvas id="chart_nirwe"></canvas></div><div class="cap">示意數據/模擬光譜，非特定儀器規格。水的兩個峰約落在 <b>1450 nm(O–H 一級倍頻)</b>與 <b>1940 nm(O–H 合頻)</b>附近；乙醇除了較弱的 O–H 峰，還多了 <b>C–H 一級倍頻 ~1700–1760 nm</b> 與 <b>C–H 二級倍頻 ~1150–1210 nm</b> —— 這也是為什麼光看『某個波長的吸光值』很難分辨兩者，要靠整條光譜的形狀(化學計量學)。</div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">校正 1</div><h2 class="slide-title">Raman x 軸校正：<span class='hi'>矽晶圓・聚苯乙烯・環己烷</span></h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">💎</div><div class="ct">矽晶圓 Silicon wafer</div><div class="cb">單一尖峰 <b>~520.7 cm⁻¹</b>，檢查峰位置是否落在儀器容許誤差內——x 軸校正最常用的基準</div></div><div class="card a"><div class="ic">🧴</div><div class="ct">聚苯乙烯 Polystyrene</div><div class="cb">主要校正峰 <b>1001.4 cm⁻¹</b>(環呼吸模)，另有 620.9、1031.8、1602.3 cm⁻¹可交叉核對多點</div></div><div class="card g"><div class="ic">🧪</div><div class="ct">環己烷 Cyclohexane</div><div class="cb"><b>801.3 cm⁻¹</b>等峰，依 <strong>ASTM E1840</strong> 拉曼位移標準品規範使用</div></div></div><div class="note" style="margin-top:12px"><strong>532nm 與 785nm 是兩台不同雷射，要分別各做一次 x 軸校正</strong>，同時記錄雷射功率與對焦狀態(功率過高可能燒焦/降解樣品，對焦不良會使訊號變弱)。<br><strong>換算練習：</strong>聚苯乙烯 1001.4 cm⁻¹ 峰，用 785nm 雷射時散射光絕對波長 ≈ <b>851.97 nm</b>；換成 532nm 雷射時 ≈ <b>561.94 nm</b>（同一個 Raman shift，換雷射波長，散射光的絕對波長完全不同）。</div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">校正 2</div><h2 class="slide-title">NIR：暗電流・白參考・波長檢查 — 一個真實的 QC 教訓</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li><strong>暗電流(dark current)</strong>：光路全暗時的偵測器背景訊號，每次校正的第一步</li><li><strong>白參考(white reference)</strong>：如 Spectralon/PTFE(~99% 反射率)，<strong>每次上機前/每批樣品前</strong>都要重新做，建立反射基準</li><li><strong>波長檢查</strong>：用聚苯乙烯或 NIST 稀土氧化物反射標準品(如 SRM 1920 系列，若有)確認波長準確性</li><li><strong>暖機時間</strong>：依儀器建議，讓光源與偵測器穩定後再開始量測</li><li>換算練習：<b>1450 nm ≈ 6897 cm⁻¹</b>（波數 = 1/波長，換算成 cm 再取倒數）</li></ul></div><div class='svgwrap'>
-<svg viewBox="0 0 620 260">
- <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">InnoSpectra 1mm 比色管卡匣：正裝 vs 反裝</text>
- <rect x="30" y="46" width="260" height="180" rx="10" fill="#fbe7e7" stroke="#d94f4f" stroke-width="2"/>
- <text x="160" y="66" text-anchor="middle" class="lblb" font-size="12" fill="#d94f4f">NORMAL 正裝（錯誤）</text>
- <rect x="90" y="90" width="140" height="100" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
- <rect x="90" y="150" width="140" height="40" fill="#8493ad"/>
- <text x="160" y="175" text-anchor="middle" class="lbl" font-size="10" fill="#eef2f8">卡匣底座（較厚）</text>
- <circle cx="60" cy="195" r="7" fill="#d9822b"/>
- <text x="60" y="215" text-anchor="middle" class="lbl" font-size="10">光源</text>
- <path d="M67 195 L90 178" stroke="#d94f4f" stroke-width="2" stroke-dasharray="3 3"/>
- <text x="70" y="150" class="lbl" font-size="9" fill="#d94f4f">低處光線被擋住 ✕</text>
- <path d="M60 150 L90 120" stroke="#1f9d6b" stroke-width="2"/>
- <text x="245" y="205" text-anchor="middle" class="lblb" font-size="11" fill="#d94f4f">基線升高、特徵消失</text>
- <rect x="330" y="46" width="260" height="180" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
- <text x="460" y="66" text-anchor="middle" class="lblb" font-size="12" fill="#1f9d6b">INVERTED 反裝（正確）</text>
- <rect x="390" y="90" width="140" height="100" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
- <rect x="390" y="90" width="140" height="40" fill="#8493ad"/>
- <text x="460" y="115" text-anchor="middle" class="lbl" font-size="10" fill="#eef2f8">卡匣底座（翻到上方）</text>
- <circle cx="360" cy="195" r="7" fill="#d9822b"/>
- <text x="360" y="215" text-anchor="middle" class="lbl" font-size="10">光源</text>
- <path d="M367 195 L390 178" stroke="#1f9d6b" stroke-width="2.2"/>
- <path d="M367 195 L420 150" stroke="#1f9d6b" stroke-width="2.2"/>
- <text x="370" y="150" class="lbl" font-size="9" fill="#1f9d6b">光路暢通 ✓</text>
- <text x="545" y="205" text-anchor="middle" class="lblb" font-size="11" fill="#1f9d6b">光譜正常、峰形完整</text>
- <text x="310" y="248" text-anchor="middle" class="lbl" font-size="11">QC 習慣：不管正裝反裝，開始量測前先量一次已知光譜(如水)確認基線正常，再相信數據</text>
+<svg viewBox="0 0 620 266">
+ <defs>
+  <pattern id="hatch10" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+   <rect width="6" height="6" fill="#8493ad"/><line x1="0" y1="0" x2="0" y2="6" stroke="#48597a" stroke-width="1.4"/></pattern>
+  <marker id="arH" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="#d9822b"/></marker>
+ </defs>
+ <text x="310" y="20" text-anchor="middle" class="lblb" style="font-size:14px">InnoSpectra 1mm 比色管卡匣：正裝 vs 反裝（側視示意）</text>
+ <rect x="30" y="34" width="260" height="206" rx="10" fill="#fbe7e7" stroke="#d94f4f" stroke-width="2"/>
+ <text x="160" y="54" text-anchor="middle" class="lblb" style="font-size:12px;fill:#d94f4f">NORMAL 正裝（錯誤）</text>
+ <rect x="46" y="196" width="228" height="10" fill="#8493ad"/><rect x="54" y="167" width="16" height="22" rx="2" fill="#fde7c2" stroke="#d9822b" stroke-width="1.4"/><rect x="250" y="167" width="16" height="22" rx="2" fill="#dde5f0" stroke="#48597a" stroke-width="1.4"/><text x="62" y="160" text-anchor="middle" class="lbl" style="font-size:11px">光源</text><text x="258" y="160" text-anchor="middle" class="lbl" style="font-size:11px">偵測器</text><rect x="130" y="80" width="70" height="12" fill="url(#hatch10)" stroke="#48597a" stroke-width="1.4"/><rect x="130" y="122" width="70" height="74" fill="url(#hatch10)" stroke="#48597a" stroke-width="1.4"/><rect x="144" y="94" width="42" height="26" fill="#cfe0f6" stroke="#1f6feb" stroke-width="1.4"/><text x="165" y="72" text-anchor="middle" class="lbl" style="font-size:11px">卡匣(holder)</text><path d="M70 178 H124" stroke="#d9822b" stroke-width="3" marker-end="url(#arH)"/><text x="128" y="168" text-anchor="middle" class="lblb" style="font-size:16px;fill:#d94f4f">✕</text><line x1="200" y1="178" x2="250" y2="178" stroke="#8493ad" stroke-width="1.2" stroke-dasharray="4 3"/><text x="165" y="150" text-anchor="middle" class="lbl" style="font-size:10px;fill:#ffffff">厚底座擋光</text><text x="165" y="111" text-anchor="middle" class="lbl" style="font-size:10px">樣品窗</text>
+ <text x="160" y="228" text-anchor="middle" class="lblb" style="font-size:11px;fill:#d94f4f">光束打在底座 → 基線升高、特徵消失</text>
+ <rect x="330" y="34" width="260" height="206" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="460" y="54" text-anchor="middle" class="lblb" style="font-size:12px;fill:#1f9d6b">INVERTED 反裝（正確）</text>
+ <rect x="346" y="196" width="228" height="10" fill="#8493ad"/><rect x="354" y="167" width="16" height="22" rx="2" fill="#fde7c2" stroke="#d9822b" stroke-width="1.4"/><rect x="550" y="167" width="16" height="22" rx="2" fill="#dde5f0" stroke="#48597a" stroke-width="1.4"/><text x="362" y="160" text-anchor="middle" class="lbl" style="font-size:11px">光源</text><text x="558" y="160" text-anchor="middle" class="lbl" style="font-size:11px">偵測器</text><rect x="430" y="190" width="70" height="6" fill="url(#hatch10)" stroke="#48597a" stroke-width="1.4"/><rect x="430" y="80" width="70" height="84" fill="url(#hatch10)" stroke="#48597a" stroke-width="1.4"/><rect x="444" y="166" width="42" height="22" fill="#cfe0f6" stroke="#1f6feb" stroke-width="1.4"/><text x="465" y="72" text-anchor="middle" class="lbl" style="font-size:11px">卡匣(holder)</text><path d="M370 178 H544" stroke="#d9822b" stroke-width="3" marker-end="url(#arH)"/><text x="465" y="126" text-anchor="middle" class="lbl" style="font-size:10px;fill:#ffffff">底座翻到上方</text>
+ <text x="460" y="228" text-anchor="middle" class="lblb" style="font-size:11px;fill:#1f9d6b">樣品窗對準光束 → 光譜正常、峰形完整</text>
+ <text x="310" y="258" text-anchor="middle" class="lbl" style="font-size:11px">QC 習慣：不管正裝反裝，開始量測前先量一次已知光譜(如水)確認基線正常，再相信數據</text>
 </svg></div></div><div class="note" style="margin-top:10px"><strong>InnoSpectra 的真實教訓：</strong>1mm 比色管卡匣如果用<strong>正常(normal)方向</strong>裝，卡匣底座會擋住較低處的光源，使基線升高、原本該有的特徵幾乎消失；<strong>反過來裝(inverted)</strong>才會量到正確的光譜。這正是為什麼<strong>QC 習慣一定要先量一次已知光譜(如水)確認基線正常</strong>，才敢相信接下來量到的數據。</div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-chart="repeat"><div class="slide-inner"><div class="kicker">數據・重複性</div><h2 class="slide-title">重複掃描：<span class='hi'>5 次 → 平均光譜與 SD 光譜</span></h2><div class="chartbox" style="height:42vh"><canvas id="chart_repeat"></canvas></div><div class="cap">示意數據/模擬光譜，x 軸為等間距的 Raman shift(cm⁻¹)。SD(以「平均±1SD」兩條線表示)在光譜<strong>兩端</strong>最大——光譜邊緣通常光通量較低、訊噪比較差，是重複性最不穩定的地方；中段訊號較強的區域反而較穩定。</div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">4 小時課程時間表</div><h2 class="slide-title">原理 → 校正 → 量測 → 重複性 → 上傳</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody>
     <tr><td class="c">0:00–0:30</td><td>原理講解(NIR vs Raman)＋雷射與溶劑安全示範</td></tr>
     <tr><td class="c">0:30–1:15</td><td>Raman 波數校正（矽晶圓、聚苯乙烯，532/785 各一次）與 NIR 暗電流／白參考／波長檢查</td></tr>

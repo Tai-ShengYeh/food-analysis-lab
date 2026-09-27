@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -181,7 +185,7 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <text x="417" y="74" text-anchor="middle" class="lblb" font-size="12">VIP 輸出</text>
  <rect x="508" y="42" width="132" height="56" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
  <text x="574" y="66" text-anchor="middle" class="lblb" font-size="11">Scatter Plot</text>
- <text x="574" y="84" text-anchor="middle" class="lbl" font-size="10">x=wavelength,y=VIP</text>
+ <text x="574" y="84" text-anchor="middle" class="lbl" style="font-size:11px">x＝波長，y＝VIP</text>
  <path d="M140 70 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
  <path d="M326 70 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
  <path d="M472 70 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
@@ -192,15 +196,15 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <rect x="176" y="160" width="150" height="56" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
  <text x="251" y="192" text-anchor="middle" class="lblb" font-size="12">PLS-DA</text>
  <rect x="362" y="160" width="278" height="56" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <text x="501" y="184" text-anchor="middle" class="lblb" font-size="11">Confusion Matrix / Predictions</text>
- <text x="501" y="202" text-anchor="middle" class="lbl" font-size="10">另有 Scores／Loadings／VIP 輸出</text>
+ <text x="501" y="184" text-anchor="middle" class="lblb" style="font-size:12px">Predictions／Scores／Loadings／VIP</text>
+ <text x="501" y="202" text-anchor="middle" class="lbl" style="font-size:11px">面板內顯示訓練集混淆矩陣(非交叉驗證)</text>
  <path d="M140 188 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
  <path d="M326 188 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
 
  <rect x="20" y="238" width="620" height="78" rx="10" fill="#f6f9fd" stroke="#8493ad" stroke-width="1.6"/>
  <text x="34" y="258" class="lblb" font-size="12">Colab／R 也能算 VIP（概念相同）：</text>
  <text x="34" y="278" class="lbl mono" font-size="11">Python: VIP = sqrt(p * (W**2 @ SSY) / SSY.sum())   # W 已單位化，逐波長平方加權</text>
- <text x="34" y="296" class="lbl mono" font-size="11">R:      VIP &lt;- sqrt(p * colSums(SSY * (W/colnorm)^2) / sum(SSY))</text>
+ <text x="34" y="296" class="lbl mono" font-size="11">R:      VIP &lt;- sqrt(p * (Wn^2 %*% SSY) / sum(SSY))   # Wn = W 各欄單位化</text>
  <defs><marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
    <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
 </svg></div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理 2</div><h2 class="slide-title">PLS-DA：把<span class='hi'>分類問題</span>硬做成迴歸</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li>把類別編碼成 <strong>dummy Y(one-hot)</strong>：每一類是一欄 0/1</li><li>對每一欄各自(同時)做 PLS 迴歸，得到每一類的預測分數 ŷ</li><li><strong>預測類別 = ŷ 最大的那一欄</strong>(argmax)</li><li>結果整理成<strong>混淆矩陣(confusion matrix)</strong>：列＝實際類別，欄＝預測類別</li><li><strong>準確率(accuracy)</strong> = 對角線總和 / 全部樣品數</li><li><strong>敏感度(sensitivity)</strong> = 該類別抓對的比例；<strong>特異度(specificity)</strong> = 正確排除「不是該類別」的比例</li><li>Orange 的 <strong>PLS-DA</strong> widget 另有 Scores／Loadings／<strong>VIP</strong> 輸出——分類問題一樣能看變數重要性</li></ul></div><div class='note'>Orange 內建的一般 PLS 迴歸 widget<strong>沒有 VIP 輸出</strong>；要看 VIP，需要教師提供的 <strong>orange-spectra</strong> 附加元件裡的 PLS Regression／PLS-DA widget。</div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">PLS-DA 示範</div><h2 class="slide-title">W12 六種食用油分類（<span class='hi'>示意數據</span>）</h2><div class="grid2-1" style="margin-top:6px"><div><table class="cmp" style="font-size:.82rem"><thead><tr><th>實際\預測</th><th>特級初榨橄欖油</th><th>精製橄欖油</th><th>大豆油</th><th>芥花油</th><th>椰子油</th><th>花生油</th></tr></thead><tbody><tr><td class="c">特級初榨橄欖油</td><td style="background:var(--ok-soft);font-weight:800">4</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td class="c">精製橄欖油</td><td>2</td><td style="background:var(--ok-soft);font-weight:800">3</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td class="c">大豆油</td><td>0</td><td>0</td><td style="background:var(--ok-soft);font-weight:800">3</td><td>1</td><td>0</td><td>0</td></tr><tr><td class="c">芥花油</td><td>0</td><td>0</td><td>1</td><td style="background:var(--ok-soft);font-weight:800">4</td><td>0</td><td>0</td></tr><tr><td class="c">椰子油</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="background:var(--ok-soft);font-weight:800">4</td><td>0</td></tr><tr><td class="c">花生油</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="background:var(--ok-soft);font-weight:800">4</td></tr></tbody></table><p class="cap" style="text-align:left;margin-top:8px">測試集 n=27，ncomp=6，整體準確率 = <b>81.5%</b>。示意數據，非本班真實光譜。</p></div><div class="note"><strong>以「精製橄欖油」為例：</strong>TP=3、FN=2、FP=1、TN=21<br>sensitivity = TP/(TP+FN) ≈ <b>0.60</b>　　specificity = TN/(TN+FP) ≈ <b>0.95</b><br>敏感度低代表這一類常被<strong>誤判成別類</strong>；特異度低代表<strong>別類常被誤判成這一類</strong>——兩者要一起看。</div></div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">這是分類問題還是定量問題？</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個食品分析情境分到「分類問題(PLS-DA)」或「定量問題(PLS 迴歸)」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理 3</div><h2 class="slide-title">離群值：<span class='hi'>Hotelling T²</span> vs <span class='hi'>Q 殘差(SPE)</span></h2><div class="grid2" style="margin-top:8px"><div class="card b"><div class="ic">📐</div><div class="ct">Hotelling T²（槓桿 leverage）</div><div class="cb">樣品<strong>在模型平面內</strong>，但落在校正集涵蓋範圍很邊緣的位置——模型『看得懂』這個樣品的化學組成，只是它比較極端</div></div><div class="card a"><div class="ic">🌀</div><div class="ct">Q 殘差 / SPE</div><div class="cb">樣品含有<strong>模型平面解釋不到的新變異</strong>——可能是新雜質、儀器差異、或根本是模型沒學過的化學現象</div></div></div><div class="note" style="margin-top:12px">兩者都要看：<strong>T²高、Q低</strong> → 化學上合理但偏極端的樣品；<strong>T²低、Q高</strong> → 模型完全沒見過的新變異，即使數值本身看起來不誇張也要小心；<strong>兩者都高</strong> → 最需要優先檢查的樣品。</div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">數據・T² vs Q 影響圖</div>

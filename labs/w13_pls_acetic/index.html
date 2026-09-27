@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -171,11 +175,11 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
  <text x="79" y="80" text-anchor="middle" class="lbl" font-size="11">讀入光譜＋參考值(Y)</text>
  <rect x="176" y="30" width="130" height="70" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
  <text x="241" y="60" text-anchor="middle" class="lblb" font-size="12">Preprocess</text>
- <text x="241" y="80" text-anchor="middle" class="lbl" font-size="11">SNV／1st導數 等前處理</text>
+ <text x="241" y="80" text-anchor="middle" class="lbl" style="font-size:12px">SNV／一階導數等</text>
  <rect x="338" y="30" width="150" height="70" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
- <text x="413" y="54" text-anchor="middle" class="lblb" font-size="12">Test and Score</text>
- <text x="413" y="72" text-anchor="middle" class="lbl" font-size="11">PLS learner</text>
- <text x="413" y="88" text-anchor="middle" class="lbl" font-size="11">10-fold 交叉驗證</text>
+ <text x="413" y="52" text-anchor="middle" class="lblb" font-size="12">Test and Score</text>
+ <text x="413" y="70" text-anchor="middle" class="lbl" font-size="11">PLS learner</text>
+ <text x="413" y="90" text-anchor="middle" class="lbl" font-size="11">10-fold 交叉驗證</text>
  <rect x="510" y="30" width="120" height="70" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
  <text x="570" y="60" text-anchor="middle" class="lblb" font-size="12">Predictions</text>
  <text x="570" y="80" text-anchor="middle" class="lbl" font-size="11">套用在測試集</text>

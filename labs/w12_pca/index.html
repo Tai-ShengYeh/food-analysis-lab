@@ -75,8 +75,12 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
 .hook .hi{color:var(--accent)}
 .svgwrap{display:flex;align-items:center;justify-content:center}
 .svgwrap svg{max-width:100%;max-height:62vh;height:auto}
-.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
-.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
 .game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
 .game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
@@ -168,25 +172,31 @@ table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--
     <strong>光譜 + PCA 看得出來嗎？</strong>（待會看分數圖時回來討論）</p>
 </div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W12，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>直覺理解 <strong>PCA</strong> 在找什麼：資料<strong>變異最大</strong>的方向，PC1 ⟂ PC2</li><li>分清楚 <strong>scores(分數)</strong>＝樣品在圖上的位置，<strong>loadings(負荷量)</strong>＝哪些波長/波數在驅動這個 PC</li><li>知道為什麼光譜資料通常<strong>mean-centering 一定做，但不做 autoscale</strong></li></ul><ul class='clean'><li>看懂 <strong>scree plot</strong>(陡坡圖)與解釋變異(explained variance)</li><li>在 Orange 裡把 PCA 的 <strong>Data</strong>(不是 Transformed Data)接到 Scatter Plot 依類別上色</li><li>用分數圖判讀<strong>重複性(是否緊聚)</strong>與<strong>離群樣品</strong>，並知道 PCA 是<strong>非監督式</strong>方法</li></ul></div></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">這個問題該看 scores 還是 loadings？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把下面 8 個問題，分到「scores 回答的問題」或「loadings 回答的問題」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理</div><h2 class="slide-title">PCA 在找什麼：<span class='hi'>變異最大</span>的方向</h2><div class="grid2" style="margin-top:6px"><div class="svgwrap">
 <svg viewBox="0 0 620 300">
- <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">PCA 找的是「資料變異最大」的方向</text>
- <line x1="60" y1="240" x2="560" y2="240" stroke="#8493ad" stroke-width="1.6"/>
- <line x1="120" y1="270" x2="500" y2="70" stroke="#8493ad" stroke-width="1.6"/>
- <text x="565" y="244" class="lbl" font-size="12">原始波長 1</text>
- <text x="495" y="62" class="lbl" font-size="12">原始波長 2</text>
- <g fill="#1f6feb" fill-opacity=".85">
-  <circle cx="220" cy="205" r="6"/><circle cx="235" cy="195" r="6"/><circle cx="205" cy="215" r="6"/>
-  <circle cx="330" cy="165" r="6"/><circle cx="345" cy="155" r="6"/><circle cx="315" cy="175" r="6"/>
-  <circle cx="410" cy="120" r="6"/><circle cx="425" cy="110" r="6"/><circle cx="395" cy="130" r="6"/>
- </g>
- <line x1="150" y1="235" x2="470" y2="95" stroke="#d94f4f" stroke-width="2.6" marker-end="url(#arpc1)"/>
- <text x="475" y="88" class="lblb" fill="#d94f4f" font-size="13">PC1（最大變異方向）</text>
- <line x1="270" y1="130" x2="330" y2="205" stroke="#1f9d6b" stroke-width="2.2" marker-end="url(#arpc2)"/>
- <text x="335" y="220" class="lblb" fill="#1f9d6b" font-size="13">PC2（與PC1垂直，次大變異）</text>
- <text x="310" y="285" text-anchor="middle" class="lbl" font-size="12">每個點＝一條光譜；PCA 把高維度波長資料，投影到幾個「變異方向」上來看</text>
+ <text x="310" y="20" text-anchor="middle" class="lblb" style="font-size:14px">PCA 找的是「資料變異最大」的方向</text>
  <defs>
+  <marker id="arpc0" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#8493ad"/></marker>
   <marker id="arpc1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#d94f4f"/></marker>
   <marker id="arpc2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#1f9d6b"/></marker>
  </defs>
+ <!-- original variable axes: perpendicular -->
+ <line x1="70" y1="250" x2="540" y2="250" stroke="#8493ad" stroke-width="1.6" marker-end="url(#arpc0)"/>
+ <line x1="70" y1="250" x2="70" y2="44" stroke="#8493ad" stroke-width="1.6" marker-end="url(#arpc0)"/>
+ <text x="540" y="270" text-anchor="end" class="lbl" style="font-size:12px">原始波長 1 的吸光度 →</text>
+ <text x="80" y="50" class="lbl" style="font-size:12px">↑ 原始波長 2 的吸光度</text>
+ <!-- samples: elongated cloud, centroid (300,150), long axis at 30 degrees -->
+ <g fill="#1f6feb" fill-opacity=".85">
+  <circle cx="191" cy="208" r="6"/><circle cx="178" cy="209" r="6"/><circle cx="218" cy="180" r="6"/>
+  <circle cx="238" cy="179" r="6"/><circle cx="267" cy="177" r="6"/><circle cx="286" cy="154" r="6"/>
+  <circle cx="304" cy="163" r="6"/><circle cx="330" cy="129" r="6"/><circle cx="349" cy="122" r="6"/>
+  <circle cx="411" cy="111" r="6"/><circle cx="395" cy="104" r="6"/><circle cx="420" cy="84" r="6"/>
+ </g>
+ <!-- PC1 along the long axis; PC2 perpendicular, both through the mean -->
+ <line x1="153" y1="235" x2="452" y2="62" stroke="#d94f4f" stroke-width="2.6" marker-end="url(#arpc1)"/>
+ <text x="462" y="62" class="lblb" style="font-size:13px;fill:#d94f4f">PC1（最大變異方向）</text>
+ <line x1="278" y1="111" x2="331" y2="204" stroke="#1f9d6b" stroke-width="2.2" marker-end="url(#arpc2)"/>
+ <polyline points="310.4,144 316.4,154.4 306,160.4" fill="none" stroke="#48597a" stroke-width="1.2"/>
+ <text x="340" y="214" class="lblb" style="font-size:13px;fill:#1f9d6b">PC2（與 PC1 垂直，次大變異）</text>
+ <text x="310" y="292" text-anchor="middle" class="lbl" style="font-size:12px">每個點＝一條光譜；PCA 把高維度波長資料，投影到幾個「變異方向」上來看</text>
 </svg></div><div><ul class="clean"><li><strong>PC1</strong>：資料變異量最大的方向；<strong>PC2</strong>：與 PC1 垂直、次大變異的方向</li><li><strong>scores(分數)</strong>：每個樣品投影到 PC1、PC2 後的座標——決定它畫在圖上哪裡</li><li><strong>loadings(負荷量)</strong>：每個波長(波數)對某個 PC 的貢獻——決定「為什麼」樣品會分開</li><li><strong>解釋變異(explained variance)</strong>：這個 PC 佔全部變異的比例；scree plot 就是把它們畫成長條圖</li><li>PCA 是<strong>非監督式(unsupervised)</strong>方法——它完全不知道樣品是哪一種油，只根據光譜本身的變異來分——所以如果分數圖上不同油真的分開，代表<strong>光譜本身就存在真實的化學差異</strong></li></ul></div></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">前處理</div><h2 class="slide-title"><span class='hi'>mean-centering</span> 一定做，autoscale 通常不做</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">➖</div><div class="ct">Mean-centering（一定做）</div><div class="cb">每個波長都減去自己的平均值，PCA 才是在找「相對平均光譜的變異方向」，幾乎是必要的前處理</div></div><div class="card a"><div class="ic">🚫</div><div class="ct">Autoscale（光譜通常不做）</div><div class="cb">把每個波長除以自己的標準差，會把那些幾乎只有雜訊的波長<strong>放大</strong>，反而蓋過真正有用的訊號</div></div><div class="card g"><div class="ic">🧪</div><div class="ct">真正重要的是前處理方法</div><div class="cb">SNV(標準常態變量轉換)、一階/二階導數，能去除散射與基線差異，往往比要不要 autoscale 更關鍵</div></div></div><div class="note" style="margin-top:12px">今天示範的圖表都只做<strong>mean-centering</strong>，沒有 autoscale——這也是 SpectraView／Orange 的 PCA 節點的預設行為。</div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">Orange 工作流程</div><h2 class="slide-title">從光譜到<span class='hi'>分數圖與 loadings</span></h2><div class="grid2-1" style="margin-top:6px"><div class="svgwrap">
 <svg viewBox="0 0 640 340">
  <text x="320" y="20" text-anchor="middle" class="lblb" font-size="14">Orange 工作流程</text>
