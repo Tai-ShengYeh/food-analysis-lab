@@ -19,11 +19,21 @@ group,student,item,rep,value,unit,temp_C,note
 0,TA_demo,fat_replicate_demo,3,34.6,%,,示範同一樣品三重複，用於教你算 RSD，非全班分組數據
 0,TA,known_fat_reference_measured,1,19.47,%,,已知脂肪對照品，證書標示含量 20.0%
 0,TA,solvent_blank_residue_g,1,0.0007,g,,只蒸乾溶劑、不含樣品，理論上應趨近於 0
-1,G1,milk_blind_fat_pct,1,20.82,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)
-2,G2,milk_blind_fat_pct,1,21.93,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)
-3,G3,milk_blind_fat_pct,1,21.37,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)
-4,G4,milk_blind_fat_pct,1,21.29,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)
-5,G5,milk_blind_fat_pct,1,20.99,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)
+1,G1,milk_blind_fat_pct,1,21.13,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+1,G1,milk_blind_fat_pct,2,20.78,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+1,G1,milk_blind_fat_pct,3,20.55,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+2,G2,milk_blind_fat_pct,1,21.84,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+2,G2,milk_blind_fat_pct,2,22.06,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+2,G2,milk_blind_fat_pct,3,21.89,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+3,G3,milk_blind_fat_pct,1,21.47,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+3,G3,milk_blind_fat_pct,2,21.48,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+3,G3,milk_blind_fat_pct,3,21.16,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+4,G4,milk_blind_fat_pct,1,21.19,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+4,G4,milk_blind_fat_pct,2,21.16,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+4,G4,milk_blind_fat_pct,3,21.52,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+5,G5,milk_blind_fat_pct,1,21.14,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+5,G5,milk_blind_fat_pct,2,21.27,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
+5,G5,milk_blind_fat_pct,3,20.56,%,,全脂奶粉盲樣，直接 Soxhlet(未水解)，每組三重複
 0,reference_lab,milk_blind_RG_reference,1,25.7,%,,Röse-Gottlieb 參考法數值，TA/參考實驗室提供，非本班本週測值
 0,label,milk_blind_label,1,26.0,%,,產品標示值
 0,shared,chips_moisture_pct_wet,1,2.0,%,,取自 W2 該批洋芋片的濕基水分測定
