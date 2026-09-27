@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="W1 Orange 入門：看分布、找異常值" description="第一次用 Orange：讀檔、看表格、依學生畫箱形圖，找出疑似記錄錯誤的數據。">
+	<nodes>
+		<node id="0" name="File" qualified_name="Orange.widgets.data.owfile.OWFile" project_name="Orange3" version="" title="File 讀入秤重數據" position="(60, 300)" />
+		<node id="1" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWTable" project_name="Orange3" version="" title="Data Table 看原始數據" position="(320, 120)" />
+		<node id="2" name="Column Statistics" qualified_name="Orange.widgets.data.owfeaturestatistics.OWFeatureStatistics" project_name="Orange3" version="" title="Feature Statistics 描述統計" position="(320, 480)" />
+		<node id="3" name="Select Rows" qualified_name="Orange.widgets.data.owselectrows.OWSelectRows" project_name="Orange3" version="" title="Select Rows 只看移液管" position="(320, 300)" />
+		<node id="4" name="Box Plot" qualified_name="Orange.widgets.visualize.owboxplot.OWBoxPlot" project_name="Orange3" version="" title="Box Plot 各學生的分布" position="(580, 240)" />
+		<node id="5" name="Distributions" qualified_name="Orange.widgets.visualize.owdistributions.OWDistributions" project_name="Orange3" version="" title="Distributions 直方圖" position="(580, 440)" />
+		<node id="6" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWTable" project_name="Orange3" version="" title="Data Table 被選取的點" position="(840, 240)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+		<link id="1" source_node_id="0" sink_node_id="2" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+		<link id="2" source_node_id="0" sink_node_id="3" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+		<link id="3" source_node_id="3" sink_node_id="4" source_channel="Matching Data" sink_channel="Data" enabled="true" source_channel_id="matching_data" sink_channel_id="data" />
+		<link id="4" source_node_id="3" sink_node_id="5" source_channel="Matching Data" sink_channel="Data" enabled="true" source_channel_id="matching_data" sink_channel_id="data" />
+		<link id="5" source_node_id="4" sink_node_id="6" source_channel="Selected Data" sink_channel="Data" enabled="true" source_channel_id="selected_data" sink_channel_id="data" />
+	</links>
+	<annotations>
+		<text id="0" type="text/plain" rect="(20.0, 20.0, 260.0, 170.0)" font-family="Microsoft JhengHei" font-size="13">① 雙擊 File：確認讀到 300 列（15 位同學 × 2 種器具 × 10 次）。
+換成本班數據：在 File 按資料夾圖示，選你們的 CSV。
+
+② 雙擊 Data Table 看原始表格。</text>
+		<text id="1" type="text/plain" rect="(560.0, 30.0, 340.0, 150.0)" font-family="Microsoft JhengHei" font-size="13">③ Box Plot：每位同學一個箱形圖。
+哪一位的箱子特別長、或有一個點離很遠？
+在圖上框選那個點，右邊 Data Table 就會列出它，看 note 欄寫了什麼。</text>
+		<text id="2" type="text/plain" rect="(560.0, 540.0, 360.0, 110.0)" font-family="Microsoft JhengHei" font-size="13">④ Feature Statistics：平均、SD、最大最小一次看完。
+注意這裡是「秤到的水重 g」，換算體積請用 Excel EX01 或 Colab NB01。</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="pickle">gASVCwQAAAAAAAB9lCiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjAxyZWNlbnRfcGF0aHOUXZSMHm9y
+YW5nZXdpZGdldC51dGlscy5maWxlZGlhbG9nc5SMClJlY2VudFBhdGiUk5QpgZR9lCiMB2Fic3Bh
+dGiUjBNvcjAxX3ZvbHVtZXRyaWMuY3N2lIwGcHJlZml4lIwHYmFzZWRpcpSMB3JlbHBhdGiUaAqM
+BXRpdGxllIwAlIwFc2hlZXSUaA+MC2ZpbGVfZm9ybWF0lE51YmGMC3JlY2VudF91cmxzlF2UjBNz
+YXZlZFdpZGdldEdlb21ldHJ5lE6MC3NoZWV0X25hbWVzlH2UjAZzb3VyY2WUSwCMA3VybJRoD4wN
+ZG9tYWluX2VkaXRvcpR9lIwLX192ZXJzaW9uX1+USwGMEGNvbnRleHRfc2V0dGluZ3OUXZSMFW9y
+YW5nZXdpZGdldC5zZXR0aW5nc5SMB0NvbnRleHSUk5QpgZR9lCiMBnZhbHVlc5R9lCiMCXZhcmlh
+Ymxlc5RdlGgZfZRoJV2UKF2UKIwFZ3JvdXCUjBRPcmFuZ2UuZGF0YS52YXJpYWJsZZSMEERpc2Ny
+ZXRlVmFyaWFibGWUk5RLAIwNMSwgMiwgMywgNCwgNZSIZV2UKIwHc3R1ZGVudJRoLUsAjGdHMV9T
+MSwgRzFfUzIsIEcxX1MzLCBHMl9TMSwgRzJfUzIsIEcyX1MzLCBHM19TMSwgRzNfUzIsIEczX1Mz
+LCBHNF9TMSwgRzRfUzIsIEc0X1MzLCBHNV9TMSwgRzVfUzIsIEc1X1MzlIllXZQojARpdGVtlGgt
+SwCMGmJ1cmV0dGVfMjVtTCwgcGlwZXR0ZV8xMG1MlIllXZQojAV2YWx1ZZRoK4wSQ29udGludW91
+c1ZhcmlhYmxllJOUSwBoD4hlXZQojAZ0ZW1wX0OUaDhLAGgPiGVdlCiMBG5vdGWUaCuMDlN0cmlu
+Z1ZhcmlhYmxllJOUSwJoD4llZXNoG0sBdYwKYXR0cmlidXRlc5QoaCpdlCiMATGUjAEylIwBM5SM
+ATSUjAE1lGWGlGgwXZQojAVHMV9TMZSMBUcxX1MylIwFRzFfUzOUjAVHMl9TMZSMBUcyX1MylIwF
+RzJfUzOUjAVHM19TMZSMBUczX1MylIwFRzNfUzOUjAVHNF9TMZSMBUc0X1MylIwFRzRfUzOUjAVH
+NV9TMZSMBUc1X1MylIwFRzVfUzOUZYaUaDNdlCiMDGJ1cmV0dGVfMjVtTJSMDHBpcGV0dGVfMTBt
+TJRlhpRoNksChpRoOksChpR0lIwFbWV0YXOUaDxLA4aUhZSMCmNsYXNzX3ZhcnOUKYwSbW9kaWZp
+ZWRfdmFyaWFibGVzlF2UdWJhdS4=
+</properties>
+		<properties node_id="1" format="literal">{'auto_commit': True, 'color_by_class': True, 'controlAreaVisible': True, 'savedWidgetGeometry': None, 'select_rows': True, 'show_attribute_labels': True, 'show_distributions': False, 'stored_selection': {'rows': [], 'columns': []}, 'stored_sort': [], '__version__': 1}</properties>
+		<properties node_id="2" format="pickle">gASVhwEAAAAAAAB9lCiMC2F1dG9fY29tbWl0lIiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjBNzYXZl
+ZFdpZGdldEdlb21ldHJ5lE6MB3NvcnRpbmeUSwCMB2NvcHlyZWeUjA5fcmVjb25zdHJ1Y3RvcpST
+lIwMUHlRdDUuUXRDb3JllIwMUXQuU29ydE9yZGVylJOUjAhidWlsdGluc5SMA2ludJSTlEsAh5RS
+lIaUjAtfX3ZlcnNpb25fX5RLAowQY29udGV4dF9zZXR0aW5nc5RdlIwVb3Jhbmdld2lkZ2V0LnNl
+dHRpbmdzlIwHQ29udGV4dJSTlCmBlH2UKIwGdmFsdWVzlH2UKIwJY29sb3JfdmFylE5K/v///4aU
+jA1zZWxlY3RlZF92YXJzlF2UaBFLAnWMCmF0dHJpYnV0ZXOUfZQojAVncm91cJRLAYwHc3R1ZGVu
+dJRLAYwEaXRlbZRLAYwFdmFsdWWUSwKMBnRlbXBfQ5RLAnWMBW1ldGFzlH2UjARub3RllEsDc3Vi
+YXUu
+</properties>
+		<properties node_id="3" format="pickle">gASVZgEAAAAAAAB9lCiMC2F1dG9fY29tbWl0lIiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjBBwdXJn
+ZV9hdHRyaWJ1dGVzlImMDXB1cmdlX2NsYXNzZXOUiYwTc2F2ZWRXaWRnZXRHZW9tZXRyeZROjBB1
+cGRhdGVfb25fY2hhbmdllIiMC19fdmVyc2lvbl9flEsCjBBjb250ZXh0X3NldHRpbmdzlF2UjBVv
+cmFuZ2V3aWRnZXQuc2V0dGluZ3OUjAdDb250ZXh0lJOUKYGUfZQojAZ2YWx1ZXOUfZQojApjb25k
+aXRpb25zlF2UKIwEaXRlbZRLAUsAXZSMDHBpcGV0dGVfMTBtTJRhdJRhaAdLAnWMCmF0dHJpYnV0
+ZXOUfZQojAVncm91cJRLAYwHc3R1ZGVudJRLAYwEaXRlbZRLAYwFdmFsdWWUSwKMBnRlbXBfQ5RL
+AnWMBW1ldGFzlH2UjARub3RllEsDc3ViYXUu
+</properties>
+		<properties node_id="4" format="pickle">gASVzQEAAAAAAAB9lCiMB2NvbXBhcmWUSwKMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjBNvcmRlcl9i
+eV9pbXBvcnRhbmNllImMHG9yZGVyX2dyb3VwaW5nX2J5X2ltcG9ydGFuY2WUiYwTc2F2ZWRXaWRn
+ZXRHZW9tZXRyeZROjBBzaG93X2Fubm90YXRpb25zlIiMC3Nob3dfbGFiZWxzlIiMDXNpZ190aHJl
+c2hvbGSURz+pmZmZmZmajApzb3J0X2ZyZXFzlImMCHN0YXR0ZXN0lEsAjAlzdHJldGNoZWSUiIwL
+X192ZXJzaW9uX1+USwGMEGNvbnRleHRfc2V0dGluZ3OUXZSMFW9yYW5nZXdpZGdldC5zZXR0aW5n
+c5SMB0NvbnRleHSUk5QpgZR9lCiMBnZhbHVlc5R9lCiMCWF0dHJpYnV0ZZSMBXZhbHVllEtmhpSM
+CWdyb3VwX3ZhcpSMB3N0dWRlbnSUS2WGlIwJc2VsZWN0aW9ulClK/v///4aUaAxLAXWMCmF0dHJp
+YnV0ZXOUfZQojAVncm91cJRLAWgaSwGMBGl0ZW2USwFoF0sCjAZ0ZW1wX0OUSwJ1jAVtZXRhc5R9
+lIwEbm90ZZRLA3N1YmF1Lg==
+</properties>
+		<properties node_id="5" format="pickle">gASVxgEAAAAAAAB9lCiMCmF1dG9fYXBwbHmUiIwSY29udHJvbEFyZWFWaXNpYmxllIiMEGN1bXVs
+YXRpdmVfZGlzdHKUiYwTZml0dGVkX2Rpc3RyaWJ1dGlvbpRLAIwJaGlkZV9iYXJzlImMDWtkZV9z
+bW9vdGhpbmeUSwqME3NhdmVkV2lkZ2V0R2VvbWV0cnmUTowKc2hvd19wcm9ic5SJjAxzb3J0X2J5
+X2ZyZXGUiYwPc3RhY2tlZF9jb2x1bW5zlImMC19fdmVyc2lvbl9flEsCjBBjb250ZXh0X3NldHRp
+bmdzlF2UjBVvcmFuZ2V3aWRnZXQuc2V0dGluZ3OUjAdDb250ZXh0lJOUKYGUfZQojAZ2YWx1ZXOU
+fZQojARjdmFylE5K/v///4aUjA5udW1iZXJfb2ZfYmluc5RLAEr+////hpSMDXNlbGVjdGVkX2Jh
+cnOUj5RK/v///4aUjAN2YXKUjAV2YWx1ZZRLZoaUaAtLAnWMCmF0dHJpYnV0ZXOUfZQojAVncm91
+cJRLAYwHc3R1ZGVudJRLAYwEaXRlbZRLAWgdSwKMBnRlbXBfQ5RLAnWMBW1ldGFzlH2UjARub3Rl
+lEsDc3ViYXUu
+</properties>
+		<properties node_id="6" format="literal">{'auto_commit': True, 'color_by_class': True, 'controlAreaVisible': True, 'savedWidgetGeometry': None, 'select_rows': True, 'show_attribute_labels': True, 'show_distributions': False, 'stored_selection': {'rows': [], 'columns': []}, 'stored_sort': [], '__version__': 1}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

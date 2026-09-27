@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>數據分析工具指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --ink:#18221F; --muted:#5B6964; --line:#D5DDD9;
+  --accent:#B3306A; --accent-soft:#F7E3EC; --teal:#1E6B66; --teal-soft:#DDEFEC;
+  --xl:#2F7D46; --xl-soft:#E2EFDA; --or:#C4661F; --or-soft:#FBE7D6; --py:#3A5F9E; --py-soft:#E1E8F5;
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+    --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+    --xl:#7CC48F; --xl-soft:#1D2E22; --or:#F0A56A; --or-soft:#3A2A1C; --py:#8FB0E8; --py-soft:#1F2839;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+  --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+  --xl:#7CC48F; --xl-soft:#1D2E22; --or:#F0A56A; --or-soft:#3A2A1C; --py:#8FB0E8; --py-soft:#1F2839;
+}
+*{box-sizing:border-box}
+img{max-width:100%;height:auto}
+.ladder>*,.grid2>*,.principles>*{min-width:0}
+html,body{overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.7;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:1040px;margin:0 auto}
+a{color:var(--teal)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{padding-block:36px 12px;display:grid;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--teal)}
+.eyebrow a{color:inherit}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin:0}
+.lede{max-width:70ch;color:var(--muted);margin:0}
+h2{font-family:var(--serif);font-size:21px;margin:40px 0 12px;scroll-margin-top:12px}
+h3{font-size:16px;margin:22px 0 8px}
+p{margin:8px 0}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.toc a{font-size:13.5px;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 12px;border-radius:999px}
+.toc a:hover{border-color:var(--teal);color:var(--teal)}
+.ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.step{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:8px;padding:14px 16px}
+.step .lv{font-family:var(--mono);font-size:12px;color:var(--c)}
+.step h3{margin:2px 0 6px;font-size:18px}
+.step p{font-size:13.5px;color:var(--muted);margin:4px 0}
+.step ul{margin:6px 0 0;padding-left:18px;font-size:13.5px}
+.s-xl{--c:var(--xl)} .s-or{--c:var(--or)} .s-py{--c:var(--py)}
+.note{background:var(--teal-soft);border-radius:8px;padding:12px 16px;font-size:14px;margin:14px 0}
+.warn{background:var(--accent-soft)}
+.tbl{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:700;background:var(--bg);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.wk{font-family:var(--mono);color:var(--teal);white-space:nowrap}
+.pill{display:inline-block;font-size:12.5px;border-radius:4px;padding:1px 8px;margin:2px 4px 2px 0;text-decoration:none;white-space:nowrap;border:1px solid var(--c);color:var(--c);background:var(--s)}
+.p-xl{--c:var(--xl);--s:var(--xl-soft)} .p-or{--c:var(--or);--s:var(--or-soft)} .p-py{--c:var(--py);--s:var(--py-soft)}
+.pill:hover{filter:brightness(.95)}
+.dash{color:var(--muted)}
+code{font-family:var(--mono);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+ol,ul{padding-left:22px}
+li{margin:3px 0}
+details{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0}
+summary{cursor:pointer;font-weight:500}
+details img{display:block;margin-top:10px;border-radius:6px;border:1px solid var(--line);background:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+.card h3{margin-top:0}
+footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
+@media (max-width:760px){.ladder,.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow"><a href="index.html">食品分析實驗</a> · 數據分析</div>
+  <h1>數據分析工具指南</h1>
+  <p class="lede">不會寫程式也能做完每週的數據分析。先用 Excel 把計算做懂，後半學期用 Orange 拖拉方塊建光譜模型；想進一步的同學，再用 Colab 或 Jupyter 跑 Python。三種工具用同一份數據，算出來的答案應該一樣。</p>
+  <nav class="toc" aria-label="本頁目錄">
+    <a href="#weeks">每週對照表</a><a href="#excel">Excel</a><a href="#orange">Orange</a><a href="#python">Colab／Jupyter</a><a href="#tips">學習建議</a><a href="assessment.html">學習成效評量 →</a>
+  </nav>
+</header>
+
+<section class="ladder" aria-label="三階段工具">
+  <div class="step s-xl"><div class="lv">入門 · 每位同學</div><h3>Excel</h3>
+    <p>W1–W8 每週一份練習檔。公式都寫好了，每一格旁邊都有說明；換成全班數據只要貼上就會重算。</p>
+    <ul><li>平均、SD、信賴區間、t 檢定、ANOVA</li><li>檢量線、LOD／LOQ、z-score、管制圖</li></ul></div>
+  <div class="step s-or"><div class="lv">入門 · 後半學期主力</div><h3>Orange</h3>
+    <p>拖拉方塊、連線就能做分析，不用寫程式。光譜前處理、PCA、PLS 都有現成流程檔。</p>
+    <ul><li>箱形圖與 ANOVA（W1、W8）</li><li>前處理、相似度、PCA、PLS、分類（W11–W16）</li></ul></div>
+  <div class="step s-py"><div class="lv">進階 · 選修加分</div><h3>Colab／Jupyter</h3>
+    <p>每週的 Python 筆記本。能做 Excel 和 Orange 做不到的：VIP、PLS-DA、T² 與 Q、NNLS、模擬。</p>
+    <ul><li>Colab：瀏覽器直接開，不用安裝</li><li>Jupyter：下載到自己電腦，離線也能跑</li></ul></div>
+</section>
+
+<h2 id="weeks">每週對照表</h2>
+<p>點 <span class="pill p-xl">Excel</span> 直接下載練習檔；<span class="pill p-or">Orange</span> 的流程檔都在<a href="orange/orange_workflows.zip">同一個壓縮檔</a>裡（含資料）；<span class="pill p-py">Colab</span> 在瀏覽器開啟，<span class="pill p-py">.ipynb</span> 下載給 Jupyter 用。</p>
+<div class="tbl"><table>
+<thead><tr><th>週</th><th>主題</th><th>入門：Excel</th><th>入門：Orange</th><th>進階：Python</th></tr></thead>
+<tbody id="rows"></tbody>
+</table></div>
+<div class="note">內建的都是<strong>模擬教學資料</strong>。用內建資料時，Excel 的「0_說明」頁有一張對答案表，應該全部顯示「✔ 一致」，代表你的 Excel 和 Colab 算出同樣的結果。</div>
+
+<h2 id="excel">Excel 練習檔怎麼用</h2>
+<div class="grid2">
+  <div class="card"><h3>每一份檔案長得都一樣</h3>
+    <ol>
+      <li><strong>0_說明</strong>：學習目標、操作步驟、對答案表。</li>
+      <li><strong>1_原始數據</strong>：和 Colab 同一種長格式（group、student、item、rep、value…）。</li>
+      <li><strong>2_、3_…</strong>：一個步驟一張工作表，公式旁邊寫著這個函式在做什麼。</li>
+      <li><strong>練習題</strong>：答案寫在黃色格子，和報告一起交。</li>
+    </ol>
+    <p><span class="pill p-or" style="--c:#8a6d00;--s:#FFF2CC">黃色</span>輸入或貼上　<span class="pill p-xl">綠色</span>公式，不要改　<span class="pill p-or">橘色</span>寫進報告的結果</p>
+  </div>
+  <div class="card"><h3>換成全班數據</h3>
+    <ol>
+      <li>打開全班共用的 Google 試算表，選取數據（不含標題列）→ 複製。</li>
+      <li>到練習檔的「1_原始數據」，點 A2 → 貼上。欄位順序要和標題一樣。</li>
+      <li>如果全班比範例少，把多出來的舊資料<strong>整列刪除</strong>。</li>
+      <li>學生名單或組數不同時，改各步驟工作表最左邊的黃色欄位。</li>
+    </ol>
+  </div>
+</div>
+<h3>常用函式速查</h3>
+<div class="tbl"><table>
+<thead><tr><th>想做什麼</th><th>函式</th><th>第一次出現</th></tr></thead>
+<tbody>
+<tr><td>平均、樣本標準差</td><td><code>AVERAGE</code>、<code>STDEV.S</code>（不要用 STDEV.P）</td><td>W1</td></tr>
+<tr><td>95% 信賴區間半寬</td><td><code>T.INV.2T(0.05, n−1) * SD / SQRT(n)</code></td><td>W1</td></tr>
+<tr><td>依條件取平均、計數、加總</td><td><code>AVERAGEIFS</code>、<code>COUNTIFS</code>、<code>SUMIFS</code></td><td>W1</td></tr>
+<tr><td>依條件算 SD（陣列公式）</td><td><code>{=STDEV.S(IF(條件, 數值))}</code>，舊版 Excel 按 Ctrl+Shift+Enter</td><td>W1</td></tr>
+<tr><td>t 檢定的 p 值</td><td><code>T.DIST.2T(|t|, df)</code>，或 <code>T.TEST(範圍1, 範圍2, 2, 1)</code>（配對）</td><td>W1、W2</td></tr>
+<tr><td>找最大值在哪裡（當量點）</td><td><code>MAX</code> + <code>MATCH</code> + <code>INDEX</code></td><td>W4</td></tr>
+<tr><td>檢量線</td><td><code>SLOPE</code>、<code>INTERCEPT</code>、<code>RSQ</code>、<code>STEYX</code>、<code>LINEST</code></td><td>W7</td></tr>
+<tr><td>F 檢定、ANOVA 的 p 值</td><td><code>F.DIST.RT(F, df1, df2)</code>、<code>F.INV.RT(α, df1, df2)</code></td><td>W7、W8</td></tr>
+<tr><td>擴充不確定度</td><td><code>SQRT(SUMSQ(各項 u))</code> × k</td><td>W8</td></tr>
+</tbody></table></div>
+<details><summary>用「資料分析工具箱」核對（t 檢定、ANOVA、迴歸）</summary>
+<p>練習檔都用公式算，方便看懂每一步。想用 Excel 內建的工具核對：</p>
+<ul>
+<li><strong>Windows</strong>：檔案 → 選項 → 增益集 → 下方「管理：Excel 增益集」按「執行」→ 勾「分析工具箱」。之後在「資料」索引標籤最右邊會出現「資料分析」。</li>
+<li><strong>Mac</strong>：工具 → Excel 增益集 → 勾「分析工具箱」。</li>
+<li>工具箱算出的是固定數字，數據改了不會自動更新，這是和公式最大的差別。</li>
+</ul></details>
+<details><summary>沒有 Excel？</summary>
+<ul>
+<li><strong>Google 試算表</strong>：檔案 → 匯入 → 上傳 .xlsx，公式都能用，陣列公式會自動轉成 ARRAYFORMULA。</li>
+<li><strong>LibreOffice Calc</strong>（免費）也能開。</li>
+<li>Mac 的 Numbers 不支援部分函式，請不要用。看到 <code>#NAME?</code> 表示軟體太舊。</li>
+</ul></details>
+
+<h2 id="orange">Orange 流程檔怎麼用</h2>
+<div class="grid2">
+  <div class="card"><h3>安裝（一次就好）</h3>
+    <ol>
+      <li>到 <a href="https://orangedatamining.com/download/" target="_blank" rel="noopener">orangedatamining.com</a> 下載安裝（Windows／Mac 都有）。</li>
+      <li>打開 Orange → Options → Add-ons → 勾 <strong>Spectroscopy</strong> → OK，裝完重開 Orange。光譜週（W11 起）一定要裝。</li>
+      <li>下載 <a href="orange/orange_workflows.zip">orange_workflows.zip</a>，<strong>解壓縮</strong>到同一個資料夾（.ows 流程檔和 .csv 資料要放在一起）。</li>
+      <li>Orange → File → Open → 選該週的 .ows。</li>
+    </ol>
+    <p class="dash">流程檔以 Orange 3.40、Spectroscopy 0.9 製作並測試過，請用新版。</p>
+  </div>
+  <div class="card"><h3>換成本班數據</h3>
+    <ol>
+      <li>雙擊流程最左邊的 <strong>File</strong> 方塊 → 按資料夾圖示 → 選你們的 CSV。</li>
+      <li>在 File 下方的欄位表，雙擊「Role」設定每一欄：Y 值（例如 acidity_pct、oil）設成 <strong>target</strong>；sample_id、group、rep 等文字或編號設成 <strong>meta</strong>；光譜的波長欄保持 feature。</li>
+      <li>按 Apply，後面的方塊會自動重算。</li>
+    </ol>
+    <p class="dash">小技巧：CSV 標題寫成 <code>c#acidity_pct</code>、<code>m#sample_id</code>，Orange 就會自動認成 target、meta。本頁的範例資料都是這樣做的。</p>
+  </div>
+</div>
+<div class="note warn"><strong>三個最常見的錯</strong>：① PCA 方塊裡的「Normalize variables」要<strong>取消勾選</strong>（光譜只做平均置中）；② 分數圖要接 PCA 的 <strong>Data</strong> 輸出，點才能依類別上色；③ Test and Score 用「Cross validation by feature → sample_id」，同一樣品的重複才不會被拆開，RMSECV 才不會過度樂觀。</div>
+<div id="flows"></div>
+
+<h2 id="python">Colab 與 Jupyter（進階）</h2>
+<div class="grid2">
+  <div class="card"><h3>Colab：不用安裝</h3>
+    <ol>
+      <li>在每週對照表點 <span class="pill p-py">Colab</span>，用 Google 帳號登入。</li>
+      <li>執行階段 → 全部執行。筆記本內建模擬資料，直接就能跑。</li>
+      <li>換成全班數據：照筆記本「如何使用」那一段，把 Google 試算表發布成 CSV 連結，或上傳檔案。</li>
+      <li>要保留自己的修改：檔案 → 在雲端硬碟中儲存複本。</li>
+    </ol></div>
+  <div class="card"><h3>Jupyter：下載到自己電腦</h3>
+    <ol>
+      <li>安裝 <a href="https://www.anaconda.com/download" target="_blank" rel="noopener">Anaconda</a>（已含 numpy、pandas、scipy、matplotlib、scikit-learn），或 <a href="https://github.com/jupyterlab/jupyterlab-desktop" target="_blank" rel="noopener">JupyterLab Desktop</a>。</li>
+      <li>下載 <a href="downloads/food-analysis-notebooks.zip">全部筆記本＋資料（zip）</a>並解壓縮；或在對照表點 <span class="pill p-py">.ipynb</span> 下載單一筆記本。</li>
+      <li>開 JupyterLab，切到解壓縮的資料夾 → 打開 notebooks/ 裡的筆記本 → Run → Run All Cells。</li>
+    </ol>
+    <p class="dash">13 本筆記本都在一般 Jupyter 環境測試過，不需要 Colab 也能完整執行。</p></div>
+</div>
+
+<h2 id="tips">給同學與老師的學習建議</h2>
+<ul>
+<li><strong>先 Excel，再 Orange，最後 Python</strong>。W1–W8 只要求 Excel；W11 起只要求 Orange；Colab 是進階選項，完成可加分（見<a href="assessment.html">評量說明</a>）。</li>
+<li><strong>用第二個工具對答案</strong>。同一份數據用兩種工具算，數字一致才算完成。例如 W13 用 Orange 得到 RMSEP，再到 Colab NB11 確認。能說出兩者為什麼一樣，比只會按按鈕更重要。</li>
+<li><strong>先看圖再看數字</strong>。箱形圖、殘差圖、分數圖先看一眼，再讀 p 值和 RMSE。</li>
+<li><strong>每組一位「工具小老師」</strong>。輪流擔任，負責幫組員排除軟體問題，課堂上老師只需回答小老師。</li>
+<li><strong>課前 5 分鐘熱身</strong>。每週開場讓學生用上一週的檔案回答一題（例如「G1_S3 為什麼 CI 特別大？」），順便檢查大家都能打開檔案。</li>
+<li><strong>錯誤也是教材</strong>。範例資料裡刻意放了記錄錯誤、離群值與換錯儀器的光譜，讓學生練習找出來。</li>
+</ul>
+
+<footer>Excel 練習檔的答案已和 Colab 筆記本逐一核對；Orange 流程的 PCA 解釋變異、ANOVA F 值、PLS 的 RMSECV／RMSEP 也與筆記本一致。<a href="index.html">回課程首頁</a></footer>
+</div>
+
+<script>
+const COLAB = "https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/";
+// [週, 主題, Excel 檔, Orange 代碼, 筆記本]
+const W = [
+  [1,"容量器具校正","EX01_volumetric_calibration.xlsx","OR01","NB01_volumetric_calibration.ipynb"],
+  [2,"水分與水活性","EX02_moisture_aw.xlsx","","NB02_moisture_aw.ipynb"],
+  [3,"灰分與鈉離子","EX03_ash_sodium.xlsx","","NB03_ash_sodium.ipynb"],
+  [4,"手動 vs 自動滴定","EX04_titration.xlsx","","NB04_titration.ipynb"],
+  [5,"蛋白質（凱氏法）","EX05_kjeldahl_protein.xlsx","","NB05_kjeldahl_protein.ipynb"],
+  [6,"脂肪","EX06_fat_soxhlet.xlsx","","NB06_fat_soxhlet.ipynb"],
+  [7,"糖：Brix 與酚硫酸法","EX07_sugar_calibration.xlsx","","NB07_sugar_phenolsulfuric.ipynb"],
+  [8,"全班能力試驗","EX08_proficiency_qc.xlsx","OR08","NB08_proficiency_qc.ipynb"],
+  [9,"期中考","考 Excel 或 Colab（任選）","",""],
+  [11,"前處理與光譜相似度","","OR11","NB09_preprocess_similarity.ipynb"],
+  [12,"PCA","","OR12","NB10_pca.ipynb"],
+  [13,"PLS I：醋酸定量","","OR13","NB11_pls_acetic.ipynb"],
+  [14,"PLS II：分類與離群值","","OR14","NB12_vip_plsda_outliers.ipynb"],
+  [16,"代糖專題 II","","OR16","NB13_sweetener_model.ipynb"],
+  [18,"期末考","","考 Orange 或 Colab（任選）",""]
+];
+const OR = {
+  OR01:["OR01_intro_boxplot","W1 Orange 入門：看分布、找異常值","讀檔、看表格、依學生畫箱形圖；在圖上框選離很遠的點，就能在表格看到它的備註。"],
+  OR08:["OR08_proficiency_anova","W8 組間比較（ANOVA）與一般成分表","Box Plot 依組別分組時會自動做 ANOVA（灰分 F = 14.24，和 NB08 一致）；Pivot Table 做成一般成分表。"],
+  OR11:["OR11_library_similarity","W11 前處理與光譜庫比對","ALS 扣基線 → 向量正規化 → Pearson 距離。Distance Matrix 裡距離最小的光譜庫樣品，就是未知樣品的答案。"],
+  OR12:["OR12_pca_oils","W12 PCA：六種食用油","PCA 不做 Normalize，PC1、PC2 解釋 46.3%、28.3%（和 NB10 一致）；分數圖依油種上色，loadings 看特徵峰。"],
+  OR13:["OR13_pls_acetic","W13 PLS：醋酸定量","SNV → PLS（2 LV）。以 sample_id 分組交叉驗證 RMSECV = 0.400、測試集 RMSEP = 0.427（和 NB11 一致）。"],
+  OR14:["OR14_classification_outlier","W14 分類模型與離群樣品","上半：PCA 分數 → 邏輯斯迴歸，看混淆矩陣；下半：只用校正集建 PCA，把新樣品投影上去，找出模型外的樣品。"],
+  OR16:["OR16_pls_sweetener","W16 代糖專題：PLS 定量","PLS（4 LV）阿斯巴甜 RMSECV = 0.711、盲樣 RMSEP = 0.557（和 NB13 一致）；換讀 or16_sucralose.csv 就是三氯蔗糖模型。"]
+};
+const pill = (cls, href, text, extra="") => `<a class="pill ${cls}" href="${href}" ${extra}>${text}</a>`;
+let rows = "";
+W.forEach(([n, t, xl, or, nb]) => {
+  const x = xl.endsWith(".xlsx") ? pill("p-xl", "excel/" + xl, xl.slice(0,4) + " ⬇", "download") : (xl ? `<span class="dash">${xl}</span>` : `<span class="dash">—</span>`);
+  const o = OR[or] ? pill("p-or", "#" + or, or) : (or ? `<span class="dash">${or}</span>` : `<span class="dash">—</span>`);
+  const p = nb ? pill("p-py", COLAB + nb, "Colab ↗", 'target="_blank" rel="noopener"') + pill("p-py", "notebooks/" + nb, ".ipynb ⬇", "download") : `<span class="dash">—</span>`;
+  rows += `<tr><td class="wk">W${n}</td><td>${t}</td><td>${x}</td><td>${o}</td><td>${p}</td></tr>`;
+});
+document.getElementById("rows").innerHTML = rows;
+let flows = "";
+Object.entries(OR).forEach(([code, [file, title, desc]]) => {
+  flows += `<details id="${code}"><summary>${code}　${title}</summary><p>${desc}</p>
+    <p>${pill("p-or", "orange/" + file + ".ows", "只下載 " + file + ".ows", "download")} <span class="dash">（要和資料 CSV 放在同一資料夾，建議直接下載整包 zip）</span></p>
+    <img src="orange/img/${file}.png" alt="${title} 的 Orange 流程圖" loading="lazy" width="1400"></details>`;
+});
+document.getElementById("flows").innerHTML = flows;
+if (location.hash) { const d = document.querySelector(location.hash); if (d && d.tagName === "DETAILS") d.open = true; }
+</script>
+</body>
+</html>

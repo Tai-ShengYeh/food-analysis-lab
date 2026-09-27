@@ -1,0 +1,66 @@
+D#group,i#student,D#item,i#rep,C#value,i#unit,i#temp_C,mS#note
+G1,G1,moisture,1,2.75,%,,
+G1,G1,moisture,2,2.78,%,,
+G1,G1,moisture,3,2.8,%,,
+G1,G1,ash,1,5.95,%,,
+G1,G1,ash,2,6.02,%,,
+G1,G1,ash,3,5.98,%,,
+G1,G1,protein,1,25.93,%,,
+G1,G1,fat,1,21.13,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G1,G1,fat,2,20.78,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G1,G1,fat,3,20.55,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G2,G2,moisture,1,2.85,%,,
+G2,G2,moisture,2,2.88,%,,
+G2,G2,moisture,3,2.83,%,,
+G2,G2,ash,1,6.1,%,,
+G2,G2,ash,2,6.05,%,,
+G2,G2,ash,3,6.08,%,,
+G2,G2,protein,1,26.17,%,,
+G2,G2,fat,1,21.84,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G2,G2,fat,2,22.06,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G2,G2,fat,3,21.89,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G3,G3,moisture,1,2.7,%,,
+G3,G3,moisture,2,2.74,%,,
+G3,G3,moisture,3,3.3,%,,疑似離群值 (possible outlier)
+G3,G3,ash,1,5.9,%,,
+G3,G3,ash,2,5.95,%,,
+G3,G3,ash,3,5.92,%,,
+G3,G3,protein,1,26.03,%,,
+G3,G3,fat,1,21.47,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G3,G3,fat,2,21.48,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G3,G3,fat,3,21.16,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G4,G4,moisture,1,2.9,%,,
+G4,G4,moisture,2,2.92,%,,
+G4,G4,moisture,3,2.89,%,,
+G4,G4,ash,1,6.05,%,,
+G4,G4,ash,2,6.0,%,,
+G4,G4,ash,3,6.03,%,,
+G4,G4,protein,1,24.47,%,,"系統性偏低 (systematic bias, ~1.5 個百分點)"
+G4,G4,fat,1,21.19,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G4,G4,fat,2,21.16,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G4,G4,fat,3,21.52,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G5,G5,moisture,1,2.79,%,,
+G5,G5,moisture,2,2.81,%,,
+G5,G5,moisture,3,2.8,%,,
+G5,G5,ash,1,5.98,%,,
+G5,G5,ash,2,6.01,%,,
+G5,G5,ash,3,5.99,%,,
+G5,G5,protein,1,26.0,%,,
+G5,G5,fat,1,21.14,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G5,G5,fat,2,21.27,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+G5,G5,fat,3,20.56,%,,W6 直接 Soxhlet(未水解) 盲樣三重複
+QC,QC,fat_qc_check,1,25.95,%,,
+QC,QC,fat_qc_check,2,26.15,%,,
+QC,QC,fat_qc_check,3,25.85,%,,
+QC,QC,fat_qc_check,4,26.2,%,,
+QC,QC,fat_qc_check,5,25.9,%,,
+QC,QC,fat_qc_check,6,26.05,%,,
+QC,QC,fat_qc_check,7,26.1,%,,
+QC,QC,fat_qc_check,8,26.95,%,,
+QC,QC,fat_qc_check,9,25.8,%,,
+QC,QC,fat_qc_check,10,25.3,%,,
+QC,QC,fat_qc_check,11,25.25,%,,
+QC,QC,fat_qc_check,12,26.0,%,,
+TA,TA,protein_repeatability,1,25.95,%,,
+TA,TA,protein_repeatability,2,26.15,%,,
+TA,TA,protein_repeatability,3,25.85,%,,
