@@ -1,0 +1,441 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W14 PLS 定量 II：VIP、PLS-DA 與離群值 · 食品分析實驗</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto;white-space:nowrap}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">食品分析實驗 · W14</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食品分析實驗 · W14</div><h1>PLS 定量 II：<span style='color:var(--accent-2)'>VIP</span>、PLS-DA 與離群值</h1><div class="en">Variable Importance in Projection, PLS-DA, and Outlier Diagnostics</div><div class="meta">食品分析實驗　·　4 小時課程　·　15 位學生 · 5 組（每組 3 人）<br>本週以電腦教室數據分析為主：VIP 變數重要性 · PLS-DA 分類 · Hotelling T²/Q 離群值</div><div style="margin-top:24px"><span class="pill">VIP</span><span class="pill">VIP>1篩選</span><span class="pill">PLS-DA</span><span class="pill">混淆矩陣</span><span class="pill">Hotelling T²</span><span class="pill">Q殘差/SPE</span><span class="pill">模型遷移</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">開始前，先想一個問題</div>
+  <div class="hook">模型說<span class="hi">這個波長最重要</span>——<br>你相信嗎？</div>
+  <div class="note" style="max-width:960px;margin:20px auto 0;text-align:left">
+    <strong>一個真實發生過的故事(已匿名)：</strong>準備這門課的教材時，有一支計算 VIP 的腳本裡，
+    迴圈內多寫了一個 <code class="mono">.sum()</code>，把「每個波長各自的貢獻」提早壓成同一個數字——
+    結果 228 個波長全部得到<strong>一模一樣的 VIP 值</strong>，腳本印出來的「VIP 前 20 名波長」其實完全沒有意義。
+  </div>
+  <p class="subtitle" style="max-width:960px;margin:14px auto 0"><strong>其實有三個簡單的檢查就能抓到這個 bug：</strong></p>
+  <div class="grid3" style="max-width:1040px;margin:10px auto 0;text-align:left">
+    <div class="card a"><div class="ic">🟰</div><div class="ct">VIP 值全部一樣</div><div class="cb">228 個波長理應有高有低，全部相同本身就是警訊</div></div>
+    <div class="card a"><div class="ic">➗</div><div class="ct">mean(VIP²) ≠ 1</div><div class="cb">VIP 的定義保證「全波段平均平方=1」，算出來不是 1 就代表公式或係數錯了</div></div>
+    <div class="card a"><div class="ic">🧪</div><div class="ct">高 VIP 對不上化學</div><div class="cb">「最重要」的波段如果跟已知的官能基吸收完全兜不起來，該懷疑而不是照抄</div></div>
+  </div>
+  <p class="subtitle" style="max-width:960px;margin:14px auto 0">今天這堂課，我們用<strong>會驗證自己的方法</strong>，重新走一遍 VIP、PLS-DA、離群值判斷。</p>
+</div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W14，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>說出 <strong>VIP</strong> 在算什麼：某波長跨所有潛在變數(LV)的重要性，用各 LV 解釋的 Y 變異加權</li><li>用 <strong>VIP > 1</strong> 當經驗法則篩選波長，並知道 <strong>VIP 不代表方向</strong>，方向要看迴歸係數</li><li>用 VIP>1 篩選後<strong>重建模型</strong>並比較 RMSECV，同時提防<strong>選擇偏誤(selection bias)</strong></li></ul><ul class='clean'><li>理解 <strong>PLS-DA</strong> 如何用 dummy Y 做分類，並看懂<strong>混淆矩陣／準確率／敏感度／特異度</strong></li><li>區分 <strong>Hotelling T²(槓桿，在模型平面內)</strong> 與 <strong>Q 殘差/SPE(模型解釋不到的新變異)</strong></li><li>看懂 T² vs Q 影響圖，並知道發現離群值時<strong>該做什麼、不該做什麼</strong>(絕不能默默刪除)</li></ul></div></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">憑直覺分一分：T² 高 vs Q 高</span><span class="score" id="g1score">0 / 6</span></div><div class="game-q">先不用公式，光靠描述判斷：這個情境比較像「T²高(槓桿)」還是「Q高(模型解釋不到的新變異)」？</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">4 小時課程時間表</div><h2 class="slide-title">本週以電腦教室數據分析為主</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:30</td><td>講解：VIP 是什麼、PLS-DA 原理、T²/Q 離群值概念</td></tr>
+    <tr><td class="c">0:30–1:30</td><td>VIP 與迴歸係數：用 W13 各組的醋酸 PLS 模型算 VIP，並依 VIP&gt;1 篩選波長重建模型</td></tr>
+    <tr><td class="c">1:30–2:30</td><td>PLS-DA：用 Orange 對 W12 六種食用油做分類，看混淆矩陣</td></tr>
+    <tr><td class="c">2:30–3:30</td><td>T²/Q 離群值與跨儀器模型：Corn 模組操作＋討論</td></tr>
+    <tr><td class="c">3:30–4:00</td><td>各組分享：本組 VIP 高的波段是否符合化學(醋酸 C–H／水 O–H)？</td></tr>
+    </tbody></table></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理 1</div><h2 class="slide-title">VIP：<span class='hi'>變數重要性投影</span>怎麼算？</h2><div class="grid2" style="margin-top:10px"><div><div class="eq" style="font-size:1rem">VIP<sub>j</sub> = √( p · Σ<sub>a</sub> SSY<sub>a</sub>(w<sub>ja</sub>/‖w<sub>a</sub>‖)² / Σ<sub>a</sub> SSY<sub>a</sub> )</div><ul class="clean" style="margin-top:12px"><li>j = 波長；a = 第 a 個潛在變數(LV)；p = 波長總數</li><li>某波長在<strong>解釋較多 Y 變異(SSY)的 LV</strong>上權重越大，VIP 就越高</li><li>經驗法則：<strong>VIP &gt; 1</strong> 通常視為「相對重要」(平均 VIP²=1，這就是分界會落在 1 附近的原因)</li><li><strong>VIP ≠ 方向</strong>：VIP 只講「重不重要」，不講「正相關還是負相關」——方向要看<strong>迴歸係數</strong>的正負號</li></ul></div><div class='note'><strong>對照本次示意模擬：</strong>1200 nm 附近(醋酸 C–H 合頻/倍頻，示意波段)與 1450 nm 附近(水 O–H，示意波段)VIP 應該都偏高——但兩者迴歸係數<strong>一正一負</strong>：醋酸增加時，前者訊號變強、後者(水相對訊號)變弱。確切波段位置依儀器與樣品而異，這裡只示意大方向，不是精確賦歸。</div></div></div></section><section class="slide" data-slide="7" data-section="維持注意" data-chart="vip"><div class="slide-inner"><div class="kicker">數據・VIP</div><h2 class="slide-title">VIP vs 波長，並用 <span class='hi'>VIP &gt; 1</span> 篩選重建模型</h2><div class="grid2-1" style="margin-top:8px"><div class="chartbox" style="height:36vh"><canvas id="chart_vip"></canvas></div><div><table class="cmp" style="font-size:.82rem"><thead><tr><th>模型</th><th>波長數</th><th>LV數</th><th>RMSECV</th><th>RMSEP</th></tr></thead><tbody><tr><td class="c">全波段</td><td>81</td><td>5</td><td>0.1723</td><td>0.2274</td></tr><tr><td class="c">VIP&gt;1 篩選後</td><td>18</td><td>3</td><td>0.2320</td><td>0.2393</td></tr></tbody></table><div class="note" style="margin-top:8px"><strong>篩選不是穩賺不賠：</strong>有時 RMSECV 會下降(雜訊被濾掉)，有時反而持平或變差(丟掉了有用的共線資訊)。<strong>務必用篩選時沒看過的測試集(RMSEP)驗證</strong>，不能只看訓練/篩選時算出的 RMSECV，否則會落入<strong>選擇偏誤(selection bias)</strong>。</div></div></div><p class="cap" style="margin-top:8px">示意數據，由本頁附帶的模擬 PLS 迴歸實際跑出，非本班真實光譜；紅線為 VIP=1 參考線。</p></div></section><section class="slide" data-slide="8" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">VIP 與迴歸係數 即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">操作流程</div><h2 class="slide-title">Orange：<span class='hi'>PLS Regression → VIP → Scatter Plot</span></h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 660 330">
+ <text x="330" y="20" text-anchor="middle" class="lblb" font-size="14">Orange 工作流程（orange-spectra）</text>
+ <rect x="20" y="42" width="120" height="56" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="80" y="74" text-anchor="middle" class="lblb" font-size="12">File</text>
+ <rect x="176" y="42" width="150" height="56" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="251" y="66" text-anchor="middle" class="lblb" font-size="11">PLS Regression</text>
+ <text x="251" y="84" text-anchor="middle" class="lbl" font-size="10">(orange-spectra)</text>
+ <rect x="362" y="42" width="110" height="56" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="417" y="74" text-anchor="middle" class="lblb" font-size="12">VIP 輸出</text>
+ <rect x="508" y="42" width="132" height="56" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="574" y="66" text-anchor="middle" class="lblb" font-size="11">Scatter Plot</text>
+ <text x="574" y="84" text-anchor="middle" class="lbl" font-size="10">x=wavelength,y=VIP</text>
+ <path d="M140 70 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
+ <path d="M326 70 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
+ <path d="M472 70 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
+ <text x="330" y="128" text-anchor="middle" class="lbl" font-size="11">⚠ VIP 表每列是「一個波長」，不是一筆光譜，不能直接進 Line Plot／Spectra</text>
+
+ <rect x="20" y="160" width="120" height="56" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="80" y="192" text-anchor="middle" class="lblb" font-size="12">File</text>
+ <rect x="176" y="160" width="150" height="56" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="251" y="192" text-anchor="middle" class="lblb" font-size="12">PLS-DA</text>
+ <rect x="362" y="160" width="278" height="56" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="501" y="184" text-anchor="middle" class="lblb" font-size="11">Confusion Matrix / Predictions</text>
+ <text x="501" y="202" text-anchor="middle" class="lbl" font-size="10">另有 Scores／Loadings／VIP 輸出</text>
+ <path d="M140 188 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
+ <path d="M326 188 h30" stroke="#48597a" stroke-width="2" marker-end="url(#arw)"/>
+
+ <rect x="20" y="238" width="620" height="78" rx="10" fill="#f6f9fd" stroke="#8493ad" stroke-width="1.6"/>
+ <text x="34" y="258" class="lblb" font-size="12">Colab／R 也能算 VIP（概念相同）：</text>
+ <text x="34" y="278" class="lbl mono" font-size="11">Python: VIP = sqrt(p * (W**2 @ SSY) / SSY.sum())   # W 已單位化，逐波長平方加權</text>
+ <text x="34" y="296" class="lbl mono" font-size="11">R:      VIP &lt;- sqrt(p * colSums(SSY * (W/colnorm)^2) / sum(SSY))</text>
+ <defs><marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
+</svg></div></div></section><section class="slide" data-slide="10" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理 2</div><h2 class="slide-title">PLS-DA：把<span class='hi'>分類問題</span>硬做成迴歸</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li>把類別編碼成 <strong>dummy Y(one-hot)</strong>：每一類是一欄 0/1</li><li>對每一欄各自(同時)做 PLS 迴歸，得到每一類的預測分數 ŷ</li><li><strong>預測類別 = ŷ 最大的那一欄</strong>(argmax)</li><li>結果整理成<strong>混淆矩陣(confusion matrix)</strong>：列＝實際類別，欄＝預測類別</li><li><strong>準確率(accuracy)</strong> = 對角線總和 / 全部樣品數</li><li><strong>敏感度(sensitivity)</strong> = 該類別抓對的比例；<strong>特異度(specificity)</strong> = 正確排除「不是該類別」的比例</li><li>Orange 的 <strong>PLS-DA</strong> widget 另有 Scores／Loadings／<strong>VIP</strong> 輸出——分類問題一樣能看變數重要性</li></ul></div><div class='note'>Orange 內建的一般 PLS 迴歸 widget<strong>沒有 VIP 輸出</strong>；要看 VIP，需要教師提供的 <strong>orange-spectra</strong> 附加元件裡的 PLS Regression／PLS-DA widget。</div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">PLS-DA 示範</div><h2 class="slide-title">W12 六種食用油分類（<span class='hi'>示意數據</span>）</h2><div class="grid2-1" style="margin-top:6px"><div><table class="cmp" style="font-size:.82rem"><thead><tr><th>實際\預測</th><th>特級初榨橄欖油</th><th>精製橄欖油</th><th>大豆油</th><th>芥花油</th><th>椰子油</th><th>花生油</th></tr></thead><tbody><tr><td class="c">特級初榨橄欖油</td><td style="background:var(--ok-soft);font-weight:800">4</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td class="c">精製橄欖油</td><td>2</td><td style="background:var(--ok-soft);font-weight:800">3</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td class="c">大豆油</td><td>0</td><td>0</td><td style="background:var(--ok-soft);font-weight:800">3</td><td>1</td><td>0</td><td>0</td></tr><tr><td class="c">芥花油</td><td>0</td><td>0</td><td>1</td><td style="background:var(--ok-soft);font-weight:800">4</td><td>0</td><td>0</td></tr><tr><td class="c">椰子油</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="background:var(--ok-soft);font-weight:800">4</td><td>0</td></tr><tr><td class="c">花生油</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td style="background:var(--ok-soft);font-weight:800">4</td></tr></tbody></table><p class="cap" style="text-align:left;margin-top:8px">測試集 n=27，ncomp=6，整體準確率 = <b>81.5%</b>。示意數據，非本班真實光譜。</p></div><div class="note"><strong>以「精製橄欖油」為例：</strong>TP=3、FN=2、FP=1、TN=21<br>sensitivity = TP/(TP+FN) ≈ <b>0.60</b>　　specificity = TN/(TN+FP) ≈ <b>0.95</b><br>敏感度低代表這一類常被<strong>誤判成別類</strong>；特異度低代表<strong>別類常被誤判成這一類</strong>——兩者要一起看。</div></div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">這是分類問題還是定量問題？</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個食品分析情境分到「分類問題(PLS-DA)」或「定量問題(PLS 迴歸)」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理 3</div><h2 class="slide-title">離群值：<span class='hi'>Hotelling T²</span> vs <span class='hi'>Q 殘差(SPE)</span></h2><div class="grid2" style="margin-top:8px"><div class="card b"><div class="ic">📐</div><div class="ct">Hotelling T²（槓桿 leverage）</div><div class="cb">樣品<strong>在模型平面內</strong>，但落在校正集涵蓋範圍很邊緣的位置——模型『看得懂』這個樣品的化學組成，只是它比較極端</div></div><div class="card a"><div class="ic">🌀</div><div class="ct">Q 殘差 / SPE</div><div class="cb">樣品含有<strong>模型平面解釋不到的新變異</strong>——可能是新雜質、儀器差異、或根本是模型沒學過的化學現象</div></div></div><div class="note" style="margin-top:12px">兩者都要看：<strong>T²高、Q低</strong> → 化學上合理但偏極端的樣品；<strong>T²低、Q高</strong> → 模型完全沒見過的新變異，即使數值本身看起來不誇張也要小心；<strong>兩者都高</strong> → 最需要優先檢查的樣品。</div></div></section><section class="slide" data-slide="14" data-section="維持注意"><div class="slide-inner"><div class="kicker">數據・T² vs Q 影響圖</div>
+<h2 class="slide-title">Corn 跨儀器示範：<span class="hi">m5</span> 模型套用到 <span class="hi">mp5/mp6</span></h2>
+<div class="chartbox" style="height:46vh"><canvas id="t2qChart"></canvas></div>
+<p class="cap" style="margin-top:8px">示意數據（模擬 PCA，非 Eigenvector Corn 真實數值）。虛線為 95% 界限：
+T²_limit≈6.66、Q_limit≈0.00109。紅點為標記樣品：極端槓桿點(T²高)、以及 m5 模型套用到 mp5/mp6 儀器光譜時出現的高 Q(模型解釋不到的新變異)。</p>
+<script>(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('t2qChart'); if(!el||el._done) return; el._done=1;
+    var normal=[{"x": 0.1077, "y": 0.000739}, {"x": 0.2438, "y": 0.000795}, {"x": 0.2077, "y": 0.000581}, {"x": 3.8146, "y": 0.000455}, {"x": 2.8363, "y": 0.000757}, {"x": 1.2573, "y": 0.000763}, {"x": 0.8624, "y": 0.00076}, {"x": 0.6576, "y": 0.000825}, {"x": 1.4704, "y": 0.000601}, {"x": 1.3167, "y": 0.000606}, {"x": 2.4387, "y": 0.000783}, {"x": 1.9268, "y": 0.000543}, {"x": 0.1561, "y": 0.000778}, {"x": 0.1984, "y": 0.000643}, {"x": 2.5152, "y": 0.000847}, {"x": 3.0494, "y": 0.000712}, {"x": 2.8137, "y": 0.000557}, {"x": 4.1695, "y": 0.000505}, {"x": 0.0546, "y": 0.000528}, {"x": 2.4252, "y": 0.000597}, {"x": 0.6038, "y": 0.000762}, {"x": 0.9916, "y": 0.000963}, {"x": 0.6009, "y": 0.000785}, {"x": 6.2474, "y": 0.000626}, {"x": 0.8542, "y": 0.000725}, {"x": 0.993, "y": 0.000907}, {"x": 1.472, "y": 0.00092}, {"x": 3.9077, "y": 0.000562}, {"x": 0.795, "y": 0.000713}, {"x": 1.2581, "y": 0.000654}, {"x": 0.0839, "y": 0.000832}, {"x": 0.7853, "y": 0.000583}, {"x": 1.1245, "y": 0.000624}, {"x": 5.3235, "y": 0.000543}, {"x": 1.4867, "y": 0.000508}, {"x": 4.4973, "y": 0.000345}, {"x": 2.4648, "y": 0.000566}, {"x": 6.0398, "y": 0.000758}, {"x": 5.053, "y": 0.000719}, {"x": 0.8951, "y": 0.000502}, {"x": 2.3471, "y": 0.000786}, {"x": 0.4319, "y": 0.000768}, {"x": 6.1089, "y": 0.000855}, {"x": 0.0287, "y": 0.000665}, {"x": 1.1054, "y": 0.00059}], flagged=[{"x": 49.0861, "y": 0.001847}, {"x": 2.9659, "y": 0.041099}, {"x": 1.5853, "y": 0.035478}], t2lim=6.6604, qlim=0.001092;
+    var maxT2=Math.max(t2lim*1.3, Math.max.apply(null, normal.map(function(p){return p.x}).concat(flagged.map(function(p){return p.x}))) * 1.15);
+    var maxQ=Math.max(qlim*1.4, Math.max.apply(null, normal.map(function(p){return p.y}).concat(flagged.map(function(p){return p.y}))) * 1.15);
+    new Chart(el,{
+      type:'scatter',
+      data:{datasets:[
+        {label:'m5 校正集/新樣品(正常)','data':normal,backgroundColor:'#1f6feb',pointRadius:5},
+        {label:'標記樣品(超標)','data':flagged,backgroundColor:'#d94f4f',pointRadius:8,pointStyle:'triangle'},
+        {type:'line',label:'T²界限(95%)','data':[{x:t2lim,y:0},{x:t2lim,y:maxQ}],borderColor:'#d9a32b',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false},
+        {type:'line',label:'Q界限(95%)','data':[{x:0,y:qlim},{x:maxT2,y:qlim}],borderColor:'#d9a32b',borderDash:[6,4],borderWidth:2,pointRadius:0,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:9}}}},
+        scales:{
+          x:{type:'linear',min:0,max:maxT2,title:{display:true,text:'Hotelling T²'}},
+          y:{type:'linear',min:0,max:maxQ,title:{display:true,text:'Q 殘差 / SPE'}}
+        }}
+    });
+  }
+  draw();
+})();</script></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">發現離群值，怎麼辦？</div><h2 class="slide-title">先檢查，<span class='hi'>絕不默默刪除</span></h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">🔍</div><div class="ct">先回頭看光譜/樣品本身</div><div class="cb">是不是氣泡、雜質、樣品放反、稀釋錯誤？先排除操作面的問題，再談統計面的判定</div></div><div class="card a"><div class="ic">🚫</div><div class="ct">不能默默刪除數據</div><div class="cb">刪除離群值前必須<strong>記錄原因</strong>；找不到原因就默默刪掉，等於在製造假的準確度</div></div><div class="card g"><div class="ic">🔁</div><div class="ct">模型遷移要重新驗證</div><div class="cb">同一台儀器建的模型，套到<strong>另一台儀器</strong>的光譜常出現高 Q——換儀器/換批次時要重新檢查，必要時做<strong>校正轉移(calibration transfer)</strong></div></div></div><p class="subtitle" style="margin-top:14px"><a class="no-nav" href="https://tai-shengyeh.github.io/chemometrics-teaching/outlier-detection.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 離群值偵測教學模組（Corn 資料集，T²/Q 影響圖）→</a>　——用 Corn 資料集(80樣品×700波長，m5/mp5/mp6 三台儀器，水分/油脂/蛋白質/澱粉)實際操作 T²/Q 影響圖。</p></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">模型結果看起來怪怪的，該怎麼排查？</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把「懷疑一個模型結果」時該做的檢查排成合理順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：VIP／PLS-DA／離群值綜合判斷</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="18" data-section="維持注意" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：這 5 個 VIP 值的 mean(VIP²)</span><span class="score" id="g6score">未作答</span></div><div class="game-q">從某次 Orange VIP 輸出表格中，抽出 5 個波長的 VIP 值：<b>0.824, 0.615, 0.442, 0.611, 0.348</b>。求這 5 個值的 mean(VIP²)（提示：這只是全部 81 個波長中的一部分，不是全部）。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)"></span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">課後作業</div><h2 class="slide-title">Colab NB12（即將上線）</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📈</div><div class="ct">VIP 圖＋化學解讀</div><div class="cb">畫出本組醋酸模型的 VIP vs 波長圖，標出 VIP&gt;1 的波段，並嘗試對應到已知的化學吸收</div></div><div class="card a"><div class="ic">🆚</div><div class="ct">VIP 篩選 vs 全波段</div><div class="cb">比較 VIP&gt;1 篩選後模型與全波段模型的 RMSECV／RMSEP，說明何者較好、為什麼</div></div><div class="card g"><div class="ic">🎯</div><div class="ct">PLS-DA 混淆矩陣</div><div class="cb">附上本組食用油 PLS-DA 的混淆矩陣，計算整體準確率與至少一類的敏感度/特異度</div></div><div class="card b"><div class="ic">🔎</div><div class="ct">一個離群值案例</div><div class="cb">從本組或示範數據中挑一個離群樣品，說明它是 T²高、Q高、還是兩者都高，以及你會怎麼處理</div></div></div><p class="subtitle" style="margin-top:12px">NB12 連結<strong>即將上線</strong>，屆時公告在課程網頁。報告除以上四點外，也請附上各組分享時討論的結論：VIP 高的區域是否符合化學。</p></div></section><section class="slide" data-slide="20" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出 VIP 的定義：跨所有 LV、用 Y 變異加權的波長重要性，並知道 VIP&gt;1 只是經驗法則</li><li data-k><span class="bx">✓</span>分辨 VIP(重不重要) 與迴歸係數(方向)，不會把兩者混為一談</li><li data-k><span class="bx">✓</span>用三個檢查(VIP是否全部相同、mean(VIP²)是否=1、是否符合化學)驗證自己的 VIP 計算</li><li data-k><span class="bx">✓</span>完成 VIP&gt;1 篩選、重建模型，並用測試集(而非訓練集)比較 RMSECV/RMSEP，避免選擇偏誤</li><li data-k><span class="bx">✓</span>說明 PLS-DA 如何用 dummy Y 做分類，並看懂混淆矩陣、準確率、敏感度、特異度</li><li data-k><span class="bx">✓</span>分辨 Hotelling T²(槓桿)與 Q 殘差/SPE(模型解釋不到的新變異)的差別</li><li data-k><span class="bx">✓</span>看懂 T² vs Q 影響圖的 95% 界限，並知道發現離群值時要先檢查、不能默默刪除</li><li data-k><span class="bx">✓</span>知道模型遷移(換儀器)時常見的高 Q 現象，以及為什麼需要重新驗證</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><script>window.CFG={"charts": {"vip": {"type": "line", "yTitle": "VIP（x軸：波長 nm）", "zero": true, "labels": ["900", "910", "920", "930", "940", "950", "960", "970", "980", "990", "1000", "1010", "1020", "1030", "1040", "1050", "1060", "1070", "1080", "1090", "1100", "1110", "1120", "1130", "1140", "1150", "1160", "1170", "1180", "1190", "1200", "1210", "1220", "1230", "1240", "1250", "1260", "1270", "1280", "1290", "1300", "1310", "1320", "1330", "1340", "1350", "1360", "1370", "1380", "1390", "1400", "1410", "1420", "1430", "1440", "1450", "1460", "1470", "1480", "1490", "1500", "1510", "1520", "1530", "1540", "1550", "1560", "1570", "1580", "1590", "1600", "1610", "1620", "1630", "1640", "1650", "1660", "1670", "1680", "1690", "1700"], "datasets": [{"label": "VIP（示意數據，本次模擬 PLS 模型算出）", "data": [0.824, 0.783, 0.796, 0.764, 0.787, 0.739, 0.713, 0.705, 0.673, 0.652, 0.65, 0.645, 0.63, 0.635, 0.606, 0.594, 0.604, 0.618, 0.594, 0.609, 0.615, 0.591, 0.649, 0.777, 0.987, 1.22, 1.488, 1.967, 2.244, 2.433, 2.525, 2.468, 2.233, 1.875, 1.566, 1.238, 0.967, 0.689, 0.574, 0.5, 0.442, 0.426, 0.408, 0.386, 0.4, 0.371, 0.368, 0.356, 0.357, 0.447, 0.675, 0.927, 1.26, 1.542, 1.719, 1.775, 1.695, 1.496, 1.207, 0.903, 0.611, 0.401, 0.298, 0.264, 0.307, 0.289, 0.31, 0.351, 0.351, 0.379, 0.388, 0.437, 0.412, 0.458, 0.391, 0.354, 0.373, 0.392, 0.37, 0.4, 0.348], "color": "#1f6feb"}, {"label": "VIP=1 參考線", "data": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], "color": "#d94f4f"}]}}, "bucket": {"g1": {"cats": ["T² 高（槓桿，仍在模型平面內）", "Q 高（模型解釋不到的新變異）"], "items": [{"t": "整體光譜形狀正常，但某樣品濃度落在校正集範圍外很遠", "c": "T² 高（槓桿，仍在模型平面內）"}, {"t": "樣品光譜形狀跟其他樣品明顯不同，出現奇怪的雜峰", "c": "Q 高（模型解釋不到的新變異）"}, {"t": "同一台儀器測到一個含量特別極端的樣品(例如濃度是其他人的兩倍)", "c": "T² 高（槓桿，仍在模型平面內）"}, {"t": "換了一台不同儀器測同一批樣品，光譜基線/波峰位置跟建模時不一樣", "c": "Q 高（模型解釋不到的新變異）"}, {"t": "樣品其實在模型涵蓋的化學範圍內，只是剛好是這批裡最極端的一個", "c": "T² 高（槓桿，仍在模型平面內）"}, {"t": "樣品含有校正集裡沒出現過的雜質，光譜出現一個全新的吸收峰", "c": "Q 高（模型解釋不到的新變異）"}], "ok": "🎉 全對！關鍵在於：極端但『仍是模型看得懂的化學』→T²高；出現『模型沒學過的新變異』→Q高。", "tip": "提示：問自己「這個樣品的化學組成模型認不認識？只是比較極端(T²) 還是根本沒看過(Q)？」"}, "g3": {"cats": ["分類問題(PLS-DA)", "定量問題(PLS 迴歸)"], "items": [{"t": "預測樣品是哪一種食用油(特級初榨橄欖油/精製橄欖油/…)", "c": "分類問題(PLS-DA)"}, {"t": "預測醋的醋酸濃度(%)", "c": "定量問題(PLS 迴歸)"}, {"t": "判斷這批牛奶是否摻偽(是/否)", "c": "分類問題(PLS-DA)"}, {"t": "預測牛奶的蛋白質含量(%)", "c": "定量問題(PLS 迴歸)"}, {"t": "判斷茶葉來源是哪一個產地(多個產地類別)", "c": "分類問題(PLS-DA)"}, {"t": "預測玉米的水分含量(%)", "c": "定量問題(PLS 迴歸)"}], "ok": "🎉 全對！答案是「類別標籤」→分類(PLS-DA)；答案是「一個連續數字」→定量(PLS迴歸)。", "tip": "提示：先問自己「我要的答案是一個類別名稱，還是一個數字？」"}}, "mcq": {"g2": [{"q": "「VIP > 1」這個經驗法則，最直接的理由是什麼？", "o": ["VIP 定義上平均值為 1，大於平均代表相對重要", "1 是統計上規定的顯著水準", "VIP 最大值一定是 1", "純粹是業界隨便訂的數字，沒有理論依據"], "a": 0, "e": "由 VIP 公式可推出 mean(VIP²)=1，所以 VIP&gt;1 大致代表「高於平均重要性」，是一個方便但非嚴格的經驗法則。"}, {"q": "VIP 很高的兩個波段，一個讓你覺得『這裡訊號應該隨濃度上升』，另一個『應該下降』，你該看哪個數字判斷方向？", "o": ["VIP 值本身", "迴歸係數(regression coefficient)的正負號", "波長的大小", "樣品數 n"], "a": 1, "e": "VIP 只告訴你「重不重要」，不告訴你「正相關還是負相關」；方向要看該波長對應的迴歸係數正負號。"}, {"q": "Orange 的 PLS Regression(orange-spectra) 輸出的 VIP 表格，每一列是「一個波長」，這種資料要用哪個 widget 畫散佈圖？", "o": ["Line Plot", "Spectra", "Scatter Plot(x=wavelength, y=VIP)", "Image Viewer"], "a": 2, "e": "Line Plot／Spectra 預期的輸入是「列=一筆光譜」，VIP 表格的列是「一個波長」，兩者結構不同，只能用 Scatter Plot 畫。"}, {"q": "為什麼 VIP&gt;1 篩選後重建的模型，一定要用『篩選時沒用過』的測試集算 RMSEP 來驗證？", "o": ["因為測試集比較準", "避免選擇偏誤(selection bias)：篩選依據跟評估依據若是同一批資料，結果會偏樂觀", "因為 RMSECV 沒辦法算", "純粹是流程規定，沒有統計理由"], "a": 1, "e": "如果拿同一批資料既選波長又評估效能，等於讓模型『看過答案』，RMSECV 會系統性偏低估——要用獨立測試集才公平。"}, {"q": "算出來的 VIP 高波段，完全對不上任何已知的化學吸收，最適當的態度是？", "o": ["直接採用，反正數字算出來了", "先懷疑計算過程或資料本身(例如重現本課的 bug 故事)，而不是照單全收", "改用更複雜的模型讓它變得合理", "把不合理的波長刪掉讓結果變好看"], "a": 1, "e": "高 VIP 對不上化學，正是本課開場那個 bug 故事教的訊號——應該先檢查計算是否正確，而不是直接相信或事後硬凹。"}], "g5": [{"q": "一個樣品「T²低、Q高」，最可能代表什麼？", "o": ["樣品化學組成正常，只是比較極端", "樣品含有模型完全沒學過的新變異，即使數值本身不誇張也要留意", "這一定是儀器故障", "可以直接忽略，因為 T² 沒有超標"], "a": 1, "e": "T²低代表在模型平面內不算極端，但 Q高代表有模型解釋不到的殘差——正是『模型沒看過』的訊號，需要特別留意。"}, {"q": "發現一個離群樣品後，最適當的第一步是？", "o": ["直接從資料集刪除，重新跑一次模型", "先回頭檢查光譜/樣品本身(氣泡、雜質、稀釋錯誤等)", "假裝沒看到，直接報告原始結果", "把它強制歸類到最接近的一類"], "a": 1, "e": "先排查操作面的問題；找不到原因、也不能默默刪除——刪除前一定要留下判斷依據與紀錄。"}, {"q": "PLS-DA 對某樣品的判定規則是？", "o": ["六個類別的 ŷ 都要大於 0.5", "取六個類別中 ŷ 最大的那一類(argmax)", "取六個類別 ŷ 的平均值", "隨機指定一類"], "a": 1, "e": "PLS-DA 對每一類分別預測連續分數，最後判定規則是取分數最大(argmax)的那一類。"}, {"q": "用 m5 儀器建立的模型，套用到 mp5/mp6 儀器量到的光譜，卻出現偏高的 Q 值，最可能的解讀是？", "o": ["mp5/mp6 儀器故障", "不同儀器的光譜響應存在模型沒學過的系統性差異(模型遷移問題)", "Q 值升高代表樣品本身變質", "這是正常現象，不需要理會"], "a": 1, "e": "不同儀器的雜散光、解析度、基線響應不同，這些差異若沒被原模型學到，套用到新儀器就會出現高 Q，是典型的模型遷移(calibration transfer)問題。"}, {"q": "Orange 的 PLS-DA widget，除了分類結果，還可能輸出下列哪一項？", "o": ["只有預測類別，沒有其他輸出", "Scores／Loadings／VIP", "自動生成 PDF 報告", "自動連接資料庫"], "a": 1, "e": "PLS-DA widget 跟 PLS Regression 類似，也提供 Scores、Loadings、VIP 等輸出，可以進一步分析哪些波長對分類最重要。"}]}, "sort": {"g4": {"steps": ["檢查 VIP 計算本身是否合理(是否全部一樣、mean(VIP²)是否=1)", "比對高 VIP 波段是否符合已知的化學吸收", "畫 T²/Q 影響圖，檢查是否有離群樣品", "找到離群樣品先檢查光譜/樣品本身，記錄原因", "用獨立測試集驗證模型(避免選擇偏誤)", "整理成報告，寫清楚每一步的判斷依據"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！先驗證VIP計算 → 對照化學 → 檢查離群值 → 用測試集驗證 → 寫報告。", "tip": "提示：一定要先確定 VIP 本身沒算錯，才談得上跟化學比對；獨立驗證要在報告之前完成。"}}, "calc": {"g6": {"answer": 0.3494, "tol": 0.03, "ok": "🎉 正確！(0.824 , 0.615 , 0.442 , 0.611 , 0.348 平方後取平均) ≈ <b>0.3494<\/b>——注意這不等於 1，因為這只是全部 81 個波長中抽出的 5 個。", "bad": "再算算：把這 5 個數字各自平方，加總後除以 5。別忘了 mean(VIP²)=1 只保證在『全部波長』時成立，5 個不是全部。", "hint": "提示：0.824 , 0.615 , 0.442 , 0.611 , 0.348 各自平方後相加再除以 5。"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

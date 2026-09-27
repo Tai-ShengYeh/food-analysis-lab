@@ -1,0 +1,427 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W10 振動光譜與光譜儀校正 · 食品分析實驗</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto;white-space:nowrap}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">食品分析實驗 · W10</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食品分析實驗 · W10</div><h1>振動光譜原理與<span style='color:var(--accent-2)'>光譜儀校正</span></h1><div class="en">Vibrational Spectroscopy (NIR vs Raman) & Spectrometer Calibration</div><div class="meta">食品分析實驗　·　4 小時課程　·　15 位學生 · 5 組（每組 3 人）<br>NIR 五種機型輪組固定 · 532/785nm 拉曼兩台輪流 · 校正 · 純物質光譜 → 班級光譜庫</div><div style="margin-top:24px"><span class="pill">NIR overtone/combination</span><span class="pill">Raman shift</span><span class="pill">矽晶圓/聚苯乙烯校正</span><span class="pill">白參考/暗電流</span><span class="pill">螢光背景</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">開始前，先看一段工廠影片</div>
+  <div class="hook">工廠用 NIR，<span class="hi">幾秒鐘</span>就「量出」蛋白質？</div>
+  <p class="subtitle" style="max-width:900px;margin:18px auto 0">
+    <a class="no-nav" href="https://www.youtube.com/watch?v=01xiYD63EAc&t=911s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">
+      麵粉工廠 NIR 產線（15:11–16:14，幾秒內同時報告蛋白質/水分/灰分）↗</a>
+  </p>
+  <div class="note" style="max-width:900px;margin:18px auto 0;text-align:left">
+    <strong>先想一想：</strong>NIR 儀器螢幕上跳出的「蛋白質 12.3%」，是<strong>直接量到蛋白質分子</strong>嗎？
+    還是量到別的東西、再<strong>換算</strong>出來的？如果是換算，換算的依據是什麼？——這堂課會回答這個問題，
+    也是為什麼這門課的<strong>前半學期都在教凱氏法等「參考方法」</strong>的原因。
+  </div>
+  <p class="subtitle" style="max-width:900px;margin:14px auto 0"><strong>今天的任務：</strong>
+    搞懂 NIR 與 Raman 兩種振動光譜的原理差異，把自己組的儀器<strong>校正好</strong>，
+    再量出一批<strong>純物質光譜</strong>——這些光譜會變成整個班級共用的<strong>光譜庫</strong>，
+    也是 W15–16 甜味劑專題的參考資料。</p>
+</div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W10，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>說出 <strong>NIR</strong> 訊號來自 X–H 鍵的<strong>倍頻與合頻(overtone/combination)</strong>，為什麼寬又重疊、需要化學計量學</li><li>說出 <strong>Raman</strong> 訊號來自<strong>非彈性散射</strong>，理解 Raman shift(cm⁻¹) 的定義，以及為什麼圖譜像指紋一樣尖銳</li><li>解釋為什麼<strong>水</strong>是 NIR 的強吸收體，卻是 Raman 很弱的散射體</li></ul><ul class='clean'><li>完成 <strong>Raman x 軸校正</strong>(矽晶圓、聚苯乙烯)與 <strong>NIR 暗電流／白參考／波長檢查</strong></li><li>認出 <strong>InnoSpectra 卡匣正反裝</strong>造成的基線異常，並知道用「先量已知光譜」把關</li><li>完成 5 次重複掃描，看懂平均光譜與 SD 光譜、判斷雜訊最大的位置</li><li>遵守<strong>雷射安全</strong>與溶劑操作規範，量出本組的純物質光譜並依規則命名上傳</li></ul></div><p class="subtitle" style="margin-top:10px">理論複習：本課不重複紅外光譜、光譜學的完整原理——完整內容在 <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-decks/ch8_ir/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 完整原理 deck（Nielsen Ch8，紅外光譜）→</a> 與 <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-decks/ch6_spectroscopy/ch6_spectroscopy.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 完整原理 deck（Nielsen Ch6，光譜學總覽）→</a>。</p></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">這個特性屬於 NIR 還是 Raman？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把下面 8 個敘述，分到「NIR 特性」或「Raman 特性」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理（簡述）</div><h2 class="slide-title">NIR：<span class='hi'>倍頻/合頻</span>　vs　Raman：<span class='hi'>非彈性散射</span></h2><div class="grid2" style="margin-top:6px"><div><ul class="clean"><li><strong>NIR</strong>：訊號來自 O–H、C–H、N–H 等 X–H 鍵的<strong>倍頻/合頻</strong>——如 O–H(~1450、~1940 nm)、C–H(~1150–1210、~1700–1760 nm)。峰<strong>寬又重疊</strong>，一定要靠<strong>化學計量學</strong>才能定量；<strong>水</strong>是很強的吸收體，常主導光譜</li><li><strong>Raman</strong>：雷射照射樣品後的<strong>非彈性散射</strong>，出射光與入射光的波數差就是 <strong>Raman shift(cm⁻¹)</strong>，圖譜<strong>尖銳如指紋</strong>，可直接比對資料庫辨識物質</li><li><strong>水是很弱的 Raman 散射體</strong>，幾乎不干擾——這是量水溶液樣品的一大優勢；最大的敵人是<strong>螢光背景</strong>：785nm 較不易引發螢光，但 532nm 散射訊號本身較強(∝ 1/λ⁴)</li></ul></div><div class='svgwrap'>
+<svg viewBox="0 0 620 270">
+ <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">彈性散射(Rayleigh) vs 非彈性散射(Stokes Raman)：能階示意圖</text>
+ <line x1="40" y1="40" x2="580" y2="40" stroke="#8493ad" stroke-width="1.6" stroke-dasharray="5 4"/>
+ <text x="586" y="44" class="lbl" font-size="11">虛擬態 virtual state</text>
+ <line x1="40" y1="180" x2="580" y2="180" stroke="#48597a" stroke-width="2"/>
+ <text x="586" y="184" class="lbl" font-size="11">v=1(振動激發)</text>
+ <line x1="40" y1="225" x2="580" y2="225" stroke="#15233f" stroke-width="2.2"/>
+ <text x="586" y="229" class="lbl" font-size="11">v=0(基態)</text>
+ <path d="M150 225 L150 40" stroke="#48597a" stroke-width="2.4" marker-end="url(#arE)"/>
+ <text x="126" y="150" class="lblb" font-size="12" fill="#48597a">hν₀</text>
+ <path d="M190 40 L190 225" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#arE)"/>
+ <text x="196" y="150" class="lblb" font-size="12" fill="#1f6feb">hν₀</text>
+ <text x="170" y="248" text-anchor="middle" class="lblb" font-size="12" fill="#1f6feb">Rayleigh（彈性，同能量）</text>
+ <path d="M400 225 L400 40" stroke="#48597a" stroke-width="2.4" marker-end="url(#arE)"/>
+ <text x="376" y="150" class="lblb" font-size="12" fill="#48597a">hν₀</text>
+ <path d="M440 40 L440 180" stroke="#d9822b" stroke-width="2.4" marker-end="url(#arE)"/>
+ <text x="446" y="120" class="lblb" font-size="12" fill="#d9822b">hν₀−Δν̃</text>
+ <text x="420" y="248" text-anchor="middle" class="lblb" font-size="12" fill="#d9822b">Stokes Raman（非彈性，分子留在 v=1）</text>
+ <text x="310" y="265" text-anchor="middle" class="lbl" font-size="11">Raman shift Δν̃ = 入射與散射光的波數差(cm⁻¹)，只跟分子振動有關、與雷射波長無關</text>
+ <defs><marker id="arE" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
+</svg></div></div></div></section><section class="slide" data-slide="6" data-section="維持注意" data-chart="ramanfl"><div class="slide-inner"><div class="kicker">數據・模擬光譜</div><h2 class="slide-title">模擬拉曼光譜：<span class='hi'>532nm vs 785nm</span>，同一組峰位置</h2><div class="chartbox" style="height:42vh"><canvas id="chart_ramanfl"></canvas></div><div class="cap">示意數據/模擬光譜（非本班實測），x 軸為等間距的 Raman shift(cm⁻¹)。532nm 的散射訊號本身較強，但螢光背景也大幅升高、把小峰蓋掉；785nm 背景平坦，峰形清楚——這就是有色/易螢光樣品常改用 785nm 的原因。</div></div></section><section class="slide" data-slide="7" data-section="維持注意" data-chart="nirwe"><div class="slide-inner"><div class="kicker">數據・模擬光譜</div><h2 class="slide-title">模擬 NIR 吸收光譜：<span class='hi'>水 vs 乙醇</span></h2><div class="chartbox" style="height:42vh"><canvas id="chart_nirwe"></canvas></div><div class="cap">示意數據/模擬光譜，非特定儀器規格。水的兩個峰約落在 <b>1450 nm(O–H 一級倍頻)</b>與 <b>1940 nm(O–H 合頻)</b>附近；乙醇除了較弱的 O–H 峰，還多了 <b>C–H 一級倍頻 ~1700–1760 nm</b> 與 <b>C–H 二級倍頻 ~1150–1210 nm</b> —— 這也是為什麼光看『某個波長的吸光值』很難分辨兩者，要靠整條光譜的形狀(化學計量學)。</div></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">校正 1</div><h2 class="slide-title">Raman x 軸校正：<span class='hi'>矽晶圓・聚苯乙烯・環己烷</span></h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">💎</div><div class="ct">矽晶圓 Silicon wafer</div><div class="cb">單一尖峰 <b>~520.7 cm⁻¹</b>，檢查峰位置是否落在儀器容許誤差內——x 軸校正最常用的基準</div></div><div class="card a"><div class="ic">🧴</div><div class="ct">聚苯乙烯 Polystyrene</div><div class="cb">主要校正峰 <b>1001.4 cm⁻¹</b>(環呼吸模)，另有 620.9、1031.8、1602.3 cm⁻¹可交叉核對多點</div></div><div class="card g"><div class="ic">🧪</div><div class="ct">環己烷 Cyclohexane</div><div class="cb"><b>801.3 cm⁻¹</b>等峰，依 <strong>ASTM E1840</strong> 拉曼位移標準品規範使用</div></div></div><div class="note" style="margin-top:12px"><strong>532nm 與 785nm 是兩台不同雷射，要分別各做一次 x 軸校正</strong>，同時記錄雷射功率與對焦狀態(功率過高可能燒焦/降解樣品，對焦不良會使訊號變弱)。<br><strong>換算練習：</strong>聚苯乙烯 1001.4 cm⁻¹ 峰，用 785nm 雷射時散射光絕對波長 ≈ <b>851.97 nm</b>；換成 532nm 雷射時 ≈ <b>561.94 nm</b>（同一個 Raman shift，換雷射波長，散射光的絕對波長完全不同）。</div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">校正 2</div><h2 class="slide-title">NIR：暗電流・白參考・波長檢查 — 一個真實的 QC 教訓</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li><strong>暗電流(dark current)</strong>：光路全暗時的偵測器背景訊號，每次校正的第一步</li><li><strong>白參考(white reference)</strong>：如 Spectralon/PTFE(~99% 反射率)，<strong>每次上機前/每批樣品前</strong>都要重新做，建立反射基準</li><li><strong>波長檢查</strong>：用聚苯乙烯或 NIST 稀土氧化物反射標準品(如 SRM 1920 系列，若有)確認波長準確性</li><li><strong>暖機時間</strong>：依儀器建議，讓光源與偵測器穩定後再開始量測</li><li>換算練習：<b>1450 nm ≈ 6897 cm⁻¹</b>（波數 = 1/波長，換算成 cm 再取倒數）</li></ul></div><div class='svgwrap'>
+<svg viewBox="0 0 620 260">
+ <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">InnoSpectra 1mm 比色管卡匣：正裝 vs 反裝</text>
+ <rect x="30" y="46" width="260" height="180" rx="10" fill="#fbe7e7" stroke="#d94f4f" stroke-width="2"/>
+ <text x="160" y="66" text-anchor="middle" class="lblb" font-size="12" fill="#d94f4f">NORMAL 正裝（錯誤）</text>
+ <rect x="90" y="90" width="140" height="100" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+ <rect x="90" y="150" width="140" height="40" fill="#8493ad"/>
+ <text x="160" y="175" text-anchor="middle" class="lbl" font-size="10" fill="#eef2f8">卡匣底座（較厚）</text>
+ <circle cx="60" cy="195" r="7" fill="#d9822b"/>
+ <text x="60" y="215" text-anchor="middle" class="lbl" font-size="10">光源</text>
+ <path d="M67 195 L90 178" stroke="#d94f4f" stroke-width="2" stroke-dasharray="3 3"/>
+ <text x="70" y="150" class="lbl" font-size="9" fill="#d94f4f">低處光線被擋住 ✕</text>
+ <path d="M60 150 L90 120" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="245" y="205" text-anchor="middle" class="lblb" font-size="11" fill="#d94f4f">基線升高、特徵消失</text>
+ <rect x="330" y="46" width="260" height="180" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="460" y="66" text-anchor="middle" class="lblb" font-size="12" fill="#1f9d6b">INVERTED 反裝（正確）</text>
+ <rect x="390" y="90" width="140" height="100" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+ <rect x="390" y="90" width="140" height="40" fill="#8493ad"/>
+ <text x="460" y="115" text-anchor="middle" class="lbl" font-size="10" fill="#eef2f8">卡匣底座（翻到上方）</text>
+ <circle cx="360" cy="195" r="7" fill="#d9822b"/>
+ <text x="360" y="215" text-anchor="middle" class="lbl" font-size="10">光源</text>
+ <path d="M367 195 L390 178" stroke="#1f9d6b" stroke-width="2.2"/>
+ <path d="M367 195 L420 150" stroke="#1f9d6b" stroke-width="2.2"/>
+ <text x="370" y="150" class="lbl" font-size="9" fill="#1f9d6b">光路暢通 ✓</text>
+ <text x="545" y="205" text-anchor="middle" class="lblb" font-size="11" fill="#1f9d6b">光譜正常、峰形完整</text>
+ <text x="310" y="248" text-anchor="middle" class="lbl" font-size="11">QC 習慣：不管正裝反裝，開始量測前先量一次已知光譜(如水)確認基線正常，再相信數據</text>
+</svg></div></div><div class="note" style="margin-top:10px"><strong>InnoSpectra 的真實教訓：</strong>1mm 比色管卡匣如果用<strong>正常(normal)方向</strong>裝，卡匣底座會擋住較低處的光源，使基線升高、原本該有的特徵幾乎消失；<strong>反過來裝(inverted)</strong>才會量到正確的光譜。這正是為什麼<strong>QC 習慣一定要先量一次已知光譜(如水)確認基線正常</strong>，才敢相信接下來量到的數據。</div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-chart="repeat"><div class="slide-inner"><div class="kicker">數據・重複性</div><h2 class="slide-title">重複掃描：<span class='hi'>5 次 → 平均光譜與 SD 光譜</span></h2><div class="chartbox" style="height:42vh"><canvas id="chart_repeat"></canvas></div><div class="cap">示意數據/模擬光譜，x 軸為等間距的 Raman shift(cm⁻¹)。SD(以「平均±1SD」兩條線表示)在光譜<strong>兩端</strong>最大——光譜邊緣通常光通量較低、訊噪比較差，是重複性最不穩定的地方；中段訊號較強的區域反而較穩定。</div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">4 小時課程時間表</div><h2 class="slide-title">原理 → 校正 → 量測 → 重複性 → 上傳</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:30</td><td>原理講解(NIR vs Raman)＋雷射與溶劑安全示範</td></tr>
+    <tr><td class="c">0:30–1:15</td><td>Raman 波數校正（矽晶圓、聚苯乙烯，532/785 各一次）與 NIR 暗電流／白參考／波長檢查</td></tr>
+    <tr><td class="c">1:15–3:15</td><td>純物質光譜量測：兩台 Raman 輪流量測全班，各組同時用自己固定的 NIR 量測</td></tr>
+    <tr><td class="c">3:15–3:45</td><td>挑一個樣品做 5 次重複掃描，繪製平均光譜與 SD 光譜</td></tr>
+    <tr><td class="c">3:45–4:00</td><td>檔案命名與上傳（命名規則：組別_儀器_樣品_重複.csv）</td></tr>
+    </tbody></table></div></section><section class="slide" data-slide="12" data-section="維持注意"><div class="slide-inner"><div class="kicker">安全守則</div><h2 class="slide-title">雷射防護 · 溶劑處理</h2><div class="grid2" style="margin-top:14px"><div class="card a"><div class="ic">🚫</div><div class="ct">Class 3B/4 雷射：絕不直視光束</div><div class="cb">依儀器規定使用護目鏡或機殼防護；雷射開啟時不要把眼睛湊近光路方向</div></div><div class="card b"><div class="ic">💍</div><div class="ct">操作雷射時避免配戴反光飾品</div><div class="cb">戒指、手錶、金屬手鍊等反光物品可能造成意外反射，操作前先取下</div></div><div class="card g"><div class="ic">🧴</div><div class="ct">乙醇／醋酸於通風處操作</div><div class="cb">避免直接吸入蒸氣或讓其接觸皮膚，比色管用畢加蓋、歸位</div></div><div class="card a"><div class="ic">🧹</div><div class="ct">粉末／液體樣品外洩立即清理</div><div class="cb">依實驗室 SOP 處理外洩，避免交叉污染下一組的量測</div></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">儀器開機與校正流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把「開始一天量測前」的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="14" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">這種樣品，容易產生螢光干擾嗎？</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 種樣品分到「容易產生螢光干擾」或「不易產生螢光干擾」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="15" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">NIR / Raman 原理與校正 即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="16" data-section="維持注意"><div class="slide-inner"><div class="kicker">實驗操作</div><h2 class="slide-title">純物質光譜量測 → 建立班級光譜庫</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li><strong>粉末樣品</strong>(比色皿/粉末架)：蔗糖、阿斯巴甜(aspartame)、三氯蔗糖(sucralose)、赤藻糖醇(erythritol)、麥芽糊精(maltodextrin)</li><li><strong>液體樣品</strong>(比色管)：水、乙醇、醋酸</li><li>每個樣品都要用<strong>本組固定的 NIR</strong> + <strong>532nm 與 785nm 兩台 Raman(輪流)</strong>量測</li><li>這些光譜會成為 <strong>W11 的班級光譜庫</strong>，也是 <strong>W15–16 甜味劑專題</strong>的參考光譜</li></ul></div><div class='note'><strong>532 vs 785 對照實驗：</strong>挑一個<strong>易螢光</strong>的樣品（如紅糖/黑糖，或未精製食用油），同時用 532nm 與 785nm 量測、疊圖比較螢光背景的差異——這就是把今天原理課教的「785nm 降低螢光」，在真實樣品上親手驗證一次。</div></div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：校正與 QC 判讀</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="18" data-section="維持注意" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：Raman shift → 絕對散射波長</span><span class="score" id="g6score">未作答</span></div><div class="game-q">785 nm 雷射激發，聚苯乙烯 <b>1001.4 cm⁻¹</b>峰(環呼吸模)。求散射光的絕對波長(nm)。公式：1/λ<sub>散射</sub> = 1/λ<sub>雷射</sub> − Δν̃（Δν̃ 換算成 cm⁻¹，波長換算成 cm 再取倒數）。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">nm</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">課後作業</div><h2 class="slide-title">檔案上傳與校正紀錄</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📁</div><div class="ct">依命名規則上傳光譜</div><div class="cb">組別_儀器_樣品_重複.csv，把今天所有純物質光譜(含 5 次重複掃描)整理上傳</div></div><div class="card a"><div class="ic">📝</div><div class="ct">一頁校正紀錄表</div><div class="cb">每台儀器各一頁：標準品、預期值、量測值、通過/不通過（Raman x軸、NIR 暗電流/白參考/波長）</div></div><div class="card g"><div class="ic">🗂</div><div class="ct">檢查光譜庫完整性</div><div class="cb">確認每個樣品、每次重複都有上傳，這是 W11 建立班級光譜庫的基礎</div></div><div class="card b"><div class="ic">🔬</div><div class="ct">為 W15–16 做準備</div><div class="cb">這些純物質光譜也是甜味劑專題的參考光譜，先把檔案整理好、標示清楚</div></div></div><p class="subtitle" style="margin-top:12px">Colab NB10 連結<strong>即將上線</strong>，屆時公告在課程網頁。</p></div></section><section class="slide" data-slide="20" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出 NIR 訊號來自 X–H 鍵的倍頻與合頻，為什麼寬又重疊、需要化學計量學才能定量</li><li data-k><span class="bx">✓</span>說出 Raman 訊號來自非彈性散射，並定義 Raman shift(cm⁻¹)——與雷射波長無關，只跟分子振動有關</li><li data-k><span class="bx">✓</span>解釋水為什麼在 NIR 是強吸收體、在 Raman 卻是很弱的散射體</li><li data-k><span class="bx">✓</span>說出為什麼有色/易螢光樣品常用 785nm，而 532nm 散射訊號較強但螢光背景也較大</li><li data-k><span class="bx">✓</span>完成 Raman x 軸校正(矽晶圓 520.7 cm⁻¹、聚苯乙烯 1001.4 cm⁻¹等)，並記錄兩台雷射的校正結果</li><li data-k><span class="bx">✓</span>完成 NIR 暗電流、白參考、波長檢查，並認得 InnoSpectra 卡匣正反裝造成的基線異常</li><li data-k><span class="bx">✓</span>完成 5 次重複掃描，看懂平均光譜與 SD 光譜、指出雜訊最大的位置</li><li data-k><span class="bx">✓</span>遵守雷射與溶劑安全規範，依命名規則上傳今天的純物質光譜</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><script>window.CFG={"charts": {"ramanfl": {"type": "line", "yTitle": "拉曼強度 (a.u.)（x軸：Raman shift cm⁻¹）", "zero": true, "labels": ["200", "250", "300", "350", "400", "450", "500", "550", "600", "650", "700", "750", "800", "850", "900", "950", "1000", "1050", "1100", "1150", "1200", "1250", "1300", "1350", "1400", "1450", "1500", "1550", "1600", "1650", "1700", "1750", "1800"], "datasets": [{"label": "532nm（示意，含螢光背景）", "data": [1.72, 1.608, 1.491, 1.481, 1.587, 1.297, 1.135, 1.081, 0.982, 1.07, 1.321, 0.976, 0.765, 0.691, 0.702, 1.028, 1.41, 0.933, 0.52, 0.473, 0.571, 0.833, 0.533, 0.41, 0.525, 0.974, 0.624, 0.335, 0.367, 0.544, 0.311, 0.259, 0.237], "color": "#d94f4f"}, {"label": "785nm（示意，背景平坦）", "data": [0.039, 0.067, 0.045, 0.16, 0.365, 0.152, 0.056, 0.055, 0.062, 0.197, 0.505, 0.237, 0.039, 0.068, 0.094, 0.435, 0.936, 0.456, 0.076, 0.065, 0.209, 0.454, 0.212, 0.068, 0.217, 0.704, 0.386, 0.086, 0.114, 0.311, 0.104, 0.052, 0.057], "color": "#1f6feb"}]}, "nirwe": {"type": "line", "yTitle": "吸收 (a.u.)（x軸：波長 nm）", "zero": true, "labels": ["1100", "1120", "1140", "1160", "1180", "1200", "1220", "1240", "1260", "1280", "1300", "1320", "1340", "1360", "1380", "1400", "1420", "1440", "1460", "1480", "1500", "1520", "1540", "1560", "1580", "1600", "1620", "1640", "1660", "1680", "1700", "1720", "1740", "1760", "1780", "1800", "1820", "1840", "1860", "1880", "1900", "1920", "1940", "1960", "1980", "2000"], "datasets": [{"label": "水（示意）", "data": [0.07, 0.024, 0.054, 0.044, 0.045, 0.048, 0.03, 0.048, 0.041, 0.084, 0.056, 0.061, 0.095, 0.172, 0.323, 0.559, 0.816, 0.974, 0.986, 0.809, 0.563, 0.349, 0.184, 0.093, 0.063, 0.059, 0.07, 0.047, 0.048, 0.06, 0.041, 0.047, 0.06, 0.061, 0.065, 0.096, 0.114, 0.252, 0.388, 0.585, 0.82, 0.993, 1.046, 0.975, 0.818, 0.601], "color": "#1f6feb"}, {"label": "乙醇（示意）", "data": [0.09, 0.138, 0.234, 0.358, 0.398, 0.338, 0.238, 0.137, 0.075, 0.054, 0.073, 0.079, 0.176, 0.271, 0.354, 0.441, 0.431, 0.378, 0.245, 0.16, 0.111, 0.082, 0.035, 0.047, 0.054, 0.047, 0.078, 0.082, 0.172, 0.291, 0.479, 0.583, 0.581, 0.454, 0.334, 0.214, 0.179, 0.21, 0.26, 0.303, 0.322, 0.3, 0.267, 0.172, 0.122, 0.085], "color": "#d9822b"}]}, "repeat": {"type": "line", "yTitle": "強度 (a.u.)（x軸：Raman shift cm⁻¹）", "zero": true, "labels": ["200", "250", "300", "350", "400", "450", "500", "550", "600", "650", "700", "750", "800", "850", "900", "950", "1000", "1050", "1100", "1150", "1200", "1250", "1300", "1350", "1400", "1450", "1500", "1550", "1600", "1650", "1700", "1750", "1800"], "datasets": [{"label": "平均光譜（5次）", "data": [0.122, 0.096, 0.144, 0.224, 0.434, 0.225, 0.083, 0.084, 0.112, 0.081, 0.049, 0.083, 0.082, 0.084, 0.145, 0.549, 0.898, 0.56, 0.187, 0.083, 0.073, 0.063, 0.058, 0.127, 0.272, 0.583, 0.45, 0.099, 0.12, 0.081, 0.102, 0.052, 0.005], "color": "#1f6feb"}, {"label": "平均 + 1SD", "data": [0.175, 0.201, 0.203, 0.278, 0.5, 0.271, 0.152, 0.113, 0.16, 0.158, 0.112, 0.129, 0.111, 0.136, 0.164, 0.574, 0.935, 0.586, 0.225, 0.127, 0.099, 0.112, 0.094, 0.187, 0.358, 0.682, 0.532, 0.158, 0.222, 0.124, 0.169, 0.182, 0.092], "color": "#d9a32b"}, {"label": "平均 − 1SD", "data": [0.069, 0.0, 0.086, 0.171, 0.368, 0.178, 0.015, 0.056, 0.065, 0.004, 0.0, 0.037, 0.054, 0.031, 0.126, 0.524, 0.861, 0.533, 0.148, 0.039, 0.047, 0.014, 0.023, 0.066, 0.186, 0.484, 0.368, 0.04, 0.017, 0.039, 0.034, 0.0, 0.0], "color": "#d9a32b"}]}}, "bucket": {"g1": {"cats": ["NIR 特性", "Raman 特性"], "items": [{"t": "訊號來自 X–H 鍵的倍頻與合頻(overtone/combination)", "c": "NIR 特性"}, {"t": "訊號來自非彈性散射(inelastic scattering)", "c": "Raman 特性"}, {"t": "光譜寬而重疊，一定要靠化學計量學才能定量", "c": "NIR 特性"}, {"t": "圖譜尖銳如指紋，可直接跟資料庫比對辨識物質", "c": "Raman 特性"}, {"t": "水是很強的吸收體，常常主導整條光譜", "c": "NIR 特性"}, {"t": "水是很弱的散射體，幾乎不干擾光譜", "c": "Raman 特性"}, {"t": "螢光背景是最主要的干擾來源", "c": "Raman 特性"}, {"t": "常搭配光纖探頭做非破壞性快速線上篩檢(如工廠產線)", "c": "NIR 特性"}], "ok": "🎉 全對！NIR 靠 X–H 倍頻/合頻、需要化學計量學；Raman 靠非彈性散射、圖譜像指紋、水幾乎不干擾。", "tip": "提示：跟『水的訊號強不強』『圖譜寬不寬』『需不需要化學計量學』這幾個關鍵字對照看看。"}, "g3": {"cats": ["容易產生螢光干擾", "不易產生螢光干擾"], "items": [{"t": "醬油(深色、含焦糖色素)", "c": "容易產生螢光干擾"}, {"t": "未精製紅棕櫚油(色素豐富)", "c": "容易產生螢光干擾"}, {"t": "咖啡萃取液(深色)", "c": "容易產生螢光干擾"}, {"t": "蒸餾水", "c": "不易產生螢光干擾"}, {"t": "白色蔗糖結晶標準品", "c": "不易產生螢光干擾"}, {"t": "無色透明的95%乙醇", "c": "不易產生螢光干擾"}], "ok": "🎉 全對！顏色深、含天然色素或焦糖化產物的樣品，容易在532nm下產生強烈螢光；無色/白色樣品通常干擾較小。", "tip": "提示：想想樣品的顏色，以及有沒有共軛色素分子(焦糖、葉綠素、類胡蘿蔔素等)——顏色愈深愈可能螢光干擾。"}}, "mcq": {"g2": [{"q": "為什麼深色、易產生螢光的食品(如深色醬油、咖啡)做拉曼光譜時，常建議用 785nm 而不是 532nm？", "o": ["785nm 解析度比較高", "785nm 較不易激發螢光，訊號較不會被螢光背景蓋過", "532nm 雷射比較危險，禁止使用", "785nm 波長比較短"], "a": 1, "e": "有色/易螢光樣品在532nm激發下容易產生強烈螢光背景蓋過拉曼訊號；785nm能量較低，較不易引發螢光，因此常用於有色食品。"}, {"q": "NIR 量測前為什麼要做白參考(white reference)？", "o": ["讓儀器螢幕看起來比較準", "建立反射基準，扣除光源光譜形狀與偵測器響應差異，換算出樣品的相對反射率", "白參考只是出廠測試用，跟日常量測無關", "只有第一次使用該儀器時才需要做"], "a": 1, "e": "白參考片(如Spectralon/PTFE)提供已知的高反射率基準，用來校正光源與偵測器的響應，需每次上機/每批樣品前重新做。"}, {"q": "如果 Raman 光譜儀的 x 軸(波數)沒有校正，最可能發生什麼問題？", "o": ["光譜強度會變成負值", "所有峰的位置會系統性偏移，導致跟光譜庫比對時誤判物質", "光譜會整個變成雜訊", "沒有影響，只要看訊噪比就好"], "a": 1, "e": "波數軸沒校正時，所有峰位置會整體偏移，拿去跟資料庫比對相似度、指認物質時容易誤判——這正是為什麼每次都要用矽晶圓、聚苯乙烯等標準品校正x軸。"}, {"q": "為什麼 NIR 定量分析幾乎都要搭配化學計量學(如 PLS 迴歸)，而不是直接看某個波長的吸光值？", "o": ["NIR 訊號太弱，需要放大", "NIR 的倍頻/合頻峰又寬又重疊，難以用單一波長對應單一成分，需要多變量模型連結參考方法數值", "化學計量學可以省略前處理", "因為 NIR 儀器比較便宜"], "a": 1, "e": "NIR的倍頻/合頻峰彼此重疊、缺乏特異性，必須靠化學計量學把整條光譜的形狀連結到參考方法(如凱氏法)的數值，才能定量。"}, {"q": "水在 NIR 與 Raman 兩種光譜中的行為，下列敘述何者正確？", "o": ["水在兩種光譜中都是很強的訊號", "水是 NIR 的強吸收體(常主導光譜)，但只是很弱的 Raman 散射體，較不干擾拉曼光譜", "水在NIR和Raman中都幾乎不出現訊號", "水只在 Raman 中才有訊號"], "a": 1, "e": "水的O–H鍵在NIR吸收很強、常主導整條光譜；但水是很弱的Raman散射體，這是Raman適合量測水溶液樣品的一大優勢。"}], "g5": [{"q": "某組用 InnoSpectra 量水的 NIR 光譜，發現基線異常升高、原本該有的 O–H 吸收峰幾乎看不見，最可能的原因與處置是？", "o": ["儀器壞了，需要立刻送修", "可能是1 mm比色管卡匣裝反了(正裝時底部擋住低處光源)，先試著把卡匣反過來(inverted)重新量測", "水本來就沒有NIR訊號，這是正常的", "需要重新開機就會恢復正常"], "a": 1, "e": "這正是InnoSpectra卡匣正反裝的artefact：正常(normal)方向時1mm卡匣底部會擋住較低處的光源，導致基線升高、特徵消失；反過來裝(inverted)才會量到正確的光譜。"}, {"q": "操作 Class 3B/4 等級雷射時，下列何者是正確的安全習慣？", "o": ["直視光束確認雷射有沒有出光", "依儀器規定使用護目鏡或機殼防護，絕不直視光束，並避免佩戴反光飾品", "只要不碰到雷射光就不用戴任何防護", "反光飾品可以幫忙定位光束，建議配戴"], "a": 1, "e": "Class 3B/4雷射對眼睛有危害，必須依儀器規定使用護目鏡或機殼防護，絕不能直視光束；反光飾品可能造成意外反射，操作前應取下。"}, {"q": "矽晶圓的 520.7 cm⁻¹峰在拉曼校正中主要用來檢查什麼？", "o": ["儀器的靈敏度(訊號強度)", "x軸(Raman shift)的波數準確性，峰位置是否落在容許誤差內", "雷射功率是否過高", "樣品的濃度"], "a": 1, "e": "矽晶圓的520.7 cm⁻¹是公認穩定的單峰，用來檢查拉曼光譜儀x軸(波數)的準確性，而不是訊號強度或樣品濃度。"}, {"q": "開始一天的 NIR 量測前，最保險的 QC 做法是？", "o": ["直接開始量樣品，有問題再說", "先量一個已知的光譜(如水)，確認基線和波形正常，再開始量未知樣品", "只要白參考做過就一定沒問題，不用再確認", "相信儀器出廠時已經校正好，不用每次確認"], "a": 1, "e": "即使暗電流、白參考、波長檢查都做過，仍建議先量一個已知光譜(如水)確認基線與波形正常——這能抓到像卡匣裝反這類人為疏失。"}, {"q": "操作乙醇與醋酸等揮發性液體樣品時，下列何者正確？", "o": ["在密閉抽屜內操作即可，不需通風", "於通風良好處操作，避免直接吸入蒸氣或讓其接觸皮膚，用畢妥善加蓋", "這些液體很安全，不需特別注意", "可以直接用嘴吸取移液管"], "a": 1, "e": "乙醇、醋酸具揮發性與刺激性，應於通風處操作、避免吸入或接觸皮膚，用畢加蓋收納，並使用吸球等工具移液(絕不能用嘴吸)。"}]}, "sort": {"g4": {"steps": ["開機暖機，等待光源與偵測器穩定", "量測暗電流(dark current)，全暗光路", "置入白參考片(Spectralon/PTFE)建立反射基準", "以標準品(如聚苯乙烯或稀土氧化物)檢查波長準確性", "量測已知光譜(如水)確認基線與波形正常", "開始量測樣品"], "shuffle": [3, 0, 4, 1, 5, 2], "ok": "🎉 順序正確！暖機 → 暗電流 → 白參考 → 波長標準品檢查 → 量已知光譜把關 → 才開始量樣品。", "tip": "提示：先暖機才有穩定的暗電流；有白參考才能做波長標準品檢查；量已知光譜是開始樣品前的最後把關。"}}, "calc": {"g6": {"answer": 851.97, "tol": 0.5, "ok": "🎉 正確！785nm換算成cm取倒數得波數，減去1001.4 cm⁻¹再取倒數換回nm，約為 <b>851.97 nm<\/b>。", "bad": "再算算：先把785nm換算成cm(785×10⁻⁷)並取倒數得雷射波數；波數減去Raman shift得散射光波數；再取倒數換回nm(乘1e7)。", "hint": "提示：1/λ散射 = 1/(785×10⁻⁷ cm) − 1001.4 cm⁻¹，算出散射光波數後再取倒數、換算回nm，答案約 851.97 nm。"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

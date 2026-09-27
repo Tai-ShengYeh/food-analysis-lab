@@ -1,0 +1,478 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W12 主成分分析 PCA · 食品分析實驗</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto;white-space:nowrap}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">食品分析實驗 · W12</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食品分析實驗 · W12</div><h1>主成分分析 <span style='color:var(--accent-2)'>PCA</span>：食用油分類</h1><div class="en">Principal Component Analysis — Classifying Edible Oils by Spectra</div><div class="meta">食品分析實驗　·　4 小時課程　·　15 位學生 · 5 組（每組 3 人）<br>六種食用油 × Raman 785nm ／各組 NIR · Orange PCA(Data→Scatter, Components→Loadings) · Colab／R</div><div style="margin-top:24px"><span class="pill">PCA scores/loadings</span><span class="pill">mean-centering</span><span class="pill">不做 autoscale</span><span class="pill">scree plot</span><span class="pill">Orange PCA</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">開始前，先看三支工廠影片</div>
+  <div class="hook">貼錯標籤的<span class="hi">「橄欖油」</span>，<br>光譜看得出來嗎？</div>
+  <p class="subtitle" style="max-width:960px;margin:18px auto 0">
+    <a class="no-nav" href="https://www.youtube.com/watch?v=Tomgd54vjl0&t=740s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">
+      橄欖油產線（12:20–13:44，特級初榨分級，容易被摻偽）↗</a>
+    <a class="no-nav" href="https://www.youtube.com/watch?v=ipJHaWYolCs&t=722s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">
+      芥花油產線（12:02–13:31，脫臭精製／酸價／過氧化價）↗</a>
+    <a class="no-nav" href="https://www.youtube.com/watch?v=VwHaRjH4KGU&t=480s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">
+      大豆油產線（08:00–09:28，己烷萃取）↗</a>
+  </p>
+  <div class="note" style="max-width:960px;margin:18px auto 0;text-align:left">
+    <strong>影片裡的小提醒：</strong>特級初榨橄欖油(EVOO)分級除了看感官，法規上也需要
+    K232/K270 等指標，而且<strong>很容易被摻偽或貼錯標籤</strong>——這正是今天的問題。
+  </div>
+  <p class="subtitle" style="max-width:960px;margin:14px auto 0"><strong>今天的問題：</strong>
+    如果有一瓶油被<span class="hi">貼錯標籤</span>（例如標「特級初榨橄欖油」但其實摻了精製橄欖油或其他油），
+    <strong>光譜 + PCA 看得出來嗎？</strong>（待會看分數圖時回來討論）</p>
+</div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W12，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>直覺理解 <strong>PCA</strong> 在找什麼：資料<strong>變異最大</strong>的方向，PC1 ⟂ PC2</li><li>分清楚 <strong>scores(分數)</strong>＝樣品在圖上的位置，<strong>loadings(負荷量)</strong>＝哪些波長/波數在驅動這個 PC</li><li>知道為什麼光譜資料通常<strong>mean-centering 一定做，但不做 autoscale</strong></li></ul><ul class='clean'><li>看懂 <strong>scree plot</strong>(陡坡圖)與解釋變異(explained variance)</li><li>在 Orange 裡把 PCA 的 <strong>Data</strong>(不是 Transformed Data)接到 Scatter Plot 依類別上色</li><li>用分數圖判讀<strong>重複性(是否緊聚)</strong>與<strong>離群樣品</strong>，並知道 PCA 是<strong>非監督式</strong>方法</li></ul></div></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">這個問題該看 scores 還是 loadings？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把下面 8 個問題，分到「scores 回答的問題」或「loadings 回答的問題」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">原理</div><h2 class="slide-title">PCA 在找什麼：<span class='hi'>變異最大</span>的方向</h2><div class="grid2" style="margin-top:6px"><div class="svgwrap">
+<svg viewBox="0 0 620 300">
+ <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">PCA 找的是「資料變異最大」的方向</text>
+ <line x1="60" y1="240" x2="560" y2="240" stroke="#8493ad" stroke-width="1.6"/>
+ <line x1="120" y1="270" x2="500" y2="70" stroke="#8493ad" stroke-width="1.6"/>
+ <text x="565" y="244" class="lbl" font-size="12">原始波長 1</text>
+ <text x="495" y="62" class="lbl" font-size="12">原始波長 2</text>
+ <g fill="#1f6feb" fill-opacity=".85">
+  <circle cx="220" cy="205" r="6"/><circle cx="235" cy="195" r="6"/><circle cx="205" cy="215" r="6"/>
+  <circle cx="330" cy="165" r="6"/><circle cx="345" cy="155" r="6"/><circle cx="315" cy="175" r="6"/>
+  <circle cx="410" cy="120" r="6"/><circle cx="425" cy="110" r="6"/><circle cx="395" cy="130" r="6"/>
+ </g>
+ <line x1="150" y1="235" x2="470" y2="95" stroke="#d94f4f" stroke-width="2.6" marker-end="url(#arpc1)"/>
+ <text x="475" y="88" class="lblb" fill="#d94f4f" font-size="13">PC1（最大變異方向）</text>
+ <line x1="270" y1="130" x2="330" y2="205" stroke="#1f9d6b" stroke-width="2.2" marker-end="url(#arpc2)"/>
+ <text x="335" y="220" class="lblb" fill="#1f9d6b" font-size="13">PC2（與PC1垂直，次大變異）</text>
+ <text x="310" y="285" text-anchor="middle" class="lbl" font-size="12">每個點＝一條光譜；PCA 把高維度波長資料，投影到幾個「變異方向」上來看</text>
+ <defs>
+  <marker id="arpc1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#d94f4f"/></marker>
+  <marker id="arpc2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="#1f9d6b"/></marker>
+ </defs>
+</svg></div><div><ul class="clean"><li><strong>PC1</strong>：資料變異量最大的方向；<strong>PC2</strong>：與 PC1 垂直、次大變異的方向</li><li><strong>scores(分數)</strong>：每個樣品投影到 PC1、PC2 後的座標——決定它畫在圖上哪裡</li><li><strong>loadings(負荷量)</strong>：每個波長(波數)對某個 PC 的貢獻——決定「為什麼」樣品會分開</li><li><strong>解釋變異(explained variance)</strong>：這個 PC 佔全部變異的比例；scree plot 就是把它們畫成長條圖</li><li>PCA 是<strong>非監督式(unsupervised)</strong>方法——它完全不知道樣品是哪一種油，只根據光譜本身的變異來分——所以如果分數圖上不同油真的分開，代表<strong>光譜本身就存在真實的化學差異</strong></li></ul></div></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">前處理</div><h2 class="slide-title"><span class='hi'>mean-centering</span> 一定做，autoscale 通常不做</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">➖</div><div class="ct">Mean-centering（一定做）</div><div class="cb">每個波長都減去自己的平均值，PCA 才是在找「相對平均光譜的變異方向」，幾乎是必要的前處理</div></div><div class="card a"><div class="ic">🚫</div><div class="ct">Autoscale（光譜通常不做）</div><div class="cb">把每個波長除以自己的標準差，會把那些幾乎只有雜訊的波長<strong>放大</strong>，反而蓋過真正有用的訊號</div></div><div class="card g"><div class="ic">🧪</div><div class="ct">真正重要的是前處理方法</div><div class="cb">SNV(標準常態變量轉換)、一階/二階導數，能去除散射與基線差異，往往比要不要 autoscale 更關鍵</div></div></div><div class="note" style="margin-top:12px">今天示範的圖表都只做<strong>mean-centering</strong>，沒有 autoscale——這也是 SpectraView／Orange 的 PCA 節點的預設行為。</div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">Orange 工作流程</div><h2 class="slide-title">從光譜到<span class='hi'>分數圖與 loadings</span></h2><div class="grid2-1" style="margin-top:6px"><div class="svgwrap">
+<svg viewBox="0 0 640 340">
+ <text x="320" y="20" text-anchor="middle" class="lblb" font-size="14">Orange 工作流程</text>
+ <rect x="16" y="46" width="170" height="60" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="101" y="70" text-anchor="middle" class="lblb" font-size="12">File／SpectraView</text>
+ <text x="101" y="88" text-anchor="middle" class="lbl" font-size="11">匯入或前處理後匯出</text>
+ <rect x="234" y="46" width="170" height="60" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="319" y="70" text-anchor="middle" class="lblb" font-size="12">Preprocess Spectra</text>
+ <text x="319" y="88" text-anchor="middle" class="lbl" font-size="11">SNV／導數（若尚未處理）</text>
+ <rect x="452" y="46" width="170" height="60" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="537" y="70" text-anchor="middle" class="lblb" font-size="12">PCA</text>
+ <text x="537" y="88" text-anchor="middle" font-size="11" class="lbl">mean-centering 內建</text>
+ <path d="M186 76 h32" stroke="#48597a" stroke-width="2" marker-end="url(#aro)"/>
+ <path d="M404 76 h32" stroke="#48597a" stroke-width="2" marker-end="url(#aro)"/>
+ <rect x="234" y="150" width="170" height="60" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="319" y="174" text-anchor="middle" class="lblb" font-size="12">Data 輸出</text>
+ <text x="319" y="192" text-anchor="middle" class="lbl" font-size="11">原始資料＋PC分數＋類別</text>
+ <rect x="452" y="150" width="170" height="60" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="537" y="174" text-anchor="middle" class="lblb" font-size="12">Components 輸出</text>
+ <text x="537" y="192" text-anchor="middle" class="lbl" font-size="11">＝ loadings</text>
+ <path d="M537 106 v20 h0 M472 106 L354 150" stroke="#48597a" stroke-width="2" marker-end="url(#aro)"/>
+ <path d="M537 106 v44" stroke="#48597a" stroke-width="2" marker-end="url(#aro)"/>
+ <rect x="234" y="254" width="170" height="60" rx="10" fill="#fbe7e7" stroke="#d94f4f" stroke-width="2"/>
+ <text x="319" y="278" text-anchor="middle" class="lblb" font-size="12">Scatter Plot</text>
+ <text x="319" y="296" text-anchor="middle" class="lbl" font-size="11">依油品類別上色＝分數圖</text>
+ <rect x="16" y="254" width="170" height="60" rx="10" fill="#f6f9fd" stroke="#8493ad" stroke-width="2"/>
+ <text x="101" y="278" text-anchor="middle" class="lblb" font-size="12">Data Table</text>
+ <text x="101" y="296" text-anchor="middle" class="lbl" font-size="11">檢視數值、找離群樣品</text>
+ <rect x="452" y="254" width="170" height="60" rx="10" fill="#fbe7e7" stroke="#d94f4f" stroke-width="2"/>
+ <text x="537" y="278" text-anchor="middle" class="lblb" font-size="12">Line Plot／Spectra</text>
+ <text x="537" y="296" text-anchor="middle" class="lbl" font-size="11">loading vs 波數(波長)</text>
+ <path d="M319 210 v34" stroke="#48597a" stroke-width="2" marker-end="url(#aro)"/>
+ <path d="M319 210 q-110 30 -170 44" stroke="#48597a" stroke-width="2" marker-end="url(#aro)" fill="none"/>
+ <path d="M537 210 v34" stroke="#48597a" stroke-width="2" marker-end="url(#aro)"/>
+ <text x="320" y="335" text-anchor="middle" class="lbl" font-size="11">關鍵地雷：Scatter Plot 要接「Data」，不是「Transformed Data」（後者會把類別欄位丟掉，沒辦法上色）</text>
+ <defs><marker id="aro" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
+</svg></div><div><p class="cap" style="text-align:left;margin-bottom:8px">Colab（scikit-learn，5 行）：</p><div style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--ink);white-space:pre;overflow-x:auto;line-height:1.6;box-shadow:var(--shadow-sm)">from sklearn.decomposition import PCA
+import numpy as np
+X = np.loadtxt("oils_X.csv", delimiter=",")     # 每列一條光譜（一個樣品）
+pca = PCA(n_components=5).fit(X - X.mean(axis=0))
+scores = pca.transform(X - X.mean(axis=0))      # scores[:, :2] 拿來畫分數圖</div><p class="cap" style="text-align:left;margin:10px 0 8px">R（prcomp）：</p><div style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--ink);white-space:pre;overflow-x:auto;line-height:1.6;box-shadow:var(--shadow-sm)">X <- as.matrix(read.csv("oils_X.csv", header=FALSE))
+pca <- prcomp(X, center=TRUE, scale.=FALSE)
+scores <- pca$x[, 1:2]
+loadings <- pca$rotation[, 1]
+summary(pca)$importance[2, ]     # 各 PC 解釋變異比例</div></div></div><p class="subtitle" style="margin-top:10px">Colab NB10：<strong>即將上線</strong>，屆時公告在課程網頁。備用資料集：<a class="no-nav" href="https://tai-shengyeh.github.io/chemometrics-teaching/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">五種糖 NIR 備用資料集（chemometrics-teaching）→</a></p></div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">樣品、儀器與安全</div><h2 class="slide-title">六種食用油 × Raman 785 ＋ 各組 NIR</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li><strong>六種油</strong>：特級初榨橄欖油、精製橄欖油、大豆油、芥花油、椰子油、花生油——每組全部都要測，各 <strong>3 次重複</strong>(重新裝填/取樣)</li><li><strong>Raman 785 nm</strong>(輪站量測)：初榨橄欖油若用 <strong>532 nm</strong> 會有強烈螢光干擾——回想 W10 教訓，今天固定用 785 nm</li><li><strong>各組 NIR</strong>：依組別使用 Avantes(900–1700／600–1100 nm)、InnoSpectra NIR-S-G1／NIR-M-R14、NeoSpectra 光纖／Micro Dev Kit 或 Spectral Engines NIRONE 其中一台</li><li><strong>椰子油</strong>：室溫(約24°C以下)會凝固，需先<strong>微溫加熱融化</strong>成液態才能量測</li></ul></div><div class='grid2' style='display:grid;grid-template-columns:1fr;gap:14px'><div class="card a"><div class="ic">🔴</div><div class="ct">拉曼雷射(532/785nm)</div><div class="cb">不可直視光源或讓光束射向他人眼睛，依儀器說明配戴適當護目措施</div></div><div class="card b"><div class="ic">🔥🛢️</div><div class="ct">熱油與地板濕滑</div><div class="cb">椰子油只需<strong>微溫</strong>加熱到液態即可，勿過度加熱；發現油漬溢漏立即擦拭，避免滑倒</div></div></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">4 小時課程時間表</div><h2 class="slide-title">測光譜 → 前處理 → PCA → 跨儀器比較</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:30</td><td>講解：PCA 原理、scores/loadings、為什麼不做 autoscale</td></tr>
+    <tr><td class="c">0:30–2:00</td><td>六種油 × 3 重複：Raman 785 輪站量測＋各組 NIR 量測（椰子油先加熱融化）</td></tr>
+    <tr><td class="c">2:00–2:30</td><td>用 SpectraView 前處理(SNV／導數)，匯出成一列一樣品的 X 矩陣</td></tr>
+    <tr><td class="c">2:30–3:30</td><td>Orange 執行 PCA：分數圖(依油品上色)、loadings(vs 波數)、解釋變異</td></tr>
+    <tr><td class="c">3:30–4:00</td><td>各組交換、比較不同儀器(NIR)測出的分數圖是否一致</td></tr>
+    </tbody></table></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">PCA 分析工作流程排序</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">用 ▲▼ 把「從光譜到 PCA 結果」的 6 個步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意" data-chart="score"><div class="slide-inner"><div class="kicker">分數圖 Score Plot</div>
+<h2 class="slide-title">PC1 vs <span class="hi">PC2</span>：六種油分數散佈圖</h2>
+<div class="grid2-1" style="margin-top:4px">
+<div class="chartbox" style="height:42vh"><canvas id="scoreChart"></canvas></div>
+<div><ul class="clean" style="margin:0">
+<li style="margin:6px 0"><strong>PC1</strong>(約 46%)：主要由 <b>1655/1265 cm⁻¹</b>(不飽和相關)驅動——<strong>椰子油</strong>(飽和度最高)落在最負的一端</li>
+<li style="margin:6px 0"><strong>PC2</strong>(約 28%)：初榨橄欖油因類胡蘿蔔素譜帶，跟精製橄欖油、花生油分得開</li>
+<li style="margin:6px 0"><strong>QC</strong>：五種油的重複都緊緊聚在一起；但<strong>花生油有一點跑到最上面</strong>——這就是「離群分數」，該回頭查原始光譜(氣泡？對準？雜散光？)</li>
+<li style="margin:6px 0"><strong>回應開場問題</strong>：貼錯標籤的「橄欖油」若摻了其他油，只要類胡蘿蔔素等譜帶有<strong>真實化學差異</strong>，PCA 通常看得出來</li>
+</ul></div></div>
+<p class="cap" style="margin-top:6px">示意數據（Python 對模擬拉曼光譜實際跑 PCA，scores/loadings/解釋變異彼此一致）。點色＝油品，同色三點＝三次重複。</p>
+<script>
+(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('scoreChart'); if(!el||el._done) return; el._done=1;
+    var pts={"EVOO": [{"x": 0.439, "y": 0.413, "r": 1}, {"x": 0.389, "y": 0.328, "r": 2}, {"x": 0.333, "y": 0.319, "r": 3}], "ROO": [{"x": 0.017, "y": -0.191, "r": 1}, {"x": 0.071, "y": -0.143, "r": 2}, {"x": 0.018, "y": -0.148, "r": 3}], "SOY": [{"x": 0.524, "y": -0.348, "r": 1}, {"x": 0.507, "y": -0.339, "r": 2}, {"x": 0.573, "y": -0.353, "r": 3}], "CAN": [{"x": 0.331, "y": -0.303, "r": 1}, {"x": 0.354, "y": -0.304, "r": 2}, {"x": 0.434, "y": -0.303, "r": 3}], "COC": [{"x": -1.413, "y": 0.013, "r": 1}, {"x": -1.383, "y": -0.002, "r": 2}, {"x": -1.361, "y": -0.028, "r": 3}], "PEA": [{"x": -0.054, "y": -0.223, "r": 1}, {"x": -0.026, "y": -0.239, "r": 2}, {"x": 0.246, "y": 1.851, "r": 3}]}, colors={"EVOO": "#1f6feb", "ROO": "#8493ad", "SOY": "#1f9d6b", "CAN": "#d9a32b", "COC": "#d94f4f", "PEA": "#d9822b"}, names={"EVOO": "特級初榨橄欖油", "ROO": "精製橄欖油", "SOY": "大豆油", "CAN": "芥花油", "COC": "椰子油", "PEA": "花生油"};
+    var datasets=Object.keys(pts).map(function(k){
+      return {label:names[k], data:pts[k].map(function(p){return {x:p.x,y:p.y}}),
+        backgroundColor:colors[k], borderColor:colors[k], pointRadius:7, pointHoverRadius:9};
+    });
+    new Chart(el,{type:'scatter',data:{datasets:datasets},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:10}}}},
+        scales:{
+          x:{type:'linear',title:{display:true,text:'PC1 (46.3%)'}},
+          y:{type:'linear',title:{display:true,text:'PC2 (28.3%)'}}
+        }}});
+  }
+  draw();
+})();
+</script></div></section><section class="slide" data-slide="12" data-section="維持注意" data-chart="scree"><div class="slide-inner"><div class="kicker">數據・Scree</div><h2 class="slide-title">Scree Plot：<span class='hi'>解釋變異</span>隨 PC 遞減</h2><div class="chartbox" style="height:40vh"><canvas id="chart_scree"></canvas></div><div class="cap">示意數據，來自同一組模擬光譜的實際 PCA。前 2 個 PC 已解釋約 75% 的總變異，第 3 個 PC 之後明顯趨緩(elbow)。</div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-chart="loading"><div class="slide-inner"><div class="kicker">數據・Loadings</div><h2 class="slide-title">PC1 Loading：<span class='hi'>哪些波數</span>驅動了這個主成分</h2><div class="chartbox" style="height:34vh"><canvas id="chart_loading"></canvas></div><div class="cap">示意數據。PC1 loading 在約 <b>1655 cm⁻¹</b>(C=C stretching)與約 <b>1265 cm⁻¹</b>(=C–H bending)附近是正值的高峰——這兩個都是<strong>不飽和</strong>相關的拉曼譜帶，也正好解釋了椰子油(高度飽和)為什麼在 PC1 上差最遠。波段歸屬請視為<strong>約略</strong>指認，實際樣品仍須以標準品或文獻圖譜比對確認。</div><div class="note" style="margin-top:8px;font-size:.86rem"><strong>兩群重疊怎麼辦：</strong>可以看 <b>PC3</b>，或換一種前處理(如二階導數)。　<strong>跨儀器比較：</strong>不同組用不同 NIR，波長範圍與解析度不同，分數圖不一定能直接疊在一起——待會請各組互相對照討論。</div></div></section><section class="slide" data-slide="14" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">PCA 觀念 即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="15" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">這個前處理決定，會不會影響 PCA 結果？</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把 6 個決定分到「會影響 PCA 結果」或「不影響 PCA 結果」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：分數圖判讀</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：PC1+PC2 解釋變異 (%)</span><span class="score" id="g6score">未作答</span></div><div class="game-q">已知 5 個主成分的特徵值(eigenvalues)分別為 <b>8.2, 3.1, 0.9, 0.5, 0.3</b>。求 PC1 與 PC2 合計解釋了全部變異的百分之多少？公式：(λ₁+λ₂)/Σλᵢ×100%。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動"><div class="slide-inner"><div class="kicker">課後作業</div><h2 class="slide-title">Colab NB10（即將上線）</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📊</div><div class="ct">分數圖＋解讀</div><div class="cb">附上本組數據的 PC1 vs PC2 分數圖，說明哪些油分得開、哪些重疊，以及是否有離群點</div></div><div class="card a"><div class="ic">🧬</div><div class="ct">Loading 圖＋化學指認</div><div class="cb">附上 loading 圖，指出 1–2 個波段並嘗試給出化學官能基指認(記得標「約」)</div></div><div class="card g"><div class="ic">📡</div><div class="ct">跨儀器比較</div><div class="cb">找另一組交換分數圖，比較用不同 NIR 測出的結果是否一致，討論可能原因</div></div><div class="card b"><div class="ic">🔍</div><div class="ct">備用資料集(選用)</div><div class="cb">若當天量測不理想，可用老師 JCE 2025 論文的五種糖 NIR 備用資料集練習同樣的 PCA 流程</div></div></div><p class="subtitle" style="margin-top:12px">NB10 連結<strong>即將上線</strong>，屆時公告在課程網頁。備用資料集：<a class="no-nav" href="https://tai-shengyeh.github.io/chemometrics-teaching/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">五種糖 NIR 備用資料集（chemometrics-teaching）→</a></p></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>用一句話解釋 PCA 在找什麼：資料變異最大的方向，PC1 ⟂ PC2</li><li data-k><span class="bx">✓</span>分清楚 scores(樣品位置)與 loadings(哪些波長在驅動)分別回答什麼問題</li><li data-k><span class="bx">✓</span>說出為什麼光譜資料 mean-centering 一定做，但通常不做 autoscale</li><li data-k><span class="bx">✓</span>看懂 scree plot，說出解釋變異在哪裡出現明顯的 elbow</li><li data-k><span class="bx">✓</span>在 Orange 裡把 PCA 的 Data(不是 Transformed Data)接到 Scatter Plot 依類別上色</li><li data-k><span class="bx">✓</span>從分數圖判讀重複是否緊聚、有沒有離群樣品，並知道該回頭檢查原始光譜</li><li data-k><span class="bx">✓</span>說出 PCA 是非監督式方法，以及這對「分數圖上分得開」這件事代表什麼意義</li><li data-k><span class="bx">✓</span>遵守拉曼雷射、熱油與地板濕滑的相關安全規範</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><script>window.CFG={"charts": {"scree": {"type": "bar", "yTitle": "解釋變異 Explained variance (%)", "zero": true, "labels": ["PC1", "PC2", "PC3", "PC4", "PC5"], "datasets": [{"label": "解釋變異% (示意數據，實際 PCA 計算)", "data": [46.3, 28.3, 23.0, 0.5, 0.3], "color": "#1f6feb"}]}, "loading": {"type": "line", "yTitle": "PC1 loading（x軸：拉曼位移 cm⁻¹，等間距網格）", "zero": false, "labels": ["900", "915", "931", "946", "961", "976", "992", "1007", "1022", "1037", "1053", "1068", "1083", "1098", "1114", "1129", "1144", "1159", "1175", "1190", "1205", "1220", "1236", "1251", "1266", "1281", "1297", "1312", "1327", "1342", "1358", "1373", "1388", "1403", "1419", "1434", "1449", "1464", "1480", "1495", "1510", "1525", "1541", "1556", "1571", "1586", "1602", "1617", "1632", "1647", "1663", "1678", "1693", "1708", "1724", "1739", "1754", "1769", "1785", "1800"], "datasets": [{"label": "PC1 loading（示意數據）", "data": [-0.0016, -0.0135, -0.0003, 0.0043, -0.0004, -0.009, 0.0034, -0.0009, -0.0061, -0.0033, 0.0111, 0.0123, 0.0282, 0.017, 0.0225, 0.0331, 0.0904, 0.1203, 0.0529, 0.012, 0.0135, 0.045, 0.1288, 0.2864, 0.3587, 0.2316, 0.0611, -0.0099, -0.0006, -0.0011, -0.0024, -0.0075, 0.0029, -0.003, -0.0154, -0.0139, -0.0174, -0.0113, 0.0096, 0.0412, 0.1125, 0.1259, 0.0584, -0.0064, 0.0079, 0.0051, 0.046, 0.1466, 0.3242, 0.4549, 0.4489, 0.3014, 0.1377, 0.0402, 0.0236, 0.0071, 0.0145, -0.0015, 0.0093, -0.006], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["scores 回答的問題", "loadings 回答的問題"], "items": [{"t": "這兩瓶油在化學組成上像不像？", "c": "scores 回答的問題"}, {"t": "哪一個樣品點看起來像離群值？", "c": "scores 回答的問題"}, {"t": "同一種油的三次重複，測起來夠不夠一致？", "c": "scores 回答的問題"}, {"t": "不同儀器(NIR)測同一組油，分群結果一不一樣？", "c": "scores 回答的問題"}, {"t": "是哪一段波長(波數)造成這兩群油分開？", "c": "loadings 回答的問題"}, {"t": "1655 cm⁻¹ 附近的訊號，對 PC1 是正貢獻還是負貢獻？", "c": "loadings 回答的問題"}, {"t": "椰子油之所以自成一群，化學上跟哪個官能基有關？", "c": "loadings 回答的問題"}, {"t": "哪個波段幾乎只有雜訊、對 PCA 沒什麼貢獻？", "c": "loadings 回答的問題"}], "ok": "🎉 全對！問「樣品之間的關係、誰是誰」→scores；問「哪個波長、為什麼」→loadings。", "tip": "提示：問題裡如果在講「樣品／組」之間的比較，是 scores；如果在講「波長／波數／官能基」，是 loadings。"}, "g3": {"cats": ["會影響 PCA 結果", "不影響 PCA 結果"], "items": [{"t": "選擇用 SNV 還是二階導數前處理", "c": "會影響 PCA 結果"}, {"t": "決定要不要先做基線校正(baseline correction)再做 PCA", "c": "會影響 PCA 結果"}, {"t": "波數(波長)範圍怎麼裁切、要不要排除雜訊區", "c": "會影響 PCA 結果"}, {"t": "散佈圖裡每一種油要用什麼顏色畫", "c": "不影響 PCA 結果"}, {"t": "資料點在圖上先畫哪一個、後畫哪一個", "c": "不影響 PCA 結果"}, {"t": "匯出的 CSV 檔案欄位順序(只要標籤對應正確)", "c": "不影響 PCA 結果"}], "ok": "🎉 全對！凡是會改變送進 PCA 的『數值本身』的決定都會影響結果；純粹畫圖／檔案外觀的選擇不會。", "tip": "提示：問自己「這個決定會不會改到 PCA 實際拿去計算的數字？」會→影響；只是畫圖好不好看→不影響。"}}, "mcq": {"g2": [{"q": "在 Orange 的 PCA 節點，要把哪一個輸出接到 Scatter Plot，才能依照油品類別把點上色？", "o": ["Transformed Data", "Data", "Components", "Contribution to Variance"], "a": 1, "e": "Transformed Data 只保留 PC 分數，會把原本的類別欄位丟掉——這正是「分數圖沒辦法上色」的經典地雷；Data 輸出＝原始資料＋PC分數＋類別，才能拿來上色。"}, {"q": "PCA 的「loading(負荷量)」代表什麼？", "o": ["每個樣品在新座標軸上的位置", "每個波長(波數)對某一主成分的貢獻程度", "樣品之間的歐氏距離", "儀器的訊噪比"], "a": 1, "e": "loading 描述的是「原始變數(波長/波數)對某個主成分的貢獻大小與方向」，跟描述樣品位置的 scores 不同。"}, {"q": "分析光譜資料做 PCA 前，為什麼通常「不」做 autoscale(把每個波長除以自己的標準差)？", "o": ["因為 autoscale 運算太慢", "因為那些幾乎只有雜訊的波長會被放大，反而蓋過真正有用的訊號", "因為 autoscale 只能用在 Excel", "因為光譜資料一定要先取對數"], "a": 1, "e": "雜訊波長本身標準差小，除以標準差後反而被放大成跟訊號波長差不多的量級，稀釋掉真正有用的變異方向。"}, {"q": "PCA 是監督式(supervised)還是非監督式(unsupervised)方法？", "o": ["監督式，因為它知道每個樣品是哪一種油", "非監督式，PCA完全不知道樣品的類別標籤，只根據光譜變異來分", "半監督式，需要先給10%的標籤", "要看用哪個軟體做PCA而定"], "a": 1, "e": "PCA 不使用任何類別標籤。也因此，如果分數圖上不同油真的分開，代表光譜本身就存在真實的化學差異，不是「硬做」出來的。"}, {"q": "分數圖上有一個樣品點離所有群都很遠，你應該先做什麼？", "o": ["直接刪除這個樣品，當作沒發生過", "回頭檢查該樣品的原始光譜，看看是不是氣泡、比色管沒對準、螢光干擾等問題", "相信 PCA，那個樣品就是全班最特別的油", "調整圖表座標軸讓它看起來比較近"], "a": 1, "e": "離群分數常常是量測問題(氣泡、對準不良、雜散光、螢光)造成的，應先查原始光譜再決定是否排除或重測。"}], "g5": [{"q": "兩種油在 PC1–PC2 平面上幾乎重疊在一起，下一步比較合理的做法是？", "o": ["直接下結論說兩種油光譜完全相同", "看看 PC3，或改用不同的前處理(如導數)，可能在其他方向才看得出差異", "把座標軸拉遠一點，重疊自然就會消失", "改成長條圖畫就看得出來了"], "a": 1, "e": "PC1、PC2 只是解釋變異最大的前兩個方向，真正的差異也可能藏在 PC3 或需要不同前處理才能突顯。"}, {"q": "PCA 節點的「Components」輸出，最適合拿來做什麼？", "o": ["畫分數圖(score plot)", "接到 Line Plot 或 Orange-Spectroscopy 的 Spectra 元件，畫成 loading vs 波數(波長)", "直接當作最終報告結果", "拿來取代原始光譜資料"], "a": 1, "e": "Components 輸出就是 loadings，本質上是「每個波長的貢獻」，最適合畫成 loading 對波長(波數)的曲線圖。"}, {"q": "工廠影片裡提到，初榨橄欖油最容易被「貼錯標籤」混充。用光譜做 PCA，理論上能不能看出來？", "o": ["不行，光譜對摻偽完全沒反應", "有機會：如果摻入的油(如精製橄欖油或其他植物油)在光譜上有真實的化學差異(如類胡蘿蔔素譜帶)，PCA 分數圖可能會分開", "可以百分之百保證抓到所有摻偽", "只要用眼睛看油的顏色就能判斷，不需要儀器"], "a": 1, "e": "PCA 能不能看出摻偽，取決於摻入物是否帶來『真實的』光譜差異；類胡蘿蔔素等譜帶通常能提供約略的線索，但不是萬能的摻偽檢測法。"}, {"q": "六種油中，椰子油在 PCA 分數圖上通常會跟其他油差最遠，化學上最可能的原因是？", "o": ["椰子油顏色比較白", "椰子油飽和度高，C=C(不飽和鍵)相關的拉曼訊號明顯較弱", "椰子油含水量比較高", "椰子油的比重比較輕"], "a": 1, "e": "椰子油以飽和脂肪酸為主，1655/1265 cm⁻¹ 等不飽和相關譜帶訊號弱，在 PC1(不飽和方向)上會跟其他油差最遠。"}, {"q": "做 PCA 前一定要做的前處理是？", "o": ["autoscale(除以標準差)", "mean-centering(每個波長減去自己的平均值)", "把所有訊號歸一化到 0～1 之間", "一定要先取對數"], "a": 1, "e": "mean-centering 讓 PCA 找的是「相對於平均光譜的變異方向」，是幾乎所有 PCA 實作的必要前處理；autoscale 則是選用，光譜資料通常不建議。"}]}, "sort": {"g4": {"steps": ["用 Raman/NIR 量測六種油，每種 3 次重複", "用 SpectraView 做前處理(如 SNV／導數)，匯出一列一樣品的 X 矩陣", "對前處理後的光譜做 mean-centering(PCA 內建，不做 autoscale)", "執行 PCA，得到 scores 與 loadings", "把 Data 輸出接到 Scatter Plot，依油品類別上色看分群；Components 輸出接到 Line Plot 看 loadings", "對照 scree plot 的解釋變異，決定要看幾個 PC 才夠，並檢查有沒有離群樣品"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 順序正確！量測 → 前處理匯出矩陣 → mean-centering → PCA → 分數圖/loadings → 看解釋變異與離群點。", "tip": "提示：一定要先有前處理過的矩陣才能做 PCA；分數圖/loadings 是 PCA 之後才看得到的輸出；解釋變異與離群點檢查通常放在最後收尾。"}}, "calc": {"g6": {"answer": 86.92, "tol": 0.2, "ok": "🎉 正確！(8.2+3.1)/13.0×100% ≈ <b>86.92%<\/b>。", "bad": "再算算：先把 5 個特徵值加總當分母，PC1+PC2 的特徵值加總當分子，相除再乘 100%。", "hint": "提示：分母 = 8.2 + 3.1 + 0.9 + 0.5 + 0.3 = 13.0；分子 = 8.2 + 3.1 = 11.3。"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>

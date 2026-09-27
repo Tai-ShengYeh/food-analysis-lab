@@ -1,0 +1,397 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W15 代糖專題 I：配製與量測 · 食品分析實驗</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink-2)}
+.lblb{font-family:"Noto Sans TC",sans-serif;font-size:13px;fill:var(--ink);font-weight:700}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto;white-space:nowrap}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">食品分析實驗 · W15</div><div id="pageInfo"></div><div id="hint">← → / 空白鍵切頁　·　F 全螢幕　·　點兩側翻頁</div><section class="slide" data-slide="1" data-section="引起動機" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">食品分析實驗 · W15</div><h1>代糖專題 I：<span style='color:var(--accent-2)'>配製與量測</span></h1><div class="en">Sweetener Blends I — Design, Preparation & Spectroscopic Measurement</div><div class="meta">食品分析實驗　·　4 小時課程　·　15 位學生 · 5 組（每組 3 人）<br>阿斯巴甜 × 三氯蔗糖 固體混合物　·　Raman 785nm　·　NIR 漫反射　·　25 點全因子設計</div><div style="margin-top:24px"><span class="pill">全因子設計 DOE</span><span class="pill">Raman 785nm</span><span class="pill">NIR 漫反射</span><span class="pill">幾何稀釋</span><span class="pill">取樣變異</span><span class="pill">承接 W10/W11 純物質光譜</span></div></div></div></section><section class="slide" data-slide="2" data-section="引起動機"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">桌上的代糖包裝，藏著一個問題</div>
+  <div class="hook">包裝寫著「阿斯巴甜」或「三氯蔗糖」，<br>卻沒告訴你<span class="hi">加了多少</span>。</div>
+  <p class="subtitle" style="max-width:920px;margin:18px auto 0">
+    光譜（Raman / NIR）加上 PLS，能不能同時測出<strong>粉末中兩種代糖各自的含量</strong>？
+  </p>
+  <div class="note" style="max-width:920px;margin:18px auto 0;text-align:left">
+    <strong>今天不是先測，而是先設計：</strong>W15 的任務是配出一組「值得被模型學習」的校正樣品；
+    W16 才會真正建立 PLS 模型、拿今天量到的光譜來預測。今天配得好不好，直接決定 W16 能不能成功。
+  </div>
+  <p class="subtitle" style="max-width:920px;margin:14px auto 0"><strong>但在動手秤重之前，有一個關鍵問題要先想清楚：</strong>
+    我們真的能像量一般飲料那樣，泡成<span class="hi">溶液</span>來測嗎？（答案在下一段「可行性限制」）</p>
+</div></div></section><section class="slide" data-slide="3" data-section="引起動機"><div class="slide-inner"><div class="kicker">今天的學習目標</div><h2 class="slide-title">上完 W15，你應該會…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>說出為什麼這次要配<strong>固體粉末</strong>而不是溶液，以及阿斯巴甜溶解度為何是關鍵限制</li><li>理解 <strong>Y 值來自秤重(gravimetric)</strong> 的意義，以及為什麼沒有標示值可以拿來對答案</li><li>說明為什麼用 <strong>5×5 全因子設計</strong>、而不是稀釋 2–3 支市售配方，才能讓兩個 Y 互不相關(corr≈0)</li><li>完成本組負責那一列(row)的 5 個配製樣品：秤重、幾何稀釋研磨、過篩、封裝標籤</li></ul><ul class='clean'><li>用<strong>隨機順序</strong>完成 Raman(5 點)與 NIR(3 次重裝)量測，並知道為什麼要隨機、要留白參考</li><li>計算樣品的<strong>實際質量分率</strong>(而非配方設計時的「nominal」目標值)，並試算秤重誤差如何傳播到 Y</li><li>算出<strong>取樣變異</strong>(spot-to-spot / repack-to-repack SD)，比較 Raman 與 NIR 何者取樣誤差較大</li><li>知道 TA 的驗證樣品為何刻意設在<strong>網格之外</strong>，為 W16 的模型檢驗預做準備</li></ul></div></div></section><section class="slide" data-slide="4" data-section="引起動機" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">小遊戲 ①</span><span class="gt">設計好壞判斷：這樣配會不會讓兩個 Y 混淆？</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">把下面 8 種設計方式，分到「會讓兩個 Y 混淆的設計」或「好的設計」。</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">檢查答案</button><button class="btn ghost" id="g1reset">重來</button></div></div></div></section><section class="slide" data-slide="5" data-section="維持注意"><div class="slide-inner"><div class="kicker">可行性限制</div><h2 class="slide-title">為什麼要配<span class='hi'>固體粉末</span>，不是泡成溶液？</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">💧</div><div class="ct">不能用溶液</div><div class="cb">飲料實際添加濃度下，兩種代糖遠低於 NIR/Raman 可偵測濃度；阿斯巴甜水中溶解度只有約 1%，飲料等級的濃度做成溶液根本測不到訊號——所以這次要用遠高於市售產品的<strong>固體粉末混合物</strong>。</div></div><div class="card a"><div class="ic">⚖️</div><div class="ct">Y 來自秤重，不是標示值</div><div class="cb">市售產品不會公開兩種代糖各自的添加量，沒有「標示值」可以拿來驗證模型；我們的 Y(真值)只能靠配製時的<strong>實際秤重質量分率</strong>——這也是待會 g6 要練習算的重點。</div></div><div class="card g"><div class="ic">🧪</div><div class="ct">市售包裝 = 挑戰測試組</div><div class="cb">市售代糖包裝中，高效甜味劑通常只占很小比例(實際比例請自行查包裝標示或文獻，這裡不寫死數字)；W16 會把市售包裝當作<strong>外部挑戰樣品</strong>，訊號可能貼近或低於偵測極限(LOD)。</div></div><div class="card b"><div class="ic">🧭</div><div class="ct">前導測試 = 已完成的前提</div><div class="cb">開學前 TA 已先配 <strong>0%、5%、10%</strong> 三個濃度，確認每一台儀器(Raman/各組 NIR)都測得到訊號，今天才放心進行完整的 25 點設計——這是今天能開始配製的前提。</div></div></div></div></section><section class="slide" data-slide="6" data-section="維持注意"><div class="slide-inner"><div class="kicker">實驗設計</div><h2 class="slide-title">為什麼是<span class='hi'>5×5 全因子設計</span>，不是稀釋 2–3 支市售品？</h2><div class="grid2" style="margin-top:8px"><div><p class='lead'>阿斯巴甜(asp) 0、2.5、5、7.5、10% × 三氯蔗糖(suc) 0、2.5、5、7.5、10%，赤藻糖醇補足到 100% → <strong>25 個校正配方</strong>。兩個 Y 是各自獨立設定的，不是沿著同一條稀釋線變化。</p><p class='lead' style='margin-top:10px'>如果只稀釋 2–3 支市售混合品，兩種代糖的濃度會綁在同一條線上一起變化——對 PLS/VIP 而言，模型分不出「訊號到底來自哪個成分」，兩個 Y 就<strong>混淆(confounded)</strong>了。</p></div><div class="eq" style="text-align:left">本次 25 點設計格：<br><br>corr(Y<sub>阿斯巴甜</sub>, Y<sub>三氯蔗糖</sub>) = <b>0.0000</b><p class="cap" style="text-align:left;margin-top:10px">Python 對 25 個配方的 (asp,suc) 直接算相關係數，全因子設計下理論值就是 0——兩個 Y 完全不相關，PLS/VIP 才拆得開兩者各自的貢獻。</p></div></div><div class="note" style="margin-top:12px">延伸閱讀：實驗設計(DOE)如何避免變數互相混淆，可參考 <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">食品分析統計網站 ↗</a>（DOE 章節）。</div></div></section><section class="slide" data-slide="7" data-section="維持注意"><div class="slide-inner"><div class="kicker">設計視覺化</div><h2 class="slide-title">25 個校正配方 + 7 個 TA 盲樣驗證點</h2><div class="grid2-1" style="margin-top:8px"><div class="chartbox" style="height:46vh"><canvas id="designGridChart"></canvas></div><div><table class="cmp" style="font-size:.85rem"><thead><tr><th>組別</th><th>負責列(阿斯巴甜%)</th><th>三氯蔗糖水準</th></tr></thead><tbody><tr><td class="c">G1</td><td>0.0%</td><td>0 / 2.5 / 5 / 7.5 / 10%</td></tr><tr><td class="c">G2</td><td>2.5%</td><td>0 / 2.5 / 5 / 7.5 / 10%</td></tr><tr><td class="c">G3</td><td>5.0%</td><td>0 / 2.5 / 5 / 7.5 / 10%</td></tr><tr><td class="c">G4</td><td>7.5%</td><td>0 / 2.5 / 5 / 7.5 / 10%</td></tr><tr><td class="c">G5</td><td>10.0%</td><td>0 / 2.5 / 5 / 7.5 / 10%</td></tr></tbody></table><p class="cap" style="text-align:left;margin-top:8px">每組配 5 個樣品(同一阿斯巴甜%、5 個三氯蔗糖%)，赤藻糖醇補足到 100%。TA 另外準備 7 個離網格(off-grid)盲樣，如 3.5%、6.0%、8.5% 等組合，留到 W16 當驗證/挑戰樣品。</p></div></div>
+<script>(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('designGridChart'); if(!el||el._done) return; el._done=1;
+    var groups=[{"name": "G1（阿斯巴甜 0.0% 列）", "pts": [[0.0, 0.0], [0.0, 2.5], [0.0, 5.0], [0.0, 7.5], [0.0, 10.0]]}, {"name": "G2（阿斯巴甜 2.5% 列）", "pts": [[2.5, 0.0], [2.5, 2.5], [2.5, 5.0], [2.5, 7.5], [2.5, 10.0]]}, {"name": "G3（阿斯巴甜 5.0% 列）", "pts": [[5.0, 0.0], [5.0, 2.5], [5.0, 5.0], [5.0, 7.5], [5.0, 10.0]]}, {"name": "G4（阿斯巴甜 7.5% 列）", "pts": [[7.5, 0.0], [7.5, 2.5], [7.5, 5.0], [7.5, 7.5], [7.5, 10.0]]}, {"name": "G5（阿斯巴甜 10.0% 列）", "pts": [[10.0, 0.0], [10.0, 2.5], [10.0, 5.0], [10.0, 7.5], [10.0, 10.0]]}];
+    var colors=['#1f6feb','#d9822b','#1f9d6b','#d94f4f','#7c5cff'];
+    var datasets=groups.map(function(g,i){
+      return {label:g.name,data:g.pts.map(function(p){return {x:p[0],y:p[1]}}),
+        backgroundColor:colors[i],pointRadius:7,pointStyle:'circle'};
+    });
+    var blind=[[3.5, 6.0], [6.0, 3.5], [8.5, 1.0], [1.0, 8.5], [4.5, 4.5], [6.5, 6.5], [2.0, 9.0]];
+    datasets.push({label:'TA 盲樣驗證(離網格)',data:blind.map(function(p){return {x:p[0],y:p[1]}}),
+      backgroundColor:'#15233f',pointStyle:'triangle',pointRadius:9,borderColor:'#15233f'});
+    new Chart(el,{type:'scatter',data:{datasets:datasets},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:9}}}},
+        scales:{x:{type:'linear',min:-1,max:11,title:{display:true,text:'阿斯巴甜 (%, w/w)'}},
+                y:{type:'linear',min:-1,max:11,title:{display:true,text:'三氯蔗糖 (%, w/w)'}}}}
+    });
+  }
+  draw();
+})();</script>
+</div></section><section class="slide" data-slide="8" data-section="維持注意"><div class="slide-inner"><div class="kicker">配製流程</div><h2 class="slide-title">秤重 → 幾何稀釋 → 過篩 → 封裝</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">⚖️</div><div class="ct">精秤到 0.1 mg</div><div class="cb">以 2.000 g 為總質量目標，三種成分(阿斯巴甜/三氯蔗糖/赤藻糖醇)都用分析天平秤到 0.1 mg；記下<strong>實際</strong>秤重質量，不是配方表上的目標值——這就是 Y 的真正來源。</div></div><div class="card a"><div class="ic">🥣</div><div class="ct">幾何稀釋 geometric dilution</div><div class="cb">先把量最少的成分與<strong>等量</strong>的赤藻糖醇初步混合均勻，再逐次加入剩餘的赤藻糖醇——避免少量粉末直接被大量填充劑稀釋不均。</div></div><div class="card g"><div class="ic">🧂</div><div class="ct">過篩至統一粒徑</div><div class="cb">研磨後過篩，讓所有樣品的粒徑分布範圍一致，減少粒徑造成的光散射差異(這也是待會取樣變異討論的一部分)。</div></div><div class="card b"><div class="ic">🏷️</div><div class="ct">密封標籤，注意吸濕</div><div class="cb">赤藻糖醇、麥芽糊精等填充劑容易吸濕，秤重與研磨動作要快，完成後立刻密封並標籤(group_blend_ID)，避免受潮改變質量與光譜。</div></div></div></div></section><section class="slide" data-slide="9" data-section="維持注意"><div class="slide-inner"><div class="kicker">範例試算</div><h2 class="slide-title">幾何稀釋怎麼做？秤重誤差怎麼傳播到 Y？</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li>秤 <b>0.1523 g</b> 阿斯巴甜(量最少的成分)</li><li>先取<strong>等量</strong>約 0.15 g 赤藻糖醇，初步研磨混合均勻</li><li>逐次加入剩餘赤藻糖醇(約 1.60 g)，每次都研磨到看不出顆粒差異再加下一批</li><li>依相同邏輯加入三氯蔗糖，最後總質量約 <b>2.0009 g</b></li></ul></div><div class='eq' style='text-align:left'>秤重不確定度傳播(阿斯巴甜)：<br><br>u<sub>rel</sub> = 0.1 mg / 0.1523 g ≈ <b>0.07%</b>（矩形分佈簡化估計，僅取絕對值示意）<p class="cap" style="text-align:left;margin-top:10px">秤重帶來的相對不確定度其實很小，遠不是本設計最大的誤差來源——待會會看到<strong>取樣變異</strong>(尤其 Raman)才是關鍵。</p></div></div></div></section><section class="slide" data-slide="10" data-section="維持注意" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">小遊戲 ⑥</span><span class="gt">計算闖關：實際阿斯巴甜質量分率</span><span class="score" id="g6score">未作答</span></div><div class="game-q">本組配製時實際秤得：阿斯巴甜 <b>0.1523 g</b>、三氯蔗糖 <b>0.0997 g</b>、赤藻糖醇 <b>1.7489 g</b>。求阿斯巴甜的實際質量分率(%，w/w)——以三者<strong>實際總質量</strong>為分母，不是設計時的 2.000 g 目標。</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span><button class="btn" id="g6check">對答案</button><button class="btn ghost" id="g6hint">提示</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="11" data-section="維持注意"><div class="slide-inner"><div class="kicker">量測流程</div><h2 class="slide-title">Raman 785nm 與 NIR 漫反射，怎麼量？</h2><div class="grid2" style="margin-top:10px"><ul class="clean"><li><strong>Raman 785nm</strong>(必要時 532nm 對照)：每個樣品 <b>5 個點位</b>(或旋轉載台連續掃描)取平均，降低單點取樣誤差</li><li><strong>NIR 漫反射</strong>(diffuse reflectance，粉末專用杯)：每個樣品<strong>重新裝填(repack)3 次</strong>分別量測取平均</li></ul><ul class='clean'><li>全部樣品以<strong>隨機順序</strong>量測(不要按濃度排列)，避免儀器隨時間漂移(溫度、雷射功率等)跟濃度趨勢混在一起</li><li>每測 N 個樣品做一次<strong>白參考(white reference)</strong>校正</li><li>檔案命名：<span class='mono'>group_instrument_blendID_rep</span>，例如 <span class='mono'>G3_NIR-S-G1_A5S5_rep2</span></li></ul></div></div></section><section class="slide" data-slide="12" data-section="維持注意" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">小遊戲 ④</span><span class="gt">配製與量測工作流程排序</span><span class="score" id="g4score">— / 8</span></div><div class="game-q">用 ▲▼ 把配製到量測的完整流程步驟排成正確順序。</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">檢查順序</button><button class="btn ghost" id="g4reset">打亂重排</button></div></div></div></section><section class="slide" data-slide="13" data-section="維持注意" data-chart="samplingsd"><div class="slide-inner"><div class="kicker">數據・取樣變異</div><h2 class="slide-title">取樣變異(sampling variance)也是 QC 數據：<span class='hi'>Raman</span> vs <span class='hi'>NIR</span></h2><div class="chartbox" style="height:38vh"><canvas id="chart_samplingsd"></canvas></div><div class="cap">示意數據(非本班實測)。每個長條是同一樣品在該儀器下的取樣標準差(RSD%)：Raman 五點掃描 vs NIR 三次重裝。</div><div class="note" style="margin-top:10px"><strong>怎麼算：</strong>對每個樣品，分別計算 Raman 5 個點與 NIR 3 次重裝讀值的標準差(SD)，再與「不同樣品之間」的變異比較——如果某台儀器的取樣 SD 逼近甚至超過樣品間的真實差異，代表這台儀器/技術的取樣誤差已經大到會蓋掉你想測的訊號。以上圖示意數據來看，<strong>Raman 的點對點取樣誤差通常大於 NIR 的整杯取樣誤差</strong>，因為雷射光斑只照到局部顆粒，粉末不均勻時影響更明顯；NIR 漫反射每次重裝取的是較大體積/深度的粉末，取樣代表性較好。</div></div></section><section class="slide" data-slide="14" data-section="維持注意" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">小遊戲 ②</span><span class="gt">代糖配製與設計 即時測驗</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="15" data-section="維持注意"><div class="slide-inner"><div class="kicker">4 小時課程時間表</div><h2 class="slide-title">設計 → 配製 → 量測 → 上傳</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>時間</th><th>內容</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:30</td><td>講解設計原理與流程規劃(全因子設計、幾何稀釋、隨機量測順序)</td></tr>
+    <tr><td class="c">0:30–1:45</td><td>秤重配製本組負責的 5 個樣品：幾何稀釋研磨、過篩、封裝標籤</td></tr>
+    <tr><td class="c">1:45–3:30</td><td>Raman(兩台輪站，5 點)與 NIR(3 次重裝)，隨機順序量測</td></tr>
+    <tr><td class="c">3:30–4:00</td><td>上傳光譜檔與實際配方表(以實際質量分率為準)</td></tr>
+    </tbody></table><div class="grid3" style="margin-top:16px"><div class="card a"><div class="ic">😷</div><div class="ct">細粉末，避免吸入</div><div class="cb">秤重、研磨、過篩全程配戴口罩，動作輕緩避免粉塵飛揚。</div></div><div class="card b"><div class="ic">🔦</div><div class="ct">雷射安全(Raman)</div><div class="cb">785nm(或 532nm)雷射勿直視光路，遵守儀器雷射安全規範。</div></div><div class="card g"><div class="ic">🧬</div><div class="ct">阿斯巴甜含苯丙胺酸</div><div class="cb">與 PKU(苯酮尿症)患者的飲食限制有關——操作上不需特別防護，但這是常見的食品標示知識。</div></div></div></div></section><section class="slide" data-slide="16" data-section="維持注意" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">小遊戲 ③</span><span class="gt">取樣誤差 vs 儀器誤差</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">把下面 6 種現象，分到「取樣誤差來源」或「儀器誤差來源」。</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">檢查答案</button><button class="btn ghost" id="g3reset">重來</button></div></div></div></section><section class="slide" data-slide="17" data-section="維持注意" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">小遊戲 ⑤</span><span class="gt">決策挑戰：設計與 QC 判讀</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">下一題 →</button></div></div></div></section><section class="slide" data-slide="18" data-section="喚起行動"><div class="slide-inner"><div class="kicker">課後作業</div><h2 class="slide-title">上傳資料，準備 W16 建模</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📤</div><div class="ct">上傳光譜＋實際配方表</div><div class="cb">本組 5 個樣品的 Raman/NIR 光譜檔，附上實際秤重質量分率(而非設計目標值)表格。</div></div><div class="card a"><div class="ic">📐</div><div class="ct">計算取樣 SD</div><div class="cb">分別算出本組樣品在 Raman(5 點)與 NIR(3 次重裝)下的取樣標準差，並與同組不同樣品間的差異比較。</div></div><div class="card g"><div class="ic">🧮</div><div class="ct">驗算相關係數</div><div class="cb">用本組(或全班彙整)25 點設計資料，重新驗算 corr(Y1,Y2)是否接近 0。</div></div><div class="card b"><div class="ic">🔭</div><div class="ct">預習 W16</div><div class="cb">複習 W11 的純物質光譜峰位指認，準備下週用今天的光譜資料建立 PLS 模型。</div></div></div></div></section><section class="slide" data-slide="19" data-section="喚起行動"><div class="slide-inner"><div class="kicker">自我檢核</div><h2 class="slide-title">今天結束，你應該會…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>說出為什麼這次用固體粉末混合物、而不是溶液(阿斯巴甜溶解度限制、偵測極限)</li><li data-k><span class="bx">✓</span>解釋 Y 值為什麼來自秤重(gravimetric)，而不是市售產品的標示值</li><li data-k><span class="bx">✓</span>說明 5×5 全因子設計如何讓兩個 Y 互不相關(corr≈0)，並知道只稀釋少數市售品會造成 Y 混淆</li><li data-k><span class="bx">✓</span>完成本組負責那一列的 5 個樣品：秤重、幾何稀釋、過篩、封裝標籤</li><li data-k><span class="bx">✓</span>用隨機順序完成 Raman(5 點)與 NIR(3 次重裝)量測，並說出為什麼要隨機、要用白參考</li><li data-k><span class="bx">✓</span>計算樣品的實際質量分率，並估算秤重誤差對 Y 的相對不確定度</li><li data-k><span class="bx">✓</span>算出並比較 Raman 與 NIR 的取樣標準差，判斷哪個技術的取樣誤差較大</li><li data-k><span class="bx">✓</span>說出 TA 的驗證樣品為何刻意設在網格之外，並理解這對 W16 模型檢驗的意義</li></ul><p class="subtitle" style="margin-top:12px">點一下打勾——確認自己真的會了。</p></div></section><script>window.CFG={"charts": {"samplingsd": {"type": "bar", "yTitle": "取樣標準差 RSD (%)", "zero": true, "labels": ["0%A/0%S", "5%A/5%S", "10%A/0%S", "0%A/10%S"], "datasets": [{"label": "Raman 五點掃描 SD(RSD%)", "data": [4.2, 3.8, 5.1, 4.6], "color": "#1f6feb"}, {"label": "NIR 三次重裝 SD(RSD%)", "data": [1.9, 2.1, 1.7, 2.3], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["會讓兩個 Y 混淆的設計", "好的設計"], "items": [{"t": "5×5 全因子設計，阿斯巴甜與三氯蔗糖各自獨立設 5 個濃度，兩兩組合成 25 個配方", "c": "好的設計"}, {"t": "只用市售 3 款成品，依標示比例微幅稀釋", "c": "會讓兩個 Y 混淆的設計"}, {"t": "阿斯巴甜與三氯蔗糖濃度都固定同一組配方比例，只調整總糖度", "c": "會讓兩個 Y 混淆的設計"}, {"t": "以拉丁方(Latin square)安排兩個變數，使兩者濃度在樣本中彼此獨立", "c": "好的設計"}, {"t": "先配好 5 個「阿斯巴甜:三氯蔗糖 = 1:1」的糖度序列，再稀釋", "c": "會讓兩個 Y 混淆的設計"}, {"t": "兩個變數各自的濃度水準來自完全獨立的隨機排列，corr(Y1,Y2)≈0", "c": "好的設計"}, {"t": "只用兩種成品的「加量版」與「半量版」，共 4 個樣品", "c": "會讓兩個 Y 混淆的設計"}, {"t": "刻意讓阿斯巴甜濃度高時，三氯蔗糖濃度也跟著等比例變高", "c": "會讓兩個 Y 混淆的設計"}], "ok": "🎉 全對！只要兩個成分的濃度是綁在同一條線上一起變化，就會混淆；讓兩者各自獨立設定水準，才是好的設計。", "tip": "提示：凡是『固定比例、一起稀釋』的設計都會讓兩個 Y 綁在一起變化；讓兩個變數各自獨立、互不相關的設計才是好的。"}, "g3": {"cats": ["取樣誤差來源", "儀器誤差來源"], "items": [{"t": "研磨後樣品在容器中因顆粒比重不同而分層", "c": "取樣誤差來源"}, {"t": "Raman 雷射光斑只照到局部顆粒，粉末不均勻時每次照到的組成不同", "c": "取樣誤差來源"}, {"t": "NIR 裝填杯時，同一杯裝填的鬆緊程度(bulk density)每次不同", "c": "取樣誤差來源"}, {"t": "光譜儀偵測器的暗電流(dark current)雜訊", "c": "儀器誤差來源"}, {"t": "白參考(white reference)老化、久未更新", "c": "儀器誤差來源"}, {"t": "雷射功率隨量測時間逐漸漂移", "c": "儀器誤差來源"}], "ok": "🎉 全對！跟『從整批樣品中怎麼取一小份出來量』有關的是取樣誤差；跟『儀器本身穩不穩定』有關的是儀器誤差。", "tip": "提示：分層、裝填鬆緊、光斑照到哪裡→取樣誤差；暗電流、白參考老化、雷射功率漂移→儀器誤差。"}}, "mcq": {"g2": [{"q": "為什麼這次代糖混合物要配成「固體粉末」，而不是像飲料一樣泡成溶液？", "o": ["粉末比較好保存，沒有科學上的理由", "飲料等級的添加濃度遠低於光譜偵測極限，且阿斯巴甜水中溶解度僅約 1%，泡成溶液根本測不到訊號", "溶液會腐蝕比色管", "純粹是儀器公司建議這樣做"], "a": 1, "e": "在實際飲用濃度下，兩種代糖在溶液中的訊號遠低於 NIR/Raman 可偵測範圍；加上阿斯巴甜溶解度限制(~1%)，因此改用遠高於市售濃度的固體粉末混合物。"}, {"q": "配方表上『目標(nominal)質量分率』與『實際(actual)質量分率』有什麼不同？為什麼建模要用『實際』？", "o": ["兩者永遠相同，不用區分", "目標值是配方設計時打算加的量；實際值是秤重紀錄下來、真正加進去的量，秤重總有些微誤差，建模的 Y 必須用實際值", "實際值只是四捨五入後的目標值", "目標值比較準確，應該優先使用"], "a": 1, "e": "秤重不可能完全等於設計目標，PLS 模型學的是『光譜↔真實成分量』的關係，Y 必須用秤重當下記錄的實際質量分率，而不是配方設計時的目標值。"}, {"q": "為什麼要用 5×5 全因子設計，而不是只稀釋 2–3 支市售代糖包裝？", "o": ["全因子設計比較省時間", "只稀釋少數市售品時，兩種代糖濃度會沿同一條稀釋線一起變化、彼此高度相關，模型無法分辨訊號來自哪個成分；全因子設計讓兩者互相獨立(corr≈0)", "市售品數量不夠買", "全因子設計比較便宜"], "a": 1, "e": "稀釋少數固定比例的市售品，兩個 Y 會被綁在一起變化(confounded)；全因子設計讓阿斯巴甜與三氯蔗糖各自獨立設定水準，才能讓 PLS/VIP 把兩者的貢獻分開估計。"}, {"q": "幾何稀釋(geometric dilution)時，為什麼要先把少量成分跟『等量』的填充劑混合，而不是直接倒進一大堆填充劑？", "o": ["這樣比較快", "少量粉末直接加進大量填充劑很難混合均勻，逐步以等量方式稀釋才能確保每一步都混得均勻，最終整體才會均勻", "填充劑會跟少量成分產生化學反應", "純粹是傳統習慣，沒有實質作用"], "a": 1, "e": "少量成分若一次倒進大量填充劑，濃度落差太大很難靠研磨混勻；幾何稀釋每一步的濃度差都不大，逐步放大才能確保最終整批樣品均勻。"}, {"q": "量測 25 個(以及 TA 的驗證)樣品時，為什麼要用『隨機順序』而不是照濃度高低排列？", "o": ["隨機順序比較好記錄", "若照濃度排序，儀器隨時間的微小漂移(溫度、雷射功率等)會跟濃度趨勢疊在一起，模型可能誤把時間趨勢當成濃度訊號；隨機順序能把干擾打散", "隨機順序可以量得比較快", "沒有特別原因，純粹是慣例"], "a": 1, "e": "如果照濃度排序量測，任何隨時間累積的系統漂移都會跟濃度變化方向一致，模型可能學到假的相關性；隨機化能避免時間趨勢與濃度趨勢混淆。"}], "g5": [{"q": "取樣變異的長條圖顯示，Raman 的點對點 SD 明顯大於 NIR 的重裝 SD，這告訴你什麼？", "o": ["Raman 儀器比較爛，應該淘汰", "以本次粉末樣品而言，Raman 單點光斑的取樣代表性比 NIR 整杯漫反射差，之後建模可能需要更多重複點來平均掉這個變異", "兩者其實一樣準", "代表 NIR 完全沒有取樣誤差"], "a": 1, "e": "取樣 SD 大代表單次量測的代表性較差；Raman 光斑小，粉末不均勻時影響明顯，之後可考慮增加取樣點數或用旋轉載台降低這個變異。"}, {"q": "TA 準備的 6–8 個驗證樣品，濃度刻意設在網格『之外』(如 3.5%、6.0%、8.5%)，用意是什麼？", "o": ["純粹想增加 TA 的工作量", "若驗證點跟訓練網格點重合，只能測出模型『記住』了訓練點，離網格才能真正檢驗模型對新濃度的內插(interpolation)能力", "網格上的點已經被用光了", "離網格的樣品比較容易配製"], "a": 1, "e": "驗證集若跟訓練點重疊，無法區分模型是真的學到了濃度-光譜關係，還是只是記住訓練資料；離網格的內插點才能真正檢驗模型的泛化能力。"}, {"q": "開學前 TA 已用 0%、5%、10% 三個濃度在每一台儀器上先測過一輪，這個前導測試(pilot)的目的是？", "o": ["純屬形式，沒有實質意義", "確認每一台 Raman/NIR 儀器在這個濃度範圍內都測得到可辨識的訊號，才敢放心讓全班投入配製完整的 25 點設計", "節省耗材", "讓 TA 提前熟悉操作"], "a": 1, "e": "全因子設計要花全班一整堂課配製與量測，事前用低/中/高三點確認訊號可偵測性，是投入大規模設計前必要的可行性檢查。"}, {"q": "市售代糖包裝被規劃為 W16 的『外部挑戰樣品』，最主要的困難是什麼？", "o": ["市售包裝完全買不到", "市售包裝中高效甜味劑的實際添加比例通常遠低於本次校正樣品的濃度範圍，訊號可能貼近或低於偵測極限(LOD)，且沒有標示的確切添加量可驗證預測", "市售包裝的顏色會干擾光譜", "市售包裝一定含防腐劑，無法用光譜測"], "a": 1, "e": "市售產品的高效甜味劑添加量通常遠低於本次刻意拉高的訓練濃度範圍，訊號弱、又缺乏可對照的真值，因此是比訓練集更嚴苛的外部測試情境。"}, {"q": "赤藻糖醇等填充劑容易吸濕，若某組樣品配好後沒密封好、放到隔天才拿去量測，最可能出現什麼問題？", "o": ["完全不會有影響", "吸收的水分會改變樣品實際質量與含水量，使配製時記錄的『實際質量分率』與量測當下的真實組成不再一致，等於引入額外未被記錄的誤差", "水分會讓代糖濃度自動變得更準確", "只會影響顏色，不影響光譜"], "a": 1, "e": "吸濕會改變樣品實際的質量與含水量，使配製時記錄的質量分率(Y)與量測當下的樣品組成產生落差，是沒被記錄、卻會混進模型誤差裡的系統性問題。"}]}, "sort": {"g4": {"steps": ["依全因子設計表，確認本組負責的那一列(阿斯巴甜%固定，三氯蔗糖 5 個水準)", "秤量阿斯巴甜、三氯蔗糖、赤藻糖醇至 0.1 mg，記錄實際質量", "以幾何稀釋法初步混合，再逐次加入其餘赤藻糖醇研磨均勻", "過篩至統一粒徑範圍", "密封並標籤(group_blend_ID)，避免受潮", "以隨機順序排列 5 個樣品，準備進行光譜量測", "Raman 785nm 5 點(或旋轉載台)、NIR 重新裝填 3 次，分別取平均", "上傳光譜檔與實際配方表(以實際秤重質量分率為準)"], "shuffle": [4, 7, 1, 5, 2, 6, 0, 3], "ok": "🎉 順序正確！確認分工→秤重→幾何稀釋研磨→過篩→封裝→隨機排序→Raman/NIR量測→上傳資料。", "tip": "提示：一定要先秤重才能研磨；研磨過篩後才封裝；封裝好才排隨機順序量測；上傳是最後一步。"}}, "calc": {"g6": {"answer": 7.61, "tol": 0.01, "ok": "🎉 正確！總質量 = 0.1523+0.0997+1.7489 = 2.0009 g；%阿斯巴甜 = 0.1523/2.0009×100 ≈ <b>7.61%<\/b>。", "bad": "再算算：先把三個實際秤重的質量加起來當分母(不是 2.000 g)，阿斯巴甜質量除以這個實際總質量再乘 100。", "hint": "提示：總質量 ≈ 2.0009 g；0.1523 / 2.0009 × 100 ≈ 7.61%。"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+}
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 全對！','good');
+    else fb(g+'fb','答對 '+ok+'/'+N+'。'+(cfg.tip||'再調整看看。'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ 答對！':'❌ 正解：'+d.o[d.a]+'。')+'<br>'+d.e+(done?'<br><b>完成！總分 '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 順序完全正確！','good');
+    else fb(g+'fb','對了 '+ok+'/'+N+' 個位置。'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','請先輸入一個數字。','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ 答對'); fb(g+'fb',cfg.ok||('🎉 正確！答案是 '+cfg.answer),'good');
+    } else { setScore(g+'score','再試一次'); fb(g+'fb',cfg.bad||'再算算看。','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'提示：對照公式逐步代入。','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+</body></html>
