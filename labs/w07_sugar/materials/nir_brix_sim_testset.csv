@@ -1,0 +1,9 @@
+﻿fruit_id,reference_brix,predicted_brix,data_origin,split
+SIM01,8,8.4,教學模擬 非專利實測 非設備性能,test
+SIM02,9,8.8,教學模擬 非專利實測 非設備性能,test
+SIM03,10,10.6,教學模擬 非專利實測 非設備性能,test
+SIM04,11,10.5,教學模擬 非專利實測 非設備性能,test
+SIM05,12,12.2,教學模擬 非專利實測 非設備性能,test
+SIM06,13,13.3,教學模擬 非專利實測 非設備性能,test
+SIM07,14,13.6,教學模擬 非專利實測 非設備性能,test
+SIM08,15,15.5,教學模擬 非專利實測 非設備性能,test
