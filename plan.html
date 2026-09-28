@@ -233,7 +233,7 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
       <tr class="b">
         <td class="wk">W11</td>
         <td class="topic"><b>前處理與光譜相似度比對</b><span>用 W10 的純物質建光譜庫，指認特徵峰；比對未知粉末與市售代糖的成分。</span></td>
-        <td>拉曼螢光背景用 airPLS 扣除。</td>
+        <td>拉曼螢光背景用 ALS 基線（λ、p）扣除。</td>
         <td>SNV、MSC、Savitzky–Golay 微分；相關係數與 SAM 相似度；相似度門檻與誤判。</td>
         <td><div class="chiprow"><span class="c tool">SpectraView</span><span class="c tool">Similarity／Library／Peaks widget</span><a class="c tool" href="tools.html#OR11">Orange OR11</a><span class="c tool">Colab NB09</span></div></td>
       </tr>
@@ -267,10 +267,10 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
       </tr>
       <tr class="b">
         <td class="wk">W16</td>
-        <td class="topic"><b>代糖專題 II：建模與預測</b><span>兩個 Y 各建 PLS 模型，預測盲樣與市售代糖；再用 Mixture（NNLS）以純物質光譜直接回推比例，比較兩種做法。</span></td>
+        <td class="topic"><b>代糖專題 II：建模與預測</b><span>兩個 Y 各建 PLS 模型，預測盲樣與市售代糖；再用 NNLS（Colab NB13）以純物質光譜直接回推比例，比較兩種做法。</span></td>
         <td>確認兩個 Y 的相關係數接近 0（設計正確的證據）。</td>
         <td>PLS vs 經典最小平方法（CLS／NNLS）；市售品低於 LOD 時該怎麼報告。</td>
-        <td><div class="chiprow"><a class="c tool" href="tools.html#OR16">Orange OR16</a><span class="c tool">Orange PLS</span><span class="c tool">Mixture widget</span><span class="c tool">R／Colab VIP</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="tools.html#OR16">Orange OR16</a><span class="c tool">Orange PLS</span><span class="c tool">Colab NB13：VIP／NNLS／LOD／T²·Q</span></div></td>
       </tr>
       <tr class="b">
         <td class="wk">W17</td>
