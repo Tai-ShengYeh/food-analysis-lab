@@ -235,7 +235,7 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
         <td class="topic"><b>前處理與光譜相似度比對</b><span>用 W10 的純物質建光譜庫，指認特徵峰；比對未知粉末與市售代糖的成分。</span></td>
         <td>拉曼螢光背景用 ALS 基線（λ、p）扣除。</td>
         <td>SNV、MSC、Savitzky–Golay 微分；相關係數與 SAM 相似度；相似度門檻與誤判。</td>
-        <td><div class="chiprow"><span class="c tool">SpectraView</span><span class="c tool">Similarity／Library／Peaks widget</span><a class="c tool" href="tools.html#OR11">Orange OR11</a><span class="c tool">Colab NB09</span></div></td>
+        <td><div class="chiprow"><span class="c tool">SpectraView</span><a class="c tool" href="tools.html#OR11">Orange OR11</a><span class="c tool">Colab NB09</span></div></td>
       </tr>
       <tr class="b">
         <td class="wk">W12</td>
@@ -256,13 +256,13 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
         <td class="topic"><b>PLS II：VIP、PLS-DA、離群值</b><span>定量 PLS 的 VIP 與回歸係數；油種或糖種分類用 PLS-DA；Corn 資料集練 T² 與 Q 殘差，並看三台儀器間的模型轉移問題。</span></td>
         <td>VIP 高的波段要能對應 W11 指認的化學鍵。</td>
         <td>VIP 解讀與波段篩選；PLS-DA 的混淆矩陣；T²（模型內）vs Q（模型外）；模型適用範圍。</td>
-        <td><div class="chiprow"><a class="c tool" href="tools.html#OR14">Orange OR14</a><span class="c tool">R／Colab 算 VIP</span><span class="c tool">PLS-DA widget（含 VIP）</span><span class="c">chemometrics-teaching 離群值模組</span></div></td>
+        <td><div class="chiprow"><a class="c tool" href="tools.html#OR14">Orange OR14</a><span class="c tool">R／Colab 算 VIP</span><span class="c tool">Orange PCA＋邏輯斯迴歸</span><span class="c">chemometrics-teaching 離群值模組</span></div></td>
       </tr>
       <tr class="b">
         <td class="wk">W15</td>
-        <td class="topic"><b>代糖專題 I：配製與量測</b><span>阿斯巴甜 × 三氯蔗糖 5×5 格點，赤藻糖醇補足；每組配一排 5 個樣品。助教另配 6–8 個不在格點上的盲樣當驗證集。</span></td>
+        <td class="topic"><b>代糖專題 I：配製與量測</b><span>阿斯巴甜 × 三氯蔗糖 5×5 格點，赤藻糖醇補足；以拉丁方格分工，每組配 5 個樣品、每組都碰到兩種甜味劑的每個濃度水準。助教另配 7 個不在格點上的盲樣當驗證集。</span></td>
         <td>秤量用 W1 校正過的天平；研缽研磨、過篩控制粒徑。</td>
-        <td>拉曼每樣品打 5 點取平均，NIR 用漫反射重複裝填 3 次；把取樣變異當成品管數據。25 個樣品在多台 NIR 上都量，W16 可比較儀器。</td>
+        <td>32 瓶（25 校正＋7 盲樣）用 Excel =RAND() 隨機分到 6 個樣品架，輪轉經過每一台 NIR 與拉曼 785；每瓶每台重裝 2 次、分開存檔不平均，把取樣變異當成品管數據。每台儀器都量到全部樣品，W16 可比較儀器。</td>
         <td><div class="chiprow"><span class="c tool">拉曼 785</span><span class="c tool">NIR</span></div></td>
       </tr>
       <tr class="b">
@@ -327,8 +327,8 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
         <tbody>
           <tr><td>阿斯巴甜</td><td class="num">0, 2.5, 5, 7.5, 10</td></tr>
           <tr><td>三氯蔗糖</td><td class="num">0, 2.5, 5, 7.5, 10</td></tr>
-          <tr><td>校正集</td><td class="num">25 個（5 組 × 5）</td></tr>
-          <tr><td>驗證集</td><td class="num">6–8 個盲樣</td></tr>
+          <tr><td>校正集</td><td class="num">25 個（拉丁方格分工，每組 5 個）</td></tr>
+          <tr><td>驗證集</td><td class="num">7 個盲樣</td></tr>
         </tbody>
       </table>
       <p style="margin-top:10px">兩種甜味劑的濃度各自獨立變化，兩個 Y 才不會互相混淆，VIP 也才分得出各自的特徵峰。</p>
