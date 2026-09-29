@@ -62,6 +62,7 @@ summary{cursor:pointer;color:var(--accent);font-weight:700}
 a{color:var(--accent);font-weight:700}
 .case{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
 .case h3{margin:.1em 0}
+.afb-pill{top:auto!important;bottom:12px}
 </style>
 </head>
 <body>
@@ -71,7 +72,8 @@ a{color:var(--accent);font-weight:700}
   <h1>誰的 <span class="hi">200 µL</span> 最值得信任?</h1>
   <p class="lead">你是食品檢驗實驗室的數據分析員。手上是 <b>15 位同學、每人 10 次</b>的吸管實測數據(2026-09-29,學號已匿名)。有人很穩、有人有系統偏差、有人的紀錄可能出了錯。你要用<b>證據</b>找出來。<br>平均、SD、RSD、95% CI 不是今天的科目,是你破案要拿到的四件工具。</p>
 </header>
-<div id="hud"><span id="pts">🔍 偵探積分 0</span><div id="bar"><i></i></div><span class="tiny" id="prog">任務 0 / 7</span></div>
+<p class="tiny" id="lognote" style="margin:0 0 6px">💡 登入學號後,系統會記錄你每題的作答,老師用來看全班哪裡需要再講解,並給你一張學習回饋卡;不登入也可以玩,只是不會記錄。</p>
+<div id="hud"><span id="pts">🔍 偵探積分 0</span><div id="bar"><i></i></div><span class="tiny" id="prog">任務 0 / 7</span><button id="login" style="font-size:.85rem;padding:3px 10px">🎓 登入學號(記錄進度)</button></div>
 
 <!-- M1 -->
 <section class="m" id="m1">
@@ -177,11 +179,13 @@ a{color:var(--accent);font-weight:700}
   <p><b>結案測驗(Exit ticket)</b> 某學生:平均 = 191 µL,RSD = 0.25%。<br>他的操作很 <select id="ex1"><option value="">選</option><option>精密</option><option>不精密</option><option>準確</option></select>,但可能不夠 <select id="ex2"><option value="">選</option><option>準確</option><option>精密</option><option>穩定</option></select>。</p>
   <button class="primary" id="m7go">送出</button>
   <div class="fb" id="m7fb"></div>
+  <div class="case" id="recap" style="display:none"></div>
   <div class="badge" id="badge" style="display:none"><div class="big">🕵️</div><h2>結案!Data Detective</h2><div id="badgetxt"></div>
     <p><a href="index.html">回 W1 投影片</a>　·　<a href="materials/w01_class_data_corrected.xlsx" download>下載班級數據 Excel</a>　·　<a href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB01_volumetric_calibration.ipynb" target="_blank" rel="noopener">Colab NB01</a></p></div>
 </section>
 </div>
 
+<script type="module" src="assess_firebase.js"></script>
 <script>
 var D=[[0.1927, 0.1918, 0.1917, 0.1924, 0.1922, 0.1914, 0.1914, 0.1917, 0.192, 0.1919], [0.1972, 0.1994, 0.189, 0.1892, 0.2002, 0.1894, 0.1901, 0.1898, 0.1994, 0.1963], [0.1932, 0.1905, 0.1895, 0.1884, 0.1949, 0.1942, 0.1859, 0.1883, 0.1876, 0.1937], [0.1903, 0.1893, 0.1881, 0.1897, 0.1888, 0.1871, 0.1856, 0.1958, 0.1889, 0.1953], [0.1892, 0.1891, 0.1777, 0.1736, 0.1887, 0.1885, 0.1893, 0.189, 0.1892, 0.1885], [0.1895, 0.1895, 0.1892, 0.19, 0.1896, 0.1898, 0.1904, 0.1908, 0.1894, 0.1898], [0.1899, 0.1951, 0.19, 0.1893, 0.1899, 0.1909, 0.2061, 0.189, 0.189, 0.1939], [0.211, 0.1839, 0.1898, 0.1868, 0.203, 0.1899, 0.1943, 0.1905, 0.1553, 0.1885], [0.1927, 0.1921, 0.1901, 0.1901, 0.1895, 0.1908, 0.1893, 0.1835, 0.1896, 0.1923], [0.1875, 0.1877, 0.1997, 0.1922, 0.1908, 0.1892, 0.1978, 0.1906, 0.1804, 0.1867], [0.1843, 0.1882, 0.1887, 0.1886, 0.1891, 0.1913, 0.2487, 0.1353, 0.192, 0.1764], [0.1894, 0.1842, 0.1889, 0.1886, 0.1892, 0.2003, 0.1912, 0.1901, 0.1906, 0.1809], [0.1884, 0.1887, 0.1883, 0.1884, 0.1904, 0.1897, 0.1881, 0.1939, 0.1889, 0.1904], [0.1891, 0.1896, 0.1887, 0.1884, 0.188, 0.1888, 0.1887, 0.1892, 0.1891, 0.197], [0.1909, 0.1906, 0.1894, 0.1913, 0.1915, 0.1738, 0.1909, 0.1923, 0.1914, 0.1904]];  // 15 位 × 10 次單次質量 (g)
 var RHO=0.99503,FB=1.0011,NOM=200;
@@ -202,6 +206,26 @@ function save(){try{localStorage.setItem('w01detective',JSON.stringify(store))}c
 function add(n){pts+=n;$('pts').textContent='🔍 偵探積分 '+pts}
 function finish(n,bonus){if(done[n])return;done[n]=1;add(bonus);var k=Object.keys(done).length;$('prog').textContent='任務 '+k+' / 7';$('bar').firstChild.style.width=(k/7*100)+'%';var nx=$('m'+(n+1));if(nx){nx.classList.remove('locked');setTimeout(function(){nx.scrollIntoView({behavior:'smooth',block:'start'})},500)}}
 function fb(el,html,cls){el.className='fb show '+(cls||'');el.innerHTML=html}
+var LOGGING=false,ATT={},MIS={},predLogged=false,SIDK='food_analysis_student_id';
+function ev(o){if(!LOGGING||!window.AssessFB)return;try{window.AssessFB.log(o)}catch(e){}}
+function ans(qid,ok,o){o=o||{};ATT[qid]=(ATT[qid]||0)+1;if(ok===false&&o.misconception)MIS[o.misconception]=(MIS[o.misconception]||0)+1;
+  ev({event_type:'answer',question_id:qid,is_correct:ok,attempts:ATT[qid],qtype:o.qtype||'mcq',bloom:o.bloom||null,topic:o.topic||null,misconception:(ok===false&&o.misconception)?o.misconception:null,chapter:'LAB-W01'})}
+function login(){var btn=$('login');btn.disabled=true;btn.textContent='連線中…';var t=0;
+  (function poll(){
+    if(window.AssessFB){window.AssessFB.init({chapter:'LAB-W01',game:'detective'}).then(function(){LOGGING=true;btn.textContent='✅ 已記錄進度('+window.AssessFB.getStudentId()+')'}).catch(function(){btn.disabled=false;btn.textContent='🎓 登入學號(記錄進度)'});return}
+    if(++t>120){btn.disabled=false;btn.textContent='🎓 登入學號(連線失敗,稍後再試)';return}
+    setTimeout(poll,50)})()}
+$('login').onclick=login;
+try{if(localStorage.getItem(SIDK))login()}catch(e){}
+var ADV={'range-count':'數公式範圍的格子數(P 到 W 是 8 格),框選後看狀態列「計數」','missed-trials':'被漏掉的是最後兩次(第 9、10 次)','mean-only':'平均一樣不代表一樣穩,還要看 SD','sd-direction':'SD 越小代表越集中、越穩','rsd-scale':'量的大小不同時,要用 RSD(SD÷平均)才能比較','mean-calc':'平均 = 10 筆全部加起來 ÷ 10','sd-divide-n':'樣本 SD 要除以 n−1(=9),不是 n','sd-calc':'SD 步驟:離差平方和 ÷ (n−1),再開根號','rsd-calc':'RSD = SD ÷ 平均 × 100','ci-width':'CI 越窄,平均值的估計越穩','t-vs-z':'n=10 要用 t=2.262,不是 1.96','ci-forgot-sqrt-n':'半寬要再除以 √n,不是只有 t×SD','ci-no-t':'半寬要乘 t(2.262)','ci-calc':'半寬 = t × SD ÷ √n'};
+function recap(){var el=$('recap'),ks=Object.keys(MIS).sort(function(a,b){return MIS[b]-MIS[a]}),h='<b>📋 你的學習回饋卡</b><br>',dx=0,ex=0;
+  ks=ks.filter(function(k){if(k.indexOf('dx:')===0){dx+=MIS[k];return false}if(k.indexOf('exit:')===0){ex+=MIS[k];return false}return true});
+  if(dx)h+='• 診斷卡有 '+dx+' 次和標準答案不同:回頭複習系統 / 隨機 / 過失誤差的判斷關鍵(方向固不固定?)<br>';
+  ks.slice(0,4).forEach(function(k){if(ADV[k])h+='• '+ADV[k]+'(答錯 '+MIS[k]+' 次)<br>'});
+  if(ex)h+='• 精密和準確要分開看:RSD 低 = 精密,平均貼近標稱 = 準確<br>';
+  if(h.indexOf('•')<0)h+='這一輪沒有明顯迷思,做得很好 👍';
+  el.innerHTML=h;el.style.display='block'}
+
 
 // strip plot of 10 values
 function strip(vals,o){o=o||{};var lo=o.lo||165,hi=o.hi||225,W=560,H=54;var X=function(v){return 20+(v-lo)/(hi-lo)*(W-40)};
@@ -221,7 +245,7 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
 (function(){var A=st(C[0]),B=st(C[10]);
   function card(n,s){return '<div class="card"><b class="t">分析員 '+n+'</b>平均 '+f(s.m)+' µL<br>RSD '+f(s.rsd)+' %<br>95% CI '+f(s.lo,1)+' – '+f(s.hi,1)+' µL</div>'}
   $('m1cards').innerHTML=card('A',A)+card('B',B);
-  [['A','聘 A'],['B','聘 B'],['?','兩個都不夠,我要更多證據']].forEach(function(o){var b=document.createElement('button');b.textContent=o[1];b.onclick=function(){store.m1=o[0];save();[].forEach.call($('m1opts').children,function(x){x.disabled=true});b.classList.add('sel');fb($('m1fb'),'已記錄你的直覺 ✔ 先別急著知道答案,用數學來驗證它。','good');finish(1,10)};$('m1opts').appendChild(b)})
+  [['A','聘 A'],['B','聘 B'],['?','兩個都不夠,我要更多證據']].forEach(function(o){var b=document.createElement('button');b.textContent=o[1];b.onclick=function(){store.m1=o[0];save();ans('w01-m1-vote',null,{topic:'vote:'+o[0],qtype:'vote',bloom:'應用'});[].forEach.call($('m1opts').children,function(x){x.disabled=true});b.classList.add('sel');fb($('m1fb'),'已記錄你的直覺 ✔ 先別急著知道答案,用數學來驗證它。','good');finish(1,10)};$('m1opts').appendChild(b)})
 })();
 
 // ---------- M2 ----------
@@ -231,24 +255,26 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
   var s='';for(var i=1;i<=10;i++)s+='<label style="margin-right:8px"><input type="checkbox" value="'+i+'"> 第'+i+'次</label>';$('m2chk').innerHTML=s;
   $('m2go').onclick=function(){var n=$('m2n').value,ck=[].filter.call($('m2chk').querySelectorAll('input'),function(x){return x.checked}).map(function(x){return +x.value}).join(',');
     if(!n)return fb($('m2fb'),'先選涵蓋幾格。','warn');
-    var ok=n==='8'&&ck==='9,10',e=st(v.slice(0,8)),a=st(v);
+    var ok=n==='8'&&ck==='9,10',e=st(v.slice(0,8)),a=st(v);ans('w01-m2-range',n==='8',{misconception:'range-count',topic:'m2'});ans('w01-m2-missed',ck==='9,10',{misconception:'missed-trials',topic:'m2'});
     if(ok){fb($('m2fb'),'✅ 抓到了!<code>P2:W2</code> 只有 8 格,漏掉 X、Y(第 9、10 次)。<br>Excel 8 筆:平均 '+f(e.m)+',SD '+f(e.sd)+',RSD <b>'+f(e.rsd)+'%</b>;<br>正確 10 筆:平均 '+f(a.m)+',SD '+f(a.sd)+',RSD <b>'+f(a.rsd)+'%</b>。<br>第 10 次是 '+f(v[9],1)+' µL,剛好被漏掉——Excel 讓 S14 看起來「超級穩」。<b>軟體給出的答案,不代表答案一定對</b>:框選範圍後看狀態列「計數=10」。','good');finish(2,20)}
     else fb($('m2fb'),'再想想:數一數 P、Q、R、S、T、U、V、W 共幾個字母?而數據有 10 次(P 到 Y)。','warn')}})();
 
 // ---------- M3 ----------
 (function(){
-  function q(id,opts,ans,okmsg,tool,next){var box=$(id),o=box.querySelector('.opts'),f_=box.querySelector('.fb');
-    opts.forEach(function(t,i){var b=document.createElement('button');b.textContent=t;b.onclick=function(){if(i===ans){b.classList.add('ok');[].forEach.call(o.children,function(x){x.disabled=true});fb(f_,okmsg,'good');$(tool[0]).className='tool on';$(tool[0]).innerHTML=tool[1];add(5);if(next)setTimeout(next,600)}else{b.classList.add('bad');fb(f_,'再想想 🤔','warn')}};o.appendChild(b)})}
+  function q(id,opts,right,okmsg,tool,next,qid,mis){var box=$(id),o=box.querySelector('.opts'),f_=box.querySelector('.fb');
+    opts.forEach(function(t,i){var b=document.createElement('button');b.textContent=t;b.onclick=function(){ans(qid,i===right,{misconception:mis,topic:'m3',bloom:'理解'});if(i===right){b.classList.add('ok');[].forEach.call(o.children,function(x){x.disabled=true});fb(f_,okmsg,'good');$(tool[0]).className='tool on';$(tool[0]).innerHTML=tool[1];add(5);if(next)setTimeout(next,600)}else{b.classList.add('bad');fb(f_,'再想想 🤔','warn')}};o.appendChild(b)})}
   var rest=function(id){return function(){$(id).style.display='block'}};
-  q('m3q1',['甲比較好','乙比較好','一樣'],2,'兩組平均都是 200!<b>平均不夠</b>,它看不出乙忽高忽低。<br>✅ 解鎖「平均 = 全部加起來 ÷ 筆數」。',['t-mean','✅ 平均 mean'],rest('m3q2'));
-  q('m3q2',['SD = 2 µL','SD = 20 µL'],0,'SD 越小越穩。<br>✅ 解鎖 SD:<code>=STDEV(範圍)</code>(每筆離平均多遠的典型值)。',['t-sd','✅ 標準差 SD'],rest('m3q3'));
-  q('m3q3',['可以,SD 一樣就一樣穩','不行,要看它相對於量的大小'],1,'0.002 對 0.2 mL 是 1%,對 20 mL 只有 0.01%。<br>✅ 解鎖 RSD% = SD ÷ 平均 × 100,可以跨不同量比較。',['t-rsd','✅ 相對標準差 RSD%'],function(){$('m3hand').style.display='block'});
+  q('m3q1',['甲比較好','乙比較好','一樣'],2,'兩組平均都是 200!<b>平均不夠</b>,它看不出乙忽高忽低。<br>✅ 解鎖「平均 = 全部加起來 ÷ 筆數」。',['t-mean','✅ 平均 mean'],rest('m3q2'),'w01-m3-q1','mean-only');
+  q('m3q2',['SD = 2 µL','SD = 20 µL'],0,'SD 越小越穩。<br>✅ 解鎖 SD:<code>=STDEV(範圍)</code>(每筆離平均多遠的典型值)。',['t-sd','✅ 標準差 SD'],rest('m3q3'),'w01-m3-q2','sd-direction');
+  q('m3q3',['可以,SD 一樣就一樣穩','不行,要看它相對於量的大小'],1,'0.002 對 0.2 mL 是 1%,對 20 mL 只有 0.01%。<br>✅ 解鎖 RSD% = SD ÷ 平均 × 100,可以跨不同量比較。',['t-rsd','✅ 相對標準差 RSD%'],function(){$('m3hand').style.display='block'},'w01-m3-q3','rsd-scale');
   var v=C[12],s=st(v);$('m3vals').textContent=v.map(function(x){return f(x,1)}).join('、');
   var dev=v.map(function(x){return '('+f(x,1)+'−'+f(s.m)+')²='+f((x-s.m)*(x-s.m),2)}).join(' + ');
   $('m3steps').innerHTML='① 平均 = 總和 ÷ 10 = '+f(s.m)+'<br>② 每筆減平均、平方後全部加起來:<br>'+dev+'<br>= '+f(s.ss,2)+'<br>③ 除以 (n−1) = 9 → '+f(s.ss/9,2)+',開根號 → SD = <b>'+f(s.sd)+'</b><br>④ RSD = '+f(s.sd)+' ÷ '+f(s.m)+' × 100 = <b>'+f(s.rsd)+'%</b>';
   $('m3go').onclick=function(){var m=+$('in-mean').value,sd=+$('in-sd').value,r=+$('in-rsd').value;
     if(!m||!sd||!r)return fb($('m3fb'),'三個都要填。','warn');
-    var ok=Math.abs(m-s.m)<0.1&&Math.abs(sd-s.sd)<0.06&&Math.abs(r-s.rsd)<0.04;
+    var okM=Math.abs(m-s.m)<0.1,okS=Math.abs(sd-s.sd)<0.06,okR=Math.abs(r-s.rsd)<0.04,ok=okM&&okS&&okR,pp=(document.querySelector('input[name=pred]:checked')||{}).value;
+    if(!predLogged){predLogged=true;ans('w01-m3-pred',pp==='190',{topic:'pred:'+(pp||'none'),qtype:'prediction',bloom:'預測'})}
+    ans('w01-m3-mean',okM,{misconception:'mean-calc',topic:'m3',qtype:'numeric',bloom:'應用'});ans('w01-m3-sd',okS,{misconception:Math.abs(sd-Math.sqrt(s.ss/s.n))<0.06?'sd-divide-n':'sd-calc',topic:'m3',qtype:'numeric',bloom:'應用'});ans('w01-m3-rsd',okR,{misconception:'rsd-calc',topic:'m3',qtype:'numeric',bloom:'應用'});
     if(ok){var p=(document.querySelector('input[name=pred]:checked')||{}).value;
       fb($('m3fb'),'✅ 全對!平均 '+f(s.m)+'、SD '+f(s.sd)+'、RSD '+f(s.rsd)+'%,落在 '+zpill(s.rsd)+'。'+(p==='190'?' 你一開始猜 190,直覺很準!':p?' 你猜的和答案有落差——把這個落差記下來,它就是「直覺被數據修正」的證據。':''),'good');finish(3,25)}
     else fb($('m3fb'),'有一項不對。展開「看步驟」對照(注意 SD 除的是 n−1 = 9,不是 10)。','warn')}
@@ -259,13 +285,13 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
   var lab=['甲','乙','丙'];
   $('m4svg').innerHTML=forest(ids.map(function(_,k){return {label:lab[k],m:ss[k].m,lo:ss[k].lo,hi:ss[k].hi}}));
   lab.forEach(function(t,k){var b=document.createElement('button');b.textContent=t;b.onclick=function(){
-    if(k===0){b.classList.add('ok');[].forEach.call($('m4opts').children,function(x){x.disabled=true});fb($('m4fb1'),'✅ 線最短的甲。區間越窄,平均值的估計越穩。這條線就是 95% CI。','good');$('m4rest').style.display='block';add(5)}
+    ans('w01-m4-narrow',k===0,{misconception:'ci-width',topic:'m4',bloom:'理解'});if(k===0){b.classList.add('ok');[].forEach.call($('m4opts').children,function(x){x.disabled=true});fb($('m4fb1'),'✅ 線最短的甲。區間越窄,平均值的估計越穩。這條線就是 95% CI。','good');$('m4rest').style.display='block';add(5)}
     else{b.classList.add('bad');fb($('m4fb1'),'再看看:哪條線最短?','warn')}};$('m4opts').appendChild(b)});
   function upd(){var n=+$('m4n').value,t=tval(n-1),hw=t*4/Math.sqrt(n);$('m4nv').textContent=n;$('m4t').textContent=f(t,3);$('m4hw').textContent=f(hw,2);
     $('m4bar').innerHTML=forest([{label:'n='+n,m:190,lo:190-hw,hi:190+hw,color:'var(--orange)'}])}
   $('m4n').oninput=upd;upd();
   var s=st(C[12]);
-  $('m4go').onclick=function(){var v=+$('in-hw').value;if(!v)return;
+  $('m4go').onclick=function(){var v=+$('in-hw').value;if(!v)return;var okH=Math.abs(v-s.hw)<0.06,mh=okH?null:(Math.abs(v-1.96*s.sd/Math.sqrt(10))<0.06?'t-vs-z':Math.abs(v-s.t*s.sd)<0.1?'ci-forgot-sqrt-n':Math.abs(v-s.sd/Math.sqrt(10))<0.06?'ci-no-t':'ci-calc');ans('w01-m4-halfwidth',okH,{misconception:mh,topic:'m4',qtype:'numeric',bloom:'應用'});
     if(Math.abs(v-s.hw)<0.06){fb($('m4fb2'),'✅ 半寬 = 2.262 × '+f(s.sd)+' ÷ √10 = <b>'+f(s.hw)+'</b>,所以 S13 的 95% CI = '+f(s.m)+' ± '+f(s.hw)+' = ['+f(s.lo,1)+', '+f(s.hi,1)+'] µL。<br>200 不在裡面 → 統計上有<b>顯著偏低</b>。','good');finish(4,25)}
     else fb($('m4fb2'),'提示:t × SD ÷ √n = 2.262 × SD ÷ 3.162。SD 用任務 3 的答案。','warn')}
 })();
@@ -279,6 +305,7 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
   $('m5cases').innerHTML=h;
   $('m5go').onclick=function(){var ok=0,miss=[];cases.forEach(function(c){var v=$('dx'+c.id).value;if(v===''){miss.push(c.id);return}if(+v===c.ans)ok++});
     if(miss.length)return fb($('m5fb'),'案件 '+miss.join('、')+' 還沒選診斷卡。','warn');
+    cases.forEach(function(c){var v=+$('dx'+c.id).value;ans('w01-m5-'+c.id,v===c.ans,{misconception:'dx:'+v+'>'+c.ans,topic:'m5',qtype:'diagnosis',bloom:'分析'})});
     var msg='答對 '+ok+' / 4。<br><b>A</b>(S01):十次緊緊靠在一起,但整體在 200 左邊 → 精密但不準,找共同的系統原因。<br><b>B</b>(S02):點分散在 190–200 之間、沒有固定方向 → 隨機誤差為主。<br><b>C</b>(S14):九筆很緊、有一筆離群 → 標記並查紀錄,不要默默刪。<br><b>D</b>(S11):有兩筆一高一低(橘色)→ 典型過失誤差,查原始紀錄。';
     fb($('m5fb'),msg,ok===4?'good':'warn');finish(5,ok*8)}
 })();
@@ -294,9 +321,9 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
     var sus=v.filter(function(x){return Math.abs(x-s.m)/s.sd>2.29}).length;
     $('m6out').innerHTML='<div class="case">n = '+s.n+' · 平均 <b>'+f(s.m)+'</b> µL · SD '+f(s.sd)+' · RSD <b>'+f(s.rsd)+'%</b> '+zpill(s.rsd)+'<br>95% CI ['+f(s.lo,1)+', '+f(s.hi,1)+'] µL · bias '+f(bias)+'% · '+(inCI?'CI 包含標稱值(統計上無顯著偏差)':'CI 不含標稱值(有顯著偏差)')+(sus?'<br>⚠ 有 '+sus+' 筆離平均超過 2.29 SD,先檢查是不是打錯/讀錯。':'')+strip(v,{lo:Math.min(165,Math.floor(Math.min.apply(null,v)/10)*10-10),hi:Math.max(225,Math.ceil(Math.max.apply(null,v)/10)*10+10)})+
       '<div class="tiny">你是哪一型?RSD 低、平均偏離 → <b>穩定但偏</b>;RSD 高 → <b>忽高忽低</b>;RSD 低又貼近標稱 → <b>精準型</b>。下次的目標:往綠區移動 🟢。</div></div>';
-    $('m6route').style.display='block';finish(6,15)};
+    ans('w01-m6-fingerprint',null,{topic:'zone:'+zone(s.rsd)+'|rsd:'+f(s.rsd)+'|n:'+s.n,qtype:'own-data',bloom:'應用'});$('m6route').style.display='block';finish(6,15)};
   var routes=[['A 分析員','找出全班最精密的三位(用 RSD 排序),說出他們的共同點'],['B 偵探','找出最值得懷疑的異常數據,說明證據和你會怎麼處理'],['C 教練','挑一位 RSD 高的結果,提出三項具體的操作改善建議']];
-  routes.forEach(function(r){var b=document.createElement('button');b.textContent=r[0];b.onclick=function(){[].forEach.call($('m6opts').children,function(x){x.classList.remove('sel')});b.classList.add('sel');store.route=r[0];save();fb($('m6fb'),'<b>你的任務:</b>'+r[1]+'。<br>報告要用到:平均 + SD + RSD + 95% CI(可用<a href="materials/w01_class_data_corrected.xlsx" download>班級數據 Excel</a>)。','good')};$('m6opts').appendChild(b)})
+  routes.forEach(function(r){var b=document.createElement('button');b.textContent=r[0];b.onclick=function(){[].forEach.call($('m6opts').children,function(x){x.classList.remove('sel')});b.classList.add('sel');store.route=r[0];save();ans('w01-m6-route',null,{topic:'route:'+r[0],qtype:'choice'});fb($('m6fb'),'<b>你的任務:</b>'+r[1]+'。<br>報告要用到:平均 + SD + RSD + 95% CI(可用<a href="materials/w01_class_data_corrected.xlsx" download>班級數據 Excel</a>)。','good')};$('m6opts').appendChild(b)})
 })();
 
 // ---------- M7 ----------
@@ -313,7 +340,8 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
     $('m7m1').innerHTML='<b>回頭看任務 1</b><br>'+txt;obs.disconnect()}});
   obs.observe($('m7'),{attributes:true,attributeFilter:['class']});
   $('m7go').onclick=function(){var a=$('ex1').value,b=$('ex2').value;if(!a||!b)return fb($('m7fb'),'兩格都要選。','warn');
-    if(a==='精密'&&b==='準確'){fb($('m7fb'),'✅ 很精密,但可能不夠準確:RSD 低代表重複性好;但平均與 200 µL 有明顯差距(這是系統誤差,不是隨機誤差)。','good');add(20);done[7]=1;$('prog').textContent='任務 7 / 7';$('bar').firstChild.style.width='100%';
+    var okE=(a==='精密'&&b==='準確');ans('w01-m7-exit',okE,{misconception:okE?null:'exit:'+a+'/'+b,topic:'m7',qtype:'fill',bloom:'評鑑'});
+    if(a==='精密'&&b==='準確'){fb($('m7fb'),'✅ 很精密,但可能不夠準確:RSD 低代表重複性好;但平均與 200 µL 有明顯差距(這是系統誤差,不是隨機誤差)。','good');add(20);done[7]=1;ev({event_type:'attempt_complete',final_score:pts,total:7,chapter:'LAB-W01'});recap();$('prog').textContent='任務 7 / 7';$('bar').firstChild.style.width='100%';
       $('badge').style.display='block';$('badgetxt').innerHTML='偵探積分 <b>'+pts+'</b>'+(store.route?'　·　你選的路線:'+store.route:'')}
     else fb($('m7fb'),'再想想:RSD 0.25% 說明什麼?平均 191 離 200 遠嗎?','warn')}
 })();
