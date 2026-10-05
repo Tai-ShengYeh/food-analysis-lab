@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>水分找錯題 · W2 Data Detective</title>
+<style>
+:root{--bg:#eef2fb;--surface:#fff;--ink:#14213d;--ink2:#48597a;--line:#dbe2f0;--accent:#1f6feb;--orange:#d9822b;--green:#1f9d61;--red:#d94f4f;--yellow:#c99a00;--shadow:0 2px 10px rgba(20,33,61,.08)}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1526;--surface:#1a2238;--ink:#eaf0ff;--ink2:#a9b6d3;--line:#2d3858;--accent:#5b9bff;--orange:#f0a04b;--green:#3dbb82;--red:#f07070;--yellow:#e3b93a;--shadow:0 2px 10px rgba(0,0,0,.4)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.7;font-size:17px}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 80px}
+header.hero{padding:34px 0 10px}
+.kicker{color:var(--accent);font-weight:800;letter-spacing:.06em;font-size:.85rem}
+h1{font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.25;margin:.2em 0}
+h1 .hi{color:var(--orange)}
+h2{font-size:1.3rem;margin:.1em 0 .4em}
+.lead{color:var(--ink2)}
+#hud{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#bar{flex:1;min-width:120px;height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--orange));transition:width .4s}
+#pts{font-weight:800}
+section.m{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 20px 24px;margin:20px 0;box-shadow:var(--shadow)}
+.tag{display:inline-block;background:var(--accent);color:#fff;border-radius:99px;padding:1px 12px;font-size:.8rem;font-weight:800;margin-right:8px}
+.done .tag{background:var(--green)}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+button{font:inherit;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:6px 14px;font-weight:700}
+button:hover{background:var(--accent);color:#fff}
+button.primary{background:var(--accent);color:#fff}
+button.ok{background:var(--green);border-color:var(--green);color:#fff}
+button.bad{background:var(--red);border-color:var(--red);color:#fff}
+button:disabled{opacity:.6;cursor:default}
+input[type=number],select{font:inherit;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 9px}
+input[type=number]{width:7.5em}
+.fb{margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(31,111,235,.08);border-left:4px solid var(--accent);display:none}
+.fb.show{display:block}
+.fb.good{border-color:var(--green);background:rgba(31,157,97,.1)}
+.fb.warn{border-color:var(--orange);background:rgba(217,130,43,.1)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+td,th{border-bottom:1px solid var(--line);padding:5px 8px;text-align:center}
+td.l{text-align:left}
+.tiny{font-size:.85rem;color:var(--ink2)}
+.rowin{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.note{border-left:4px solid var(--orange);background:rgba(217,130,43,.1);padding:8px 12px;border-radius:8px;margin:10px 0}
+.sus{background:rgba(217,79,79,.12)}
+a{color:var(--accent);font-weight:700}
+details{margin-top:8px}
+summary{cursor:pointer;color:var(--accent);font-weight:700}
+.badge{text-align:center;padding:18px}
+.badge .big{font-size:2.4rem}
+.afb-pill{top:auto!important;bottom:12px}
+.sim{display:inline-block;background:var(--orange);color:#fff;border-radius:6px;padding:0 8px;font-size:.78rem;font-weight:800;vertical-align:middle}
+label{white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="kicker">DATA DETECTIVE · W2 水分與水活性</div>
+  <h1>這個水分數字,<span class="hi">你敢信嗎?</span></h1>
+  <p class="lead">食品檢驗實驗室收到 5 份「看起來沒問題」的水分檔案。每一份都藏著一個今天會碰到的陷阱:恆重沒到、公式用錯、儀器偏差、aw 計沒校正、離群的重複。你要用<b>證據</b>找出來。<br>題目順序不限,<b>等烘箱的空檔隨時可以玩</b>。</p>
+  <p class="tiny"><span class="sim">示意案卷</span> 這份案卷的數字是<b>依今天的流程設計的示意數據</b>,不是你們班的實測值。課後我們會用你們自己的數據再做一次。</p>
+</header>
+<p class="tiny" id="lognote" style="margin:0 0 6px">💡 登入學號後,系統會記錄你每題的作答,老師用來看全班哪裡需要再講解,並給你一張學習回饋卡;不登入也可以玩,只是不會記錄。</p>
+<div id="hud"><span id="pts">🔍 偵探積分 0</span><div id="bar"><i></i></div><span class="tiny" id="prog">案件 0 / 5</span><button id="login" style="font-size:.85rem;padding:3px 10px">🎓 登入學號(記錄進度)</button></div>
+
+<!-- C1 恆重 -->
+<section class="m" id="c1">
+  <h2><span class="tag">案件 1</span>誰可以收工?(恆重)</h2>
+  <p>三位同學都烘了 3 小時秤一次、再烘 1 小時又秤一次(奶粉,約 3.0 g)。判準:<b>連續兩次差 ≤ 2 mg</b>算恆重。幫他們看看:</p>
+  <div style="overflow-x:auto"><table id="c1tab"></table></div>
+  <button class="primary" id="c1go">送出診斷</button>
+  <div class="fb" id="c1fb"></div>
+</section>
+
+<!-- C2 公式 -->
+<section class="m" id="c2">
+  <h2><span class="tag">案件 2</span>抓出 Excel 的公式 Bug</h2>
+  <p>六位同學量同一批奶粉,各自用 Excel 算<b>濕基水分 %</b>。公式應該是 <code>=(盤+樣 − 乾後)/(盤+樣 − 空盤)*100</code>。下面是他們交的「報告值」:</p>
+  <div style="overflow-x:auto"><table id="c2tab"></table></div>
+  <p><b>① 哪幾位的報告值有問題?</b>(可複選,先憑「和別人對不上」判斷,再用原始重量重算)</p>
+  <div class="rowin" id="c2chk"></div>
+  <button class="primary" id="c2go1">檢查①</button>
+  <div class="fb" id="c2fb1"></div>
+  <div id="c2b" style="display:none">
+    <hr>
+    <p><b>② 用原始重量,算出 S4 與 S6 正確的濕基水分 %</b>(取到小數 2 位),再指出他們各自用了哪一個公式:</p>
+    <div class="rowin">S4 正確值 <input type="number" step="any" id="c2v4"> %　他的公式是
+      <select id="c2f4"><option value="">選</option><option value="A">A:(盤+樣−乾後)/(盤+樣−空盤)</option><option value="B">B:(盤+樣−乾後)/盤+樣</option><option value="C">C:(盤+樣−乾後)/(乾後−空盤)</option></select></div>
+    <div class="rowin">S6 正確值 <input type="number" step="any" id="c2v6"> %　他的公式是
+      <select id="c2f6"><option value="">選</option><option value="A">A:(盤+樣−乾後)/(盤+樣−空盤)</option><option value="B">B:(盤+樣−乾後)/盤+樣</option><option value="C">C:(盤+樣−乾後)/(乾後−空盤)</option></select></div>
+    <button class="primary" id="c2go2">對答案</button>
+    <div class="fb" id="c2fb2"></div>
+  </div>
+</section>
+
+<!-- C3 烘箱 vs IR -->
+<section class="m" id="c3">
+  <h2><span class="tag">案件 3</span>烘箱 vs IR 水分計:誰比較誠實?</h2>
+  <p>5 組各用烘箱法與 IR 水分計測同一份共同盲樣(全脂奶粉,水分 %):</p>
+  <div style="overflow-x:auto"><table id="c3tab"></table></div>
+  <div class="rowin">先算每組的差(IR − 烘箱),再求<b>平均差</b>:<input type="number" step="any" id="c3m"> 個百分點　<button class="primary" id="c3go1">對答案</button></div>
+  <div class="fb" id="c3fb1"></div>
+  <div id="c3b" style="display:none">
+    <p><b>這個差的性質是?</b></p><div class="opts" id="c3o1"></div><div class="fb" id="c3fb2"></div>
+    <p id="c3q3" style="display:none"><b>最合理的下一步是?</b></p><div class="opts" id="c3o2"></div><div class="fb" id="c3fb3"></div>
+  </div>
+</section>
+
+<!-- C4 aw 校正 -->
+<section class="m" id="c4">
+  <h2><span class="tag">案件 4</span>aw 計沒校正會害你判斷錯</h2>
+  <p>助教先用 4 種飽和鹽溶液(25°C)檢查 aw 計:</p>
+  <div style="overflow-x:auto"><table id="c4tab"></table></div>
+  <div class="rowin">① 儀器平均偏高多少?(平均「讀值 − 表列值」,取小數 3 位)<input type="number" step="any" id="c4off"> <button class="primary" id="c4go1">對答案</button></div>
+  <div class="fb" id="c4fb1"></div>
+  <div id="c4b" style="display:none">
+    <p>② 三個樣品的未校正讀值:<b>牛肉乾 0.768、龍眼乾 0.617、洋芋片 0.217</b>。龍眼乾校正後 aw = <input type="number" step="any" id="c4aw"> <button class="primary" id="c4go2">對答案</button></p>
+    <div class="fb" id="c4fb2"></div>
+    <div id="c4c" style="display:none">
+      <p>③ 教材值:嗜旱性黴菌下限 aw ≈ <b>0.61</b>。龍眼乾是否可能長出嗜旱性黴菌?</p>
+      <div class="opts" id="c4o"></div><div class="fb" id="c4fb3"></div>
+    </div>
+  </div>
+</section>
+
+<!-- C5 離群 -->
+<section class="m" id="c5">
+  <h2><span class="tag">案件 5</span>三重複裡的害群之馬</h2>
+  <p>5 組各做三重複,共同盲樣的濕基水分 %(附助教備註):</p>
+  <div style="overflow-x:auto"><table id="c5tab"></table></div>
+  <p><b>① 哪一組最可疑?</b></p><div class="opts" id="c5o1"></div><div class="fb" id="c5fb1"></div>
+  <div id="c5b" style="display:none">
+    <div class="rowin">② 算這一組三重複的 <b>RSD %</b>:<input type="number" step="any" id="c5r"> % <button class="primary" id="c5go">對答案</button></div>
+    <div class="fb" id="c5fb2"></div>
+    <div id="c5c" style="display:none"><p><b>③ 該怎麼處理這一筆?</b></p><div class="opts" id="c5o3"></div><div class="fb" id="c5fb3"></div></div>
+  </div>
+</section>
+
+<!-- 結案 -->
+<section class="m" id="ex">
+  <h2><span class="tag">結案</span>Exit ticket</h2>
+  <p>某同學報告:奶粉水分 <b>0.33%</b>(其他同學都是約 3.1%)。你的<b>第一步</b>是?</p>
+  <div class="opts" id="exo"></div><div class="fb" id="exfb"></div>
+  <div class="note" id="recap" style="display:none"></div>
+  <div class="badge" id="badge" style="display:none"><div class="big">🕵️</div><h2>結案!水分偵探</h2><div id="badgetxt"></div>
+    <p><a href="index.html">回 W2 投影片</a>　·　<a href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB02_moisture_aw.ipynb" target="_blank" rel="noopener">Colab NB02</a></p></div>
+</section>
+</div>
+
+<script type="module" src="assess_firebase.js"></script>
+<script>
+function $(id){return document.getElementById(id)}
+function f(x,d){return x.toFixed(d==null?2:d)}
+function st(a){var n=a.length,m=a.reduce(function(s,x){return s+x},0)/n,ss=a.reduce(function(s,x){return s+(x-m)*(x-m)},0),sd=Math.sqrt(ss/(n-1));return {n:n,m:m,sd:sd,rsd:sd/m*100}}
+var pts=0,done={},MIS={},ATT={},LOGGING=false;
+function add(n){pts+=n;$('pts').textContent='🔍 偵探積分 '+pts}
+function finish(n,bonus){if(done[n])return;done[n]=1;add(bonus);var k=Object.keys(done).length;$('prog').textContent='案件 '+k+' / 5';$('bar').firstChild.style.width=(k/5*100)+'%';$('c'+n).classList.add('done')}
+function fb(el,html,cls){el.className='fb show '+(cls||'');el.innerHTML=html}
+function ev(o){if(!LOGGING||!window.AssessFB)return;try{window.AssessFB.log(o)}catch(e){}}
+function ans(qid,ok,o){o=o||{};ATT[qid]=(ATT[qid]||0)+1;if(ok===false&&o.misconception)MIS[o.misconception]=(MIS[o.misconception]||0)+1;
+  ev({event_type:'answer',question_id:qid,is_correct:ok,attempts:ATT[qid],qtype:o.qtype||'mcq',bloom:o.bloom||null,topic:o.topic||null,misconception:(ok===false&&o.misconception)?o.misconception:null,chapter:'LAB-W02'})}
+function login(){var btn=$('login');btn.disabled=true;btn.textContent='連線中…';var t=0;
+  (function poll(){
+    if(window.AssessFB){window.AssessFB.init({chapter:'LAB-W02',game:'detective'}).then(function(){LOGGING=true;btn.textContent='✅ 已記錄進度('+window.AssessFB.getStudentId()+')'}).catch(function(){btn.disabled=false;btn.textContent='🎓 登入學號(記錄進度)'});return}
+    if(++t>120){btn.disabled=false;btn.textContent='🎓 登入學號(連線失敗,稍後再試)';return}
+    setTimeout(poll,50)})()}
+$('login').onclick=login;
+try{if(localStorage.getItem('food_analysis_student_id'))login()}catch(e){}
+function mc(box,opts,right,qid,mis,okmsg,badmsg,fbEl,onOk,topic){
+  opts.forEach(function(t,i){var b=document.createElement('button');b.textContent=t;b.onclick=function(){
+    ans(qid,i===right,{misconception:mis,topic:topic,bloom:'分析'});
+    if(i===right){b.classList.add('ok');[].forEach.call(box.children,function(x){x.disabled=true});fb(fbEl,okmsg,'good');onOk()}
+    else{b.classList.add('bad');fb(fbEl,badmsg,'warn')}};box.appendChild(b)})}
+
+// ============ 案件 1 恆重 ============
+(function(){
+  var A=[{n:'甲',tare:25.1234,wet:28.1234,w1:28.0310,w2:28.0298,right:0},
+         {n:'乙',tare:25.1000,wet:28.1000,w1:28.0170,w2:28.0095,right:1},
+         {n:'丙',tare:24.9876,wet:27.9876,w1:27.8946,w2:27.8959,right:2}];
+  var OPT=['達恆重,可以收工','未達恆重,要再烘','數字過關但方向怪,先查操作'];
+  var h='<tr><th>同學</th><th>空盤 g</th><th>盤+樣 g</th><th>烘 3 h 後 g</th><th>再烘 1 h 後 g</th><th>差(mg)</th><th>你的診斷</th></tr>';
+  A.forEach(function(a,i){var d=(a.w1-a.w2)*1000;a.d=d;
+    h+='<tr><td>'+a.n+'</td><td>'+f(a.tare,4)+'</td><td>'+f(a.wet,4)+'</td><td>'+f(a.w1,4)+'</td><td>'+f(a.w2,4)+'</td><td>'+(d>=0?'−':'+')+f(Math.abs(d),1)+'</td><td><select id="c1s'+i+'"><option value="">選…</option>'+OPT.map(function(t,k){return '<option value="'+k+'">'+t+'</option>'}).join('')+'</select></td></tr>'});
+  $('c1tab').innerHTML=h+'<tr><td colspan="7" class="tiny l">差(mg)=第一次 − 第二次;「−」表示第二次變輕,「+」表示第二次反而變重</td></tr>';
+  $('c1go').onclick=function(){var ok=0,miss=[];A.forEach(function(a,i){if($('c1s'+i).value==='')miss.push(a.n)});
+    if(miss.length)return fb($('c1fb'),miss.join('、')+' 還沒選診斷。','warn');
+    A.forEach(function(a,i){var v=+$('c1s'+i).value;if(v===a.right)ok++;ans('w02-c1-'+a.n,v===a.right,{misconception:(v===a.right?null:'c1:'+v+'>'+a.right),topic:'constant-weight',bloom:'分析'})});
+    var o=A[1],m1=(o.wet-o.w1)/(o.wet-o.tare)*100,m2=(o.wet-o.w2)/(o.wet-o.tare)*100;
+    var msg='答對 '+ok+' / 3。<br><b>甲</b>:差 '+f(A[0].d,1)+' mg ≤ 2 mg,達恆重 ✔<br><b>乙</b>:差 '+f(o.d,1)+' mg,還在變輕(水還沒烘完)。若 3 小時就收工,水分 '+f(m1)+'%;再烘後 '+f(m2)+'%——低估 '+f(m2-m1)+' 個百分點,比一般 RSD 還大。<br><b>丙</b>:差只有 1.3 mg 看似過關,但<b>烘過頭怎麼會變重?</b>變重代表冷卻或秤重時吸了濕氣(蓋子沒滑好、沒進乾燥器、盤還熱),這筆讀值不能直接採用。';
+    fb($('c1fb'),msg,ok===3?'good':'warn');finish(1,ok*7)}
+})();
+
+// ============ 案件 2 公式 ============
+var C2=[['S1',25.1234,28.1234,28.0300,'A'],['S2',24.8812,27.8830,27.7890,'A'],['S3',25.0450,28.0462,27.9528,'A'],['S4',25.2005,28.2011,28.1085,'B'],['S5',24.9120,27.9125,27.8190,'A'],['S6',25.0033,28.0040,27.9105,'C']];
+function calc2(r,kind){var w=r[2]-r[3];return kind==='A'?w/(r[2]-r[1])*100:kind==='B'?w/r[2]*100:w/(r[3]-r[1])*100}
+(function(){
+  var h='<tr><th>同學</th><th>空盤</th><th>盤+樣</th><th>乾後</th><th>報告值 %</th></tr>',chk='';
+  C2.forEach(function(r,i){h+='<tr><td>'+r[0]+'</td><td>'+f(r[1],4)+'</td><td>'+f(r[2],4)+'</td><td>'+f(r[3],4)+'</td><td><b>'+f(calc2(r,r[4]))+'</b></td></tr>';chk+='<label><input type="checkbox" value="'+r[0]+'"> '+r[0]+'</label>'});
+  $('c2tab').innerHTML=h;$('c2chk').innerHTML=chk;
+  $('c2go1').onclick=function(){var ck=[].filter.call($('c2chk').querySelectorAll('input'),function(x){return x.checked}).map(function(x){return x.value}).join(',');
+    var ok=ck==='S4,S6';ans('w02-c2-find',ok,{misconception:'c2-find',topic:'wet-basis-formula'});
+    if(ok){fb($('c2fb1'),'✅ 抓到了。S4 的 0.33 一眼就怪(別人約 3.1);S6 的 3.22 較難——只比別人高 0.1,要<b>回頭用原始重量重算</b>才看得出來。','good');$('c2b').style.display='block'}
+    else fb($('c2fb1'),'提示:有一位的數字小了一個位數;另一位只高一點點,要用原始重量自己算一遍才抓得到(其他四位彼此都在 3.09–3.13)。','warn')};
+  $('c2go2').onclick=function(){var v4=+$('c2v4').value,v6=+$('c2v6').value,f4=$('c2f4').value,f6=$('c2f6').value;
+    if(!v4||!v6||!f4||!f6)return fb($('c2fb2'),'四格都要填。','warn');
+    var t4=calc2(C2[3],'A'),t6=calc2(C2[5],'A'),o4=Math.abs(v4-t4)<0.02,o6=Math.abs(v6-t6)<0.02;
+    ans('w02-c2-s4val',o4,{misconception:'c2-calc',topic:'wet-basis-formula',qtype:'numeric'});ans('w02-c2-s6val',o6,{misconception:Math.abs(v6-calc2(C2[5],'C'))<0.02?'c2-dry-basis':'c2-calc',topic:'wet-basis-formula',qtype:'numeric'});
+    ans('w02-c2-s4f',f4==='B',{misconception:'c2-formula',topic:'wet-basis-formula'});ans('w02-c2-s6f',f6==='C',{misconception:'c2-dry-basis',topic:'wet-basis-formula'});
+    var all=o4&&o6&&f4==='B'&&f6==='C';
+    fb($('c2fb2'),(all?'✅ 全對。':'有地方不對,對照一下:')+'<br>S4 正確 <b>'+f(t4)+'%</b>,他把分母寫成「盤+樣」總重(連鋁盤一起算),結果小了 10 倍。<br>S6 正確 <b>'+f(t6)+'%</b>,他分母用了「乾固形物重」,算出的是<b>乾基</b>水分 '+f(calc2(C2[5],'C'))+'%,不是濕基。<br><b>同一份數據,濕基與乾基不會一樣</b>;報告前先確認欄位標題是濕基還是乾基,別人的公式也要點開來看。',all?'good':'warn');
+    if(all)finish(2,25)}
+})();
+
+// ============ 案件 3 烘箱 vs IR ============
+(function(){
+  var oven=[3.12,3.05,3.31,3.18,3.09],ir=[2.41,2.30,2.55,2.46,2.52],d=ir.map(function(x,i){return x-oven[i]}),s=st(d);
+  var h='<tr><th>組別</th>'+oven.map(function(_,i){return '<th>G'+(i+1)+'</th>'}).join('')+'</tr><tr><td>烘箱 %</td>'+oven.map(function(x){return '<td>'+f(x)+'</td>'}).join('')+'</tr><tr><td>IR %</td>'+ir.map(function(x){return '<td>'+f(x)+'</td>'}).join('')+'</tr>';
+  $('c3tab').innerHTML=h;
+  $('c3go1').onclick=function(){var v=+$('c3m').value;if(!v&&v!==0)return;var ok=Math.abs(v-s.m)<0.03;
+    ans('w02-c3-mean',ok,{misconception:Math.abs(v+s.m)<0.03?'c3-sign':'c3-calc',topic:'bias',qtype:'numeric'});
+    if(ok){fb($('c3fb1'),'✅ 平均差 = <b>'+f(s.m)+'</b> 個百分點(5 組都是 IR 較低)。','good');$('c3b').style.display='block'}
+    else fb($('c3fb1'),'提示:每組算 IR − 烘箱(都是負的),5 個差加起來除以 5。注意正負號。','warn')};
+  mc($('c3o1'),['隨機誤差:每組忽高忽低,取平均就會抵消','系統性偏差:5 組都往同一個方向差,不會被平均抵消','抄錯數字,不用處理'],1,'w02-c3-nature','c3-nature',
+     '✅ 5 組全部同方向、大小也接近(差在 '+f(Math.min.apply(null,d))+' 到 '+f(Math.max.apply(null,d))+' 之間),是<b>系統性偏差</b>(bias)。這和 W1 的「穩但偏」同一型。','再看一次:5 個差的正負號一樣嗎?如果是隨機誤差,應該有正有負。',$('c3fb2'),function(){$('c3q3').style.display='block';
+    mc($('c3o2'),['以 IR 的平均為準,烘箱太慢','以烘箱法為基準,檢查 IR 的設定(溫度、終止條件、樣品量與鋪平)並在 W4 做成對比較','把 IR 數據全部丟掉'],1,'w02-c3-next','c3-next',
+      '✅ 烘箱法是基準法,IR 是間接的快速法;差 '+f(Math.abs(s.m))+' 個百分點以上要先找原因,再用 W4 的配對比較檢定偏差是否顯著。','想想:今天課堂上說 IR 水分計「必須先用烘箱法驗證」的理由是什麼?',$('c3fb3'),function(){finish(3,25)},'bias')},'bias');
+})();
+
+// ============ 案件 4 aw ============
+(function(){
+  var salt=[['LiCl',0.113,0.131],['MgCl₂',0.328,0.344],['NaCl',0.753,0.770],['K₂SO₄',0.973,0.989]],ds=salt.map(function(r){return r[2]-r[1]}),off=ds.reduce(function(a,b){return a+b},0)/4;
+  var h='<tr><th>飽和鹽</th><th>表列 aw</th><th>儀器讀值</th><th>讀值 − 表列</th></tr>';
+  salt.forEach(function(r,i){h+='<tr><td>'+r[0]+'</td><td>'+f(r[1],3)+'</td><td>'+f(r[2],3)+'</td><td>+'+f(ds[i],3)+'</td></tr>'});
+  $('c4tab').innerHTML=h;
+  $('c4go1').onclick=function(){var v=+$('c4off').value;if(!v)return;var ok=Math.abs(v-off)<0.002;ans('w02-c4-offset',ok,{misconception:'c4-offset',topic:'aw-calibration',qtype:'numeric'});
+    if(ok){fb($('c4fb1'),'✅ 平均偏高 <b>+'+f(off,3)+'</b>。四個鹽的差都差不多(+0.016~+0.018),不管 aw 高低都偏同樣的量 → 是一個固定的<b>系統偏差</b>,可以用這個數字校正。','good');$('c4b').style.display='block'}
+    else fb($('c4fb1'),'提示:把四個「讀值 − 表列值」加起來除以 4。','warn')};
+  $('c4go2').onclick=function(){var v=+$('c4aw').value;if(!v)return;var t=0.617-off,ok=Math.abs(v-t)<0.003;ans('w02-c4-corrected',ok,{misconception:'c4-correct',topic:'aw-calibration',qtype:'numeric'});
+    if(ok){fb($('c4fb2'),'✅ 0.617 − '+f(off,3)+' = <b>'+f(t,3)+'</b>。(牛肉乾 → '+f(0.768-off,3)+';洋芋片 → '+f(0.217-off,3)+')','good');$('c4c').style.display='block'}
+    else fb($('c4fb2'),'提示:儀器偏高,所以要「減」掉偏高的量。','warn')};
+  mc($('c4o'),['可能:未校正讀值 0.617 > 0.61','不可能:校正後 0.600 < 0.61,低於嗜旱性黴菌下限','無法判斷,因為 aw 跟水分%無關'],1,'w02-c4-judge','c4-judge',
+    '✅ 沒校正的話你會多報一個風險(0.617 看起來「超過 0.61」)。<b>aw 的判斷線常常差 0.01–0.02,而儀器偏差同樣是這個量級</b>,所以量樣品前一定要先用飽和鹽查核。','再看一次:校正後的龍眼乾是 0.600,和 0.61 比誰大?',$('c4fb3'),function(){finish(4,25)},'aw-calibration');
+})();
+
+// ============ 案件 5 離群 ============
+(function(){
+  var G=[['G1',[3.08,3.12,3.10],'—'],['G2',[3.15,3.09,3.11],'—'],['G3',[3.05,3.12,3.94],'第 3 盤取出時盤緣有粉末掉落'],['G4',[3.10,3.07,3.13],'—'],['G5',[3.14,3.11,3.09],'—']];
+  var h='<tr><th>組別</th><th>#1</th><th>#2</th><th>#3</th><th>平均</th><th class="l">助教備註</th></tr>';
+  G.forEach(function(g){var s=st(g[1]);h+='<tr><td>'+g[0]+'</td>'+g[1].map(function(x){return '<td>'+f(x)+'</td>'}).join('')+'<td>'+f(s.m)+'</td><td class="l tiny">'+g[2]+'</td></tr>'});
+  $('c5tab').innerHTML=h;
+  var s3=st(G[2][1]);
+  mc($('c5o1'),G.map(function(g){return g[0]}),2,'w02-c5-find','c5-find','✅ G3 的第 3 筆 3.94 離另外兩筆(3.05、3.12)太遠,而且助教備註說明了可能原因。','再比較每一組三筆的散開程度,哪一組特別大?',$('c5fb1'),function(){$('c5b').style.display='block'},'outlier');
+  $('c5go').onclick=function(){var v=+$('c5r').value;if(!v)return;var ok=Math.abs(v-s3.rsd)<0.3;ans('w02-c5-rsd',ok,{misconception:'c5-rsd',topic:'outlier',qtype:'numeric'});
+    if(ok){var others=[0,1,3,4].map(function(i){return st(G[i][1]).rsd});fb($('c5fb2'),'✅ G3 的 RSD = '+f(s3.rsd,1)+'%(平均 '+f(s3.m)+'、SD '+f(s3.sd,3)+')。其他四組只有 '+f(Math.min.apply(null,others),1)+'–'+f(Math.max.apply(null,others),1)+'%。<br>樣品損失會讓「失去的重量」被誤當成水,所以水分偏高。','good');$('c5c').style.display='block'}
+    else fb($('c5fb2'),'提示:SD ÷ 平均 × 100;SD 用 n−1。三筆是 3.05、3.12、3.94。','warn')};
+  mc($('c5o3'),['直接刪掉 3.94,平均用另兩筆','先查原始紀錄與備註,標記這筆,補做一盤確認;不要默默刪除','三筆平均就好,不用處理'],1,'w02-c5-act','c5-act','✅ 有物理原因(樣品損失)就標記並補做;沒補做時要在報告寫明「排除一筆及理由」。<b>不能因為它讓數字不好看就刪。</b>','想想 W1 離群值的處理:先查證、再標記、後處理。',$('c5fb3'),function(){finish(5,25)},'outlier');
+})();
+
+// ============ 結案 ============
+var ADV={'c1:0>1':'恆重要看兩次差,不是看烘了多久','c1:2>0':'烘過頭卻變重是吸濕訊號,不是恆重','c2-find':'報告值先和同伴比對,再用原始重量重算','c2-dry-basis':'濕基分母是「原始總重(盤+樣−空盤)」,乾基才是乾固形物重','c2-calc':'濕基% = 水分重 ÷ 樣品重 × 100','c2-formula':'分母要用樣品重(盤+樣−空盤),不是盤+樣總重','c3-nature':'同方向、大小接近的差是系統性偏差,不會被平均抵消','c3-next':'IR 是間接法,以烘箱法驗證並找原因','c4-offset':'校正偏差 = 平均(讀值 − 表列值)','c4-correct':'儀器偏高就要把讀值減掉偏高量','c4-judge':'aw 判斷線與儀器偏差同量級,量樣品前先用飽和鹽查核','c5-find':'看三筆散開程度與備註','c5-rsd':'RSD = SD(n−1)÷平均×100','c5-act':'離群值:查證 → 標記 → 補做;不默默刪除'};
+(function(){
+  mc($('exo'),['直接填入報告','檢查公式與分母(是不是少減了鋁盤、或公式用錯)','把烘箱溫度調高重烘','把這筆刪掉'],1,'w02-ex','exit','✅ 小了 10 倍通常是<b>公式</b>問題(案件 2 的 S4),不是樣品問題。先檢查可以自己驗證的環節——計算——再考慮重做。','想想案件 2:0.33 比別人小 10 倍,什麼錯誤最容易造成「剛好差一個位數」?',$('exfb'),function(){
+    done[6]=1;ev({event_type:'attempt_complete',final_score:pts,total:6,chapter:'LAB-W02'});
+    var el=$('recap'),ks=Object.keys(MIS).sort(function(a,b){return MIS[b]-MIS[a]}),h='<b>📋 你的學習回饋卡</b><br>',n=0;
+    ks.forEach(function(k){if(ADV[k]&&n<5){h+='• '+ADV[k]+'(答錯 '+MIS[k]+' 次)<br>';n++}});
+    if(!n)h+='這一輪沒有明顯迷思,做得很好 👍';
+    el.innerHTML=h;el.style.display='block';$('badge').style.display='block';$('badgetxt').innerHTML='偵探積分 <b>'+pts+'</b> · 完成 '+Object.keys(done).filter(function(k){return k<=5}).length+' / 5 案件'+(Object.keys(done).filter(function(k){return k<=5}).length<5?'(還有案件沒破,隨時回來)':'')},'exit');
+})();
+</script>
+</body>
+</html>
