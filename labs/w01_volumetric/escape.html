@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>校正室密室逃脫 · W1 容量器具校正</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#10252a;--night2:#173238;--tile:#d7e6e2;--tile2:#c3d6d1;--steel:#8fa3a6;--steel2:#5d7275;
+  --amber:#f2b632;--alarm:#e0533d;--ok:#2f9e6b;--teal:#2c7a7b;--paper:#f6f8f4;--ink:#0f1d20;--ink2:#4a5d61;
+  --lcd:#b9e3a1;--lcdink:#16301a;
+  --mono:"Share Tech Mono",ui-monospace,Consolas,monospace;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--night);color:var(--paper);font-family:var(--sans);font-size:16px;line-height:1.65}
+button{font:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 14px 40px}
+
+/* HUD */
+#hud{position:sticky;top:0;z-index:20;background:var(--night);border-bottom:1px solid #2a464c;padding:10px 0}
+#hud .row{max-width:1120px;margin:0 auto;padding:0 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#hud h1{font-size:1.05rem;margin:0;font-weight:900;letter-spacing:.02em;flex:1 1 220px}
+#hud h1 small{display:block;font-weight:500;color:var(--steel);font-size:.78rem}
+.clock{font-family:var(--mono);font-size:1.5rem;color:var(--amber);min-width:5.2ch;text-align:right}
+.frags{display:flex;gap:6px}
+.frag{width:38px;height:46px;border-radius:6px;border:2px dashed #3b5a60;display:grid;place-items:center;font-family:var(--mono);font-size:1.5rem;color:var(--steel2);position:relative}
+.frag.got{border:2px solid var(--amber);color:var(--amber);background:#1f3a40}
+.frag i{position:absolute;bottom:-1px;right:3px;font-style:normal;font-size:.6rem;color:var(--steel);font-family:var(--sans)}
+.hudbtn{background:transparent;border:1.5px solid #3b5a60;color:var(--tile);border-radius:8px;padding:5px 11px;font-size:.88rem}
+.hudbtn:hover{border-color:var(--amber);color:var(--amber)}
+.pts{font-size:.88rem;color:var(--tile)}
+
+/* stage */
+.roombar{display:flex;gap:8px;margin:14px 0 8px;flex-wrap:wrap}
+.roombar button{background:var(--night2);border:1.5px solid #2f4d53;color:var(--tile);border-radius:8px;padding:6px 14px}
+.roombar button[aria-current="true"]{background:var(--tile);color:var(--ink);border-color:var(--tile);font-weight:700}
+.roombar button:disabled{opacity:.45;cursor:not-allowed}
+#stage{position:relative;border-radius:14px;overflow:hidden;background:var(--tile);aspect-ratio:1000/560;box-shadow:0 10px 40px rgba(0,0,0,.45)}
+#stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hs{position:absolute;background:transparent;border:2px solid transparent;border-radius:10px;padding:0}
+.hs::after{content:"";position:absolute;right:-7px;top:-7px;width:16px;height:16px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 0 rgba(242,182,50,.7);animation:ping 2.4s infinite}
+.hs.done::after{background:var(--ok);animation:none}
+.hs.locked::after{background:var(--alarm);animation:none}
+.hs:hover,.hs:focus-visible{border-color:var(--amber);background:rgba(242,182,50,.12)}
+.hs span{position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);white-space:nowrap;background:var(--ink);color:var(--paper);font-size:.8rem;padding:2px 8px;border-radius:5px;opacity:0;pointer-events:none;transition:opacity .15s}
+.hs:hover span,.hs:focus-visible span{opacity:1}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(242,182,50,.7)}70%{box-shadow:0 0 0 12px rgba(242,182,50,0)}100%{box-shadow:0 0 0 0 rgba(242,182,50,0)}}
+@media (prefers-reduced-motion:reduce){.hs::after{animation:none}}
+.objlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.objlist button{background:transparent;border:1px solid #2f4d53;color:var(--steel);border-radius:99px;padding:2px 12px;font-size:.84rem}
+.objlist button:hover{color:var(--amber);border-color:var(--amber)}
+
+/* inventory + log */
+.lower{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:760px){.lower{grid-template-columns:1fr}}
+@media(max-width:600px){#hud{position:static}}
+.panel{background:var(--night2);border:1px solid #2a464c;border-radius:12px;padding:12px 14px}
+.panel h2{font-size:.95rem;margin:0 0 8px;color:var(--tile)}
+.inv{display:flex;flex-wrap:wrap;gap:8px;min-height:52px}
+.inv button{background:var(--paper);color:var(--ink);border:none;border-radius:8px;padding:6px 10px;font-size:.88rem;display:flex;gap:6px;align-items:center}
+.inv .empty{color:var(--steel2);font-size:.88rem}
+#log{max-height:150px;overflow:auto;font-size:.88rem;color:var(--tile);margin:0;padding:0;list-style:none}
+#log li{margin:2px 0}
+
+/* modal */
+#modal{position:fixed;inset:0;z-index:50;background:rgba(6,16,18,.72);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:max(24px,env(safe-area-inset-top,0px)) 12px 40px}
+#modal.open{display:flex}
+.card{background:var(--paper);color:var(--ink);border-radius:14px;max-width:760px;width:100%;padding:20px 22px 22px;box-shadow:0 20px 60px rgba(0,0,0,.5);position:relative}
+.card h3{margin:0 0 4px;font-size:1.25rem;font-weight:900}
+.card .where{color:var(--teal);font-size:.85rem;font-weight:700}
+.card p{margin:.5em 0}
+.x{position:absolute;right:10px;top:8px;background:none;border:none;font-size:1.6rem;color:var(--ink2);line-height:1}
+.btn{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-weight:700}
+.btn.ghost{background:transparent;color:var(--teal);border:1.5px solid var(--teal)}
+.btn:disabled{opacity:.5}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.fb{margin-top:12px;padding:10px 14px;border-radius:8px;display:none;font-size:.95rem}
+.fb.show{display:block}
+.fb.ok{background:#e1f3ea;border-left:4px solid var(--ok)}
+.fb.no{background:#fbe7e3;border-left:4px solid var(--alarm)}
+.fb.hint{background:#fdf3d9;border-left:4px solid var(--amber)}
+.lcd{font-family:var(--mono);background:var(--lcd);color:var(--lcdink);border-radius:6px;padding:4px 12px;font-size:1.6rem;display:inline-block;border:3px solid #3e5a3a}
+.paper{background:#fffef8;border:1px solid #e3dcc4;border-radius:6px;padding:10px 14px;font-size:.95rem}
+input.num{font-family:var(--mono);font-size:1.3rem;width:9ch;padding:4px 8px;border:2px solid var(--steel);border-radius:6px;background:#fff;color:var(--ink)}
+select{font:inherit;border:1.5px solid var(--steel);border-radius:6px;padding:3px 6px;background:#fff;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{background:#fff;border:1.5px solid var(--steel);border-radius:8px;padding:5px 10px;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.seq{min-height:48px;border:2px dashed var(--steel);border-radius:8px;padding:6px;display:flex;flex-direction:column;gap:5px;margin:8px 0}
+.seq button{text-align:left;background:#eef4f2;border:1px solid var(--tile2);border-radius:6px;padding:5px 10px;color:var(--ink)}
+.seq .n{font-family:var(--mono);color:var(--teal);margin-right:6px}
+.sheet{overflow-x:auto;margin:8px 0}
+.sheet table{border-collapse:collapse;font-family:var(--mono);font-size:.92rem}
+.sheet td,.sheet th{border:1px solid #c9d3d0;padding:3px 8px;text-align:right}
+.sheet th{background:#e8eeec;font-weight:400;color:var(--ink2)}
+.sheet td.sel{background:#d6ecff}
+.fbar{font-family:var(--mono);background:#fff;border:1px solid #c9d3d0;padding:4px 10px;border-radius:4px;font-size:.95rem}
+.tbl{overflow-x:auto}
+.tbl table{border-collapse:collapse;font-size:.9rem;width:100%}
+.tbl td,.tbl th{border-bottom:1px solid #dfe6e3;padding:3px 8px;text-align:right}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.svgbox{overflow-x:auto}
+.svgbox svg{width:100%;min-width:520px;height:auto;display:block}
+.svgbox text{font-size:12px;fill:var(--ink2);font-family:var(--sans)}
+.dx{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
+.dx .c{border:1px solid #d8e0dd;border-radius:10px;padding:8px 10px;background:#fff}
+.dx .c b{font-family:var(--mono)}
+.keypad{display:grid;grid-template-columns:repeat(3,64px);gap:8px;margin:10px 0}
+.keypad button{height:52px;font-family:var(--mono);font-size:1.4rem;border-radius:8px;border:none;background:#24383c;color:var(--paper)}
+.keypad button:hover{background:var(--teal)}
+.who{display:flex;gap:12px;align-items:flex-start;margin:8px 0}
+.who .av{flex:0 0 46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:1.4rem;background:#e4efec}
+.who .bub{background:#eef4f2;border-radius:4px 12px 12px 12px;padding:8px 12px}
+.who .nm{font-size:.8rem;color:var(--teal);font-weight:700}
+.end-stats{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0}
+.end-stats div{font-size:.85rem;color:var(--ink2)}
+.end-stats b{display:block;font-family:var(--mono);font-size:1.6rem;color:var(--ink)}
+.foot{margin-top:18px;font-size:.85rem;color:var(--steel)}
+.foot a{color:var(--amber)}
+</style>
+</head>
+<body>
+<header id="hud">
+  <div class="row">
+    <h1>校正室密室逃脫<small>W1 容量器具校正 · 班級真實數據(2026-09-29)</small></h1>
+    <div class="frags" aria-label="密碼碎片">
+      <div class="frag" id="fr0"><span>?</span><i>①</i></div>
+      <div class="frag" id="fr1"><span>?</span><i>②</i></div>
+      <div class="frag" id="fr2"><span>?</span><i>③</i></div>
+      <div class="frag" id="fr3"><span>?</span><i>④</i></div>
+    </div>
+    <div class="clock" id="clock" title="稽核倒數">45:00</div>
+    <span class="pts" id="pts">積分 0</span>
+    <button class="hudbtn" id="login">登入學號</button>
+    <button class="hudbtn" id="reset">重新開始</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="roombar" id="rooms" aria-label="房間"></nav>
+  <div id="stage" role="region" aria-label="場景"></div>
+  <div class="objlist" id="objlist" aria-label="本房間可調查的物件"></div>
+
+  <div class="lower">
+    <section class="panel">
+      <h2>背包(點物品可查看)</h2>
+      <div class="inv" id="inv"></div>
+    </section>
+    <section class="panel">
+      <h2>調查紀錄</h2>
+      <ul id="log"></ul>
+    </section>
+  </div>
+  <p class="foot">數據來源:<a href="materials/w01_class_data_corrected.xlsx">W01 班級數據(修正版)</a>,學號已匿名。換算:V(µL) = m(g) × Fb ÷ ρw × 1000,Fb = 1.0011,ρw(32 °C) = 0.99503 g/mL。
+  · <a href="detective.html">Data Detective</a> · <a href="index.html">回 W1</a></p>
+</main>
+
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle"><div class="card" id="mcard"></div></div>
+
+<script type="module" src="assess_firebase.js"></script>
+<script>
+/* ============================================================
+   數據:15 位 × 10 次單次質量 (g),與 detective.html 相同
+   ============================================================ */
+var D=[[0.1927,0.1918,0.1917,0.1924,0.1922,0.1914,0.1914,0.1917,0.192,0.1919],[0.1972,0.1994,0.189,0.1892,0.2002,0.1894,0.1901,0.1898,0.1994,0.1963],[0.1932,0.1905,0.1895,0.1884,0.1949,0.1942,0.1859,0.1883,0.1876,0.1937],[0.1903,0.1893,0.1881,0.1897,0.1888,0.1871,0.1856,0.1958,0.1889,0.1953],[0.1892,0.1891,0.1777,0.1736,0.1887,0.1885,0.1893,0.189,0.1892,0.1885],[0.1895,0.1895,0.1892,0.19,0.1896,0.1898,0.1904,0.1908,0.1894,0.1898],[0.1899,0.1951,0.19,0.1893,0.1899,0.1909,0.2061,0.189,0.189,0.1939],[0.211,0.1839,0.1898,0.1868,0.203,0.1899,0.1943,0.1905,0.1553,0.1885],[0.1927,0.1921,0.1901,0.1901,0.1895,0.1908,0.1893,0.1835,0.1896,0.1923],[0.1875,0.1877,0.1997,0.1922,0.1908,0.1892,0.1978,0.1906,0.1804,0.1867],[0.1843,0.1882,0.1887,0.1886,0.1891,0.1913,0.2487,0.1353,0.192,0.1764],[0.1894,0.1842,0.1889,0.1886,0.1892,0.2003,0.1912,0.1901,0.1906,0.1809],[0.1884,0.1887,0.1883,0.1884,0.1904,0.1897,0.1881,0.1939,0.1889,0.1904],[0.1891,0.1896,0.1887,0.1884,0.188,0.1888,0.1887,0.1892,0.1891,0.197],[0.1909,0.1906,0.1894,0.1913,0.1915,0.1738,0.1909,0.1923,0.1914,0.1904]];
+var RHO=0.99503,FB=1.0011,NOM=200,T9=2.262;
+function toUL(g){return g*FB/RHO*1000}
+var C=D.map(function(r){return r.map(toUL)});
+function st(a){var n=a.length,m=a.reduce(function(s,x){return s+x},0)/n,ss=a.reduce(function(s,x){return s+(x-m)*(x-m)},0),sd=Math.sqrt(ss/(n-1)),hw=T9*sd/Math.sqrt(n);return{m:m,sd:sd,rsd:sd/m*100,hw:hw,lo:m-hw,hi:m+hw,sdp:Math.sqrt(ss/n)}}
+var S=C.map(st);
+function lab(i){return 'S'+(i<9?'0':'')+(i+1)}
+function f(x,d){return x.toFixed(d==null?2:d)}
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+/* ============================================================
+   狀態(仿 escape-game-engine:scene / inventory / flags)
+   ============================================================ */
+var KEY='w01escape_v1',LIMIT=45*60;
+var G;
+function fresh(){return{scene:'A',items:[],flags:{},frags:[null,null,null,null],solved:{},hints:{},pts:0,elapsed:0,log:[],done:false}}
+function load(){try{G=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){G=null}if(!G||!G.flags)G=fresh()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(G))}catch(e){}}
+function has(it){return G.items.indexOf(it)>=0}
+function give(it){if(!has(it)){G.items.push(it);note('獲得:'+ITEMS[it].icon+' '+ITEMS[it].name)}renderInv();save()}
+function flag(k){return !!G.flags[k]}
+function setFlag(k){G.flags[k]=true;save()}
+function note(t){G.log.push(t);renderLog()}
+function addPts(n){G.pts+=n;$('pts').textContent='積分 '+G.pts;save()}
+function setFrag(i,d){G.frags[i]=d;renderFrags();save()}
+
+/* ---------- 紀錄到 Firebase(與 detective.html 相同的 AssessFB 介面) ---------- */
+var LOGGING=false,ATT={},MIS={},SIDK='food_analysis_student_id';
+function ev(o){if(!LOGGING||!window.AssessFB)return;try{window.AssessFB.log(o)}catch(e){}}
+function ans(qid,ok,o){o=o||{};ATT[qid]=(ATT[qid]||0)+1;if(ok===false&&o.misconception)MIS[o.misconception]=(MIS[o.misconception]||0)+1;
+  ev({event_type:'answer',question_id:'ESC-'+qid,is_correct:ok,attempts:ATT[qid],qtype:o.qtype||'mcq',bloom:o.bloom||null,topic:o.topic||null,misconception:(ok===false&&o.misconception)?o.misconception:null,chapter:'LAB-W01'})}
+function login(){var b=$('login');b.disabled=true;b.textContent='連線中…';var t=0;
+  (function poll(){
+    if(window.AssessFB){window.AssessFB.init({chapter:'LAB-W01',game:'escape'}).then(function(){LOGGING=true;b.textContent='已記錄('+window.AssessFB.getStudentId()+')'}).catch(function(){b.disabled=false;b.textContent='登入學號'});return}
+    if(++t>120){b.disabled=false;b.textContent='登入失敗,稍後再試';return}
+    setTimeout(poll,50)})()}
+$('login').onclick=login;
+try{if(localStorage.getItem(SIDK))login()}catch(e){}
+
+/* ============================================================
+   物品
+   ============================================================ */
+var ITEMS={
+  temp:{icon:'🌡️',name:'水溫紀錄',desc:'<p>實驗當天蒸餾水溫度:<b>32 °C</b>。</p><p class="paper">便利貼:「水溫要先和室溫平衡,不然密度會一直變。」</p>'},
+  density:{icon:'📄',name:'水密度表',desc:'<div class="tbl"><table><tr><th>水溫 (°C)</th><th>ρw (g/mL,Tanaka)</th></tr><tr><td>20</td><td>0.99821</td></tr><tr><td>25</td><td>0.99705</td></tr><tr><td>28</td><td>0.99624</td></tr><tr><td>30</td><td>0.99565</td></tr><tr><td>32</td><td>0.99503</td></tr><tr><td>35</td><td>0.99403</td></tr></table></div><p>底部手寫:<b>浮力校正 Fb = 1.0011</b>(空氣比砝碼密度小,秤到的水會被「托輕」一點)。</p><p class="paper">V = m × Fb ÷ ρw</p>'},
+  drawerKey:{icon:'🗝️',name:'抽屜鑰匙',desc:'<p>天平底座下找到的小鑰匙。上面刻著「SOP」。</p>'},
+  cardB:{icon:'💳',name:'電腦室門禁卡',desc:'<p>卡片背面印著正確的重量法校正流程。</p>'},
+  ttable:{icon:'📐',name:'t 值卡',desc:'<p>自由度 df = n − 1 = 9,雙尾 95%:<b>t = 2.262</b>(不是 1.96)。</p><p class="paper">95% CI = x̄ ± t × SD ÷ √n</p>'},
+  report:{icon:'📁',name:'診斷報告',desc:'<p>你分好類的誤差診斷:系統誤差、隨機誤差、過失誤差。出口門要掃描這份報告。</p>'}
+};
+
+/* ============================================================
+   場景圖(SVG)
+   ============================================================ */
+function tiles(){var s='<defs><pattern id="tl" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#d7e6e2"/><path d="M40 0H0V40" fill="none" stroke="#c3d6d1" stroke-width="2"/></pattern><linearGradient id="bench" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3d40"/><stop offset="1" stop-color="#1c2b2e"/></linearGradient><linearGradient id="steel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9d4d5"/><stop offset="1" stop-color="#8fa3a6"/></linearGradient></defs><rect width="1000" height="560" fill="url(#tl)"/>';return s}
+function door(x,locked,label){return '<g><rect x="'+x+'" y="120" width="130" height="300" rx="4" fill="#5d7275"/><rect x="'+(x+8)+'" y="128" width="114" height="292" fill="#7c9295"/><rect x="'+(x+30)+'" y="150" width="70" height="60" fill="#b9d3d6" stroke="#5d7275" stroke-width="4"/><rect x="'+(x+98)+'" y="270" width="16" height="34" rx="3" fill="'+(locked?'#e0533d':'#2f9e6b')+'"/><text x="'+(x+65)+'" y="245" text-anchor="middle" font-size="15" font-weight="700" fill="#10252a" font-family="Noto Sans TC">'+label+'</text></g>'}
+var SVG={
+A:function(){return '<svg viewBox="0 0 1000 560" aria-hidden="true">'+tiles()+
+  // poster
+  '<g><rect x="70" y="60" width="170" height="210" fill="#fffef8" stroke="#bfb79c" stroke-width="3"/><text x="155" y="92" text-anchor="middle" font-size="17" font-weight="900" fill="#10252a" font-family="Noto Sans TC">水的密度</text>'+[0,1,2,3,4,5].map(function(i){return '<rect x="92" y="'+(108+i*24)+'" width="126" height="14" fill="'+(i==4?'#f2b632':'#e5e9e4')+'"/>'}).join('')+'</g>'+
+  // bench
+  '<rect x="0" y="420" width="1000" height="26" fill="#3a4f53"/><rect x="0" y="446" width="1000" height="114" fill="url(#bench)"/>'+
+  // drawer
+  '<rect x="300" y="462" width="200" height="70" rx="6" fill="#33484c" stroke="#5d7275" stroke-width="3"/><rect x="375" y="490" width="50" height="12" rx="6" fill="#8fa3a6"/>'+
+  // balance
+  '<g><rect x="300" y="250" width="230" height="170" rx="8" fill="url(#steel)" opacity=".55" stroke="#8fa3a6" stroke-width="3"/><rect x="280" y="380" width="270" height="44" rx="6" fill="#e9eeee" stroke="#8fa3a6" stroke-width="3"/><rect x="335" y="390" width="120" height="26" rx="3" fill="#b9e3a1" stroke="#3e5a3a" stroke-width="2"/><text x="395" y="409" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="18" fill="#16301a">0.1895 g</text><ellipse cx="415" cy="375" rx="60" ry="8" fill="#c9d4d5"/><rect x="395" y="335" width="40" height="38" rx="4" fill="#ffffff" opacity=".8" stroke="#8fa3a6"/></g>'+
+  // beaker + thermometer
+  '<g><path d="M610 300h70v110a10 10 0 0 1-10 10h-50a10 10 0 0 1-10-10z" fill="#bfe0f0" opacity=".7" stroke="#5d7275" stroke-width="3"/><rect x="655" y="230" width="10" height="170" rx="5" fill="#fff" stroke="#5d7275" stroke-width="2"/><rect x="657" y="320" width="6" height="78" fill="#e0533d"/><circle cx="660" cy="400" r="10" fill="#e0533d"/></g>'+
+  door(820,!has('cardB'),'電腦室')+'</svg>'},
+B:function(){return '<svg viewBox="0 0 1000 560" aria-hidden="true">'+tiles()+
+  door(20,false,'天平室')+
+  // whiteboard
+  '<g><rect x="520" y="50" width="300" height="190" fill="#fbfcfb" stroke="#8fa3a6" stroke-width="6"/><text x="545" y="95" font-size="20" fill="#2c7a7b" font-family="Share Tech Mono,monospace">x̄ = Σx ÷ ?</text><text x="545" y="130" font-size="20" fill="#2c7a7b" font-family="Share Tech Mono,monospace">SD = √(Σ(x−x̄)² ÷ ?)</text><text x="545" y="165" font-size="20" fill="#e0533d" font-family="Share Tech Mono,monospace">CI = x̄ ± ? × SD ÷ ?</text></g>'+
+  '<rect x="0" y="420" width="1000" height="26" fill="#3a4f53"/><rect x="0" y="446" width="1000" height="114" fill="url(#bench)"/>'+
+  // monitor
+  '<g><rect x="200" y="200" width="250" height="160" rx="8" fill="#1c2b2e"/><rect x="212" y="212" width="226" height="130" fill="#e8f5ee"/>'+[0,1,2,3,4].map(function(r){return [0,1,2,3,4,5].map(function(c){return '<rect x="'+(218+c*36)+'" y="'+(220+r*22)+'" width="34" height="20" fill="'+(r==1&&c<4?'#d6ecff':'#fff')+'" stroke="#c9d3d0"/>'}).join('')}).join('')+'<rect x="305" y="360" width="40" height="40" fill="#5d7275"/><rect x="270" y="398" width="110" height="10" rx="4" fill="#5d7275"/></g>'+
+  // notebook
+  '<g transform="rotate(-6 640 380)"><rect x="560" y="340" width="170" height="80" rx="4" fill="#fffef8" stroke="#bfb79c" stroke-width="3"/>'+[0,1,2,3].map(function(i){return '<line x1="575" x2="715" y1="'+(360+i*16)+'" y2="'+(360+i*16)+'" stroke="#c9d3d0"/>'}).join('')+'<text x="645" y="398" text-anchor="middle" font-size="14" fill="#e0533d" font-family="Noto Sans TC">S11 紀錄</text></g>'+
+  door(850,!(flag('excel')&&has('ttable')),'主任室')+'</svg>'},
+C:function(){return '<svg viewBox="0 0 1000 560" aria-hidden="true">'+tiles()+
+  door(20,false,'電腦室')+
+  // forest screen
+  '<g><rect x="190" y="50" width="300" height="200" rx="6" fill="#1c2b2e"/><rect x="200" y="60" width="280" height="180" fill="#f6f8f4"/><line x1="410" x2="410" y1="68" y2="232" stroke="#e0533d" stroke-dasharray="6 4" stroke-width="2"/>'+S.map(function(s,i){var X=function(v){return 210+(v-165)/50*260};return '<line x1="'+X(s.lo)+'" x2="'+X(s.hi)+'" y1="'+(74+i*10.5)+'" y2="'+(74+i*10.5)+'" stroke="#2c7a7b" stroke-width="3"/>'}).join('')+'</g>'+
+  // RSD board
+  '<g><rect x="530" y="60" width="200" height="180" fill="#2c7a7b"/><text x="630" y="92" text-anchor="middle" font-size="16" fill="#fff" font-weight="700" font-family="Noto Sans TC">RSD 看板</text>'+[0,1,2,3,4].map(function(i){return '<rect x="548" y="'+(106+i*24)+'" width="'+[60,140,90,120,40][i]+'" height="12" fill="'+['#2f9e6b','#f2b632','#f2b632','#e0533d','#2f9e6b'][i]+'"/>'}).join('')+'</g>'+
+  '<rect x="0" y="420" width="1000" height="26" fill="#3a4f53"/><rect x="0" y="446" width="1000" height="114" fill="url(#bench)"/>'+
+  // cards on desk
+  '<g>'+[0,1,2,3,4,5].map(function(i){return '<rect x="'+(250+i*36)+'" y="'+(360+(i%2)*10)+'" width="58" height="44" rx="4" fill="#fffef8" stroke="#bfb79c" stroke-width="2" transform="rotate('+(i*5-12)+' '+(279+i*36)+' 382)"/>'}).join('')+'</g>'+
+  // exit door with keypad
+  '<g><rect x="800" y="110" width="160" height="310" rx="4" fill="#24383c"/><rect x="810" y="120" width="140" height="300" fill="#33484c"/><text x="880" y="160" text-anchor="middle" font-size="20" font-weight="900" fill="#f2b632" font-family="Noto Sans TC">出口</text><rect x="845" y="230" width="70" height="90" rx="6" fill="#10252a"/>'+[0,1,2].map(function(r){return [0,1,2].map(function(c){return '<rect x="'+(853+c*20)+'" y="'+(258+r*20)+'" width="14" height="14" rx="2" fill="#8fa3a6"/>'}).join('')}).join('')+'<rect x="853" y="238" width="54" height="14" fill="#b9e3a1"/></g>'+
+  '</svg>'}
+};
+
+/* ============================================================
+   場景與熱點(rect = x,y,w,h,單位 %)
+   ============================================================ */
+var ROOMS=[{id:'A',name:'天平室'},{id:'B',name:'電腦室'},{id:'C',name:'主任室'}];
+function roomOpen(id){if(id==='A')return true;if(id==='B')return has('cardB');if(id==='C')return flag('excel')&&has('ttable');return false}
+var HS={
+A:[
+  {id:'poster',label:'牆上的海報',rect:[6,10,19,39],act:function(){inspectPickup('density','牆上的海報','一張護貝的水密度表,32 °C 那一列被螢光筆畫起來。')}},
+  {id:'thermo',label:'燒杯和溫度計',rect:[59,40,11,36],act:function(){inspectPickup('temp','燒杯和溫度計','溫度計插在平衡過的蒸餾水裡,讀數停在 32 °C。')}},
+  {id:'balance',label:'分析天平',rect:[28,44,27,33],act:function(){openPuzzle('balance')},done:function(){return G.solved.balance}},
+  {id:'drawer',label:'上鎖的抽屜',rect:[30,82,20,14],act:function(){if(!has('drawerKey'))return say('上鎖的抽屜','抽屜鎖住了。鑰匙孔很小,大概藏在天平附近。');openPuzzle('sop')},done:function(){return G.solved.sop},locked:function(){return !has('drawerKey')}},
+  {id:'doorB',label:'往電腦室',rect:[82,21,13,54],act:function(){if(!has('cardB'))return say('電腦室的門','讀卡機亮紅燈。你需要電腦室門禁卡。');go('B')},locked:function(){return !has('cardB')}}
+],
+B:[
+  {id:'doorA',label:'回天平室',rect:[2,21,13,54],act:function(){go('A')}},
+  {id:'pc',label:'電腦(老師的 Excel)',rect:[20,36,25,37],act:function(){openPuzzle('excel')},done:function(){return G.solved.excel}},
+  {id:'wb',label:'白板',rect:[52,9,30,34],act:function(){openPuzzle('cloze')},done:function(){return G.solved.cloze}},
+  {id:'nb',label:'S11 的紀錄本',rect:[56,58,17,19],act:function(){openPuzzle('s11')},done:function(){return G.solved.s11}},
+  {id:'doorC',label:'往主任室',rect:[85,21,13,54],act:function(){if(!roomOpen('C'))return say('主任室的門','門上貼著:「Excel 的錯沒修好、沒帶 t 值卡,不准進來。」');go('C')},locked:function(){return !roomOpen('C')}}
+],
+C:[
+  {id:'doorB2',label:'回電腦室',rect:[2,21,13,54],act:function(){go('B')}},
+  {id:'forest',label:'森林圖螢幕',rect:[19,9,30,36],act:function(){openPuzzle('forest')},done:function(){return G.solved.forest}},
+  {id:'rsd',label:'RSD 看板',rect:[53,11,20,32],act:function(){openPuzzle('rsd')},done:function(){return G.solved.rsd}},
+  {id:'cards',label:'桌上的案件卡',rect:[24,62,25,15],act:function(){openPuzzle('dx')},done:function(){return G.solved.dx}},
+  {id:'exit',label:'出口密碼鎖',rect:[80,20,16,55],act:function(){openPuzzle('exit')},locked:function(){return !(G.frags.every(function(x){return x!==null})&&has('report'))}}
+]};
+
+/* ============================================================
+   渲染
+   ============================================================ */
+function render(){
+  var sc=G.scene;
+  $('rooms').innerHTML=ROOMS.map(function(r){return '<button '+(r.id===sc?'aria-current="true"':'')+(roomOpen(r.id)?'':' disabled')+' data-r="'+r.id+'">'+(roomOpen(r.id)?'':'🔒 ')+r.name+'</button>'}).join('');
+  [].forEach.call($('rooms').querySelectorAll('button'),function(b){b.onclick=function(){go(b.dataset.r)}});
+  var h=SVG[sc]();
+  HS[sc].forEach(function(o){var r=o.rect,cls='hs'+(o.done&&o.done()?' done':'')+(o.locked&&o.locked()?' locked':'');
+    h+='<button class="'+cls+'" data-h="'+o.id+'" style="left:'+r[0]+'%;top:'+r[1]+'%;width:'+r[2]+'%;height:'+r[3]+'%" aria-label="'+esc(o.label)+'"><span>'+esc(o.label)+'</span></button>'});
+  $('stage').innerHTML=h;
+  $('objlist').innerHTML=HS[sc].map(function(o){return '<button data-h="'+o.id+'">'+esc(o.label)+'</button>'}).join('');
+  [].forEach.call(document.querySelectorAll('[data-h]'),function(b){b.onclick=function(){var o=HS[sc].filter(function(x){return x.id===b.dataset.h})[0];o.act()}});
+  renderInv();renderFrags();renderLog();$('pts').textContent='積分 '+G.pts;
+}
+function renderInv(){var el=$('inv');if(!G.items.length){el.innerHTML='<span class="empty">還沒有東西。點場景裡閃黃點的物件調查。</span>';return}
+  el.innerHTML=G.items.map(function(k){return '<button data-i="'+k+'">'+ITEMS[k].icon+' '+ITEMS[k].name+'</button>'}).join('');
+  [].forEach.call(el.querySelectorAll('button'),function(b){b.onclick=function(){var it=ITEMS[b.dataset.i];modal('<h3>'+it.icon+' '+it.name+'</h3>'+it.desc+'<div class="acts"><button class="btn" data-close>收起來</button></div>')}})}
+function renderFrags(){G.frags.forEach(function(d,i){var el=$('fr'+i);el.className='frag'+(d!==null?' got':'');el.firstChild.textContent=d!==null?d:'?'})}
+function renderLog(){$('log').innerHTML=G.log.slice(-30).map(function(t){return '<li>'+esc(t)+'</li>'}).join('');$('log').scrollTop=1e6}
+function go(id){if(!roomOpen(id))return;G.scene=id;save();render();note('進入'+ROOMS.filter(function(r){return r.id===id})[0].name)}
+
+/* ---------- modal ---------- */
+var lastFocus=null;
+function modal(html){lastFocus=lastFocus&&$('modal').classList.contains('open')?lastFocus:document.activeElement;$('mcard').onkeydown=null;$('mcard').innerHTML='<button class="x" data-close aria-label="關閉">×</button>'+html;$('modal').classList.add('open');
+  [].forEach.call($('mcard').querySelectorAll('[data-close]'),function(b){b.onclick=closeModal});
+  var first=$('mcard').querySelector('input,select,.chip,.btn');(first||$('mcard').querySelector('.x')).focus()}
+function closeModal(){$('modal').classList.remove('open');render();if(lastFocus&&document.body.contains(lastFocus))lastFocus.focus()}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('modal').classList.contains('open'))closeModal()});
+$('modal').addEventListener('click',function(e){if(e.target===$('modal'))closeModal()});
+function say(t,msg){modal('<h3>'+t+'</h3><p>'+msg+'</p><div class="acts"><button class="btn" data-close>好</button></div>')}
+function inspectPickup(it,t,msg){if(has(it))return modal('<h3>'+t+'</h3><p>'+msg+'</p><p>(已經收進背包了)</p>'+ITEMS[it].desc+'<div class="acts"><button class="btn" data-close>好</button></div>');
+  modal('<h3>'+t+'</h3><p>'+msg+'</p>'+ITEMS[it].desc+'<div class="acts"><button class="btn" id="take">收進背包</button></div>');$('take').onclick=function(){give(it);closeModal()}}
+function fb(html,cls){var el=$('fb');el.className='fb show '+cls;el.innerHTML=html}
+function hintBtn(pid){return '<button class="btn ghost" id="hintb">提示(−2 分)</button>'}
+function wireHint(pid){var b=$('hintb');if(!b)return;b.onclick=function(){var P=PUZ[pid],k=G.hints[pid]||0;if(k>=P.hints.length){fb('沒有更多提示了。','hint');return}G.hints[pid]=k+1;addPts(-2);fb('提示 '+(k+1)+'/'+P.hints.length+':'+P.hints[k],'hint');ev({event_type:'hint',question_id:'ESC-'+pid,hint_level:k+1,chapter:'LAB-W01'})}}
+function win(pid,pts,html,after){if(G.solved[pid]){fb(html,'ok');return}G.solved[pid]=true;addPts(pts);fb(html,'ok');var b=$('mcard').querySelector('#chk');if(b)b.disabled=true;
+  var a=$('mcard').querySelector('.acts');var c=document.createElement('button');c.className='btn';c.textContent='繼續';c.onclick=closeModal;a.appendChild(c);if(after)after();save();c.focus()}
+function head(where,title){return '<div class="where">'+where+'</div><h3>'+title+'</h3>'}
+function strip(vals,lo,hi){var W=560,H=48,X=function(v){return 14+(Math.max(lo,Math.min(hi,v))-lo)/(hi-lo)*(W-28)};var s='<svg viewBox="0 0 '+W+' '+H+'"><line x1="'+X(NOM)+'" x2="'+X(NOM)+'" y1="4" y2="30" stroke="#e0533d" stroke-width="2" stroke-dasharray="5 3"/>';
+  vals.forEach(function(v){s+='<circle cx="'+X(v)+'" cy="17" r="6" fill="#2c7a7b" fill-opacity=".6"/>'});for(var v=Math.ceil(lo/20)*20;v<=hi;v+=20)s+='<text x="'+X(v)+'" y="45" text-anchor="middle">'+v+'</text>';return s+'</svg>'}
+
+/* ============================================================
+   謎題(對應引擎的 puzzle kinds:code / order / choice / cloze / group / quiz)
+   ============================================================ */
+var PUZ={
+/* ---- code:質量換算體積 ---- */
+balance:{hints:['V = m × Fb ÷ ρw。從背包拿出水密度表,32 °C 的 ρw 是 0.99503。','0.1895 × 1.0011 ÷ 0.99503 = 0.19066 mL,再 × 1000 變成 µL。'],
+ open:function(){var need=!(has('temp')&&has('density'));
+  modal(head('天平室 · 分析天平','天平的數字不是體積')+
+  '<p>螢幕停在 S06 的第 1 次結果:</p><p><span class="lcd">0.1895 g</span></p>'+
+  '<p>底座有一個三位數密碼鎖,旁邊寫著:「把這次結果換成 <b>µL</b>,四捨五入到整數。」</p>'+
+  (need?'<p class="paper">你還缺換算需要的資訊。先在這個房間找找水溫和水的密度。</p>':'')+
+  '<p><label>µL:<input class="num" id="in" inputmode="decimal" '+(need?'disabled':'')+'></label></p>'+
+  '<div class="acts"><button class="btn" id="chk" '+(need?'disabled':'')+'>開鎖</button>'+hintBtn()+'</div><div class="fb" id="fb"></div>');
+  wireHint('balance');if(need)return;
+  $('chk').onclick=function(){var v=parseFloat($('in').value),ok=Math.abs(v-190.66)<=0.5,mis=null,msg;
+   if(ok){ans('balance',true,{qtype:'numeric',topic:'gravimetric-conversion'});return win('balance',10,'喀一聲,鎖開了。0.1895 g → <b>190.66 µL</b>。天平底座下面黏著一把小鑰匙。<br>注意:標稱 200 µL,這一次少了將近 10 µL。',function(){give('drawerKey');note('天平密碼:191')})}
+   if(Math.abs(v-190.45)<0.3){mis='forgot-fb';msg='很接近。你只除了 ρw,忘了乘浮力校正 Fb = 1.0011。'}
+   else if(Math.abs(v-188.56)<0.6){mis='density-multiply';msg='方向反了:體積 = 質量 ÷ 密度,你乘了密度。'}
+   else if(Math.abs(v-189.5)<0.4){mis='no-density';msg='直接把 g 當成 mL 了。水在 32 °C 的密度不是 1。'}
+   else if(v>0&&v<1){mis='unit-ul';msg='單位要 µL(1 mL = 1000 µL)。'}
+   else msg='鎖沒有動。檢查公式 V = m × Fb ÷ ρw。';
+   ans('balance',false,{qtype:'numeric',topic:'gravimetric-conversion',misconception:mis});fb(msg,'no')}}},
+
+/* ---- order:SOP ---- */
+sop:{hints:['水溫和天平的準備一定在吸液之前。','最後一步才是把質量換算成體積。'],
+ steps:['讓蒸餾水與室溫平衡,記錄水溫','秤量瓶放上天平,按 TARE 歸零','吸管預潤後,吸取 200 µL','以固定角度把液體排入秤量瓶','讀取並記錄質量','用 Fb ÷ ρw 把質量換算成體積'],
+ open:function(){var P=this,pool=[3,0,5,2,4,1],seq=[];
+  function draw(){
+   $('pool').innerHTML=pool.filter(function(i){return seq.indexOf(i)<0}).map(function(i){return '<button class="chip" data-s="'+i+'">'+P.steps[i]+'</button>'}).join('')||'<span style="color:var(--ink2)">全部排好了</span>';
+   $('seq').innerHTML=seq.length?seq.map(function(i,k){return '<button data-q="'+i+'"><span class="n">'+(k+1)+'</span>'+P.steps[i]+'</button>'}).join(''):'<span style="color:var(--ink2);padding:6px">點上面的步驟,依序放進這裡;點這裡的步驟可以拿回去。</span>';
+   [].forEach.call($('pool').querySelectorAll('button'),function(b){b.onclick=function(){seq.push(+b.dataset.s);draw()}});
+   [].forEach.call($('seq').querySelectorAll('button'),function(b){b.onclick=function(){seq.splice(seq.indexOf(+b.dataset.q),1);draw()}})}
+  modal(head('天平室 · 抽屜','抽屜裡的門禁卡,背面要填流程')+'<p>卡片背面有六個空格:把重量法校正吸管的步驟排好,讀卡機才會認得。</p><div class="chips" id="pool"></div><div class="seq" id="seq"></div><div class="acts"><button class="btn" id="chk">刷卡</button>'+hintBtn()+'</div><div class="fb" id="fb"></div>');
+  wireHint('sop');draw();
+  $('chk').onclick=function(){if(seq.length<6){fb('還有步驟沒放進去。','no');return}
+   var ok=seq.every(function(v,i){return v===i});
+   if(ok){ans('sop',true,{qtype:'order',topic:'sop'});return win('sop',10,'讀卡機亮綠燈。<b>電腦室門禁卡</b>收進背包。',function(){give('cardB')})}
+   var wrong=seq.map(function(v,i){return v===i?null:i+1}).filter(function(x){return x}).join('、');
+   ans('sop',false,{qtype:'order',topic:'sop',misconception:seq.indexOf(5)<4?'convert-early':(seq.indexOf(1)>seq.indexOf(2)?'tare-late':'sop-order')});
+   fb('第 '+wrong+' 格的位置不對。','no')}}},
+
+/* ---- choice:Excel bug ---- */
+excel:{hints:['P、Q、R、S、T、U、V、W:用手指數一次。','10 次結果放在 P 到 Y,W 之後還有 X、Y。'],
+ open:function(){var v=D[13],cols='PQRSTUVWXY'.split(''),pick=null,miss={};
+  var tbl='<div class="sheet"><table><tr><th></th>'+cols.map(function(c){return '<th>'+c+'</th>'}).join('')+'</tr><tr><th>15</th>'+v.map(function(x,i){return '<td class="'+(i<8?'sel':'')+'">'+x.toFixed(4)+'</td>'}).join('')+'</tr><tr><th></th>'+cols.map(function(c,i){return '<th>#'+(i+1)+'</th>'}).join('')+'</tr></table></div>';
+  modal(head('電腦室 · 老師的 Excel','S14 到底穩不穩?')+'<p>Excel 算出 S14 的 RSD = <b>0.26%</b>(超級穩),Dashboard 卻說 <b>1.38%</b>。公式列:</p><p class="fbar">=STDEV(P15:W15)</p>'+tbl+
+   '<p><b>① 這個範圍實際涵蓋幾格?</b></p><div class="chips" id="cnt">'+[8,9,10].map(function(n){return '<button class="chip" aria-pressed="false" data-n="'+n+'">'+n+' 格</button>'}).join('')+'</div>'+
+   '<p><b>② 哪幾次沒被算到?</b>(可複選)</p><div class="chips" id="ms">'+cols.map(function(c,i){return '<button class="chip" aria-pressed="false" data-m="'+(i+1)+'">#'+(i+1)+'</button>'}).join('')+'</div>'+
+   '<div class="acts"><button class="btn" id="chk">檢查</button>'+hintBtn()+'</div><div class="fb" id="fb"></div>');
+  wireHint('excel');
+  [].forEach.call($('cnt').querySelectorAll('.chip'),function(b){b.onclick=function(){pick=+b.dataset.n;[].forEach.call($('cnt').querySelectorAll('.chip'),function(x){x.setAttribute('aria-pressed',x===b)})}});
+  [].forEach.call($('ms').querySelectorAll('.chip'),function(b){b.onclick=function(){var k=b.dataset.m;miss[k]=!miss[k];b.setAttribute('aria-pressed',!!miss[k])}});
+  $('chk').onclick=function(){var sel=Object.keys(miss).filter(function(k){return miss[k]}).map(Number).sort(function(a,b){return a-b});
+   if(pick===null){fb('先回答 ①。','no');return}
+   if(pick!==8){ans('excel-count',false,{topic:'excel-range',misconception:'range-count'});fb('再數一次 P 到 W。','no');return}
+   ans('excel-count',true,{topic:'excel-range'});
+   if(sel.join()!=='9,10'){ans('excel-missed',false,{qtype:'multi',topic:'excel-range',misconception:'missed-trials'});fb('① 對了。② 再想想:8 格是從第幾次排到第幾次?','no');return}
+   ans('excel-missed',true,{qtype:'multi',topic:'excel-range'});
+   var s=S[13];
+   win('excel',15,'抓到了。公式漏掉第 9、10 次,而第 10 次 0.1970 g(≈'+f(C[13][9],1)+' µL)正是最離群的一筆。把範圍改成 P:Y,S14 的真正結果是 平均 '+f(s.m)+' µL、SD '+f(s.sd)+' µL、<b>RSD '+f(s.rsd)+'%</b>。<br>螢幕右下角跳出一個數字:<b>密碼碎片 ① = 8</b>(公式真正涵蓋的格數)。',function(){setFlag('excel');setFrag(0,8);note('碎片 ① = 8')})}}},
+
+/* ---- cloze:白板公式 ---- */
+cloze:{hints:['樣本 SD 除的是自由度,不是 n。','95% CI 半寬 = t × SD ÷ √n;n = 10 時 df = 9。'],
+ blanks:[['n',['n','n − 1','√n']],['n − 1',['n','n − 1','√n']],['平均',['平均','SD','n']],['t',['t','z','n']],['√n',['n','√n','n − 1']],['2.262',['1.96','2.262','2.228']]],
+ open:function(){var B=this.blanks;function sel(i){return '<select id="b'+i+'" aria-label="空格 '+(i+1)+'"><option value="">?</option>'+B[i][1].map(function(o){return '<option>'+o+'</option>'}).join('')+'</select>'}
+  modal(head('電腦室 · 白板','白板上的公式被擦掉了')+'<div class="paper" style="font-size:1.05rem;line-height:2.3">'+
+   '平均 x̄ = Σx ÷ '+sel(0)+'<br>標準差 SD = √( Σ(x − x̄)² ÷ '+sel(1)+' )<br>RSD % = SD ÷ '+sel(2)+' × 100<br>95% CI = x̄ ± '+sel(3)+' × SD ÷ '+sel(4)+'<br>n = 10 時,t = '+sel(5)+'</div>'+
+   '<div class="acts"><button class="btn" id="chk">寫回白板</button>'+hintBtn()+'</div><div class="fb" id="fb"></div>');
+  wireHint('cloze');
+  $('chk').onclick=function(){var wrong=[],mis=null;B.forEach(function(b,i){var v=$('b'+i).value;if(v!==b[0]){wrong.push(i+1);if(!mis){if(i===1&&v==='n')mis='sd-divide-n';else if(i===5&&v==='1.96')mis='t-vs-z';else if(i===5&&v==='2.228')mis='t-df';else if(i===4)mis='ci-forgot-sqrt-n';else if(i===3)mis='t-vs-z';else mis='formula'}}});
+   if(!wrong.length){ans('cloze',true,{qtype:'cloze',topic:'formulas'});return win('cloze',10,'公式全部對。白板背後掉出一張 <b>t 值卡</b>:df = 9 時 t = 2.262。<br>為什麼不是 1.96?只有 10 次,樣本 SD 本身也不確定,t 分布的尾巴比常態分布厚。',function(){give('ttable')})}
+   ans('cloze',false,{qtype:'cloze',topic:'formulas',misconception:mis});fb('第 '+wrong.join('、')+' 格不對。','no')}}},
+
+/* ---- choice:S11 累計紀錄 ---- */
+s11:{hints:['單次 = 這次累計 − 上次累計。','第 7 次和第 8 次的差,一個太大一個太小,加起來剛好正常。'],
+ open:function(){var cum=[0.1843,0.3725,0.5612,0.7498,0.9389,1.1302,1.3789,1.5142,1.7062,1.8826],sel={};
+  modal(head('電腦室 · S11 的紀錄本','累計值看起來都很正常')+'<p>S11 是用「累計質量」記錄的:秤量瓶不倒掉,每加一次讀一次。</p><div class="tbl"><table><tr><th>次數</th>'+cum.map(function(c,i){return '<th>'+(i+1)+'</th>'}).join('')+'</tr><tr><td>累計 (g)</td>'+cum.map(function(c){return '<td style="font-family:var(--mono)">'+c.toFixed(4)+'</td>'}).join('')+'</tr></table></div>'+
+   '<p>10 次加總 1.8826 g,平均每次 0.188 g,看起來跟別人差不多。<b>哪幾次的單次值有問題?</b>(可複選)</p><div class="chips" id="ms">'+cum.map(function(c,i){return '<button class="chip" aria-pressed="false" data-m="'+(i+1)+'">第 '+(i+1)+' 次</button>'}).join('')+'</div>'+
+   '<div class="acts"><button class="btn" id="chk">圈出來</button>'+hintBtn()+'</div><div class="fb" id="fb"></div>');
+  wireHint('s11');
+  [].forEach.call($('ms').querySelectorAll('.chip'),function(b){b.onclick=function(){var k=b.dataset.m;sel[k]=!sel[k];b.setAttribute('aria-pressed',!!sel[k])}});
+  $('chk').onclick=function(){var s=Object.keys(sel).filter(function(k){return sel[k]}).map(Number).sort(function(a,b){return a-b}).join();
+   if(s==='7,8'){ans('s11',true,{qtype:'multi',topic:'gross-error'});return win('s11',15,'第 7 次單次 = 1.3789 − 1.1302 = <b>0.2487 g</b>,第 8 次 = 1.5142 − 1.3789 = <b>0.1353 g</b>。一個多 60 µL、一個少 55 µL,累計值互相抵消,所以只看總和完全看不出來。這是<b>過失誤差</b>(多半是讀錯或抄錯),要回頭查原始紀錄,不能直接平均掉。<br>紀錄本最後一頁寫著:<b>密碼碎片 ② = 7</b>(第一筆出錯的次數)。',function(){setFrag(1,7);note('碎片 ② = 7')})}
+   ans('s11',false,{qtype:'multi',topic:'gross-error',misconception:'cumulative-diff'});fb('不對。先把每一次的單次值算出來再看。','no')}}},
+
+/* ---- code + forest ---- */
+forest:{hints:['看紅色虛線 200 穿過哪幾條橫線。','有兩位。再看看他們的 RSD。'],
+ open:function(){var lo=165,hi=215,W=640,rh=22,top=22,H=top+rh*15+30,X=function(v){return 52+(v-lo)/(hi-lo)*(W-70)};
+  var s='<svg viewBox="0 0 '+W+' '+H+'"><line x1="'+X(NOM)+'" x2="'+X(NOM)+'" y1="'+(top-8)+'" y2="'+(H-24)+'" stroke="#e0533d" stroke-width="2" stroke-dasharray="6 4"/><text x="'+X(NOM)+'" y="'+(top-10)+'" text-anchor="middle" style="fill:#e0533d;font-weight:700">標稱 200</text>';
+  for(var v=170;v<=210;v+=10)s+='<text x="'+X(v)+'" y="'+(H-8)+'" text-anchor="middle">'+v+'</text>';
+  S.forEach(function(q,i){var y=top+rh*i+rh/2;s+='<text x="44" y="'+(y+4)+'" text-anchor="end">'+lab(i)+'</text><line x1="'+X(q.lo)+'" x2="'+X(q.hi)+'" y1="'+y+'" y2="'+y+'" stroke="#2c7a7b" stroke-width="2.6"/><circle cx="'+X(q.m)+'" cy="'+y+'" r="4" fill="#2c7a7b"/>'});
+  modal(head('主任室 · 森林圖','誰的 95% CI 包含 200 µL?')+'<p>每條橫線是一位同學的平均 ± t × SD ÷ √n(你剛拿到的 t 值卡)。</p><div class="svgbox">'+s+'</svg></div>'+
+   '<p>螢幕下方的輸入框:<b>95% CI 有包含 200 µL 的人數</b></p><p><input class="num" id="in" inputmode="numeric"></p><div class="acts"><button class="btn" id="chk">輸入</button>'+hintBtn()+'</div><div class="fb" id="fb"></div>');
+  wireHint('forest');
+  $('chk').onclick=function(){var v=parseInt($('in').value,10);
+   if(v===2){ans('forest',true,{qtype:'numeric',topic:'ci'});return win('forest',15,'只有 <b>S08</b>('+f(S[7].lo,1)+'–'+f(S[7].hi,1)+')和 <b>S11</b>('+f(S[10].lo,1)+'–'+f(S[10].hi,1)+')。<br>但他們的 RSD 分別是 '+f(S[7].rsd)+'% 和 '+f(S[10].rsd)+'%,全班最差的兩位。CI 包到 200,是因為<b>區間太寬</b>,不是因為比較準。<br><b>密碼碎片 ③ = 2</b>。',function(){setFrag(2,2);note('碎片 ③ = 2')})}
+   ans('forest',false,{qtype:'numeric',topic:'ci',misconception:'ci-read'});fb('數一下紅線穿過的橫線。','no')}}},
+
+/* ---- code:RSD 看板 ---- */
+rsd:{hints:['先算平均,再算每筆離平均的平方和,÷ 9,開根號,得到 SD。','S13 的 SD 約 1.77 µL;RSD = SD ÷ 平均 × 100。'],
+ open:function(){var stage=G.flags.rsd1?2:1;
+  var rows=S.map(function(q,i){return '<tr><td>'+lab(i)+'</td><td>'+(i===12&&stage===1?'??':f(q.rsd)+'%')+'</td></tr>'}).join('');
+  var vals=C[12].map(function(x){return f(x)}).join('、');
+  modal(head('主任室 · RSD 看板','看板缺了一格')+'<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start"><div class="tbl" style="flex:0 0 170px"><table><tr><th>學生</th><th>RSD</th></tr>'+rows+'</table></div><div style="flex:1 1 260px">'+
+   (stage===1?'<p>S13 的 10 次結果(µL):</p><p class="paper" style="font-family:var(--mono)">'+vals+'</p><p>用計算機或 Excel 算出 S13 的 <b>RSD %</b>(小數 2 位):</p><p><input class="num" id="in" inputmode="decimal"> %</p>':
+   '<p>S13 的 RSD 補上了。看板最下面的問題:</p><p><b>RSD 小於 1% 的同學有幾位?</b></p><p><input class="num" id="in" inputmode="numeric"></p>')+
+   '<div class="acts"><button class="btn" id="chk">確認</button>'+hintBtn()+'</div><div class="fb" id="fb"></div></div></div>');
+  wireHint('rsd');
+  $('chk').onclick=function(){var v=parseFloat($('in').value),q=S[12];
+   if(stage===1){if(Math.abs(v-q.rsd)<=0.03){ans('rsd-calc',true,{qtype:'numeric',topic:'rsd'});G.flags.rsd1=true;addPts(5);save();note('S13 RSD = '+f(q.rsd)+'%');return PUZ.rsd.open()}
+    var mis=Math.abs(v-q.sdp/q.m*100)<=0.03?'sd-divide-n':Math.abs(v-q.sd)<=0.05?'rsd-calc':'sd-calc';
+    ans('rsd-calc',false,{qtype:'numeric',topic:'rsd',misconception:mis});
+    fb(mis==='sd-divide-n'?'差一點:樣本 SD 要除以 n − 1 = 9,不是 10。':mis==='rsd-calc'?'這是 SD,還要 ÷ 平均 × 100。':'數字不對。檢查平均和 SD 的計算。','no');return}
+   if(v===3){ans('rsd-count',true,{qtype:'numeric',topic:'rsd'});return win('rsd',10,'S01(0.22%)、S06(0.26%)、S13(0.93%)。注意 S14:Excel 的 0.26% 修正後是 1.38%,不能算進來。<br><b>密碼碎片 ④ = 3</b>。',function(){setFrag(3,3);note('碎片 ④ = 3')})}
+   ans('rsd-count',false,{qtype:'numeric',topic:'rsd',misconception:v===4?'used-buggy-excel':'zone-read'});fb(v===4?'你是不是把 S14 也算進去了?看板上的是修正後的值。':'再數一次。','no')}}},
+
+/* ---- group:診斷卡 ---- */
+dx:{hints:['點全部擠在一起、但整團離紅線很遠:系統誤差。','有一兩點離其他點非常遠:過失誤差。點均勻散開、沒有特別離群:隨機誤差。'],
+ cases:[[0,'sys'],[7,'gross'],[1,'rand'],[5,'sys'],[10,'gross'],[9,'rand']],
+ open:function(){var K=this.cases,cat={sys:'系統誤差(穩但偏)',rand:'隨機誤差(散)',gross:'過失誤差(有離群值)'};
+  modal(head('主任室 · 案件卡','把六張案件卡分到三個誤差類型')+'<p>紅色虛線 = 標稱 200 µL。每類各兩張。</p><div class="dx">'+K.map(function(k,j){var q=S[k[0]];return '<div class="c"><b>案件 '+String.fromCharCode(65+j)+'</b> · 平均 '+f(q.m,1)+' µL · RSD '+f(q.rsd)+'%'+strip(C[k[0]],130,260)+'<label>判定:<select id="g'+j+'"><option value="">選一類</option>'+Object.keys(cat).map(function(c){return '<option value="'+c+'">'+cat[c]+'</option>'}).join('')+'</select></label></div>'}).join('')+'</div>'+
+   '<div class="acts"><button class="btn" id="chk">送出診斷</button>'+hintBtn()+'</div><div class="fb" id="fb"></div>');
+  wireHint('dx');
+  $('chk').onclick=function(){var wrong=[];K.forEach(function(k,j){var v=$('g'+j).value,ok=v===k[1];ans('dx-'+lab(k[0]),ok,{qtype:'group',topic:'error-type',misconception:ok?null:'dx:'+k[1]+'->'+(v||'none')});if(!ok)wrong.push(String.fromCharCode(65+j))});
+   if(!wrong.length)return win('dx',15,'全部正確。A = S01、D = S06:很精密,但整體偏低 3–5%,這種偏差方向固定,可以靠校正修正。C = S02、F = S10:沒有離群值,只是散。B = S08、E = S11:各有一兩筆離很遠,要回頭查紀錄。<br>你把結論寫成 <b>診斷報告</b>。',function(){give('report')});
+   fb('案件 '+wrong.join('、')+' 的判定不對。','no')}}},
+
+/* ---- exit:keypad + 結案題 ---- */
+exit:{hints:['碎片編號 ① ② ③ ④ 就是密碼的順序。'],
+ open:function(){var ready=G.frags.every(function(x){return x!==null})&&has('report');
+  if(!ready)return say('出口密碼鎖','鍵盤上方寫著:「4 位數密碼 + 診斷報告」。你目前有 '+G.frags.filter(function(x){return x!==null}).length+' / 4 個碎片'+(has('report')?'':',還沒有診斷報告')+'。');
+  var code='';
+  modal(head('主任室 · 出口','輸入 4 位數密碼')+'<p><span class="lcd" id="disp" tabindex="0" aria-live="polite" aria-label="密碼顯示(可直接用鍵盤輸入數字)" style="min-width:6ch;text-align:center">____</span></p><div class="keypad" id="kp">'+[1,2,3,4,5,6,7,8,9,'⌫',0,'↵'].map(function(k){return '<button data-k="'+k+'">'+k+'</button>'}).join('')+'</div><div class="acts">'+hintBtn()+'</div><div class="fb" id="fb"></div>');
+  wireHint('exit');
+  function show(){$('disp').textContent=(code+'____').slice(0,4)}
+  function press(k){if(k==='⌫'){code=code.slice(0,-1);show();return}if(k==='↵'){check();return}if(code.length<4){code+=k;show()}}
+  function check(){if(code===G.frags.join('')){ans('exit-code',true,{qtype:'code'});return finalQ()}ans('exit-code',false,{qtype:'code',misconception:'code-order'});fb('紅燈。密碼的順序照碎片編號 ① ② ③ ④。','no');code='';show()}
+  [].forEach.call($('kp').querySelectorAll('button'),function(b){b.onclick=function(){press(b.dataset.k)}});$('disp').focus();
+  $('mcard').onkeydown=function(e){if(e.target.closest&&e.target.closest('#kp')&&(e.key==='Enter'||e.key===' '))return;if(/^[0-9]$/.test(e.key))press(e.key);else if(e.key==='Backspace'){e.preventDefault();press('⌫')}else if(e.key==='Enter'){e.preventDefault();press('↵')}}}}
+};
+function openPuzzle(id){PUZ[id].open()}
+
+/* ---------- 最後一道:主任的問題 ---------- */
+function finalQ(){var cm=S.reduce(function(a,q){return a+q.m},0)/15,mx=Math.max.apply(null,S.map(function(q){return q.m})),mn=Math.min.apply(null,S.map(function(q){return q.m}));
+  var opts=[['a','每一位同學都很粗心'],['b','吸管本身或大家共用的操作方式有系統偏差,要先校正器具'],['c','多量幾次,平均就會回到 200'],['d','天平壞了,這批數據全部作廢']];
+  modal(head('主任室 · 門開了一半','主任站在門口')+
+   '<div class="who"><div class="av">👩‍🔬</div><div><div class="nm">品保主任</div><div class="bub">密碼對了。走之前回答我一個問題。<br>全班 15 個人的平均落在 '+f(mn,1)+'–'+f(mx,1)+' µL,班平均 '+f(cm,1)+' µL,<b>沒有一個人到 200</b>。最可能的原因是什麼?</div></div></div>'+
+   '<div class="chips" id="fq" style="flex-direction:column;align-items:stretch">'+opts.map(function(o){return '<button class="chip" data-o="'+o[0]+'" style="text-align:left">'+o[1]+'</button>'}).join('')+'</div><div class="acts"></div><div class="fb" id="fb"></div>');
+  [].forEach.call($('fq').querySelectorAll('.chip'),function(b){b.onclick=function(){var o=b.dataset.o,ok=o==='b';
+    ans('final-bias',ok,{topic:'systematic-error',misconception:ok?null:{a:'blame-individual',c:'more-reps-fix-bias',d:'discard-data'}[o]});
+    if(ok){G.done=true;addPts(20);save();stopClock();ev({event_type:'attempt_complete',final_score:G.pts,elapsed:G.elapsed,chapter:'LAB-W01',game:'escape'});return ending()}
+    fb({a:'15 個人全部往同一個方向偏,不太可能是每個人各自粗心。隨機的粗心會有高有低。',c:'多量幾次只會讓 CI 變窄,不會把偏差拉回來。偏差要靠校正。',d:'天平有沒有問題可以用砝碼查核;數據本身很一致,不需要作廢。'}[o],'no')}})}
+
+var ADV={'forgot-fb':'質量換體積:V = m × Fb ÷ ρw,浮力校正不能漏','density-multiply':'體積 = 質量 ÷ 密度','no-density':'32 °C 水的密度是 0.99503,不是 1','range-count':'數公式範圍的格數(P 到 W 是 8 格)','missed-trials':'被漏掉的是第 9、10 次','sd-divide-n':'樣本 SD 要除以 n − 1','t-vs-z':'n = 10 要用 t = 2.262,不是 1.96','t-df':'df = n − 1 = 9,t = 2.262','ci-forgot-sqrt-n':'CI 半寬要 ÷ √n','cumulative-diff':'累計紀錄要先相減得到單次值','ci-read':'CI 包含標稱值 ≠ 準確,寬的區間也會包到','used-buggy-excel':'用修正後的數據判斷,不要沿用有錯的 Excel','more-reps-fix-bias':'重複次數只改善精密度,不改善偏差','blame-individual':'全體同方向偏移是系統誤差的訊號','convert-early':'換算體積是最後一步','tare-late':'先歸零再加液'};
+function ending(){
+  var t=G.elapsed,mm=Math.floor(t/60),ss=t%60,used=Object.keys(G.hints).reduce(function(a,k){return a+G.hints[k]},0);
+  var ks=Object.keys(MIS).filter(function(k){return ADV[k]}).sort(function(a,b){return MIS[b]-MIS[a]}).slice(0,4);
+  var dx=Object.keys(MIS).filter(function(k){return k.indexOf('dx:')===0}).length;
+  var rec=ks.map(function(k){return '<li>'+ADV[k]+'(錯 '+MIS[k]+' 次)</li>'}).join('')+(dx?'<li>誤差類型判斷:看「偏的方向固不固定」和「有沒有單點離很遠」</li>':'');
+  modal('<h3>你逃出來了</h3><p>天亮前,你交出一份可信的校正報告:</p>'+
+   '<div class="end-stats"><div><b>'+mm+':'+(ss<10?'0':'')+ss+'</b>用時</div><div><b>'+G.pts+'</b>積分</div><div><b>'+used+'</b>提示</div></div>'+
+   '<p class="paper">結論:這一班多數人的<b>精密度</b>落在 1–3%(RSD 中位數約 '+f(S.map(function(q){return q.rsd}).sort(function(a,b){return a-b})[7])+'%),但<b>準確度</b>整體偏低約 '+f((200-S.reduce(function(a,q){return a+q.m},0)/15)/2,1)+'%。下一步先校正吸管(檢查設定值、吸頭密合、預潤與排液角度),而不是要求大家多量幾次。</p>'+
+   (rec?'<p><b>學習回饋卡</b></p><ul>'+rec+'</ul>':'<p>這一輪沒有明顯迷思。</p>')+
+   '<div class="acts"><a class="btn" href="detective.html" style="text-decoration:none">去玩 Data Detective</a><button class="btn ghost" id="again">再玩一次</button></div>');
+  $('again').onclick=function(){resetGame()}}
+
+/* ---------- 計時 ---------- */
+var tick=null;
+function drawClock(){var left=LIMIT-G.elapsed,neg=left<0,a=Math.abs(left);$('clock').textContent=(neg?'+':'')+Math.floor(a/60)+':'+((a%60)<10?'0':'')+(a%60);$('clock').style.color=neg?'var(--alarm)':''}
+function startClock(){if(tick||G.done)return;tick=setInterval(function(){if(document.hidden)return;G.elapsed++;drawClock();if(G.elapsed%10===0)save()},1000)}
+function stopClock(){clearInterval(tick);tick=null;save()}
+
+/* ---------- 開場 ---------- */
+function intro(){modal('<div class="where">晚上 8:12 · 食品檢驗實驗室</div><h3>稽核明天早上 9 點</h3>'+
+  '<div class="who"><div class="av">👩‍🔬</div><div><div class="nm">品保主任(語音訊息)</div><div class="bub">上週 15 位同學的 200 µL 吸管校正數據,稽核員明早要看。系統發現<b>報表有錯</b>,把整間實驗室鎖了。<br>修好數據、找出問題,出口才會開。45 分鐘內搞定。</div></div></div>'+
+  '<p>點場景中閃<span style="color:#b38300;font-weight:700">黃點</span>的物件調查。綠點 = 已完成,紅點 = 還鎖著。集齊 4 個密碼碎片和診斷報告就能離開。</p>'+
+  '<div class="acts"><button class="btn" id="go">開始調查</button></div>');
+  $('go').onclick=function(){G.flags.started=true;save();closeModal();startClock()}}
+function resetGame(){if(!confirm('清除進度,從頭開始?'))return;stopClock();G=fresh();ATT={};MIS={};save();closeModal();drawClock();intro()}
+$('reset').onclick=resetGame;
+
+load();render();drawClock();
+if(G.done){ending()}else if(!G.flags.started){intro()}else{startClock()}
+</script>
+</body>
+</html>
