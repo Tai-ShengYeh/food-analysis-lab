@@ -206,6 +206,15 @@ function save(){try{localStorage.setItem('w01detective',JSON.stringify(store))}c
 function add(n){pts+=n;$('pts').textContent='🔍 偵探積分 '+pts}
 function finish(n,bonus){if(done[n])return;done[n]=1;add(bonus);var k=Object.keys(done).length;$('prog').textContent='任務 '+k+' / 7';$('bar').firstChild.style.width=(k/7*100)+'%';var nx=$('m'+(n+1));if(nx){nx.classList.remove('locked');setTimeout(function(){nx.scrollIntoView({behavior:'smooth',block:'start'})},500)}}
 function fb(el,html,cls){el.className='fb show '+(cls||'');el.innerHTML=html}
+/* 答錯節流:選擇題每次答錯 → 顯示提示並鎖 5 秒;數值題第 2 次起答錯 → 顯示對應提示並鎖 10 秒。
+   目的是讓學生先讀提示再試,而不是 1–2 秒內連按猜答案。 */
+var WRONG={},T0=Date.now();
+function lockFor(els,sec,fbEl,html){els=[].concat(els).filter(Boolean);els.forEach(function(e){e.disabled=true});var left=sec;
+  (function tick(){if(left<=0){els.forEach(function(e){e.disabled=false});fb(fbEl,html,'warn');return}
+    fb(fbEl,html+'<div class="tiny" style="margin-top:6px">⏳ 先讀完提示,'+left+' 秒後可以再試</div>','warn');left--;setTimeout(tick,1000)})()}
+function wrongChoice(key,els,fbEl,html){WRONG[key]=(WRONG[key]||0)+1;lockFor(els,5,fbEl,html)}
+function wrongNum(key,els,fbEl,html){var k=WRONG[key]=(WRONG[key]||0)+1;if(k>=2)lockFor(els,10,fbEl,html);else fb(fbEl,html,'warn')}
+function hintsUsed(){var n=0;for(var k in WRONG)n+=WRONG[k];return n}
 var LOGGING=false,ATT={},MIS={},predLogged=false,SIDK='food_analysis_student_id';
 function ev(o){if(!LOGGING||!window.AssessFB)return;try{window.AssessFB.log(o)}catch(e){}}
 function ans(qid,ok,o){o=o||{};ATT[qid]=(ATT[qid]||0)+1;if(ok===false&&o.misconception)MIS[o.misconception]=(MIS[o.misconception]||0)+1;
@@ -217,7 +226,7 @@ function login(){var btn=$('login');btn.disabled=true;btn.textContent='連線中
     setTimeout(poll,50)})()}
 $('login').onclick=login;
 try{if(localStorage.getItem(SIDK))login()}catch(e){}
-var ADV={'range-count':'數公式範圍的格子數(P 到 W 是 8 格),框選後看狀態列「計數」','missed-trials':'被漏掉的是最後兩次(第 9、10 次)','mean-only':'平均一樣不代表一樣穩,還要看 SD','sd-direction':'SD 越小代表越集中、越穩','rsd-scale':'量的大小不同時,要用 RSD(SD÷平均)才能比較','mean-calc':'平均 = 10 筆全部加起來 ÷ 10','sd-divide-n':'樣本 SD 要除以 n−1(=9),不是 n','sd-calc':'SD 步驟:離差平方和 ÷ (n−1),再開根號','rsd-calc':'RSD = SD ÷ 平均 × 100','ci-width':'CI 越窄,平均值的估計越穩','t-vs-z':'n=10 要用 t=2.262,不是 1.96','ci-forgot-sqrt-n':'半寬要再除以 √n,不是只有 t×SD','ci-no-t':'半寬要乘 t(2.262)','ci-calc':'半寬 = t × SD ÷ √n'};
+var ADV={'range-count':'數公式範圍的格子數(P 到 W 是 8 格),框選後看狀態列「計數」','missed-trials':'被漏掉的是最後兩次(第 9、10 次)','mean-only':'平均一樣不代表一樣穩,還要看 SD','sd-direction':'SD 越小代表越集中、越穩','rsd-scale':'量的大小不同時,要用 RSD(SD÷平均)才能比較','mean-calc':'平均 = 10 筆全部加起來 ÷ 10','sd-divide-n':'樣本 SD 要除以 n−1(=9),不是 n','sd-calc':'SD 步驟:離差平方和 ÷ (n−1),再開根號','rsd-calc':'RSD = SD ÷ 平均 × 100','ci-width':'CI 越窄,平均值的估計越穩','t-vs-z':'n=10 要用 t=2.262,不是 1.96','ci-forgot-sqrt-n':'半寬要再除以 √n,不是只有 t×SD','ci-no-t':'半寬要乘 t(2.262)','ci-calc':'半寬 = t × SD ÷ √n','mean-divide-9':'平均是除以筆數 10,n−1 = 9 是算 SD 才用'};
 function recap(){var el=$('recap'),ks=Object.keys(MIS).sort(function(a,b){return MIS[b]-MIS[a]}),h='<b>📋 你的學習回饋卡</b><br>',dx=0,ex=0;
   ks=ks.filter(function(k){if(k.indexOf('dx:')===0){dx+=MIS[k];return false}if(k.indexOf('exit:')===0){ex+=MIS[k];return false}return true});
   if(dx)h+='• 診斷卡有 '+dx+' 次和標準答案不同:回頭複習系統 / 隨機 / 過失誤差的判斷關鍵(方向固不固定?)<br>';
@@ -257,12 +266,12 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
     if(!n)return fb($('m2fb'),'先選涵蓋幾格。','warn');
     var ok=n==='8'&&ck==='9,10',e=st(v.slice(0,8)),a=st(v);ans('w01-m2-range',n==='8',{misconception:'range-count',topic:'m2'});ans('w01-m2-missed',ck==='9,10',{misconception:'missed-trials',topic:'m2'});
     if(ok){fb($('m2fb'),'✅ 抓到了!<code>P2:W2</code> 只有 8 格,漏掉 X、Y(第 9、10 次)。<br>Excel 8 筆:平均 '+f(e.m)+',SD '+f(e.sd)+',RSD <b>'+f(e.rsd)+'%</b>;<br>正確 10 筆:平均 '+f(a.m)+',SD '+f(a.sd)+',RSD <b>'+f(a.rsd)+'%</b>。<br>第 10 次是 '+f(v[9],1)+' µL,剛好被漏掉——Excel 讓 S14 看起來「超級穩」。<b>軟體給出的答案,不代表答案一定對</b>:框選範圍後看狀態列「計數=10」。','good');finish(2,20)}
-    else fb($('m2fb'),'再想想:數一數 P、Q、R、S、T、U、V、W 共幾個字母?而數據有 10 次(P 到 Y)。','warn')}})();
+    else wrongChoice('m2',$('m2go'),$('m2fb'),n!=='8'?'再想想:數一數 P、Q、R、S、T、U、V、W 共幾個字母?而數據有 10 次(P 到 Y)。':'格數對了。公式只到 W,那 X、Y 欄是第幾次?把那兩次勾起來。')}})();
 
 // ---------- M3 ----------
 (function(){
   function q(id,opts,right,okmsg,tool,next,qid,mis){var box=$(id),o=box.querySelector('.opts'),f_=box.querySelector('.fb');
-    opts.forEach(function(t,i){var b=document.createElement('button');b.textContent=t;b.onclick=function(){ans(qid,i===right,{misconception:mis,topic:'m3',bloom:'理解'});if(i===right){b.classList.add('ok');[].forEach.call(o.children,function(x){x.disabled=true});fb(f_,okmsg,'good');$(tool[0]).className='tool on';$(tool[0]).innerHTML=tool[1];add(5);if(next)setTimeout(next,600)}else{b.classList.add('bad');fb(f_,'再想想 🤔','warn')}};o.appendChild(b)})}
+    opts.forEach(function(t,i){var b=document.createElement('button');b.textContent=t;b.onclick=function(){ans(qid,i===right,{misconception:mis,topic:'m3',bloom:'理解'});if(i===right){b.classList.add('ok');[].forEach.call(o.children,function(x){x.disabled=true});fb(f_,okmsg,'good');$(tool[0]).className='tool on';$(tool[0]).innerHTML=tool[1];add(5);if(next)setTimeout(next,600)}else{b.classList.add('bad');var rest_=[].filter.call(o.children,function(x){return !x.classList.contains('bad')});b.disabled=true;wrongChoice(qid,rest_,f_,'再想想 🤔 提示:'+(ADV[mis]||''))}};o.appendChild(b)})}
   var rest=function(id){return function(){$(id).style.display='block'}};
   q('m3q1',['甲比較好','乙比較好','一樣'],2,'兩組平均都是 200!<b>平均不夠</b>,它看不出乙忽高忽低。<br>✅ 解鎖「平均 = 全部加起來 ÷ 筆數」。',['t-mean','✅ 平均 mean'],rest('m3q2'),'w01-m3-q1','mean-only');
   q('m3q2',['SD = 2 µL','SD = 20 µL'],0,'SD 越小越穩。<br>✅ 解鎖 SD:<code>=STDEV(範圍)</code>(每筆離平均多遠的典型值)。',['t-sd','✅ 標準差 SD'],rest('m3q3'),'w01-m3-q2','sd-direction');
@@ -274,10 +283,12 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
     if(!m||!sd||!r)return fb($('m3fb'),'三個都要填。','warn');
     var okM=Math.abs(m-s.m)<0.1,okS=Math.abs(sd-s.sd)<0.06,okR=Math.abs(r-s.rsd)<0.04,ok=okM&&okS&&okR,pp=(document.querySelector('input[name=pred]:checked')||{}).value;
     if(!predLogged){predLogged=true;ans('w01-m3-pred',pp==='190',{topic:'pred:'+(pp||'none'),qtype:'prediction',bloom:'預測'})}
-    ans('w01-m3-mean',okM,{misconception:'mean-calc',topic:'m3',qtype:'numeric',bloom:'應用'});ans('w01-m3-sd',okS,{misconception:Math.abs(sd-Math.sqrt(s.ss/s.n))<0.06?'sd-divide-n':'sd-calc',topic:'m3',qtype:'numeric',bloom:'應用'});ans('w01-m3-rsd',okR,{misconception:'rsd-calc',topic:'m3',qtype:'numeric',bloom:'應用'});
+    var sum=v.reduce(function(a,x){return a+x},0),mm=okM?null:Math.abs(m-sum/9)<0.1?'mean-divide-9':'mean-calc';
+    ans('w01-m3-mean',okM,{misconception:mm,topic:'m3',qtype:'numeric',bloom:'應用'});ans('w01-m3-sd',okS,{misconception:Math.abs(sd-Math.sqrt(s.ss/s.n))<0.06?'sd-divide-n':'sd-calc',topic:'m3',qtype:'numeric',bloom:'應用'});ans('w01-m3-rsd',okR,{misconception:'rsd-calc',topic:'m3',qtype:'numeric',bloom:'應用'});
     if(ok){var p=(document.querySelector('input[name=pred]:checked')||{}).value;
       fb($('m3fb'),'✅ 全對!平均 '+f(s.m)+'、SD '+f(s.sd)+'、RSD '+f(s.rsd)+'%,落在 '+zpill(s.rsd)+'。'+(p==='190'?' 你一開始猜 190,直覺很準!':p?' 你猜的和答案有落差——把這個落差記下來,它就是「直覺被數據修正」的證據。':''),'good');finish(3,25)}
-    else fb($('m3fb'),'有一項不對。展開「看步驟」對照(注意 SD 除的是 n−1 = 9,不是 10)。','warn')}
+    else{var tips=[];if(!okM)tips.push('平均:'+ADV[mm]);if(!okS)tips.push('SD:'+ADV[Math.abs(sd-Math.sqrt(s.ss/s.n))<0.06?'sd-divide-n':'sd-calc']);if(!okR)tips.push('RSD:'+ADV['rsd-calc']+(okS&&okM?'':'(先把平均和 SD 算對)'));
+      wrongNum('m3',$('m3go'),$('m3fb'),'有 '+tips.length+' 項不對。<br>'+tips.join('<br>')+'<br>卡住的話展開「看步驟」對照。')}}
 })();
 
 // ---------- M4 ----------
@@ -286,14 +297,14 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
   $('m4svg').innerHTML=forest(ids.map(function(_,k){return {label:lab[k],m:ss[k].m,lo:ss[k].lo,hi:ss[k].hi}}));
   lab.forEach(function(t,k){var b=document.createElement('button');b.textContent=t;b.onclick=function(){
     ans('w01-m4-narrow',k===0,{misconception:'ci-width',topic:'m4',bloom:'理解'});if(k===0){b.classList.add('ok');[].forEach.call($('m4opts').children,function(x){x.disabled=true});fb($('m4fb1'),'✅ 線最短的甲。區間越窄,平均值的估計越穩。這條線就是 95% CI。','good');$('m4rest').style.display='block';add(5)}
-    else{b.classList.add('bad');fb($('m4fb1'),'再看看:哪條線最短?','warn')}};$('m4opts').appendChild(b)});
+    else{b.classList.add('bad');b.disabled=true;wrongChoice('m4n',[].filter.call($('m4opts').children,function(x){return !x.classList.contains('bad')}),$('m4fb1'),'再看看:哪條線最短?提示:'+ADV['ci-width'])}};$('m4opts').appendChild(b)});
   function upd(){var n=+$('m4n').value,t=tval(n-1),hw=t*4/Math.sqrt(n);$('m4nv').textContent=n;$('m4t').textContent=f(t,3);$('m4hw').textContent=f(hw,2);
     $('m4bar').innerHTML=forest([{label:'n='+n,m:190,lo:190-hw,hi:190+hw,color:'var(--orange)'}])}
   $('m4n').oninput=upd;upd();
   var s=st(C[12]);
   $('m4go').onclick=function(){var v=+$('in-hw').value;if(!v)return;var okH=Math.abs(v-s.hw)<0.06,mh=okH?null:(Math.abs(v-1.96*s.sd/Math.sqrt(10))<0.06?'t-vs-z':Math.abs(v-s.t*s.sd)<0.1?'ci-forgot-sqrt-n':Math.abs(v-s.sd/Math.sqrt(10))<0.06?'ci-no-t':'ci-calc');ans('w01-m4-halfwidth',okH,{misconception:mh,topic:'m4',qtype:'numeric',bloom:'應用'});
     if(Math.abs(v-s.hw)<0.06){fb($('m4fb2'),'✅ 半寬 = 2.262 × '+f(s.sd)+' ÷ √10 = <b>'+f(s.hw)+'</b>,所以 S13 的 95% CI = '+f(s.m)+' ± '+f(s.hw)+' = ['+f(s.lo,1)+', '+f(s.hi,1)+'] µL。<br>200 不在裡面 → 統計上有<b>顯著偏低</b>。','good');finish(4,25)}
-    else fb($('m4fb2'),'提示:t × SD ÷ √n = 2.262 × SD ÷ 3.162。SD 用任務 3 的答案。','warn')}
+    else wrongNum('m4hw',$('m4go'),$('m4fb2'),'還不對。'+(mh&&mh!=='ci-calc'?'你的數字看起來是:<b>'+ADV[mh]+'</b>。':'')+'<br>半寬 = t × SD ÷ √n = 2.262 × SD ÷ 3.162,SD 用任務 3 的答案。')}
 })();
 
 // ---------- M5 ----------
@@ -341,9 +352,9 @@ function zcolor(r){return ['var(--green)','var(--yellow)','var(--orange)','var(-
   obs.observe($('m7'),{attributes:true,attributeFilter:['class']});
   $('m7go').onclick=function(){var a=$('ex1').value,b=$('ex2').value;if(!a||!b)return fb($('m7fb'),'兩格都要選。','warn');
     var okE=(a==='精密'&&b==='準確');ans('w01-m7-exit',okE,{misconception:okE?null:'exit:'+a+'/'+b,topic:'m7',qtype:'fill',bloom:'評鑑'});
-    if(a==='精密'&&b==='準確'){fb($('m7fb'),'✅ 很精密,但可能不夠準確:RSD 低代表重複性好;但平均與 200 µL 有明顯差距(這是系統誤差,不是隨機誤差)。','good');add(20);done[7]=1;ev({event_type:'attempt_complete',final_score:pts,total:7,chapter:'LAB-W01'});recap();$('prog').textContent='任務 7 / 7';$('bar').firstChild.style.width='100%';
+    if(a==='精密'&&b==='準確'){fb($('m7fb'),'✅ 很精密,但可能不夠準確:RSD 低代表重複性好;但平均與 200 µL 有明顯差距(這是系統誤差,不是隨機誤差)。','good');add(20);done[7]=1;ev({event_type:'attempt_complete',final_score:pts,total:7,chapter:'LAB-W01',elapsed_sec:Math.round((Date.now()-T0)/1000),hints_used:hintsUsed()});recap();$('prog').textContent='任務 7 / 7';$('bar').firstChild.style.width='100%';
       $('badge').style.display='block';$('badgetxt').innerHTML='偵探積分 <b>'+pts+'</b>'+(store.route?'　·　你選的路線:'+store.route:'')}
-    else fb($('m7fb'),'再想想:RSD 0.25% 說明什麼?平均 191 離 200 遠嗎?','warn')}
+    else wrongChoice('m7',$('m7go'),$('m7fb'),'再想想:RSD 0.25% 說明什麼?('+ADV['sd-direction']+')平均 191 離 200 遠嗎?精密看 RSD,準確看平均離標稱值多遠。')}
 })();
 </script>
 </body>
