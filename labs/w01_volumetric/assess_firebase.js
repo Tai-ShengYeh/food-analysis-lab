@@ -29,6 +29,11 @@ const FALLBACK_CONFIG = {
 const SUPABASE_URL = 'https://qmldcjkllisvfgegkfsz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtbGRjamtsbGlzdmZnZWdrZnN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExMjM5ODYsImV4cCI6MjA4NjY5OTk4Nn0.Bfj0W7HN_n_vcjGe5502Chamk0YV-de8a0fxF4Nyczk';
 
+// Supabase 的 student_events 是固定欄位。要在 Supabase 也看到用時與提示次數,先在 SQL Editor 執行:
+//   alter table student_events add column if not exists elapsed_sec int, add column if not exists hints_used int;
+// 再把下面改成 true。沒加欄位就設 true 會讓 Supabase 寫入失敗(400)。
+const SUPABASE_EXTRA_COLS = false;
+
 let db = null;
 let readyResolve;
 const ready = new Promise(r => { readyResolve = r; });
@@ -64,7 +69,8 @@ function logToSupabase(p){
       student_id:p.student_id, course_id:p.course_id, class_id:p.class_id,
       chapter:p.chapter, game:p.game, event_type:p.event_type,
       question_id:p.question_id, is_correct:p.is_correct, attempts:p.attempts,
-      final_score:p.final_score, user_agent:p.user_agent, client_ts:new Date().toISOString()
+      final_score:p.final_score, user_agent:p.user_agent, client_ts:new Date().toISOString(),
+      ...(SUPABASE_EXTRA_COLS ? { elapsed_sec:p.elapsed_sec, hints_used:p.hints_used } : {})
     })
   }).catch(()=>{});
 }
@@ -84,8 +90,8 @@ export async function log(data){
     final_score:data.final_score ?? null,
     user_agent:(navigator.userAgent||'').slice(0,200),
   };
-  // 原欄位 → Supabase
-  logToSupabase(base);
+  // 原欄位 → Supabase(若已加欄位,也送時間與提示次數)
+  logToSupabase({ ...base, elapsed_sec:data.elapsed_sec ?? null, hints_used:data.hints_used ?? null });
   // 完整富欄位 → Firestore
   if(db){
     try{
@@ -100,6 +106,10 @@ export async function log(data){
         misconception:data.misconception ?? null,
         mode:data.mode ?? null,
         total:data.total ?? null,
+        // 時間與提示(2026-10 新增):完成事件帶總用時與提示次數,hint 事件帶第幾層提示
+        elapsed_sec:data.elapsed_sec ?? null,
+        hints_used:data.hints_used ?? null,
+        hint_level:data.hint_level ?? null,
         timestamp:serverTimestamp(),
       });
     }catch(e){ console.error('[AssessFB] Firestore 寫入失敗：', e); }

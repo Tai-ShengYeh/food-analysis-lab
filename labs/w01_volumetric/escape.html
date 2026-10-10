@@ -325,6 +325,16 @@ function say(t,msg){modal('<h3>'+t+'</h3><p>'+msg+'</p><div class="acts"><button
 function inspectPickup(it,t,msg){if(has(it))return modal('<h3>'+t+'</h3><p>'+msg+'</p><p>(已經收進背包了)</p>'+ITEMS[it].desc+'<div class="acts"><button class="btn" data-close>好</button></div>');
   modal('<h3>'+t+'</h3><p>'+msg+'</p>'+ITEMS[it].desc+'<div class="acts"><button class="btn" id="take">收進背包</button></div>');$('take').onclick=function(){give(it);closeModal()}}
 function fb(html,cls){var el=$('fb');el.className='fb show '+cls;el.innerHTML=html}
+/* 答錯節流:選擇/排序/勾選題每次答錯鎖 5 秒;計算題第 2 次起答錯鎖 10 秒。
+   鎖定時間記在 LOCK,關掉視窗再打開也不會解除。 */
+var WRONG={},LOCK={};
+function wrongLock(pid,html,kind,els){var k=WRONG[pid]=(WRONG[pid]||0)+1,sec=kind==='num'?(k>=2?10:0):5;
+  fb(html,'no');if(!sec)return;LOCK[pid]=Date.now()+sec*1000;applyLock(pid,html,els)}
+function applyLock(pid,html,els){els=(els||[$('chk')]).filter(Boolean);if(!els.length)return;els.forEach(function(e){e.disabled=true});
+  (function tick(){if(!document.body.contains(els[0]))return;var left=Math.ceil((LOCK[pid]-Date.now())/1000);
+    if(left<=0){els.forEach(function(e){e.disabled=false});fb(html,'no');return}
+    fb(html+'<div style="margin-top:6px;font-size:.85em;opacity:.8">⏳ 先想一想(或按「提示」),'+left+' 秒後可以再試</div>','no');setTimeout(tick,500)})()}
+function hintsUsed(){return Object.keys(G.hints).reduce(function(a,k){return a+G.hints[k]},0)}
 function hintBtn(pid){return '<button class="btn ghost" id="hintb">提示(−2 分)</button>'}
 function wireHint(pid){var b=$('hintb');if(!b)return;b.onclick=function(){var P=PUZ[pid],k=G.hints[pid]||0;if(k>=P.hints.length){fb('沒有更多提示了。','hint');return}G.hints[pid]=k+1;addPts(-2);fb('提示 '+(k+1)+'/'+P.hints.length+':'+P.hints[k],'hint');ev({event_type:'hint',question_id:'ESC-'+pid,hint_level:k+1,chapter:'LAB-W01'})}}
 function win(pid,pts,html,after){if(G.solved[pid]){fb(html,'ok');return}G.solved[pid]=true;addPts(pts);fb(html,'ok');var b=$('mcard').querySelector('#chk');if(b)b.disabled=true;
@@ -354,7 +364,7 @@ balance:{hints:['V = m × Fb ÷ ρw。從背包拿出水密度表,32 °C 的 ρw
    else if(Math.abs(v-189.5)<0.4){mis='no-density';msg='直接把 g 當成 mL 了。水在 32 °C 的密度不是 1。'}
    else if(v>0&&v<1){mis='unit-ul';msg='單位要 µL(1 mL = 1000 µL)。'}
    else msg='鎖沒有動。檢查公式 V = m × Fb ÷ ρw。';
-   ans('balance',false,{qtype:'numeric',topic:'gravimetric-conversion',misconception:mis});fb(msg,'no')}}},
+   ans('balance',false,{qtype:'numeric',topic:'gravimetric-conversion',misconception:mis});wrongLock('balance',msg,'num')}}},
 
 /* ---- order:SOP ---- */
 sop:{hints:['水溫和天平的準備一定在吸液之前。','最後一步才是把質量換算成體積。'],
@@ -372,7 +382,7 @@ sop:{hints:['水溫和天平的準備一定在吸液之前。','最後一步才�
    if(ok){ans('sop',true,{qtype:'order',topic:'sop'});return win('sop',10,'讀卡機亮綠燈。<b>電腦室門禁卡</b>收進背包。',function(){give('cardB')})}
    var wrong=seq.map(function(v,i){return v===i?null:i+1}).filter(function(x){return x}).join('、');
    ans('sop',false,{qtype:'order',topic:'sop',misconception:seq.indexOf(5)<4?'convert-early':(seq.indexOf(1)>seq.indexOf(2)?'tare-late':'sop-order')});
-   fb('第 '+wrong+' 格的位置不對。','no')}}},
+   wrongLock('sop','第 '+wrong+' 格的位置不對。','choice')}}},
 
 /* ---- choice:Excel bug ---- */
 excel:{hints:['P、Q、R、S、T、U、V、W:用手指數一次。','10 次結果放在 P 到 Y,W 之後還有 X、Y。'],
@@ -387,9 +397,9 @@ excel:{hints:['P、Q、R、S、T、U、V、W:用手指數一次。','10 次結�
   [].forEach.call($('ms').querySelectorAll('.chip'),function(b){b.onclick=function(){var k=b.dataset.m;miss[k]=!miss[k];b.setAttribute('aria-pressed',!!miss[k])}});
   $('chk').onclick=function(){var sel=Object.keys(miss).filter(function(k){return miss[k]}).map(Number).sort(function(a,b){return a-b});
    if(pick===null){fb('先回答 ①。','no');return}
-   if(pick!==8){ans('excel-count',false,{topic:'excel-range',misconception:'range-count'});fb('再數一次 P 到 W。','no');return}
+   if(pick!==8){ans('excel-count',false,{topic:'excel-range',misconception:'range-count'});wrongLock('excel','再數一次 P 到 W。','choice');return}
    ans('excel-count',true,{topic:'excel-range'});
-   if(sel.join()!=='9,10'){ans('excel-missed',false,{qtype:'multi',topic:'excel-range',misconception:'missed-trials'});fb('① 對了。② 再想想:8 格是從第幾次排到第幾次?','no');return}
+   if(sel.join()!=='9,10'){ans('excel-missed',false,{qtype:'multi',topic:'excel-range',misconception:'missed-trials'});wrongLock('excel','① 對了。② 再想想:8 格是從第幾次排到第幾次?','choice');return}
    ans('excel-missed',true,{qtype:'multi',topic:'excel-range'});
    var s=S[13];
    win('excel',15,'抓到了。公式漏掉第 9、10 次,而第 10 次 0.1970 g(≈'+f(C[13][9],1)+' µL)正是最離群的一筆。把範圍改成 P:Y,S14 的真正結果是 平均 '+f(s.m)+' µL、SD '+f(s.sd)+' µL、<b>RSD '+f(s.rsd)+'%</b>。<br>螢幕右下角跳出一個數字:<b>密碼碎片 ① = 8</b>(公式真正涵蓋的格數)。',function(){setFlag('excel');setFrag(0,8);note('碎片 ① = 8')})}}},
@@ -404,7 +414,7 @@ cloze:{hints:['樣本 SD 除的是自由度,不是 n。','95% CI 半寬 = t × S
   wireHint('cloze');
   $('chk').onclick=function(){var wrong=[],mis=null;B.forEach(function(b,i){var v=$('b'+i).value;if(v!==b[0]){wrong.push(i+1);if(!mis){if(i===1&&v==='n')mis='sd-divide-n';else if(i===5&&v==='1.96')mis='t-vs-z';else if(i===5&&v==='2.228')mis='t-df';else if(i===4)mis='ci-forgot-sqrt-n';else if(i===3)mis='t-vs-z';else mis='formula'}}});
    if(!wrong.length){ans('cloze',true,{qtype:'cloze',topic:'formulas'});return win('cloze',10,'公式全部對。白板背後掉出一張 <b>t 值卡</b>:df = 9 時 t = 2.262。<br>為什麼不是 1.96?只有 10 次,樣本 SD 本身也不確定,t 分布的尾巴比常態分布厚。',function(){give('ttable')})}
-   ans('cloze',false,{qtype:'cloze',topic:'formulas',misconception:mis});fb('第 '+wrong.join('、')+' 格不對。','no')}}},
+   ans('cloze',false,{qtype:'cloze',topic:'formulas',misconception:mis});wrongLock('cloze','第 '+wrong.join('、')+' 格不對。','choice')}}},
 
 /* ---- choice:S11 累計紀錄 ---- */
 s11:{hints:['單次 = 這次累計 − 上次累計。','第 7 次和第 8 次的差,一個太大一個太小,加起來剛好正常。'],
@@ -416,7 +426,7 @@ s11:{hints:['單次 = 這次累計 − 上次累計。','第 7 次和第 8 次�
   [].forEach.call($('ms').querySelectorAll('.chip'),function(b){b.onclick=function(){var k=b.dataset.m;sel[k]=!sel[k];b.setAttribute('aria-pressed',!!sel[k])}});
   $('chk').onclick=function(){var s=Object.keys(sel).filter(function(k){return sel[k]}).map(Number).sort(function(a,b){return a-b}).join();
    if(s==='7,8'){ans('s11',true,{qtype:'multi',topic:'gross-error'});return win('s11',15,'第 7 次單次 = 1.3789 − 1.1302 = <b>0.2487 g</b>,第 8 次 = 1.5142 − 1.3789 = <b>0.1353 g</b>。一個多 60 µL、一個少 55 µL,累計值互相抵消,所以只看總和完全看不出來。這是<b>過失誤差</b>(多半是讀錯或抄錯),要回頭查原始紀錄,不能直接平均掉。<br>紀錄本最後一頁寫著:<b>密碼碎片 ② = 7</b>(第一筆出錯的次數)。',function(){setFrag(1,7);note('碎片 ② = 7')})}
-   ans('s11',false,{qtype:'multi',topic:'gross-error',misconception:'cumulative-diff'});fb('不對。先把每一次的單次值算出來再看。','no')}}},
+   ans('s11',false,{qtype:'multi',topic:'gross-error',misconception:'cumulative-diff'});wrongLock('s11','不對。先把每一次的單次值算出來再看(單次 = 這次累計 − 上次累計)。','choice')}}},
 
 /* ---- code + forest ---- */
 forest:{hints:['看紅色虛線 200 穿過哪幾條橫線。','有兩位。再看看他們的 RSD。'],
@@ -429,7 +439,7 @@ forest:{hints:['看紅色虛線 200 穿過哪幾條橫線。','有兩位。再�
   wireHint('forest');
   $('chk').onclick=function(){var v=parseInt($('in').value,10);
    if(v===2){ans('forest',true,{qtype:'numeric',topic:'ci'});return win('forest',15,'只有 <b>S08</b>('+f(S[7].lo,1)+'–'+f(S[7].hi,1)+')和 <b>S11</b>('+f(S[10].lo,1)+'–'+f(S[10].hi,1)+')。<br>但他們的 RSD 分別是 '+f(S[7].rsd)+'% 和 '+f(S[10].rsd)+'%,全班最差的兩位。CI 包到 200,是因為<b>區間太寬</b>,不是因為比較準。<br><b>密碼碎片 ③ = 2</b>。',function(){setFrag(2,2);note('碎片 ③ = 2')})}
-   ans('forest',false,{qtype:'numeric',topic:'ci',misconception:'ci-read'});fb('數一下紅線穿過的橫線。','no')}}},
+   ans('forest',false,{qtype:'numeric',topic:'ci',misconception:'ci-read'});wrongLock('forest','數一下紅線穿過的橫線。','choice')}}},
 
 /* ---- code:RSD 看板 ---- */
 rsd:{hints:['先算平均,再算每筆離平均的平方和,÷ 9,開根號,得到 SD。','S13 的 SD 約 1.77 µL;RSD = SD ÷ 平均 × 100。'],
@@ -445,9 +455,9 @@ rsd:{hints:['先算平均,再算每筆離平均的平方和,÷ 9,開根號,得�
    if(stage===1){if(Math.abs(v-q.rsd)<=0.03){ans('rsd-calc',true,{qtype:'numeric',topic:'rsd'});G.flags.rsd1=true;addPts(5);save();note('S13 RSD = '+f(q.rsd)+'%');return PUZ.rsd.open()}
     var mis=Math.abs(v-q.sdp/q.m*100)<=0.03?'sd-divide-n':Math.abs(v-q.sd)<=0.05?'rsd-calc':'sd-calc';
     ans('rsd-calc',false,{qtype:'numeric',topic:'rsd',misconception:mis});
-    fb(mis==='sd-divide-n'?'差一點:樣本 SD 要除以 n − 1 = 9,不是 10。':mis==='rsd-calc'?'這是 SD,還要 ÷ 平均 × 100。':'數字不對。檢查平均和 SD 的計算。','no');return}
+    wrongLock('rsd',mis==='sd-divide-n'?'差一點:樣本 SD 要除以 n − 1 = 9,不是 10。':mis==='rsd-calc'?'這是 SD,還要 ÷ 平均 × 100。':'數字不對。檢查平均和 SD 的計算。','num');return}
    if(v===3){ans('rsd-count',true,{qtype:'numeric',topic:'rsd'});return win('rsd',10,'S01(0.22%)、S06(0.26%)、S13(0.93%)。注意 S14:Excel 的 0.26% 修正後是 1.38%,不能算進來。<br><b>密碼碎片 ④ = 3</b>。',function(){setFrag(3,3);note('碎片 ④ = 3')})}
-   ans('rsd-count',false,{qtype:'numeric',topic:'rsd',misconception:v===4?'used-buggy-excel':'zone-read'});fb(v===4?'你是不是把 S14 也算進去了?看板上的是修正後的值。':'再數一次。','no')}}},
+   ans('rsd-count',false,{qtype:'numeric',topic:'rsd',misconception:v===4?'used-buggy-excel':'zone-read'});wrongLock('rsd',v===4?'你是不是把 S14 也算進去了?看板上的是修正後的值。':'再數一次。','choice')}}},
 
 /* ---- group:診斷卡 ---- */
 dx:{hints:['點全部擠在一起、但整團離紅線很遠:系統誤差。','有一兩點離其他點非常遠:過失誤差。點均勻散開、沒有特別離群:隨機誤差。'],
@@ -458,7 +468,7 @@ dx:{hints:['點全部擠在一起、但整團離紅線很遠:系統誤差。','�
   wireHint('dx');
   $('chk').onclick=function(){var wrong=[];K.forEach(function(k,j){var v=$('g'+j).value,ok=v===k[1];ans('dx-'+lab(k[0]),ok,{qtype:'group',topic:'error-type',misconception:ok?null:'dx:'+k[1]+'->'+(v||'none')});if(!ok)wrong.push(String.fromCharCode(65+j))});
    if(!wrong.length)return win('dx',15,'全部正確。A = S01、D = S06:很精密,但整體偏低 3–5%,這種偏差方向固定,可以靠校正修正。C = S02、F = S10:沒有離群值,只是散。B = S08、E = S11:各有一兩筆離很遠,要回頭查紀錄。<br>你把結論寫成 <b>診斷報告</b>。',function(){give('report')});
-   fb('案件 '+wrong.join('、')+' 的判定不對。','no')}}},
+   wrongLock('dx','案件 '+wrong.join('、')+' 的判定不對。','choice')}}},
 
 /* ---- exit:keypad + 結案題 ---- */
 exit:{hints:['碎片編號 ① ② ③ ④ 就是密碼的順序。'],
@@ -473,7 +483,7 @@ exit:{hints:['碎片編號 ① ② ③ ④ 就是密碼的順序。'],
   [].forEach.call($('kp').querySelectorAll('button'),function(b){b.onclick=function(){press(b.dataset.k)}});$('disp').focus();
   $('mcard').onkeydown=function(e){if(e.target.closest&&e.target.closest('#kp')&&(e.key==='Enter'||e.key===' '))return;if(/^[0-9]$/.test(e.key))press(e.key);else if(e.key==='Backspace'){e.preventDefault();press('⌫')}else if(e.key==='Enter'){e.preventDefault();press('↵')}}}}
 };
-function openPuzzle(id){PUZ[id].open()}
+function openPuzzle(id){PUZ[id].open();if(LOCK[id]>Date.now()&&!G.solved[id])applyLock(id,'剛剛答錯了,先想一想再試。')}
 
 /* ---------- 最後一道:主任的問題 ---------- */
 function finalQ(){var cm=S.reduce(function(a,q){return a+q.m},0)/15,mx=Math.max.apply(null,S.map(function(q){return q.m})),mn=Math.min.apply(null,S.map(function(q){return q.m}));
@@ -483,8 +493,8 @@ function finalQ(){var cm=S.reduce(function(a,q){return a+q.m},0)/15,mx=Math.max.
    '<div class="chips" id="fq" style="flex-direction:column;align-items:stretch">'+opts.map(function(o){return '<button class="chip" data-o="'+o[0]+'" style="text-align:left">'+o[1]+'</button>'}).join('')+'</div><div class="acts"></div><div class="fb" id="fb"></div>');
   [].forEach.call($('fq').querySelectorAll('.chip'),function(b){b.onclick=function(){var o=b.dataset.o,ok=o==='b';
     ans('final-bias',ok,{topic:'systematic-error',misconception:ok?null:{a:'blame-individual',c:'more-reps-fix-bias',d:'discard-data'}[o]});
-    if(ok){G.done=true;addPts(20);save();stopClock();ev({event_type:'attempt_complete',final_score:G.pts,elapsed:G.elapsed,chapter:'LAB-W01',game:'escape'});return ending()}
-    fb({a:'15 個人全部往同一個方向偏,不太可能是每個人各自粗心。隨機的粗心會有高有低。',c:'多量幾次只會讓 CI 變窄,不會把偏差拉回來。偏差要靠校正。',d:'天平有沒有問題可以用砝碼查核;數據本身很一致,不需要作廢。'}[o],'no')}})}
+    if(ok){G.done=true;addPts(20);save();stopClock();ev({event_type:'attempt_complete',final_score:G.pts,elapsed_sec:G.elapsed,hints_used:hintsUsed(),chapter:'LAB-W01'});return ending()}
+    wrongLock('final',{a:'15 個人全部往同一個方向偏,不太可能是每個人各自粗心。隨機的粗心會有高有低。',c:'多量幾次只會讓 CI 變窄,不會把偏差拉回來。偏差要靠校正。',d:'天平有沒有問題可以用砝碼查核;數據本身很一致,不需要作廢。'}[o],'choice',[].slice.call($('fq').querySelectorAll('.chip')))}})}
 
 var ADV={'forgot-fb':'質量換體積:V = m × Fb ÷ ρw,浮力校正不能漏','density-multiply':'體積 = 質量 ÷ 密度','no-density':'32 °C 水的密度是 0.99503,不是 1','range-count':'數公式範圍的格數(P 到 W 是 8 格)','missed-trials':'被漏掉的是第 9、10 次','sd-divide-n':'樣本 SD 要除以 n − 1','t-vs-z':'n = 10 要用 t = 2.262,不是 1.96','t-df':'df = n − 1 = 9,t = 2.262','ci-forgot-sqrt-n':'CI 半寬要 ÷ √n','cumulative-diff':'累計紀錄要先相減得到單次值','ci-read':'CI 包含標稱值 ≠ 準確,寬的區間也會包到','used-buggy-excel':'用修正後的數據判斷,不要沿用有錯的 Excel','more-reps-fix-bias':'重複次數只改善精密度,不改善偏差','blame-individual':'全體同方向偏移是系統誤差的訊號','convert-early':'換算體積是最後一步','tare-late':'先歸零再加液'};
 function ending(){
