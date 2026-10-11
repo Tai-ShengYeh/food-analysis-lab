@@ -56,9 +56,11 @@ h2{font-family:var(--serif);font-size:21px;margin:34px 0 12px}
 .links a.nb{border-color:var(--teal);color:var(--teal)}
 .links a.xl{border-color:#2F7D46;color:#2F7D46}
 .links a.or{border-color:#C4661F;color:#C4661F}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .links a.xl{border-color:#7CC48F;color:#7CC48F}:root:not([data-theme="light"]) .links a.or{border-color:#F0A56A;color:#F0A56A}}
+.links a.vd{border-color:#B3261E;color:#B3261E}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .links a.xl{border-color:#7CC48F;color:#7CC48F}:root:not([data-theme="light"]) .links a.or{border-color:#F0A56A;color:#F0A56A}:root:not([data-theme="light"]) .links a.vd{border-color:#F28B82;color:#F28B82}}
 :root[data-theme="dark"] .links a.xl{border-color:#7CC48F;color:#7CC48F}
 :root[data-theme="dark"] .links a.or{border-color:#F0A56A;color:#F0A56A}
+:root[data-theme="dark"] .links a.vd{border-color:#F28B82;color:#F28B82}
 .links a:hover{border-color:var(--accent);color:var(--accent)}
 .links a.main:hover{color:var(--surface);background:var(--accent);border-color:var(--accent)}
 .st{font-size:12px;white-space:nowrap;padding-top:2px}
@@ -102,6 +104,8 @@ const DECKS = "https://tai-shengyeh.github.io/food-analysis-decks/";
 const COLAB = "https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/";
 // 入門工具：Excel 練習檔（W1–W8）與 Orange 流程（說明在 tools.html）
 const XL = {1:"EX01_volumetric_calibration.xlsx",2:"EX02_moisture_aw.xlsx",3:"EX03_ash_sodium.xlsx",4:"EX04_titration.xlsx",5:"EX05_kjeldahl_protein.xlsx",6:"EX06_fat_soxhlet.xlsx",7:"EX07_sugar_calibration.xlsx",8:"EX08_proficiency_qc.xlsx"};
+// 課前導覽影片（YouTube）
+const VID = {3:"https://youtu.be/aWerpvpFJ4E"};
 const ORG = {1:"OR01",8:"OR08",11:"OR11",12:"OR12",13:"OR13",14:"OR14",16:"OR16"};
 // [週, 標題, 說明, 投影片路徑(空=準備中), 筆記本檔名, 理論章節[名稱, 路徑], 類型 a/b/x]
 const W = [
@@ -131,6 +135,7 @@ W.forEach(w => {
   if (n === 10) html += `<div class="part">後半學期　近紅外 × 拉曼 × 化學計量學</div>`;
   const links = [];
   if (deck) links.push(`<a class="main" href="${deck}">實驗投影片</a>`);
+  if (VID[n]) links.push(`<a class="vd" href="${VID[n]}" target="_blank" rel="noopener">▶ 課前導覽影片（2 分鐘）↗</a>`);
   if (XL[n]) links.push(`<a class="xl" href="excel/${XL[n]}" download>Excel 練習檔 ⬇</a>`);
   if (ORG[n]) links.push(`<a class="or" href="tools.html#${ORG[n]}">Orange 流程 ${ORG[n]}</a>`);
   if (nb) links.push(`<a class="nb" href="${COLAB}${nb}" target="_blank" rel="noopener">Colab 筆記本 ↗</a>`);
