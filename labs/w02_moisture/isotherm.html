@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>麵條吸濕曲線 · W2 單分子層水</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#eef2fb;--surface:#fff;--ink:#14213d;--ink2:#48597a;--line:#dbe2f0;--accent:#1f6feb;--orange:#d9822b;--green:#1f9d61;--red:#d94f4f;--yellow:#c99a00;--grey:#8493ad;--shadow:0 2px 10px rgba(20,33,61,.08)}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1526;--surface:#1a2238;--ink:#eaf0ff;--ink2:#a9b6d3;--line:#2d3858;--accent:#5b9bff;--orange:#f0a04b;--green:#3dbb82;--red:#f07070;--yellow:#e3b93a;--grey:#7d8bab;--shadow:0 2px 10px rgba(0,0,0,.4)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.7;font-size:17px}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 80px}
+header.hero{padding:34px 0 10px}
+.kicker{color:var(--accent);font-weight:800;letter-spacing:.06em;font-size:.85rem}
+h1{font-size:clamp(1.6rem,5vw,2.3rem);line-height:1.25;margin:.2em 0}
+h1 .hi{color:var(--orange)}
+h2{font-size:1.3rem;margin:.1em 0 .4em}
+h3{font-size:1.05rem;margin:14px 0 4px}
+.lead{color:var(--ink2)}
+#hud{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#bar{flex:1;min-width:120px;height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--orange));transition:width .4s}
+#pts{font-weight:800}
+section.m{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 20px 24px;margin:20px 0;box-shadow:var(--shadow)}
+.tag{display:inline-block;background:var(--accent);color:#fff;border-radius:99px;padding:1px 12px;font-size:.8rem;font-weight:800;margin-right:8px}
+.done .tag{background:var(--green)}
+.opts{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.opts button{text-align:left}
+button{font:inherit;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:6px 14px;font-weight:700}
+button:hover{background:var(--accent);color:#fff}
+button.primary{background:var(--accent);color:#fff}
+button.ok{background:var(--green);border-color:var(--green);color:#fff}
+button.bad{background:var(--red);border-color:var(--red);color:#fff}
+button:disabled{opacity:.6;cursor:default}
+button.ok:disabled,button.bad:disabled{opacity:1}
+input[type=number],select{font:inherit;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 9px}
+input[type=number]{width:7.5em}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.fb{margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(31,111,235,.08);border-left:4px solid var(--accent);display:none}
+.fb.show{display:block}
+.fb.good{border-color:var(--green);background:rgba(31,157,97,.1)}
+.fb.warn{border-color:var(--orange);background:rgba(217,130,43,.1)}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+td,th{border-bottom:1px solid var(--line);padding:5px 8px;text-align:center;white-space:nowrap}
+.tiny{font-size:.85rem;color:var(--ink2)}
+.rowin{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.note{border-left:4px solid var(--orange);background:rgba(217,130,43,.1);padding:8px 12px;border-radius:8px;margin:10px 0}
+.eq{font-family:"JetBrains Mono",Consolas,monospace;background:rgba(31,111,235,.06);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto;white-space:nowrap}
+a{color:var(--accent);font-weight:700}
+details{margin-top:8px}
+summary{cursor:pointer;color:var(--accent);font-weight:700}
+.chart{position:relative;height:340px;margin:10px 0}
+.chart.sm{height:260px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.grid2>*{min-width:0}
+@media(max-width:700px){.grid2{grid-template-columns:minmax(0,1fr)}.chart{height:280px}}
+.stat{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.stat span{background:rgba(31,111,235,.08);border:1px solid var(--line);border-radius:8px;padding:2px 10px;font-family:"JetBrains Mono",Consolas,monospace;font-size:.9rem}
+.stat span.warn{background:rgba(217,79,79,.12);border-color:var(--red);color:var(--red)}
+.real{display:inline-block;background:var(--green);color:#fff;border-radius:6px;padding:0 8px;font-size:.78rem;font-weight:800;vertical-align:middle}
+.sim{display:inline-block;background:var(--orange);color:#fff;border-radius:6px;padding:0 8px;font-size:.78rem;font-weight:800;vertical-align:middle}
+.salts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px;margin:8px 0}
+.salts label{border:1.5px solid var(--line);border-radius:10px;padding:5px 10px;cursor:pointer;white-space:normal}
+.salts label.on{border-color:var(--accent);background:rgba(31,111,235,.08)}
+.badge{text-align:center;padding:18px}
+.badge .big{font-size:2.4rem}
+ul.take li{margin:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="kicker">REAL DATA · W2 延伸活動 · 等溫吸濕曲線</div>
+  <h1>麵條烘乾時，<span class="hi">單分子層水</span>算得出來嗎？</h1>
+  <p class="lead">等溫吸濕曲線（moisture sorption isotherm, MSI）把「水分含量」和「水活性 a<sub>w</sub>」連在一起。教科書說：用 BET 或 GAB 模型擬合 MSI，就能算出<b>單分子層水含量 X<sub>m</sub></b>——食品最安定的含水量。<br>這次我們用<b>真的研究數據</b>試試看，而且要學會判斷：<b>算出來的數字，數據撐得住嗎？</b></p>
+  <p class="tiny"><span class="real">真實數據</span> 麵條在 28 °C 乾燥過程中的 8 個取樣點：同一份樣品同時以 <b>105 °C 烘箱法</b>與 <b>FD-660 紅外線水分計</b>測水分（濕基 %），並以水活性計測 a<sub>w</sub>。第 ⑤ 關會另外用到<span class="sim">模擬數據</span>，會清楚標示。</p>
+</header>
+<div id="hud"><span id="pts">💧 積分 0</span><div id="bar"><i></i></div><span class="tiny" id="prog">任務 0 / 6</span></div>
+
+<!-- M1 -->
+<section class="m" id="m1">
+  <h2><span class="tag">任務 ①</span>先看數據：從濕基到乾基</h2>
+  <p>MSI 的 y 軸習慣用<b>乾基含水量 X</b>（g 水 / g 乾物），因為乾物重在乾燥過程中不變，比較好比。</p>
+  <div class="tblwrap"><table id="tbl"><thead><tr><th>取樣時間</th><th>a<sub>w</sub></th><th>烘箱 %wb</th><th>烘箱 X (g/g)</th><th>FD-660 %wb</th><th>FD-660 X (g/g)</th><th>烘箱 − FD-660</th></tr></thead><tbody></tbody></table></div>
+  <div class="eq">X（乾基, g/g）= 濕基% ÷ (100 − 濕基%)</div>
+  <h3>Q1-a　1425 那一點烘箱法 18.1 %wb，換成乾基 X 是多少 g/g？（表格中的「?」）</h3>
+  <div class="rowin"><input type="number" id="m1in" step="0.001" placeholder="例 0.123"> <button class="primary" id="m1chk">對答案</button></div>
+  <div class="fb" id="m1fb"></div>
+  <div class="chart"><canvas id="c1"></canvas></div>
+  <p class="tiny">灰色色帶是教科書的等溫線三區：<b>區域 I</b>（a<sub>w</sub> 約 0–0.25，單分子層結合水）、<b>區域 II</b>（約 0.25–0.8，多層吸附水）、<b>區域 III</b>（約 0.8 以上，毛細管水／自由水）。橘色虛線是多數黴菌的生長下限 a<sub>w</sub> 0.6 左右（不同資料寫 0.6–0.7）。</p>
+  <h3>Q1-b　FD-660 在 8 個點裡有 7 個比烘箱法低，平均低約 0.7 個百分點。最合理的解讀是？</h3>
+  <div data-q="m1b"></div><div class="fb" id="m1bfb"></div>
+</section>
+
+<!-- M2 -->
+<section class="m" id="m2">
+  <h2><span class="tag">任務 ②</span>數據落在曲線的哪一段？</h2>
+  <p>看任務 ① 的圖：8 個點的 a<sub>w</sub> 從 0.558 到 0.867。</p>
+  <h3>Q2　單分子層水 X<sub>m</sub> 主要由等溫線哪一段的形狀決定？我們的數據有碰到那一段嗎？</h3>
+  <div data-q="m2"></div><div class="fb" id="m2fb"></div>
+</section>
+
+<!-- M3 -->
+<section class="m" id="m3">
+  <h2><span class="tag">任務 ③</span>BET 陷阱：R² 很漂亮，答案卻不可能</h2>
+  <p>BET 方程式可以整理成直線，用 Excel 畫趨勢線就能算 X<sub>m</sub>，這是最常見的作法：</p>
+  <div class="eq">a<sub>w</sub> / [(1 − a<sub>w</sub>)·X] = 1/(X<sub>m</sub>C) + [(C − 1)/(X<sub>m</sub>C)]·a<sub>w</sub></div>
+  <div class="eq">斜率 s = (C−1)/(X<sub>m</sub>C)　截距 i = 1/(X<sub>m</sub>C)　⇒　C = 1 + s/i　X<sub>m</sub> = 1/(s + i)</div>
+  <div class="rowin"><label>數據：<select id="m3ds"><option value="ov">烘箱法</option><option value="fd">FD-660</option></select></label></div>
+  <div class="chart sm"><canvas id="c3"></canvas></div>
+  <div class="stat" id="m3stat"></div>
+  <h3>Q3-a　用上面的斜率與截距，算出 BET 常數 C（烘箱法數據）</h3>
+  <div class="rowin"><span>C =</span><input type="number" id="m3in" step="0.01"> <button class="primary" id="m3chk">對答案</button></div>
+  <div class="fb" id="m3fb"></div>
+  <h3>Q3-b　R² 接近 0.98，這組 BET 結果可以拿來報告嗎？</h3>
+  <div data-q="m3b"></div><div class="fb" id="m3bfb"></div>
+</section>
+
+<!-- M4 -->
+<section class="m" id="m4">
+  <h2><span class="tag">任務 ④</span>換 GAB：拖動 X<sub>m</sub>，看數據在不在乎</h2>
+  <p>GAB 模型適用範圍較寬（a<sub>w</sub> 約 0.05–0.9），是目前食品 MSI 最常用的模型：</p>
+  <div class="eq">X = X<sub>m</sub>·C·K·a<sub>w</sub> / [(1 − K·a<sub>w</sub>)(1 − K·a<sub>w</sub> + C·K·a<sub>w</sub>)]</div>
+  <p>下面的滑桿讓你<b>固定 X<sub>m</sub></b>，電腦自動找出最配合的 C 與 K。看看 X<sub>m</sub> 改變時，曲線和誤差怎麼變。</p>
+  <div class="rowin"><label>數據：<select id="m4ds"><option value="ov">烘箱法</option><option value="fd">FD-660</option></select></label>
+    <label>每個點的量測誤差 σ：<select id="m4sig"><option value="0.003">0.003 g/g（很精密）</option><option value="0.005" selected>0.005 g/g（合理估計）</option><option value="0.008">0.008 g/g（保守）</option></select></label></div>
+  <div class="rowin" style="flex-wrap:nowrap"><span style="white-space:nowrap">X<sub>m</sub> =</span><input type="range" id="m4xm" min="0.030" max="0.150" step="0.001" value="0.060"><b id="m4xmv" style="font-family:monospace;white-space:nowrap">0.060</b></div>
+  <div class="stat" id="m4stat"></div>
+  <div class="grid2">
+    <div><div class="chart sm"><canvas id="c4a"></canvas></div><p class="tiny" style="text-align:center">GAB 曲線與數據</p></div>
+    <div><div class="chart sm"><canvas id="c4b"></canvas></div><p class="tiny" style="text-align:center">Δ：比最佳擬合差多少（以量測誤差為單位）。<br>低於橘線 3.84 ＝ 數據分辨不出來（95%）</p></div>
+  </div>
+  <div class="note" id="m4free"></div>
+  <details><summary>Δ 怎麼算？σ 為什麼取 0.005？</summary>
+    <p class="tiny">Δ = (SSE − SSE<sub>最小</sub>) ÷ σ²，SSE 是殘差平方和。若 Δ ≤ 3.84（自由度 1 的卡方 95% 臨界值），代表這個 X<sub>m</sub> 和最佳值的差異可以用量測誤差解釋，數據無法排除它；這叫<b>輪廓似然（profile likelihood）信賴區間</b>。<br>
+    σ 的估計：烘箱法三重複的 SD 約 0.2 %wb ≈ 0.0025 g/g；a<sub>w</sub> 計約 ±0.015，在曲線較陡的高 a<sub>w</sub> 處，換算成 X 約 0.004 g/g；兩者合起來約 0.005 g/g。烘箱法與 FD-660 的平均差是 0.7 %wb ≈ 0.008 g/g。<br>
+    注意：擬合殘差（RMSE 約 0.002–0.003）比真實量測誤差小，是因為 3 個參數配 8 個點太有彈性，不能拿殘差當量測誤差。</p></details>
+  <h3>Q4　用 σ = 0.005 g/g，把 X<sub>m</sub> 從 0.06 拉到 0.10，你看到什麼？</h3>
+  <div data-q="m4"></div><div class="fb" id="m4fb"></div>
+</section>
+
+<!-- M5 -->
+<section class="m" id="m5">
+  <h2><span class="tag">任務 ⑤</span>設計補點實驗：要加哪些飽和鹽？</h2>
+  <p>問題出在低 a<sub>w</sub> 沒有點。W2 校正 a<sub>w</sub> 計用的飽和鹽溶液，也可以拿來做 MSI：把乾燥的麵條放進裝有不同飽和鹽的密閉罐，恆溫放到恆重，就得到不同 a<sub>w</sub> 下的平衡含水量。</p>
+  <p><b>勾選你要加做的鹽</b>（a<sub>w</sub> 為 25 °C 參考值，Greenspan 1977），目標是讓 BET 和 GAB 都有足夠的點，但罐子有限，最多選 5 種。</p>
+  <div class="salts" id="salts"></div>
+  <div class="rowin"><button class="primary" id="m5chk">檢查我的設計</button></div>
+  <div class="fb" id="m5fb"></div>
+  <div id="m5sim" style="display:none">
+    <h3><span class="sim">模擬數據</span> 如果真的補做了，結果會長怎樣？</h3>
+    <p class="tiny">以下橘色點是<b>模擬值</b>：假設這批麵條的真實 GAB 參數為 X<sub>m</sub> = 0.065、C = 9.2、K = 0.824（和真實數據相容），在你選的 a<sub>w</sub> 產生約 ±3% 的量測誤差。用來說明「補點能不能把 X<sub>m</sub> 定住」，不是實測結果。</p>
+    <div class="grid2">
+      <div><div class="chart sm"><canvas id="c5a"></canvas></div><p class="tiny" style="text-align:center">真實點＋模擬補點，與 GAB 擬合</p></div>
+      <div><div class="chart sm"><canvas id="c5b"></canvas></div><p class="tiny" style="text-align:center">Δ 曲線越尖、低於 3.84 的範圍越窄，X<sub>m</sub> 越確定（σ 與任務 ④ 相同）</p></div>
+    </div>
+    <div class="stat" id="m5stat"></div>
+  </div>
+</section>
+
+<!-- M6 -->
+<section class="m" id="m6">
+  <h2><span class="tag">任務 ⑥</span>數據背後的實驗設計</h2>
+  <div id="m6box"></div>
+</section>
+
+<section class="m badge" id="end" style="display:none">
+  <div class="big">🍜</div>
+  <h2 id="endt">完成！</h2>
+  <p id="endp" class="lead"></p>
+</section>
+
+<section class="m">
+  <h2>今天帶走的三件事</h2>
+  <ul class="take">
+    <li><b>先檢查範圍，再擬合。</b>BET 只適用 a<sub>w</sub> 約 0.05–0.45；GAB 雖然範圍寬，但 X<sub>m</sub> 仍然要靠低 a<sub>w</sub> 的點來決定。</li>
+    <li><b>R² 高不代表模型合理。</b>參數要有物理意義（C &gt; 0、0 &lt; K &lt; 1），還要看參數是不是真的被數據「定住」了。</li>
+    <li><b>數據不夠時，要說「算不出來」，然後設計補點實驗</b>，不要把外插值當成結果報告。這組麵條數據比較適合回答：<b>水分要降到多少，a<sub>w</sub> 才會低於 0.6？</b></li>
+  </ul>
+  <p class="tiny">← 回到 <a href="index.html">W2 水分與水活性</a>　·　<a href="../../data/w02_noodle_msi.csv" download>下載這組數據（CSV）</a>，可以在 Excel 練習檔 EX02 或 Colab NB02 自己重做 BET／GAB 擬合。</p>
+</section>
+</div>
+
+<script>
+(function(){
+/* ---------- data (real) ---------- */
+var T=['1425','1455','1525','1555','1625','1655','1755','final'];
+var AW=[.867,.856,.866,.72,.643,.628,.647,.558];
+var OV=[18.1,17.55,17.6,12.6,11.3,10.9,11.1,9.9];
+var FD=[16.81,16.57,16.31,11.85,11.43,10.07,10.57,9.73];
+function db(w){return w/(100-w)}
+var DS={ov:{name:'烘箱法',X:OV.map(db)},fd:{name:'FD-660',X:FD.map(db)}};
+/* saturated salts, 25 °C (Greenspan 1977) */
+var SALTS=[['LiCl',.113],['CH₃COOK',.225],['MgCl₂',.328],['K₂CO₃',.432],['Mg(NO₃)₂',.529],['NaCl',.753],['KCl',.843],['K₂SO₄',.973]];
+var NOISE=[1.03,.98,1.02,.99,1.01,.985,1.015,1.0];            /* fixed ±3 % "measurement error" for the simulation */
+var SIM={Xm:.065,C:9.19,K:.8237};
+
+/* ---------- theme ---------- */
+var css=getComputedStyle(document.documentElement);
+function v(n){return css.getPropertyValue(n).trim()}
+var COL={ink:v('--ink2'),line:v('--line'),acc:v('--accent'),or:v('--orange'),gr:v('--green'),red:v('--red'),grey:v('--grey')};
+if(window.Chart){Chart.defaults.font.family="'Noto Sans TC','Microsoft JhengHei',sans-serif";Chart.defaults.color=COL.ink;Chart.defaults.borderColor=COL.line;}
+
+/* ---------- maths ---------- */
+function gab(a,Xm,C,K){var ka=K*a;return Xm*C*ka/((1-ka)*(1-ka+C*ka))}
+function sse(A,X,Xm,C,K){var s=0;for(var i=0;i<A.length;i++){var d=gab(A[i],Xm,C,K)-X[i];s+=d*d}return s}
+var LCMIN=Math.log(.5),LCMAX=Math.log(1000),KMIN=.5,KMAX=.999;
+/* best C,K for a fixed Xm: coarse grid, then two zoomed refinements */
+function fitCK(A,X,Xm){
+  var n=60,best={s:Infinity},i,j,lc,k,s;
+  for(i=0;i<=n;i++){lc=LCMIN+(LCMAX-LCMIN)*i/n;for(j=0;j<=n;j++){k=KMIN+(KMAX-KMIN)*j/n;s=sse(A,X,Xm,Math.exp(lc),k);if(s<best.s)best={s:s,lc:lc,k:k}}}
+  var dl=(LCMAX-LCMIN)/n,dk=(KMAX-KMIN)/n;
+  for(var r=0;r<3;r++){var b=best;
+    for(i=-10;i<=10;i++){lc=Math.min(LCMAX,Math.max(LCMIN,b.lc+dl*i/10));for(j=-10;j<=10;j++){k=Math.min(KMAX,Math.max(KMIN,b.k+dk*j/10));s=sse(A,X,Xm,Math.exp(lc),k);if(s<best.s)best={s:s,lc:lc,k:k}}}
+    dl/=8;dk/=8;}
+  return {Xm:Xm,C:Math.exp(best.lc),K:best.k,rmse:Math.sqrt(best.s/A.length)};
+}
+var XMIN=.03,XMAX=.15;
+function profile(A,X){var out=[];for(var j=0;j<=48;j++){var f=fitCK(A,X,+(XMIN+.0025*j).toFixed(4));f.n=A.length;out.push(f)}return out}
+/* free fit: best point of the profile, then a finer scan around it */
+function freeFit(A,X,pr){var b=pr.reduce(function(m,q){return q.rmse<m.rmse?q:m});var c=b.Xm;
+  for(var x=c-.0025;x<=c+.0025+1e-9;x+=.0005){if(x<XMIN||x>XMAX)continue;var f=fitCK(A,X,+x.toFixed(4));if(f.rmse<b.rmse)b=f}b.n=A.length;return b}
+function linreg(x,y){var n=x.length,mx=0,my=0,i;for(i=0;i<n;i++){mx+=x[i];my+=y[i]}mx/=n;my/=n;var sxy=0,sxx=0,syy=0;for(i=0;i<n;i++){sxy+=(x[i]-mx)*(y[i]-my);sxx+=(x[i]-mx)*(x[i]-mx);syy+=(y[i]-my)*(y[i]-my)}var s=sxy/sxx;return {s:s,i:my-s*mx,r2:sxy*sxy/(sxx*syy)}}
+function bet(A,X){var y=A.map(function(a,i){return a/((1-a)*X[i])});var r=linreg(A,y);r.C=1+r.s/r.i;r.Xm=1/(r.s+r.i);r.y=y;return r}
+function curve(p,a0,a1){var o=[];for(var a=a0;a<=a1+1e-9;a+=.01){var y=gab(a,p.Xm,p.C,p.K);if(y>0&&y<.4)o.push({x:+a.toFixed(2),y:y})}return o}
+function pts(A,X){return A.map(function(a,i){return {x:a,y:X[i]}})}
+function f3(x){return x.toFixed(3)}function f4(x){return x.toFixed(4)}
+
+/* ---------- scoring ---------- */
+var score=0,done={},NM=6;
+function finish(id,pts_){
+  if(done[id])return;done[id]=1;score+=pts_;
+  document.getElementById(id).classList.add('done');
+  var n=Object.keys(done).length;
+  document.getElementById('pts').textContent='💧 積分 '+score;
+  document.getElementById('prog').textContent='任務 '+n+' / '+NM;
+  document.querySelector('#bar i').style.width=(n/NM*100)+'%';
+  if(n===NM){var e=document.getElementById('end');e.style.display='block';
+    document.getElementById('endp').innerHTML='總積分 <b>'+score+'</b> / 120。你已經會判斷「這組數據能不能算單分子層」，也能設計補點實驗。';}
+}
+function fb(id,msg,cls){var f=document.getElementById(id);f.className='fb show '+(cls||'');f.innerHTML=msg}
+
+/* generic multiple-choice; Q = {q?,o:[...],a:index,e:explain}; onDone(firstTry) */
+function mcq(box,Q,fbid,onDone){
+  var tries=0,over=false;
+  if(Q.q){var h=document.createElement('h3');h.innerHTML=Q.q;box.appendChild(h)}
+  var wrap=document.createElement('div');wrap.className='opts';box.appendChild(wrap);
+  Q.o.forEach(function(t,i){var b=document.createElement('button');b.innerHTML=t;wrap.appendChild(b);
+    b.onclick=function(){if(over)return;tries++;
+      if(i===Q.a){over=true;b.className='ok';[].forEach.call(wrap.children,function(c){c.disabled=true});
+        fb(fbid,'✅ '+Q.e,'good');onDone(tries===1)}
+      else{b.className='bad';b.disabled=true;fb(fbid,'❌ '+(Q.w&&Q.w[i]?Q.w[i]:'再想想。'),'warn')}};
+  });
+}
+
+/* ---------- M1 ---------- */
+var tb=document.querySelector('#tbl tbody');
+T.forEach(function(t,i){var tr=document.createElement('tr');
+  tr.innerHTML='<td>'+t+'</td><td>'+AW[i].toFixed(3)+'</td><td>'+OV[i]+'</td><td id="x'+i+'">'+(i===0?'<b style="color:var(--orange)">?</b>':f4(DS.ov.X[i]))+'</td><td>'+FD[i]+'</td><td>'+f4(DS.fd.X[i])+'</td><td>'+(OV[i]-FD[i]).toFixed(2)+'</td>';tb.appendChild(tr)});
+document.getElementById('m1chk').onclick=function(){
+  var x=parseFloat(document.getElementById('m1in').value);
+  if(isNaN(x)){fb('m1fb','請先輸入數字。');return}
+  if(Math.abs(x-.221)<=.002){document.getElementById('x0').textContent=f4(DS.ov.X[0]);
+    fb('m1fb','✅ 18.1 ÷ (100 − 18.1) = 18.1 ÷ 81.9 = <b>0.221 g/g</b>，也就是每 1 g 乾物帶著 0.221 g 水。','good');m1a=1;chk1()}
+  else if(Math.abs(x-.181)<.003)fb('m1fb','❌ 0.181 是濕基的小數，還沒換算。乾基的分母是「乾物重」＝ 100 − 18.1。','warn');
+  else fb('m1fb','❌ 再算一次：X = 濕基% ÷ (100 − 濕基%)。','warn');
+};
+var m1a=0,m1b=0;function chk1(){if(m1a&&m1b)finish('m1',20)}
+/* shade the three textbook regions + mould line */
+var zones={id:'zones',beforeDatasetsDraw:function(ch,args,o){if(!o||!o.on)return;var c=ch.ctx,x=ch.scales.x,a=ch.chartArea;c.save();
+  [[0,.25,'I'],[.25,.8,'II'],[.8,1,'III']].forEach(function(z,k){var x0=x.getPixelForValue(z[0]),x1=x.getPixelForValue(z[1]);
+    c.fillStyle=k%2?'rgba(132,147,173,.06)':'rgba(132,147,173,.15)';c.fillRect(x0,a.top,x1-x0,a.bottom-a.top);
+    c.fillStyle=COL.grey;c.font='bold 13px sans-serif';c.textAlign='center';c.fillText('區域 '+z[2],(x0+x1)/2,a.top+16)});
+  var m=x.getPixelForValue(.6);c.strokeStyle=COL.or;c.setLineDash([5,4]);c.beginPath();c.moveTo(m,a.top+22);c.lineTo(m,a.bottom);c.stroke();c.restore()}};
+function axes(xt,yt,ymax,xmin,xmax){return {x:{type:'linear',min:xmin==null?0:xmin,max:xmax==null?1:xmax,title:{display:true,text:xt}},y:{min:0,max:ymax,title:{display:true,text:yt}}}}
+var tip={callbacks:{label:function(c){var r=c.raw;return (r.t?r.t+'：':'')+'aw '+r.x.toFixed(3)+'，X '+r.y.toFixed(4)}}};
+function tagged(A,X,lab){return A.map(function(a,i){return {x:a,y:X[i],t:lab?lab[i]:''}})}
+if(window.Chart) new Chart(document.getElementById('c1'),{type:'scatter',plugins:[zones],
+  data:{datasets:[{label:'烘箱法',data:tagged(AW,DS.ov.X,T),backgroundColor:COL.acc,pointRadius:5},
+                  {label:'FD-660',data:tagged(AW,DS.fd.X,T),backgroundColor:COL.or,pointStyle:'rect',pointRadius:5}]},
+  options:{maintainAspectRatio:false,plugins:{zones:{on:true},tooltip:tip},scales:axes('水活性 aw','乾基含水量 X (g/g)',.3)}});
+mcq(document.querySelector('[data-q=m1b]'),{o:['隨機誤差，平均掉就好','系統性偏差（bias）：IR 水分計要以烘箱法（參考法）校正；W4 會用成對 t 檢定判斷差異是否顯著','烘箱法一定測錯了，應該以 FD-660 為準','aw 計沒有校正'],a:1,
+  e:'方向一致（7/8 同向）就是系統性偏差的訊號。IR 水分計快，但要先用烘箱法驗證，這和 W2 主實驗「烘箱 vs IR」是同一件事。對 MSI 來說，兩種方法會給出兩條不同的曲線，報告時要寫清楚用哪一種。',
+  w:{0:'隨機誤差應該有正有負、大小不一；這裡 7/8 都同方向。',2:'烘箱法是參考法；IR 水分計才是需要被驗證的那一方。',3:'這題看的是兩種「水分」方法的差異，跟 aw 計無關。'}},'m1bfb',function(ft){m1b=1;if(!ft)score-=5;chk1()});
+
+/* ---------- M2 ---------- */
+mcq(document.querySelector('[data-q=m2]'),{o:['由 aw > 0.8 的區域 III 決定；我們的數據剛好有','由 aw 約 0.1–0.3 的第一個彎（區域 I→II）決定；我們最低只到 0.558，完全沒碰到','整條曲線的平均高度決定；有 8 個點就夠了','和 aw 無關，只要知道烘箱水分就能算'],a:1,
+  e:'單分子層是水分子「一層貼滿」吸附位置時的含水量，對應等溫線低 aw 處的第一個彎（膝部）。我們的 8 個點都在區域 II 後段和區域 III，等於要從曲線的尾巴去猜它的頭——這就是外插（extrapolation）。',
+  w:{0:'區域 III 是毛細管水／自由水，跟單分子層離最遠。',2:'點數多不等於範圍對；8 個點全擠在高 aw，對低 aw 的形狀幾乎沒有資訊。',3:'X_m 一定要從 aw 與含水量的關係（等溫線）求得。'}},'m2fb',function(ft){finish('m2',ft?20:12)});
+
+/* ---------- M3 ---------- */
+var c3=null;
+function drawM3(){
+  var d=DS[document.getElementById('m3ds').value],r=bet(AW,d.X);
+  var line=[{x:0,y:r.i},{x:.95,y:r.i+r.s*.95}];
+  document.getElementById('m3stat').innerHTML='<span>斜率 s = '+r.s.toFixed(2)+'</span><span>截距 i = '+r.i.toFixed(2)+'</span><span>R² = '+r.r2.toFixed(3)+'</span>'+
+    (q3done?'<span class="warn">C = '+r.C.toFixed(2)+'</span><span class="warn">X<sub>m</sub> = '+f4(r.Xm)+' g/g</span>':'')+'<span>BET 範圍 (aw ≤ 0.45) 內的點：0 個</span>';
+  var data={datasets:[{label:'數據 aw/[(1−aw)X]',data:tagged(AW,r.y,T),backgroundColor:COL.acc,pointRadius:5},
+    {label:'趨勢線（往回延伸）',data:line,showLine:true,borderColor:COL.red,borderDash:[6,4],pointRadius:0}]};
+  if(!window.Chart)return;
+  if(c3){c3.data=data;c3.update();return}
+  var band={id:'band',beforeDatasetsDraw:function(ch){var c=ch.ctx,x=ch.scales.x,y=ch.scales.y,a=ch.chartArea;c.save();
+    var x0=x.getPixelForValue(.05),x1=x.getPixelForValue(.45);c.fillStyle='rgba(31,157,97,.12)';c.fillRect(x0,a.top,x1-x0,a.bottom-a.top);
+    c.fillStyle=COL.gr;c.font='bold 12px sans-serif';c.textAlign='center';c.fillText('BET 適用範圍',(x0+x1)/2,a.top+15);
+    var y0=y.getPixelForValue(0);c.strokeStyle=COL.ink;c.setLineDash([]);c.beginPath();c.moveTo(a.left,y0);c.lineTo(a.right,y0);c.stroke();c.restore()}};
+  c3=new Chart(document.getElementById('c3'),{type:'scatter',data:data,plugins:[band],
+    options:{maintainAspectRatio:false,plugins:{tooltip:{callbacks:{label:function(c){return 'aw '+c.raw.x.toFixed(3)+'，y '+c.raw.y.toFixed(2)}}}},
+      scales:{x:{type:'linear',min:0,max:1,title:{display:true,text:'水活性 aw'}},y:{min:-35,max:40,title:{display:true,text:'aw / [(1−aw)·X]'}}}}});
+}
+var q3done=0,m3a=0,m3b=0;
+document.getElementById('m3ds').onchange=drawM3;drawM3();
+document.getElementById('m3chk').onclick=function(){
+  var x=parseFloat(document.getElementById('m3in').value),r=bet(AW,DS.ov.X);
+  if(isNaN(x)){fb('m3fb','請先輸入數字。');return}
+  if(Math.abs(x-r.C)<=.05){q3done=1;drawM3();
+    fb('m3fb','✅ C = 1 + s/i = 1 + '+r.s.toFixed(2)+'/('+r.i.toFixed(2)+') = <b>'+r.C.toFixed(2)+'</b>。C 是負的！再看 X<sub>m</sub> = 1/(s+i) = '+f4(r.Xm)+' g/g——數字看起來「像樣」，但 C 不可能是負的（C 與吸附熱有關，必須 &gt; 0），所以這組參數沒有物理意義。','good');m3a=1;chk3()}
+  else if(Math.abs(x-(1+r.i/r.s))<.05)fb('m3fb','❌ 分子分母反了：C = 1 + 斜率／截距。','warn');
+  else fb('m3fb','❌ 提示：C = 1 + s/i，注意截距是負的。','warn');
+};
+function chk3(){if(m3a&&m3b)finish('m3',20)}
+mcq(document.querySelector('[data-q=m3b]'),{o:['可以，R² &gt; 0.95 就代表模型適用','不行：8 個點全部在 BET 適用範圍（aw 約 0.05–0.45）之外，而且 C 是負值，物理上不可能','可以，只要把 C 取絕對值','不行，因為點太少，至少要 20 點'],a:1,
+  e:'R² 只說明「這些點排得像一條直線」，不保證模型在這段 aw 成立。BET 假設只在低 aw 成立，高 aw 時多層吸附與毛細凝結讓它失效。正確作法：先檢查範圍，範圍外的點不能用 BET。',
+  w:{0:'R² 高只代表點排得直，不代表模型成立。看看 C 的正負號，還有點落在哪個範圍。',2:'取絕對值是在修改結果，不是在修正模型。',3:'點數不是主要問題；就算有 20 點，全在 aw 0.55 以上也一樣不能用 BET。'}},'m3bfb',function(ft){m3b=1;if(!ft)score-=5;chk3()});
+
+/* ---------- M4 ---------- */
+var c4a=null,c4b=null,PROF={},FREE={};
+function getProf(k){if(!PROF[k]){PROF[k]=profile(AW,DS[k].X);FREE[k]=freeFit(AW,DS[k].X,PROF[k])}return PROF[k]}
+function sig(){return +document.getElementById('m4sig').value}
+function delta(q,fr,s){return Math.max(0,(q.rmse*q.rmse-fr.rmse*fr.rmse)*fr.n/(s*s))}
+function ci(pr,fr,s){var ok=pr.filter(function(q){return delta(q,fr,s)<=3.84});return [ok[0].Xm,ok[ok.length-1].Xm,ok[ok.length-1].Xm>=XMAX-1e-6]}
+function ciTxt(r){return f3(r[0])+' – '+f3(r[1])+(r[2]?' 以上':'')}
+function drawM4(){
+  var k=document.getElementById('m4ds').value,d=DS[k],xm=+document.getElementById('m4xm').value,s=sig();
+  document.getElementById('m4xmv').textContent=xm.toFixed(3);
+  var p=fitCK(AW,d.X,xm),pr=getProf(k),fr=FREE[k],dl=delta(p,fr,s),r=ci(pr,fr,s);
+  var hitC=p.C>900;
+  document.getElementById('m4stat').innerHTML='<span'+(hitC?' class="warn"':'')+'>C = '+(hitC?'&gt; 900（撞到上限）':p.C.toFixed(1))+'</span><span>K = '+p.K.toFixed(3)+'</span><span>RMSE = '+f4(p.rmse)+' g/g</span>'+
+    '<span'+(dl>3.84?' class="warn"':'')+'>Δ = '+dl.toFixed(1)+(dl>3.84?'（數據排除）':'（數據分不出來）')+'</span><span>σ = '+s+' 時可接受的 X<sub>m</sub>：'+ciTxt(r)+'</span>';
+  document.getElementById('m4free').innerHTML='電腦讓 X<sub>m</sub>、C、K 三個一起自由擬合（'+d.name+'）：X<sub>m</sub> ≈ <b>'+f3(fr.Xm)+'</b> g/g、C ≈ '+fr.C.toFixed(0)+'、K = '+fr.K.toFixed(3)+'、RMSE '+f4(fr.rmse)+'。<br>'+
+    'C 跑到好幾百，而且換一個搜尋上限就會跟著變（若把上限設成 200，C 就停在 200）——<b>C 根本沒有被估出來</b>。X<sub>m</sub> 的下限約 0.055 還算穩定，上限卻要看量測誤差有多大。';
+  var A=[{label:d.name+'（真實）',data:tagged(AW,d.X,T),backgroundColor:k==='ov'?COL.acc:COL.or,pointRadius:5},
+         {label:'GAB（X_m = '+xm.toFixed(3)+'）',data:curve(p,.02,.95),showLine:true,borderColor:COL.red,borderWidth:2,pointRadius:0},
+         {label:'X_m 水平線',data:[{x:0,y:xm},{x:1,y:xm}],showLine:true,borderColor:COL.grey,borderDash:[4,4],borderWidth:1,pointRadius:0}];
+  var B=[{label:'Δ',data:pr.map(function(q){return {x:q.Xm,y:Math.min(delta(q,fr,s),60)}}),showLine:true,borderColor:COL.acc,pointRadius:2},
+         {label:'目前',data:[{x:xm,y:Math.min(dl,60)}],backgroundColor:COL.red,pointRadius:7},
+         {label:'3.84 界線',data:[{x:XMIN,y:3.84},{x:XMAX,y:3.84}],showLine:true,borderColor:COL.or,borderDash:[5,4],pointRadius:0}];
+  if(!window.Chart)return;
+  if(c4a){c4a.data.datasets=A;c4a.update('none');c4b.data.datasets=B;c4b.update('none');return}
+  c4a=new Chart(document.getElementById('c4a'),{type:'scatter',data:{datasets:A},options:{maintainAspectRatio:false,animation:false,
+    plugins:{legend:{labels:{boxWidth:12,font:{size:11}}},tooltip:tip},scales:axes('aw','X (g/g)',.3)}});
+  c4b=new Chart(document.getElementById('c4b'),{type:'scatter',data:{datasets:B},options:{maintainAspectRatio:false,animation:false,
+    plugins:{legend:{labels:{boxWidth:12,font:{size:11}}}},scales:{x:{type:'linear',min:XMIN,max:XMAX,title:{display:true,text:'固定的 X_m (g/g)'}},y:{min:0,max:20,title:{display:true,text:'Δ'}}}}});
+}
+document.getElementById('m4xm').oninput=drawM4;document.getElementById('m4ds').onchange=drawM4;
+document.getElementById('m4sig').onchange=function(){drawM4();if(lastIds)drawM5(lastIds)};
+setTimeout(drawM4,30);
+mcq(document.querySelector('[data-q=m4]'),{o:['曲線在數據範圍內明顯分開，X_m 被精準定在 0.057','在 aw 0.55–0.87 曲線幾乎重疊，Δ 都還在 3.84 以下；可接受的 X_m 從約 0.055 到 0.11，相差一倍——X_m 只被數據鬆鬆地框住','X_m 越大越好，所以應該取 0.15','Δ 都很小，代表 0.06 和 0.10 都是正確答案'],a:1,
+  e:'這叫「參數不可辨識」（identifiability problem）：X_m、C、K 三個參數高度相關，一個變了，另外兩個跟著調整，在有數據的範圍內就補回來了，差別都落在沒有數據的低 aw 區。再試試把 σ 改成 0.003：量測越精密，範圍越窄——可見「X_m 有多確定」取決於量測品質，不是軟體印出幾位小數。若要報告，至少要寫成「約 0.06（0.055–0.11，外插）」，更誠實的說法是：這組數據不足以估計單分子層水。',
+  w:{0:'再拖一次滑桿，看左圖 aw 0.55 以上的曲線差多少，還有右圖 Δ 的變化。',2:'看右圖：Δ 最低點在 0.057 附近，0.15 已經超過界線。',3:'「數據分不出來」不等於「都對」。真正的 X_m 只有一個，要靠低 aw 的點才能找出來。'}},'m4fb',function(ft){finish('m4',ft?20:12)});
+
+/* ---------- M5 ---------- */
+var sb=document.getElementById('salts'),sel={},lastIds=null;
+SALTS.forEach(function(s,i){var l=document.createElement('label');l.innerHTML='<input type="checkbox" data-i="'+i+'"> '+s[0]+'　a<sub>w</sub> '+s[1].toFixed(3);sb.appendChild(l);
+  l.querySelector('input').onchange=function(e){sel[i]=e.target.checked;l.classList.toggle('on',e.target.checked)}});
+var c5a=null,c5b=null,m5tries=0;
+document.getElementById('m5chk').onclick=function(){
+  var ids=Object.keys(sel).filter(function(i){return sel[i]}).map(Number);
+  var low=ids.filter(function(i){return SALTS[i][1]<=.45}).length;
+  if(!ids.length){fb('m5fb','請先勾選。');return}
+  m5tries++;
+  if(ids.length>5){fb('m5fb','❌ 最多 5 種罐子，請刪掉一些。提示：高 aw 那一段我們已經有 8 個點了。','warn');return}
+  if(low<3){fb('m5fb','❌ 你選的鹽只有 '+low+' 種落在 aw ≤ 0.45。BET 線性迴歸至少要 3 點，而且 X_m 就是由低 aw 那段決定的。'+(ids.some(function(i){return SALTS[i][1]>.7})?'NaCl、KCl、K₂SO₄ 的 aw 和現有數據重疊，幫助不大。':''),'warn');return}
+  var msg='✅ 好設計！你在 aw ≤ 0.45 放了 '+low+' 個點'+(ids.some(function(i){return SALTS[i][1]>.45&&SALTS[i][1]<.6})?'，還用 Mg(NO₃)₂ 把低 aw 和現有數據接起來':'')+'。';
+  if(ids.some(function(i){return SALTS[i][1]>.7}))msg+='（高 aw 的鹽和現有點重疊，下次可以省下來。）';
+  msg+='<br>實務提醒：鹽的 aw 會隨溫度變（這組數據在 28 °C）；吸濕罐要恆溫放到恆重（常常要 2–3 週），高 aw 罐子要防黴。';
+  fb('m5fb',msg,'good');finish('m5',m5tries===1?20:12);
+  drawM5(ids);
+};
+function drawM5(ids){
+  lastIds=ids;
+  document.getElementById('m5sim').style.display='block';
+  var s=sig();
+  var sa=ids.map(function(i){return SALTS[i][1]}),sx=ids.map(function(i){return +(gab(SALTS[i][1],SIM.Xm,SIM.C,SIM.K)*NOISE[i]).toFixed(4)});
+  var A=AW.concat(sa),X=DS.ov.X.concat(sx);
+  var pr0=getProf('ov'),fr0=FREE.ov,pr1=profile(A,X),fr1=freeFit(A,X,pr1);
+  var r0=ci(pr0,fr0,s),r1=ci(pr1,fr1,s);
+  var lo=ids.filter(function(i){return SALTS[i][1]<=.45}),bt=null;
+  if(lo.length>=3)bt=bet(lo.map(function(i){return SALTS[i][1]}),lo.map(function(i){return sx[ids.indexOf(i)]}));
+  document.getElementById('m5stat').innerHTML='<span>GAB X<sub>m</sub> = '+f3(fr1.Xm)+'（C '+fr1.C.toFixed(1)+'，K '+fr1.K.toFixed(3)+'）</span>'+
+    '<span>σ = '+s+' 時可接受的 X<sub>m</sub>：只有真實點 '+ciTxt(r0)+'　→　補點後 '+ciTxt(r1)+'</span>'+
+    (bt?'<span>BET（aw ≤ 0.45 的模擬點）X<sub>m</sub> = '+f3(bt.Xm)+'，C = '+bt.C.toFixed(1)+(bt.C>0?' ✔':' ✘')+'</span>':'')+
+    '<span>模擬設定的真值 X<sub>m</sub> = 0.065</span>';
+  var DA=[{label:'烘箱法（真實）',data:tagged(AW,DS.ov.X,T),backgroundColor:COL.acc,pointRadius:5},
+          {label:'補點（模擬）',data:sa.map(function(a,j){return {x:a,y:sx[j],t:SALTS[ids[j]][0]}}),backgroundColor:COL.or,pointStyle:'triangle',pointRadius:7},
+          {label:'GAB 擬合',data:curve(fr1,.02,.95),showLine:true,borderColor:COL.red,borderWidth:2,pointRadius:0}];
+  var DB=[{label:'只有真實點',data:pr0.map(function(q){return {x:q.Xm,y:Math.min(delta(q,fr0,s),60)}}),showLine:true,borderColor:COL.acc,pointRadius:0,borderWidth:2},
+          {label:'加上模擬補點',data:pr1.map(function(q){return {x:q.Xm,y:Math.min(delta(q,fr1,s),60)}}),showLine:true,borderColor:COL.or,pointRadius:0,borderWidth:2},
+          {label:'3.84 界線',data:[{x:XMIN,y:3.84},{x:XMAX,y:3.84}],showLine:true,borderColor:COL.grey,borderDash:[5,4],pointRadius:0}];
+  if(!window.Chart)return;
+  if(c5a){c5a.data.datasets=DA;c5a.update();c5b.data.datasets=DB;c5b.update();return}
+  c5a=new Chart(document.getElementById('c5a'),{type:'scatter',data:{datasets:DA},options:{maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12,font:{size:11}}},tooltip:tip},scales:axes('aw','X (g/g)',.3)}});
+  c5b=new Chart(document.getElementById('c5b'),{type:'scatter',data:{datasets:DB},options:{maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12,font:{size:11}}}},
+    scales:{x:{type:'linear',min:XMIN,max:XMAX,title:{display:true,text:'固定的 X_m (g/g)'}},y:{min:0,max:20,title:{display:true,text:'Δ'}}}}});
+}
+
+/* ---------- M6 ---------- */
+var Q6=[
+ {q:'Q6-1　這組數據是在<b>麵條烘乾過程中</b>依時間取樣測得的。嚴格來說，它是「平衡等溫吸濕曲線」嗎？',
+  o:['是，只要有 aw 和水分就是 MSI','不完全是：它是脫濕（desorption）軌跡，樣品內外水分不一定已經平衡；標準 MSI 要在恆溫、恆濕下放到恆重','是，因為溫度固定在 28 °C','不是，因為沒有用真空烘箱'],a:1,
+  e:'乾燥中的麵條外乾內濕，aw 計量到的多半是表面附近的狀態。把它當「近似的脫濕曲線」來看比較恰當；要做正式 MSI，得用任務 ⑤ 的飽和鹽罐法放到恆重。',
+  w:{0:'aw 和水分要在「平衡」狀態下成對量測，才是等溫線上的一點。',2:'恆溫是必要條件，但還不夠，水分也要平衡。',3:'測水分用哪種烘箱和是不是平衡曲線無關。'}},
+ {q:'Q6-2　1755 的 aw（0.647）反而比 1655（0.628）高，水分卻差不多。最可能的原因是？',
+  o:['麵條在烘箱裡吸水了','aw 計的不確定度約 ±0.01–0.02，加上取樣位置不同、內部水分重新分布','數據造假','aw 和水分無關，本來就會亂跳'],a:1,
+  e:'aw 差 0.019、水分差 0.2 %wb，都在量測與取樣誤差附近。所以我們用「整條趨勢」解讀，不對單一點過度詮釋；也提醒我們要做重複測定（n = 3）。',
+  w:{0:'乾燥中的麵條水分只會降低，而且水分讀值並沒有上升。',2:'先找合理的量測誤差來源，不要輕易下這種結論。',3:'同一食品、同一溫度下，aw 與水分是有關係的，這正是等溫線要描述的。'}},
+ {q:'Q6-3　這組數據雖然算不出單分子層，卻很適合回答實務問題：要讓麵條 aw < 0.6（低於多數黴菌的下限），烘箱法水分大約要降到多少？',
+  o:['約 5–6 %wb','約 10–11 %wb','約 14–15 %wb','約 18 %wb'],a:1,
+  e:'aw 0.558 時是 9.9 %wb，0.628 時是 10.9 %wb，0.6 剛好落在兩點之間，內插約 10.5 %wb。這是<b>內插</b>，有數據撐腰，比外插出來的 X_m 可靠得多。若改用 FD-660 的讀值，數字會再低一點（還記得任務 ① 的偏差嗎？）。',
+  w:{0:'那是推估的單分子層附近（而且是外插），不是 aw 0.6 對應的水分。',2:'看表格：14–15 %wb 時 aw 已經在 0.7 以上。',3:'18 %wb 時 aw 約 0.87，連酵母菌都能長。'}},
+ {q:'Q6-4　如果用這條「脫濕」曲線，去預測乾麵條在潮濕倉庫中「吸濕」後的含水量，會發生什麼事？',
+  o:['完全一樣，沒有差別','會高估：同一 aw 下脫濕曲線的含水量通常比吸濕曲線高（遲滯現象 hysteresis）','會低估，因為吸濕曲線一定比較高','無法比較，因為 aw 不同'],a:1,
+  e:'脫濕時水分子不容易從孔隙與結構中離開，所以在同一 aw 下，脫濕曲線的含水量比吸濕高，兩條曲線之間的落差就是遲滯環。預測儲存吸濕要用吸濕曲線（從乾樣品放入各個鹽罐）。',
+  w:{0:'多數食品的吸濕與脫濕曲線不重合。',2:'方向反了：通常脫濕曲線在上方。',3:'兩條曲線可以在同一個 aw 下比較含水量。'}}
+];
+var m6box=document.getElementById('m6box'),m6n=0,m6pts=0;
+Q6.forEach(function(q,k){var d=document.createElement('div');m6box.appendChild(d);var f=document.createElement('div');f.className='fb';f.id='m6fb'+k;
+  mcq(d,q,'m6fb'+k,function(ft){m6n++;m6pts+=ft?5:3;if(m6n===Q6.length)finish('m6',m6pts)});m6box.appendChild(f)});
+})();
+</script>
+</body>
+</html>
