@@ -1,0 +1,306 @@
+{
+ "fps": 30,
+ "width": 1920,
+ "height": 1080,
+ "style": "sketch-board",
+ "style_dir": "style/",
+ "direction": "direction-approved.md：使用者指定手繪草圖風（同 W3）",
+ "hero_elements": [
+  "10 mL 定量吸管（標線）",
+  "靶心上的 10 個點"
+ ],
+ "scenes": [
+  {
+   "id": "s0",
+   "title": "你的吸管準嗎",
+   "role": "引起動機",
+   "task": "問題→解答",
+   "narration": "這支 10 毫升的定量吸管，吸到標線、再放出來，真的剛好是 10 毫升嗎？",
+   "visual_intent": "一支定量吸管一筆一筆畫出（hero），水從下往上吸到標線，放進燒杯；便利貼「真的是 10.00 mL？」",
+   "hero_state": "吸管直立在左 35%，滿版高度的 80%",
+   "shot": "全景 1.04x→1x",
+   "camera": "定場微推",
+   "composition": "標題左上；吸管左 35%；燒杯右 65%；便利貼右上",
+   "key_motion": "水柱升到標線（M.draw）",
+   "signature": "紅筆圈起標線",
+   "transition_out": "推近到標線",
+   "on_screen": [
+    {
+     "text": "10 mL 吸管，真的放出 10 mL？",
+     "kind": "label"
+    },
+    {
+     "text": "標線",
+     "kind": "label"
+    },
+    {
+     "text": "真的是 10.00 mL？",
+     "kind": "label"
+    }
+   ],
+   "tts": "",
+   "check_times": [],
+   "assets": []
+  },
+  {
+   "id": "s1",
+   "title": "Class A 也有公差",
+   "role": "建立概念",
+   "task": "定義",
+   "narration": "玻璃有製造誤差，每個人的手法也不一樣。就算是最高等級的 Class A，也只保證在正負 0.02 毫升以內。",
+   "tts": "玻璃有製造誤差，每個人的手法也不一樣。就算是最高等級的 Class A，也只保證在正負零點零二毫升以內。",
+   "visual_intent": "鏡頭推近標線：標線上下畫出紅色虛線公差帶 ±0.02 mL；兩個小標籤「玻璃」「手法」；Class A 印章",
+   "hero_state": "吸管標線放大",
+   "shot": "特寫 1.6x",
+   "camera": "推近到一個形狀",
+   "composition": "標線居中；公差帶上下；兩個原因標籤在右",
+   "key_motion": "公差帶從標線向上下撐開",
+   "signature": "Class A 蓋章",
+   "transition_out": "沿箭頭平移到天平",
+   "on_screen": [
+    {
+     "text": "製造誤差",
+     "kind": "label"
+    },
+    {
+     "text": "手法",
+     "kind": "label"
+    },
+    {
+     "text": "Class A ±0.02 mL",
+     "kind": "label"
+    }
+   ],
+   "check_times": [],
+   "assets": []
+  },
+  {
+   "id": "s2",
+   "title": "不讀刻度，改用秤的",
+   "role": "方法",
+   "task": "步驟",
+   "narration": "體積用眼睛讀，很難讀得準；質量卻可以秤得很準。所以我們把水放進加蓋的秤重瓶，用分析天平秤到 0.1 毫克。",
+   "tts": "體積用眼睛讀，很難讀得準；質量卻可以秤得很準。所以我們把水放進加蓋的秤重瓶，用分析天平秤到零點一毫克。",
+   "visual_intent": "左：眼睛看刻度（×）；右：分析天平＋秤重瓶，吸管傾斜放水，瓶蓋蓋上，顯示器打出 9.9700 g",
+   "hero_state": "吸管移到天平上方放水",
+   "shot": "中景 1x",
+   "camera": "平移到下一塊區域",
+   "composition": "眼睛小圖左 25%；天平右 60%",
+   "key_motion": "水滴進瓶，數字跳到 9.9700 g",
+   "signature": "數字逐位打出，最後一位 0.1 mg 用螢光筆標",
+   "transition_out": "平移到溫度計",
+   "on_screen": [
+    {
+     "text": "不讀刻度，改用秤的",
+     "kind": "label"
+    },
+    {
+     "text": "9.9700 g",
+     "kind": "label"
+    },
+    {
+     "text": "0.1 mg",
+     "kind": "label"
+    }
+   ],
+   "check_times": [],
+   "assets": []
+  },
+  {
+   "id": "s3",
+   "title": "質量換體積：看水溫",
+   "role": "方法",
+   "task": "因果",
+   "narration": "接著把質量換回體積。水的密度會隨溫度改變，所以每次都要記下水溫；25 度時，1 毫升的水大約是 0.997 公克。",
+   "tts": "接著把質量換回體積。水的密度會隨溫度改變，所以每次都要記下水溫；25 度時，一毫升的水大約是零點九九七公克。",
+   "visual_intent": "溫度計升到 25.0 °C；手繪密度–溫度曲線往下彎；m ÷ ρw → V 的箭頭",
+   "hero_state": "—",
+   "shot": "中景",
+   "camera": "平移到下一塊區域",
+   "composition": "溫度計左；曲線中；換算箭頭下",
+   "key_motion": "曲線一筆畫出，點落在 25 °C",
+   "signature": "25 °C 點與 0.997 g/mL 標籤",
+   "transition_out": "平移",
+   "on_screen": [
+    {
+     "text": "質量 → 體積：看水溫",
+     "kind": "label"
+    },
+    {
+     "text": "25.0 °C",
+     "kind": "label"
+    },
+    {
+     "text": "ρw = 0.997 g/mL",
+     "kind": "label"
+    },
+    {
+     "text": "V = m ÷ ρw",
+     "kind": "label"
+    }
+   ],
+   "check_times": [],
+   "assets": []
+  },
+  {
+   "id": "s4",
+   "title": "別忘了空氣浮力",
+   "role": "方法",
+   "task": "因果",
+   "narration": "還有一個小細節：天平是在空氣裡秤的，空氣會把水往上托，讀數會輕一點點，所以要再乘上浮力校正，大約千分之一。",
+   "visual_intent": "秤重瓶周圍畫出往上托的小箭頭；天平讀數旁標「輕一點」；× Fb ≈ 1.001 卡片",
+   "hero_state": "—",
+   "shot": "中景",
+   "camera": "平移到下一塊區域",
+   "composition": "瓶子居中左；箭頭環繞；Fb 卡片右",
+   "key_motion": "向上的箭頭一根根長出",
+   "signature": "Fb 卡片彈入",
+   "transition_out": "往下平移到公式",
+   "on_screen": [
+    {
+     "text": "別忘了空氣浮力",
+     "kind": "label"
+    },
+    {
+     "text": "× Fb ≈ 1.001（約 0.1%）",
+     "kind": "label"
+    }
+   ],
+   "tts": "",
+   "check_times": [],
+   "assets": []
+  },
+  {
+   "id": "s5",
+   "title": "代進公式",
+   "role": "結果",
+   "task": "問題→解答",
+   "narration": "把數字代進公式：這次放出來的水，比 10 毫升多了 0.01，還在允許的範圍內。",
+   "tts": "把數字代進公式：這次放出來的水，比 10 毫升多了零點零一，還在允許的範圍內。",
+   "visual_intent": "V = m × Fb ÷ ρw，三個數字從前幾幕飛進來，算出 10.010 mL；公差帶上的點落在範圍內，打勾",
+   "hero_state": "吸管回到畫面，標線旁出現 10.010",
+   "shot": "中景",
+   "camera": "往下平移",
+   "composition": "公式上；公差尺下",
+   "key_motion": "數字代入",
+   "signature": "綠色打勾",
+   "transition_out": "平移到靶心",
+   "on_screen": [
+    {
+     "text": "V = m × Fb ÷ ρw",
+     "kind": "label"
+    },
+    {
+     "text": "10.010 mL",
+     "kind": "label"
+    },
+    {
+     "text": "±0.02 mL",
+     "kind": "label"
+    }
+   ],
+   "check_times": [],
+   "assets": []
+  },
+  {
+   "id": "s6",
+   "title": "準確度 vs 精密度",
+   "role": "建立概念",
+   "task": "比較",
+   "narration": "不過，只做一次還不夠。每支吸管要重複 10 次：平均離標示有多遠，看的是準確度；10 次散得有多開，看的是精密度。",
+   "visual_intent": "靶心：10 個點一個一個打上；平均點到中心的距離＝準確度；圍住 10 點的圈＝精密度",
+   "hero_state": "—",
+   "shot": "中景",
+   "camera": "平移到下一塊區域",
+   "composition": "靶心左；兩個定義卡右",
+   "key_motion": "10 個點依序落下",
+   "signature": "量尺從中心拉到平均點",
+   "transition_out": "平移",
+   "on_screen": [
+    {
+     "text": "準確度 vs 精密度",
+     "kind": "label"
+    },
+    {
+     "text": "× 10 次",
+     "kind": "label"
+    },
+    {
+     "text": "準確度＝平均離中心多遠",
+     "kind": "label"
+    },
+    {
+     "text": "精密度＝10 次散多開",
+     "kind": "label"
+    }
+   ],
+   "tts": "",
+   "check_times": [],
+   "assets": []
+  },
+  {
+   "id": "s7",
+   "title": "系統誤差 vs 隨機誤差",
+   "role": "建立概念",
+   "task": "比較",
+   "narration": "如果 10 次都偏向同一邊，就是系統誤差，要找出原因來修正；如果忽高忽低，就是隨機誤差，要靠多做幾次來描述它。",
+   "visual_intent": "兩個靶並排：左邊點集中但偏一側（系統誤差，紅色箭頭指向同一方向）；右邊點圍著中心散開（隨機誤差）",
+   "hero_state": "—",
+   "shot": "中景",
+   "camera": "平移到下一塊區域",
+   "composition": "左右兩靶，各一標籤與一句處理方式",
+   "key_motion": "點依序落下",
+   "signature": "同方向箭頭",
+   "transition_out": "拉遠看全圖",
+   "on_screen": [
+    {
+     "text": "系統誤差",
+     "kind": "label"
+    },
+    {
+     "text": "隨機誤差",
+     "kind": "label"
+    },
+    {
+     "text": "找原因 → 修正",
+     "kind": "label"
+    },
+    {
+     "text": "多做幾次 → 描述",
+     "kind": "label"
+    }
+   ],
+   "tts": "",
+   "check_times": [],
+   "assets": []
+  },
+  {
+   "id": "s8",
+   "title": "你那支，準嗎",
+   "role": "喚起行動",
+   "task": "問題→解答",
+   "narration": "上課時，你會親手校正自己的吸管和滴定管。先猜猜看：你手上的那支，準嗎？",
+   "visual_intent": "拉遠成整張畫布（前面各區變成一張流程圖）；中央卡片「你手上的那支，準嗎？」＋W1 容量器具校正",
+   "hero_state": "吸管回到中央",
+   "shot": "全景拉遠",
+   "camera": "拉遠看全圖",
+   "composition": "全圖 0.22x；中央卡片",
+   "key_motion": "拉遠",
+   "signature": "手寫問句",
+   "transition_out": "none",
+   "on_screen": [
+    {
+     "text": "你手上的那支，準嗎？",
+     "kind": "label"
+    },
+    {
+     "text": "W1 容量器具校正",
+     "kind": "label"
+    }
+   ],
+   "tts": "",
+   "check_times": [],
+   "assets": []
+  }
+ ]
+}
