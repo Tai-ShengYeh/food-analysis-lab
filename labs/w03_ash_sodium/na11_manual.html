@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>鈉離子計中文手冊</title>
+<meta name="description" content="HORIBA LAQUAtwin-Na-11 筆式鈉離子計操作說明書中文版：規格、安裝、校正、量測、保養、設定模式與常見問題。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --ink:#18221F; --muted:#5B6964; --line:#D5DDD9;
+  --accent:#B3306A; --accent-soft:#F7E3EC; --teal:#1E6B66; --teal-soft:#DDEFEC;
+  --or:#C4661F; --or-soft:#FBE7D6; --lcd:#DCE5D2; --lcd-ink:#1F2A1C;
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+    --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+    --or:#F0A56A; --or-soft:#3A2A1C; --lcd:#2B3426; --lcd-ink:#D6E6C8;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+  --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+  --or:#F0A56A; --or-soft:#3A2A1C; --lcd:#2B3426; --lcd-ink:#D6E6C8;
+}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:960px;margin:0 auto}
+a{color:var(--teal)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{padding-block:36px 12px;display:grid;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--teal)}
+.eyebrow a{color:inherit}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin:0}
+.lede{max-width:70ch;color:var(--muted);margin:0}
+h2{font-family:var(--serif);font-size:22px;margin:44px 0 12px;padding-top:24px;scroll-margin-top:12px;border-top:1px solid var(--line)}
+h3{font-size:16.5px;margin:24px 0 8px}
+h4{font-size:15px;margin:16px 0 6px;color:var(--teal)}
+p{margin:8px 0}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.toc a{font-size:13.5px;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 12px;border-radius:999px}
+.toc a:hover{border-color:var(--teal);color:var(--teal)}
+.tbl{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface);margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:700;background:var(--bg);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.k{white-space:nowrap;font-weight:500}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+ol,ul{padding-left:22px}
+li{margin:4px 0}
+ol.steps>li{margin:8px 0}
+ol.steps>li>b:first-child{display:inline}
+.sub{color:var(--muted);font-size:14px;display:block}
+.box{border-radius:8px;padding:12px 16px;font-size:14.5px;margin:14px 0;border-left:4px solid var(--c);background:var(--s)}
+.box>.lbl{font-weight:700;color:var(--c);margin-right:6px}
+.box ul{margin:4px 0}
+.note{--c:var(--accent);--s:var(--accent-soft)}
+.tip{--c:var(--teal);--s:var(--teal-soft)}
+.lab{--c:var(--or);--s:var(--or-soft)}
+.key{display:inline-block;font-family:var(--mono);font-size:12.5px;line-height:1.5;border:1px solid var(--ink);border-radius:999px;padding:0 8px;margin:0 2px;white-space:nowrap}
+.lcd{display:inline-block;font-family:var(--mono);font-size:14px;letter-spacing:.06em;background:var(--lcd);color:var(--lcd-ink);border:1px solid var(--line);border-radius:4px;padding:0 7px;margin:0 2px;white-space:nowrap}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0}
+.flow .arr{color:var(--muted);font-size:13px}
+.parts{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 24px;margin:8px 0;padding-left:0;list-style:none;counter-reset:p}
+.parts li{counter-increment:p}
+.parts li::before{content:counter(p);display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--teal);color:var(--surface);font-size:12px;font-family:var(--mono);margin-right:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid2>*{min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+.card h3{margin-top:0}
+.quick{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--or);border-radius:8px;padding:14px 18px;margin-top:16px}
+.quick h2{border:none;margin:0 0 6px;padding:0;font-size:19px}
+.quick ol{margin:6px 0}
+footer{margin-top:44px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+@media (max-width:760px){.grid2,.parts{grid-template-columns:1fr}}
+@media print{
+  body{background:#fff;color:#000;font-size:11pt;padding:0}
+  .toc{display:none}
+  h2{break-after:avoid}
+  .box,.card,.tbl,.quick{break-inside:avoid}
+  a{color:#000}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow"><a href="../../index.html">食品分析實驗</a> · <a href="index.html">W3 灰分與鈉離子</a> · 儀器手冊</div>
+  <h1>LAQUAtwin-Na-11 筆式鈉離子計<br>中文使用手冊</h1>
+  <p class="lede">HORIBA 小型水質計（鈉離子，Na⁺）操作說明書的中文翻譯，依原廠英文版（Instruction Manual (Operation)，CODE: GZ0000460286，2017 年 3 月）整理。內容如有出入，以原廠說明書為準。標示「課堂補充」的段落是本課程加上的，不屬於原廠說明。</p>
+  <nav class="toc" aria-label="本頁目錄">
+    <a href="#quick">課堂快速流程</a><a href="#spec">規格</a><a href="#parts">各部名稱</a><a href="#setup">初次設定</a><a href="#basic">開關機</a><a href="#cal">校正</a><a href="#meas">量測</a><a href="#maint">保養</a><a href="#appendix">干擾離子</a><a href="#faq">常見問題</a><a href="#mode">設定模式</a>
+  </nav>
+</header>
+
+<section class="quick" id="quick" aria-labelledby="quick-h">
+  <h2 id="quick-h">課堂快速流程（課堂補充）</h2>
+  <ol>
+    <li>按住 <span class="key">ON/OFF</span> 開機，畫面顯示 <span class="lcd">NA11</span>。</li>
+    <li><b>兩點校正：</b>先滴 150 ppm 標準液 → 蓋上遮光蓋 → 按 <span class="key">CAL</span> 兩次，等 😊 停止閃爍；清洗、拭乾後，再用 2000 ppm 標準液重複一次。</li>
+    <li>每次換液之間都用自來水沖洗感測面，再用拭鏡紙<b>輕壓</b>吸乾（不要擦）。</li>
+    <li><b>量測樣品：</b>滴樣品蓋滿平面感測器 → 蓋上遮光蓋 → 出現 😊 後讀值並記錄。有足量樣品時，先用樣品潤洗感測器兩次。</li>
+    <li>每量 10 個樣品回測一次標準液，確認沒有漂移；偏差太大就重新校正。</li>
+    <li>收機前清洗、拭乾，蓋上遮光蓋與滑蓋，放回收納盒。</li>
+  </ol>
+</section>
+
+<h2 id="spec">規格</h2>
+<div class="tbl"><table>
+<tbody>
+<tr><td class="k">型號</td><td>LAQUAtwin-Na-11</td></tr>
+<tr><td class="k">量測對象</td><td>鈉離子（Na⁺）</td></tr>
+<tr><td class="k">量測原理</td><td>離子選擇電極法（ISE）</td></tr>
+<tr><td class="k">最少樣品量</td><td>0.3 mL 以上（使用另售的取樣片 B 時為 0.05 mL 以上）</td></tr>
+<tr><td class="k">量測範圍</td><td>2–9900（單位：ppm 或 mg/L）</td></tr>
+<tr><td class="k">解析度（預設）</td><td>顯示 2–99 時為 1；100–990 時為 10；1000–9900 時為 100（單位：ppm 或 mg/L）</td></tr>
+<tr><td class="k">校正</td><td>最多 2 點；預設 150 ppm 與 2000 ppm</td></tr>
+<tr><td class="k">準確度<sup>*1</sup></td><td>讀值的 ±10%</td></tr>
+<tr><td class="k">防水</td><td>IP67（浸於水深 1 m 處 30 分鐘不故障）<sup>*2</sup></td></tr>
+<tr><td class="k">顯示器</td><td>客製單色數位 LCD，附背光</td></tr>
+<tr><td class="k">使用環境</td><td>溫度 5–40 °C；相對濕度 85% 以下（不可結露）</td></tr>
+<tr><td class="k">電源</td><td>CR2032 鈕扣電池 × 2</td></tr>
+<tr><td class="k">電池壽命</td><td>連續使用約 400 小時（背光關閉時）<sup>*3</sup></td></tr>
+<tr><td class="k">材質</td><td>ABS 環氧樹脂（主體）</td></tr>
+<tr><td class="k">尺寸</td><td>164 × 29 × 20 mm（不含突出部分）</td></tr>
+<tr><td class="k">重量</td><td>約 50 g（不含電池）</td></tr>
+</tbody></table></div>
+<ol style="font-size:13.5px;color:var(--muted);list-style:none;padding-left:0">
+  <li>*1 以 150 ppm 與 2000 ppm 標準液做兩點校正後，量測標準液所得的值與實際值的接近程度。條件：校正後才量測標準液；校正與量測在同一溫度下進行；不含標準液本身的誤差與進位誤差（±1 位數）。</li>
+  <li>*2 本機不能在水中使用。</li>
+  <li>*3 開啟背光時電池壽命會縮短。</li>
+</ol>
+
+<div class="grid2">
+  <div class="card"><h3>包裝內容</h3>
+    <div class="tbl"><table>
+    <thead><tr><th>品項</th><th class="num">數量</th></tr></thead>
+    <tbody>
+    <tr><td>感測器（S022）</td><td class="num">1</td></tr>
+    <tr><td>主機</td><td class="num">1</td></tr>
+    <tr><td>收納盒</td><td class="num">1</td></tr>
+    <tr><td>電池（CR2032）</td><td class="num">2</td></tr>
+    <tr><td>標準液 150 ppm</td><td class="num">1</td></tr>
+    <tr><td>標準液 2000 ppm</td><td class="num">1</td></tr>
+    <tr><td>滴管</td><td class="num">1</td></tr>
+    <tr><td>取樣片 B（5 片裝）</td><td class="num">1</td></tr>
+    <tr><td>操作說明書（Operation）</td><td class="num">1</td></tr>
+    <tr><td>使用前說明書（Before use）</td><td class="num">1</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="card"><h3>另售耗材</h3>
+    <div class="tbl"><table>
+    <thead><tr><th>品項</th><th>規格</th><th>料號</th></tr></thead>
+    <tbody>
+    <tr><td>感測器</td><td>S022，Na⁺</td><td>3200459867</td></tr>
+    <tr><td>標準液</td><td>Y022L，Na⁺ 150 ppm</td><td>3200457724</td></tr>
+    <tr><td>標準液</td><td>Y022H，Na⁺ 2000 ppm</td><td>3200457723</td></tr>
+    <tr><td>取樣片 B</td><td>Y046，100 片裝</td><td>3200053858</td></tr>
+    <tr><td>取樣片固定蓋</td><td>—</td><td>3200459736</td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<h2 id="parts">各部名稱</h2>
+<ol class="parts">
+  <li>平面感測器（flat sensor）</li>
+  <li>遮光蓋（light shield cover）</li>
+  <li>液絡部（liquid junction）</li>
+  <li>感應膜（response membrane）</li>
+  <li>鋰電池</li>
+  <li><span class="key">MEAS</span> 量測鍵</li>
+  <li><span class="key">ON/OFF</span> 電源鍵</li>
+  <li><span class="key">CAL</span> 校正鍵</li>
+  <li>防水墊圈</li>
+  <li>吊繩孔</li>
+</ol>
+<div class="box note"><span class="lbl">注意</span>除非另有說明，按鍵都要按住 0.5 秒以上才有反應。</div>
+
+<h2 id="setup">初次設定</h2>
+<h3>安裝與拆卸感測器</h3>
+<div class="grid2">
+  <div class="card"><h4>安裝感測器</h4>
+    <ol class="steps">
+      <li>關閉主機電源。</li>
+      <li>確認防水墊圈乾淨、沒有損傷。</li>
+      <li>把感測器滑入主機，讓主機背面的卡榫「A」卡進感測器舌片上的孔「a」。</li>
+    </ol>
+    <div class="box note"><span class="lbl">注意</span>不要讓防水墊圈扭曲。</div>
+  </div>
+  <div class="card"><h4>拆卸感測器</h4>
+    <ol class="steps">
+      <li>關閉主機電源。</li>
+      <li>抬起感測器舌片前端，把感測器稍微滑離主機。</li>
+      <li>將感測器整個從主機拉出。</li>
+    </ol>
+  </div>
+</div>
+
+<h3>裝入與取出電池</h3>
+<div class="grid2">
+  <div class="card"><h4>裝入電池</h4>
+    <ol class="steps">
+      <li>關閉主機電源。</li>
+      <li>依圖示把兩顆電池滑入電池槽。務必使用兩顆 CR2032，<b>正極（＋）朝上</b>。</li>
+    </ol>
+  </div>
+  <div class="card"><h4>取出電池</h4>
+    <ol class="steps">
+      <li>關閉主機電源。</li>
+      <li>用原子筆或其他工具，把電池從電池夾撬出。</li>
+    </ol>
+  </div>
+</div>
+
+<h3>電極活化（conditioning）</h3>
+<div class="box note"><span class="lbl">注意</span>
+  <ul>
+    <li>第一次使用感測器，或停用數天之後，都要先做電極活化。</li>
+    <li>活化完成後要重新校正。</li>
+  </ul>
+</div>
+<ol class="steps">
+  <li>在平面感測器上滴幾滴 <b>2000 ppm 標準液</b>。</li>
+  <li>放置數小時後再使用。<span class="sub">這段時間不需要開機。</span></li>
+  <li>用流動的清水沖洗平面感測器。</li>
+</ol>
+<div class="box lab"><span class="lbl">課堂補充</span>上課當天要用的鈉離子計，請助教在課前（前一晚或上課前數小時）先滴 2000 ppm 標準液活化，並蓋上遮光蓋避免乾掉。</div>
+
+<h2 id="basic">基本操作：開機與關機</h2>
+<div class="grid2">
+  <div class="card"><h3>開機</h3>
+    <p>按住 <span class="key">ON/OFF</span>。電源開啟，LCD 顯示機型代號 <span class="lcd">NA11</span>。</p>
+  </div>
+  <div class="card"><h3>關機</h3>
+    <p>按住 <span class="key">ON/OFF</span>，電源關閉。</p>
+  </div>
+</div>
+
+<h2 id="cal">校正</h2>
+<p>量測前必須先校正。請使用濃度在量測範圍內的標準液，並參考下方「如何選擇標準液」。</p>
+<div class="box tip"><span class="lbl">提示</span>
+  <ul>
+    <li>關機後校正值仍會保留。</li>
+    <li>用同一種標準液重複校正時，會覆寫該點的校正值。</li>
+  </ul>
+</div>
+
+<h3>校正點數</h3>
+<p>最多 2 點。</p>
+
+<h3>多點校正步驟</h3>
+<ol class="steps">
+  <li><b>設定標準液濃度。</b>參考〈<a href="#mode-cal1">第 1 校正點設定</a>〉與〈<a href="#mode-cal2">第 2 校正點設定</a>〉。<span class="sub">預設第 1 點為 150 ppm、第 2 點為 2000 ppm。</span></li>
+  <li><b>打開遮光蓋，滴幾滴標準液，蓋滿整個平面感測器。</b><span class="sub">先用標準液潤洗感測器，可減少前一個樣品的殘留汙染，校正更準確。</span></li>
+  <li><b>蓋上遮光蓋，按 <span class="key">CAL</span>。</b><span class="sub">主機進入校正模式，畫面閃爍第 1 點的設定濃度（例如 <span class="lcd">CAL 150 ppm</span>）。按 <span class="key">MEAS</span> 可在各設定濃度之間切換。</span></li>
+  <li><b>畫面顯示第 1 點的設定濃度時，按 <span class="key">CAL</span>。</b><span class="sub"><span class="lcd">CAL</span> 與 😊 閃爍，並顯示校正值。校正完成後，<span class="lcd">CAL</span> 與 😊 停止閃爍並顯示量測值；接著顯示 1 秒換算為 25 °C 的校正值，然後自動回到量測模式。</span></li>
+  <li><b>打開遮光蓋，移除標準液，再用柔軟的紙巾輕壓，吸乾感測器上的水分。</b><span class="sub">第 1 點校正完成。</span></li>
+  <li><b>重複步驟 2–5，完成第 2 點校正。</b></li>
+</ol>
+
+<h3>校正錯誤</h3>
+<p>若 <span class="lcd">CAL</span> 閃爍並出現 <span class="lcd">Er4</span>（錯誤顯示），代表校正失敗：</p>
+<ul>
+  <li>先做<a href="#setup">電極活化</a>。</li>
+  <li>確認使用的是正確的標準液，清洗感測器後重新校正。</li>
+  <li>使用正確標準液仍反覆校正失敗時，感測器可能已劣化，請更換新的感測器。</li>
+</ul>
+
+<h3>如何選擇標準液</h3>
+<p>下表為目標樣品濃度與校正用標準液的對應範例（單位：ppm）。</p>
+<div class="tbl"><table>
+<thead><tr><th class="num">目標樣品濃度</th><th class="num">標準液（低）</th><th class="num">標準液（高）</th></tr></thead>
+<tbody>
+<tr><td class="num">2000</td><td class="num">2000</td><td class="num">9000</td></tr>
+<tr><td class="num">150</td><td class="num">150</td><td class="num">2000</td></tr>
+<tr><td class="num">15</td><td class="num">15*</td><td class="num">150</td></tr>
+</tbody></table></div>
+<p style="font-size:13.5px;color:var(--muted)">* 15 ppm 標準液配法：150 ppm 標準液 1 份加純水 9 份混合（體積比 1:9）。</p>
+<div class="box tip"><span class="lbl">提示</span>要量得準，請用<b>濃度相差 10 倍以上、且涵蓋目標濃度</b>的兩種標準液做兩點校正。待測濃度非常高或非常低時，準確度可能變差。</div>
+
+<h2 id="meas">量測</h2>
+<h3>放置樣品</h3>
+<ol class="steps">
+  <li>打開遮光蓋，滴幾滴樣品，蓋滿整個平面感測器。</li>
+  <li>蓋上遮光蓋。</li>
+</ol>
+
+<h3>量測模式</h3>
+<p>可選擇自動穩定（AS）模式或自動保持（AH）模式，設定方法見〈<a href="#mode-meas">量測模式切換</a>〉。</p>
+<div class="grid2">
+  <div class="card"><h3>自動穩定（AS）模式</h3>
+    <p>出廠預設。量測值符合穩定條件時出現 😊；數值再變動時 😊 會消失。</p>
+    <ol class="steps">
+      <li><b>確認主機在量測模式，把樣品放上感測器。</b><span class="sub">讀值符合穩定條件時出現 😊，讀值鎖定。</span></li>
+      <li><b>出現 😊 時記錄顯示值。</b><span class="sub">讀值不符合穩定條件時 😊 消失，讀值會隨時間變動。</span></li>
+    </ol>
+  </div>
+  <div class="card"><h3>自動保持（AH）模式</h3>
+    <p>量測值符合穩定條件時出現 😊，讀值鎖定不再改變，直到按 <span class="key">MEAS</span> 開始下一次量測。</p>
+    <ol class="steps">
+      <li><b>確認主機在量測模式，把樣品放上感測器。</b></li>
+      <li><b>按 <span class="key">MEAS</span>。</b><span class="sub">啟動自動保持，<span class="lcd">MEAS</span> 閃爍直到數值穩定。數值穩定後 <span class="lcd">MEAS</span> 停止閃爍，與 😊 同時顯示，讀值鎖定。</span></li>
+      <li><b>記錄顯示值。</b></li>
+      <li><b>按 <span class="key">MEAS</span>。</b><span class="sub">解除自動保持，😊 消失。下一次量測前一定要做這一步，否則可能把上一個鎖定值誤當成新的量測值。</span></li>
+    </ol>
+  </div>
+</div>
+<div class="box note"><span class="lbl">注意</span>
+  <ul>
+    <li>量測值超出規格範圍時，高於上限顯示 <span class="lcd">Or</span>，低於下限顯示 <span class="lcd">Ur</span>。</li>
+    <li>校正或量測遇到問題，請參考〈<a href="#faq">常見問題</a>〉。</li>
+  </ul>
+</div>
+
+<h3>取樣片</h3>
+<h4>微量樣品</h4>
+<p>可使用隨附的取樣片 B。使用這種取樣片時，只要 50–100 µL 樣品就能蓋滿整個平面感測器。</p>
+<div class="box note"><span class="lbl">注意</span>
+  <ul>
+    <li>樣品與取樣片 B 之間的反應可能影響量測值。</li>
+    <li>請用鑷子夾取取樣片 B，盡量避免汙染。</li>
+    <li>量測時務必蓋上遮光蓋，減少樣品蒸發。</li>
+  </ul>
+</div>
+<h4>含細小顆粒的樣品</h4>
+<p>樣品含細小顆粒（例如土壤萃取液）時，顆粒會影響量測結果。可搭配另售的取樣片固定蓋與取樣片 B 來降低影響：</p>
+<ol class="steps">
+  <li>把遮光蓋換成取樣片固定蓋（料號 3200459736）。</li>
+  <li>在平面感測器上放一片取樣片 B（料號 3200053858），蓋上取樣片固定蓋。</li>
+  <li>在取樣片 B 上滴 4–5 滴樣品。</li>
+</ol>
+<div class="box note"><span class="lbl">注意</span>取樣片固定蓋無法遮光，而光線會影響感測器。使用固定蓋時，請另外想辦法替平面感測器遮光。</div>
+
+<h3 id="display">切換顯示內容</h3>
+<p>在 AS 模式下按 <span class="key">MEAS</span>，顯示內容會在濃度（單位依設定）、溫度、電壓之間切換。</p>
+
+<h2 id="maint">保養</h2>
+<h3>收納</h3>
+<ol class="steps">
+  <li>用自來水清洗感測器。</li>
+  <li>用柔軟的紙巾或布輕壓，吸乾感測器與主機上的水分。</li>
+  <li>蓋上遮光蓋與滑蓋後再收起來。</li>
+</ol>
+<div class="box note"><span class="lbl">注意</span>處理平面感測器時動作務必輕柔，避免損傷。</div>
+
+<h3>溫度感測器調整</h3>
+<p>為了在溫度補償下量得更準，可依下列步驟調整溫度感測器。一般情況下不需要做。</p>
+<ol class="steps">
+  <li><b>準備一支參考溫度計，讓主機與溫度計都回到室溫。</b></li>
+  <li><b>把顯示切換到溫度</b>（見〈<a href="#display">切換顯示內容</a>〉）。</li>
+  <li><b>按 <span class="key">CAL</span>。</b><span class="sub">畫面顯示目標溫度的設定畫面。</span></li>
+  <li><b>按 <span class="key">MEAS</span>，把主機顯示的溫度調成和參考溫度計相同。</b><span class="sub">每按一次 <span class="key">MEAS</span> 溫度增加；超過 40 °C 後回到 5 °C。</span></li>
+  <li><b>再按一次 <span class="key">CAL</span>，套用調整值。</b><span class="sub">開始調整時，調整值閃爍並顯示 <span class="lcd">CAL</span> 與 <span class="lcd">°C</span>。完成後調整值停止閃爍，並顯示 <span class="lcd">MEAS</span> 與 <span class="lcd">°C</span>。若出現 <span class="lcd">Er4</span> 代表調整失敗，請把步驟 1 的回溫時間拉長後重做。反覆失敗時感測器可能已劣化，請更換感測器。</span></li>
+</ol>
+
+<h3>初始化校正資料</h3>
+<p>下列情況需要初始化校正資料：</p>
+<ul>
+  <li>要刪除校正資料時。</li>
+  <li>不確定上一次校正做了幾點時。</li>
+  <li>更換感測器之後。</li>
+</ul>
+<ol class="steps">
+  <li><b>關機狀態下，同時按住 <span class="key">CAL</span> 與 <span class="key">ON/OFF</span> 3 秒以上。</b><span class="sub">全部顯示段亮起後顯示軟體版本，接著畫面變成 <span class="lcd">CAL Init</span>。</span></li>
+  <li><b>按 <span class="key">CAL</span>。</b><span class="sub">所有校正資料重設，完成後顯示 <span class="lcd">End</span>，主機自動關機。</span></li>
+</ol>
+
+<h3>初始化設定（回復出廠值）</h3>
+<p>清除所有設定，回到出廠預設值。</p>
+<ol class="steps">
+  <li><b>關機狀態下，同時按住 <span class="key">MEAS</span>、<span class="key">CAL</span> 與 <span class="key">ON/OFF</span> 3 秒以上。</b><span class="sub">全部顯示段亮起後顯示軟體版本，接著畫面變成 <span class="lcd">Init</span>。</span></li>
+  <li><b>按 <span class="key">CAL</span>。</b><span class="sub">所有校正資料重設，設定初始化完成後顯示 <span class="lcd">End</span>，主機自動關機。</span></li>
+</ol>
+
+<h2 id="appendix">附錄：干擾離子</h2>
+<div class="tbl"><table>
+<tbody>
+<tr><td class="k">量測對象</td><td>鈉離子（Na⁺）</td></tr>
+<tr><td class="k">干擾離子與選擇係數</td><td>K⁺、Rb⁺：1 × 10⁻²（於 10⁻³ mol/L Na⁺）</td></tr>
+<tr><td class="k">pH 範圍</td><td>pH 3–9（於 10⁻³ mol/L Na⁺）</td></tr>
+</tbody></table></div>
+<p>選擇係數是「干擾離子對目標離子量測值造成影響」的濃度比。例如干擾離子對目標離子的選擇係數為 1 × 10⁻²，代表樣品中干擾離子與目標離子濃度相同時，目標離子的量測結果會偏高約 1 × 10⁻²（1%）。</p>
+<div class="box lab"><span class="lbl">課堂補充</span>醬油、運動飲料等含鉀較多的樣品，K⁺ 會讓 Na⁺ 讀值略為偏高；酸性很強的樣品（pH &lt; 3）需先確認 pH 是否在 3–9 範圍內。這兩點都要寫進報告的誤差討論。</div>
+
+<h2 id="faq">常見問題</h2>
+<div class="tbl"><table>
+<thead><tr><th>問題</th><th>解答</th></tr></thead>
+<tbody>
+<tr><td>如何確認感測器的狀態？</td><td>做兩點校正。若出現校正錯誤，代表感測器已劣化，請更換。</td></tr>
+<tr><td>可以量高溫或低溫的樣品嗎？</td><td>本機無法量測溫度超出操作溫度範圍（5–40 °C）的樣品。樣品與環境溫差越大，量測誤差越大；請等樣品回到室溫再量。</td></tr>
+<tr><td>換了樣品，量測值卻沒有變。</td><td>AH 模式下 😊 持續亮著，代表讀值被鎖定；按 <span class="key">MEAS</span> 解除鎖定。解除後數值仍不變，感測器可能已損壞，請更換。</td></tr>
+<tr><td>量測時 <span class="lcd">Or</span> 或 <span class="lcd">Ur</span> 閃爍。</td><td>量測值可能超出規格範圍。請量測標準液確認；若 <span class="lcd">Or</span> 或 <span class="lcd">Ur</span> 仍閃爍，請更換感測器。</td></tr>
+<tr><td>量測時 <span class="lcd">°C</span> 閃爍。</td><td>量測到的溫度不在操作溫度範圍（5–40 °C）內。若環境溫度在範圍內但 <span class="lcd">°C</span> 仍閃爍，請更換感測器。</td></tr>
+<tr><td>主機無法開機。</td><td>確認電池裝入方向正確。電池電壓不足時，兩顆電池要同時換新。</td></tr>
+<tr><td>校正時出現 <span class="lcd">Er4</span>。</td><td>在 mV 或溫度顯示模式下按 <span class="key">CAL</span> 會出現 <span class="lcd">Er4</span>，因為這兩種模式沒有校正功能。其他情況見〈<a href="#cal">校正錯誤</a>〉。</td></tr>
+<tr><td>開機後不久出現 <span class="lcd">Er1</span>。</td><td>主機內部 IC 可能故障。請先做<a href="#maint">初始化設定</a>；初始化後仍顯示 <span class="lcd">Er1</span>，代表內部 IC 故障，請更換主機（主機無法修理）。</td></tr>
+<tr><td>開機後立刻出現 <span class="lcd">Er2</span>。</td><td>主機內部 IC 故障，請更換主機（主機無法修理）。</td></tr>
+<tr><td>開機後立刻出現 <span class="lcd">Er3</span>。</td><td>主機內部 IC 故障，請更換主機（主機無法修理）。</td></tr>
+<tr><td>有哪些因素會干擾量測？</td><td>酸會影響量測結果，請在 pH 3–9 範圍內量測。高濃度的一價陽離子（如 K⁺）也可能造成誤差，詳見〈<a href="#appendix">干擾離子</a>〉。</td></tr>
+<tr><td>量測時有什麼訣竅或注意事項？</td><td>
+  <ul style="margin:0">
+    <li>樣品量足夠時，先用樣品潤洗感測器兩次左右，量測會更準。</li>
+    <li>遮光蓋與平面感測器之間若有殘留物，會影響準確度。量下一個樣品前，請用自來水清洗感測器並吸乾水分。</li>
+  </ul></td></tr>
+<tr><td>可以自己配標準液嗎？</td><td>可以。把氯化鈉溶於離子交換水，配成指定濃度即可。</td></tr>
+</tbody></table></div>
+<div class="box lab"><span class="lbl">課堂補充：自配標準液的 NaCl 用量</span>
+  NaCl 中 Na 的質量分率為 22.99 / 58.44 = 0.3934，所以每 1 mg Na⁺ 需要 2.542 mg NaCl。
+  <ul>
+    <li>150 ppm（mg/L）Na⁺：NaCl 0.3813 g 定容至 1 L</li>
+    <li>2000 ppm（mg/L）Na⁺：NaCl 5.084 g 定容至 1 L</li>
+  </ul>
+  NaCl 請先在 105 °C 烘乾後於乾燥器中放冷再秤量。
+</div>
+
+<h2 id="mode">設定模式</h2>
+<p>設定模式可依使用需求自訂主機。<b>關機狀態下，同時按住 <span class="key">MEAS</span> 與 <span class="key">ON/OFF</span> 3 秒以上</b>，全部顯示段亮起（2 秒）、顯示軟體版本（1 秒）後，即進入設定模式。</p>
+<div class="box tip"><span class="lbl">提示</span>
+  <ul>
+    <li>設定要生效，必須從「進入設定模式」一路走到「設定完成」。某項設定想保持不變時，在該項直接按 <span class="key">CAL</span> 跳過即可。</li>
+    <li>想放棄修改並離開設定模式，請在倒數第二步（「背光設定」）按下 <span class="key">CAL</span> 之前，先按 <span class="key">ON/OFF</span>。</li>
+  </ul>
+</div>
+<p>設定模式中的按鍵規則：<span class="key">MEAS</span>（M）切換或增加選項，<span class="key">CAL</span>（C）確認並進入下一項。各項設定依下列順序出現。</p>
+
+<h3>1. 單位設定</h3>
+<p>可變更顯示單位。</p>
+<div class="flow"><span class="lcd">Unit</span><span class="arr">→ M →</span><span class="lcd">Unit ppm</span><span class="arr">（預設）⇄ M ⇄</span><span class="lcd">Unit mg/L</span><span class="arr">→ C 確認</span></div>
+
+<h3 id="mode-cal1">2. 第 1 校正點設定</h3>
+<p>可設定第 1 校正點的濃度。</p>
+<div class="flow"><span class="lcd">LoCh</span><span class="arr">→ M →</span><span class="lcd">CAL 150</span><span class="arr">（第 1 校正點）→ M* →</span><span class="lcd">CAL 160</span><span class="arr">→ C 確認</span></div>
+
+<h3 id="mode-cal2">3. 第 2 校正點設定</h3>
+<p>可設定第 2 校正點的濃度。</p>
+<div class="flow"><span class="lcd">HiCh</span><span class="arr">→ M →</span><span class="lcd">CAL 2000</span><span class="arr">（第 2 校正點）→ M* →</span><span class="lcd">CAL 2100</span><span class="arr">→ C 確認</span></div>
+<p style="font-size:13.5px;color:var(--muted)">* 設定校正點時，每按一次 <span class="key">MEAS</span> 數值增加；超過 9800 後回到 3。</p>
+<div class="box note"><span class="lbl">注意</span>只要變更了任一校正點的濃度，量測前就必須用兩個新設定的濃度重新校正。任一校正濃度變更時，校正資料都會被初始化。</div>
+
+<h3 id="mode-meas">4. 量測模式切換</h3>
+<p>可切換量測模式。</p>
+<div class="flow"><span class="lcd">MEAS</span><span class="arr">→ M →</span><span class="lcd">AS.</span><span class="arr">（AS 模式*，預設）⇄ M ⇄</span><span class="lcd">AH.</span><span class="arr">（AH 模式）→ C 確認</span></div>
+<p style="font-size:13.5px;color:var(--muted)">* 只有 AS 模式能切換顯示內容，見〈<a href="#display">切換顯示內容</a>〉。</p>
+
+<h3>5. 乘數補償設定</h3>
+<p>可設定一個係數（0.01–9.90）乘上量測值，畫面顯示的量測值即為補償後的結果。預設值為 1.00。</p>
+<div class="flow"><span class="lcd">A</span><span class="arr">→ M →</span><span class="lcd">A 1.00</span><span class="arr">→ M →</span><span class="lcd">A 1.10</span><span class="arr">→ … →</span><span class="lcd">A 9.90</span><span class="arr">→ M →</span><span class="lcd">A 0.01</span><span class="arr">→ …（循環）→ C 確認</span></div>
+<div class="box lab"><span class="lbl">課堂補充</span>本課程一律維持 1.00，稀釋倍數在 Excel 裡另外計算，避免忘記主機上設過係數而算錯。</div>
+
+<h3>6. 背光設定</h3>
+<p>可開啟或關閉背光。</p>
+<div class="flow"><span class="lcd">bL</span><span class="arr">→ M →</span><span class="lcd">On</span><span class="arr">（背光開，預設）⇄ M ⇄</span><span class="lcd">OFF</span><span class="arr">（背光關）→ C 確認</span></div>
+
+<h3>7. 設定完成</h3>
+<div class="flow"><span class="lcd">End</span><span class="arr">（顯示 1 秒）→ 自動關機</span></div>
+
+<footer>
+  <p>原廠：HORIBA Advanced Techno Co., Ltd.（日本京都）。原廠英文說明書 CODE: GZ0000460286，© 2017 HORIBA Advanced Techno Co., Ltd.。本頁為課程教學用的中文翻譯，產品問題請洽當地代理商或原廠網站 <a href="https://www.horiba.com/" rel="noopener">horiba.com</a>。</p>
+  <p><a href="index.html">← 回到 W3 灰分與鈉離子</a>　·　<a href="../../index.html">課程首頁</a></p>
+</footer>
+</div>
+</body>
+</html>
