@@ -41,6 +41,10 @@
 
 所有筆記本也能在本機 Jupyter（Anaconda）執行：[food-analysis-notebooks.zip](downloads/food-analysis-notebooks.zip)（筆記本＋資料）。
 
+## 儀器中文手冊
+
+- [HORIBA LAQUAtwin-Na-11 筆式鈉離子計](labs/w03_ash_sodium/na11_manual.html)（W3）：原廠操作說明書中文版，含規格、校正、量測、保養、設定模式、錯誤代碼與課堂快速流程。
+
 ## 學習成效評量
 
 [assessment/assessment_toolkit.xlsx](assessment/assessment_toolkit.xlsx)：概念前後測題庫與自動改分、標準化增益、試題分析、自我效能問卷、評分規準、成績總表。說明見 assessment.html。
