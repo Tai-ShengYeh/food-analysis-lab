@@ -1,7 +1,7 @@
 # w02_noodle_msi.csv
 
 麵條在 28 °C 乾燥過程中的 8 個取樣點（脫濕軌跡），供 W2 延伸活動
-[`labs/w02_moisture/isotherm.html`](../labs/w02_moisture/isotherm.html) 使用。**真實量測數據。**
+[`labs/w02_moisture/isotherm.html`](../labs/w02_moisture/isotherm.html)、NB02 第 7 節與 EX02 工作表「8_吸濕曲線」使用。**真實量測數據。**
 
 | 欄位 | 說明 |
 |---|---|

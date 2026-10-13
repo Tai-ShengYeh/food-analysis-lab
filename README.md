@@ -15,7 +15,7 @@
 | 週 | 檔案 |
 |---|---|
 | W1 | [EX01 容量器具校正](excel/EX01_volumetric_calibration.xlsx) |
-| W2 | [EX02 水分與水活性](excel/EX02_moisture_aw.xlsx) |
+| W2 | [EX02 水分與水活性](excel/EX02_moisture_aw.xlsx)（含延伸工作表「8_吸濕曲線」） |
 | W3 | [EX03 灰分與鈉離子](excel/EX03_ash_sodium.xlsx) |
 | W4 | [EX04 滴定](excel/EX04_titration.xlsx) |
 | W5 | [EX05 凱氏法](excel/EX05_kjeldahl_protein.xlsx) |
@@ -50,7 +50,7 @@
 | 週 | 筆記本 | 開啟 |
 |---|---|---|
 | W1 | NB01 容量器具校正：平均、SD、RSD、95% 信賴區間、準確度 vs 精密度 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB01_volumetric_calibration.ipynb) |
-| W2 | NB02 水分與水活性：濕基／乾基、恆重、烘箱 vs 紅外線配對比較 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB02_moisture_aw.ipynb) |
+| W2 | NB02 水分與水活性：濕基／乾基、恆重、烘箱 vs 紅外線配對比較；延伸：麵條等溫吸濕曲線 BET／GAB（真實數據） | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB02_moisture_aw.ipynb) |
 | W3 | NB03 灰分與鈉離子：稀釋倍數、NaCl 換算、標準添加回收、漂移檢查 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB03_ash_sodium.ipynb) |
 | W4 | NB04 滴定：KHP 標定、微分找當量點、Bland–Altman 方法比較 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB04_titration.ipynb) |
 | W5 | NB05 凱氏法：%N、換算係數、回收率、三聚氰胺 | [Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB05_kjeldahl_protein.ipynb) |
