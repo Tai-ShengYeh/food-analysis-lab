@@ -11,6 +11,8 @@
 //   window.AssessFB.log({ event_type:'answer', question_id:'L18-01', is_correct:true,
 //                         confidence:3, qtype:'mcq', bloom:'理解', topic:'光子能量' });
 //   window.AssessFB.log({ event_type:'attempt_complete', final_score:18, total:20 });
+//   detail:{...}（選用，任意物件，只進 Firestore）：例如學生寫的結論、選的參數
+//   log() 回傳 Promise<boolean>：Firestore 寫入成功為 true（未登入或失敗為 false）
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
 import { getFirestore, addDoc, collection, serverTimestamp }
@@ -73,7 +75,7 @@ function logToSupabase(p){
 export async function log(data){
   await ready;
   const sid = getStudentId();
-  if(!SESSION.ready || !sid) return;
+  if(!SESSION.ready || !sid) return false;
   const base = {
     student_id:sid, course_id:SESSION.course_id, class_id:SESSION.class_id,
     chapter:data.chapter ?? SESSION.chapter, game:SESSION.game,
@@ -100,10 +102,13 @@ export async function log(data){
         misconception:data.misconception ?? null,
         mode:data.mode ?? null,
         total:data.total ?? null,
+        ...(data.detail != null ? { detail:data.detail } : {}),   // 只有提供時才加，舊頁面的文件格式不變
         timestamp:serverTimestamp(),
       });
-    }catch(e){ console.error('[AssessFB] Firestore 寫入失敗：', e); }
+      return true;
+    }catch(e){ console.error('[AssessFB] Firestore 寫入失敗：', e); return false; }
   }
+  return false;
 }
 
 // ── 學號 modal（亮色，配合 bright 主題）─────────────────────────
