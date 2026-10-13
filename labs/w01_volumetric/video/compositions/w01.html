@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><title>W1 容量器具校正：你的吸管，真的放出 10 mL 嗎？</title>
+<meta name="viewport" content="width=1920">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../style/tokens.css"><link rel="stylesheet" href="../style/kit.css">
+<script src="../style/tokens.js"></script><script src="../style/rough.js"></script>
+<script src="../style/sketch.js"></script><script src="../style/hanzi.js"></script>
+<script src="../vendor/gsap.min.js"></script>
+<script src="timing.js"></script>
+<style>
+  body { margin: 0; background: var(--bg); overflow: hidden; }
+  #world { position: absolute; left: 0; top: 0; width: 8280px; height: 2360px; transform-origin: 0 0; }
+  .region { position: absolute; width: 1920px; height: 1080px; }
+  .region > svg.rs { position: absolute; inset: 0; overflow: visible; z-index: 1; }
+  .at { position: absolute; z-index: 2; }
+  .pen-layer { position: absolute; inset: 0; z-index: 9; overflow: visible; pointer-events: none; }
+  /* 便利貼：手寫字、微微傾斜、底下有影子 */
+  .note { position: absolute; z-index: 5; padding: 24px 32px; background: var(--hl); color: var(--ink); font: 400 var(--fs-label)/1.35 var(--font-body);
+          box-shadow: 0 18px 30px -18px var(--shadow-color), 0 2px 0 color-mix(in oklab, var(--ink) 8%, transparent); white-space: nowrap; }
+  .note b { font-weight: 700; color: var(--accent); }
+  .note .tape { width: 120px; height: 34px; top: -18px; }
+  .disp { position: absolute; z-index: 3; font: 500 var(--fs-h3)/1 var(--font-mono); color: var(--accent-2); letter-spacing: 0.04em; }
+  .eq { position: absolute; z-index: 3; font: 400 var(--fs-h3)/1.2 var(--font-body); color: var(--ink); white-space: nowrap; }
+  .eq sub { font-size: 0.55em; }
+  .eq .v { color: var(--primary); }
+  .eq .r { color: var(--accent-2); font-weight: 700; }
+  .def { position: absolute; z-index: 3; font: 400 var(--fs-body)/1.35 var(--font-body); color: var(--ink); white-space: nowrap; }
+  .def b { font-weight: 700; }
+  .tick { position: absolute; z-index: 3; transform: translateX(-50%); font: 500 var(--fs-small)/1 var(--font-mono); color: var(--ink-2); }
+  #cta { position: absolute; left: 50%; top: 46%; translate: -50% -50%; z-index: 7; text-align: center; padding: 48px 72px 40px; display: flex; flex-direction: column; gap: 18px; align-items: center; width: 1240px; }
+  #cap:empty { visibility: hidden; }
+</style></head>
+<body>
+<div class="stage tex-dotgrid" id="stage">
+  <div id="world">
+
+    <!-- r0：你的吸管準嗎（s0）＋推近標線看公差（s1） -->
+    <section class="region" id="r0" style="left:0;top:0">
+      <svg class="rs" viewBox="0 0 1920 1080"></svg>
+      <div class="at kicker" id="r0-kk" style="left:120px;top:60px">01 先想一想</div>
+      <span class="at el-label" id="r0-mk" style="left:640px;top:268px">標線</span>
+      <span class="at el-label" id="r0-ml" style="left:640px;top:740px">10 mL 定量吸管</span>
+      <div class="note" id="r0-note" style="left:1150px;top:330px;rotate:-3deg"><span class="tape"></span>真的是 <b>10.00 mL</b>？</div>
+      <span class="at t-label" id="r1-tol" style="left:660px;top:208px;color:var(--accent);font-weight:700">Class A：±0.02 mL</span>
+      <span class="at el-label" id="r1-c0" style="left:690px;top:360px">玻璃有製造誤差</span>
+      <span class="at el-label" id="r1-c1" style="left:690px;top:420px">每個人手法不同</span>
+    </section>
+
+    <!-- r1：改用秤的（s2） -->
+    <section class="region" id="r1" style="left:2120px;top:0">
+      <svg class="rs" viewBox="0 0 1920 1080"></svg>
+      <div class="at kicker" style="left:120px;top:60px">02 秤重法</div>
+      <span class="at el-label" id="r1-eye" style="left:170px;top:790px">用眼睛讀刻度</span>
+      <span class="at el-label" id="r1-btl" style="left:1500px;top:520px">加蓋秤重瓶</span>
+      <span class="at el-label" id="r1-bal" style="left:1500px;top:800px">分析天平</span>
+      <div class="disp t-num" id="r1-disp" style="left:1100px;top:712px"></div>
+      <span class="at t-label" id="r1-mg" style="left:1100px;top:600px;color:var(--accent);font-weight:700">讀到 0.1 mg</span>
+    </section>
+
+    <!-- r2：看水溫（s3） -->
+    <section class="region" id="r2" style="left:4240px;top:0">
+      <svg class="rs" viewBox="0 0 1920 1080"></svg>
+      <div class="at kicker" style="left:120px;top:60px">03 換算體積</div>
+      <span class="at t-label" id="r2-tc" style="left:330px;top:440px;color:var(--accent);font-weight:700">25.0 °C</span>
+      <span class="at t-label" id="r2-ax" style="left:1180px;top:812px">水溫 →</span>
+      <span class="at t-label" id="r2-ay" style="left:560px;top:290px">↑ 水的密度</span>
+      <span class="at t-label" id="r2-ptl" style="left:960px;top:372px;color:var(--primary);font-weight:700">ρ<sub>w</sub> = 0.997 g/mL</span>
+      <div class="eq" id="r2-eq" style="left:1440px;top:520px"><span class="v">V</span> = m ÷ ρ<sub>w</sub></div>
+    </section>
+
+    <!-- r3：空氣浮力（s4） -->
+    <section class="region" id="r3" style="left:6360px;top:0">
+      <svg class="rs" viewBox="0 0 1920 1080"></svg>
+      <div class="at kicker" style="left:120px;top:60px">04 浮力校正</div>
+      <div class="disp t-num" id="r3-disp" style="left:520px;top:752px">9.9700 g</div>
+      <span class="at el-label" id="r3-air" style="left:180px;top:300px">空氣</span>
+      <div class="note" id="r3-note" style="left:1000px;top:720px;rotate:2deg;display:none"><span class="tape"></span>讀數比真實質量<b>輕一點</b></div>
+      <div class="eq" id="r3-fb" style="left:1220px;top:430px">× F<sub>b</sub> ≈ <span class="r">1.001</span></div>
+      <span class="at t-label" id="r3-pc" style="left:1240px;top:540px">約千分之一（0.1%）</span>
+    </section>
+
+    <!-- r4：代進公式（s5） -->
+    <section class="region" id="r4" style="left:6360px;top:1280px">
+      <svg class="rs" viewBox="0 0 1920 1080"></svg>
+      <div class="at kicker" style="left:120px;top:60px">05 算出來</div>
+      <div class="eq" id="r4-e0" style="left:200px;top:280px"><span class="v">V</span> = m<sub>app</sub> × F<sub>b</sub> ÷ ρ<sub>w</sub></div>
+      <div class="eq" id="r4-e1" style="left:200px;top:380px">&nbsp;&nbsp;= 9.9700 × 1.00105 ÷ 0.997047</div>
+      <div class="eq" id="r4-e2" style="left:200px;top:480px">&nbsp;&nbsp;= <span class="r">10.010 mL</span></div>
+      <span class="tick" id="r4-k0" style="left:560px;top:800px">9.98</span>
+      <span class="tick" id="r4-k1" style="left:960px;top:800px">10.00</span>
+      <span class="tick" id="r4-k2" style="left:1360px;top:800px">10.02</span>
+      <span class="at t-label" id="r4-in" style="left:1250px;top:470px;color:var(--accent-2);font-weight:700">在公差 ±0.02 mL 以內</span>
+    </section>
+
+    <!-- r5：準確度 vs 精密度（s6） -->
+    <section class="region" id="r5" style="left:4240px;top:1280px">
+      <svg class="rs" viewBox="0 0 1920 1080"></svg>
+      <div class="at kicker" style="left:120px;top:60px">06 重複 10 次</div>
+      <span class="at el-label" id="r5-ctr" style="left:330px;top:840px">中心＝標示 10.00 mL</span>
+      <span class="at chip" id="r5-n" style="left:880px;top:300px">× 10 次</span>
+      <div class="def" id="r5-d0" style="left:1100px;top:440px"><b style="color:var(--accent)">準確度</b>＝平均離中心多遠</div>
+      <div class="def" id="r5-d1" style="left:1100px;top:600px"><b style="color:var(--primary)">精密度</b>＝10 次散得多開</div>
+    </section>
+
+    <!-- r6：系統誤差 vs 隨機誤差（s7） -->
+    <section class="region" id="r6" style="left:2120px;top:1280px">
+      <svg class="rs" viewBox="0 0 1920 1080"></svg>
+      <div class="at kicker" style="left:120px;top:60px">07 兩種誤差</div>
+      <div class="def" id="r6-a0" style="left:300px;top:790px"><b style="color:var(--accent)">系統誤差</b>：找原因 → 修正</div>
+      <div class="def" id="r6-b0" style="left:1150px;top:790px"><b style="color:var(--primary)">隨機誤差</b>：多做幾次 → 描述</div>
+      <span class="at t-label" id="r6-a1" style="left:330px;top:290px">每次都偏同一邊</span>
+      <span class="at t-label" id="r6-b1" style="left:1240px;top:290px">忽高忽低</span>
+    </section>
+
+    <!-- r7：上課見（s8） -->
+    <section class="region" id="r7" style="left:0;top:1280px">
+      <svg class="rs" viewBox="0 0 1920 1080"></svg>
+      <div class="at kicker" style="left:120px;top:60px">08 上課見</div>
+      <span class="at el-label" id="r7-p" style="left:520px;top:840px">定量吸管</span>
+      <span class="at el-label" id="r7-b" style="left:1120px;top:840px">滴定管</span>
+    </section>
+  </div>
+
+  <div id="cta" class="card card--plain" data-cover>
+    <svg id="cta-1" width="1100" height="110" viewBox="0 0 1100 110" style="overflow:visible"></svg>
+    <div class="t-body" id="cta-2">上課時，親手校正你的吸管與滴定管</div>
+    <div class="t-label" id="cta-3">食品分析實驗 W1　容量器具校正（秤重法）</div>
+  </div>
+  <div class="caption-bar" id="cap"></div>
+</div>
+
+<script>
+const T = window.TIMING, SC = Object.fromEntries(T.scenes.map(s => [s.id, s]));
+// AT(幕, "關鍵字")：這個詞在配音裡被唸到的那一刻（全片秒數）
+function AT(id, needle, nth = 0) {
+  const s = SC[id], text = s.chars.join("");
+  let i = -1;
+  for (let k = 0; k <= nth; k++) { i = text.indexOf(needle, i + 1); if (i < 0) throw new Error(`${id} 找不到「${needle}」`); }
+  return s.start + s.lead + s.starts[i];
+}
+const ST = id => SC[id].start, END = id => SC[id].start + SC[id].dur;
+// 蛇形排列：上排左→右（r0–r3），下排右→左（r4–r7），換排只要往下平移
+const R = { r0: [0, 0], r1: [2120, 0], r2: [4240, 0], r3: [6360, 0], r4: [6360, 1280], r5: [4240, 1280], r6: [2120, 1280], r7: [0, 1280] };
+const C = k => ({ x: R[k][0] + 960, y: R[k][1] + 540 });
+const sv = k => document.querySelector(`#${k} svg.rs`);
+const cam = { x: 960, y: 540, s: 1.05 };
+const D = k => M.draw().duration * k;                   // 風格卡的 draw 時長倍數
+const drivers = [];                                     // 每次 seek 都跑：打字、筆尖、擺動
+
+// 打字：依時間 t 算出顯示幾個字（可任意 seek）
+function typewriter(sel, text, t0, cps = 14) {
+  const el = document.querySelector(sel), chars = [...text];
+  drivers.push(t => { const n = Math.max(0, Math.min(chars.length, Math.floor((t - t0) * cps))); const s = chars.slice(0, n).join(""); if (el.textContent !== s) el.textContent = s; });
+  return t0 + chars.length / cps;
+}
+
+// 筆尖：跟著 SK.draw 的線條走
+const pens = {};
+function pen(k, sel, at, dur) {
+  if (!pens[k]) {
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.innerHTML = '<path d="M0 0 L8 -26 L58 -76 L76 -58 L26 -8 Z" style="fill:var(--hl);stroke:var(--ink);stroke-width:3;stroke-linejoin:round"/><path d="M0 0 L8 -26 L26 -8 Z" style="fill:var(--ink)"/><path d="M58 -76 L76 -58" style="stroke:var(--accent);stroke-width:10"/>';
+    const layer = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    layer.setAttribute("viewBox", "0 0 1920 1080"); layer.setAttribute("class", "pen-layer");
+    document.getElementById(k).appendChild(layer);
+    g.style.opacity = 0; g.setAttribute("data-overlap-ok", ""); layer.appendChild(g); pens[k] = { g, segs: [] };
+  }
+  if (!sel) return;
+  const lines = [...document.querySelectorAll(`${sel} .sk-line`)], each = (dur * 0.7) / Math.max(1, lines.length);
+  lines.forEach((path, i) => pens[k].segs.push({ t0: at + i * each, t1: at + (i + 1.15) * each, path, len: path.getTotalLength(), m: path.getCTM() }));
+}
+function penTrack(k, track) { pen(k, null, 0, 0); track.forEach(s => pens[k].segs.push({ ...s, len: s.path.getTotalLength(), m: s.path.getCTM() })); }
+function penAt(t) {
+  const ease = gsap.parseEase(M.draw().ease);
+  for (const p of Object.values(pens)) {
+    const s = p.segs.filter(s => t >= s.t0 && t <= s.t1 + 0.3).pop();
+    if (!s) { p.g.style.opacity = 0; continue; }
+    const q = ease(Math.min(1, (t - s.t0) / Math.max(0.001, s.t1 - s.t0))), raw = s.path.getPointAtLength(q * s.len);
+    const pt = s.m ? raw.matrixTransform(s.m) : raw;
+    p.g.setAttribute("transform", `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`); p.g.style.opacity = 1;
+  }
+}
+// 便利貼待機時輕輕擺動（依 t 計算，可任意 seek）
+function sway() {
+  document.querySelectorAll(".note").forEach((n, i) => {
+    const base = parseFloat(n.style.rotate) || 0;
+    drivers.push(t => { n.style.rotate = `${(base + 0.7 * Math.sin(t * 1.1 + i * 1.7)).toFixed(2)}deg`; });
+  });
+}
+
+// 定量吸管（hero）：上管、球部、下管一筆畫成；標線在上管
+function pipette(svg, cx, top, k, id, o = {}) {
+  const P = (x, y) => `${(cx + x * k).toFixed(1)} ${(top + y * k).toFixed(1)}`;
+  const d = `M${P(-8, 0)} L${P(-8, 228)} C${P(-50, 240)} ${P(-50, 360)} ${P(-8, 372)} L${P(-3, 640)} L${P(3, 640)} L${P(8, 372)} C${P(50, 360)} ${P(50, 240)} ${P(8, 228)} L${P(8, 0)}`;
+  SK.path(svg, d, { id: `${id}-body`, stroke: "ink", ...o });
+  SK.line(svg, cx - 22 * k, top + 80 * k, cx + 22 * k, top + 80 * k, { id: `${id}-mark`, stroke: "ink", width: 3, ...o });
+  return { tip: [cx, top + 640 * k], mark: [cx, top + 80 * k], fill: `M${P(-8, 80)} L${P(-8, 228)} C${P(-50, 240)} ${P(-50, 360)} ${P(-8, 372)} L${P(-3, 640)} L${P(3, 640)} L${P(8, 372)} C${P(50, 360)} ${P(50, 240)} ${P(8, 228)} L${P(8, 80)} Z` };
+}
+// 液面：用 clipPath 的矩形控制高度（level 0→1 由下往上）
+function liquid(svg, d, id, y0, y1, color = "primary-wash") {
+  const NS = "http://www.w3.org/2000/svg", cp = document.createElementNS(NS, "clipPath"), r = document.createElementNS(NS, "rect");
+  cp.setAttribute("id", `${id}-cp`); r.setAttribute("x", -100); r.setAttribute("width", 4000); r.setAttribute("y", y1); r.setAttribute("height", 0);
+  cp.appendChild(r); svg.appendChild(cp);
+  const g = document.createElementNS(NS, "g"); g.setAttribute("clip-path", `url(#${id}-cp)`); g.setAttribute("data-overlap-ok", ""); svg.insertBefore(g, svg.firstChild);
+  SK.path(svg, d, { id, fill: color, fillStyle: "solid", stroke: "none", parent: g });
+  return { rect: r, top: y0, bottom: y1 };
+}
+const level = (tl, liq, f, at, dur) => tl.to(liq.rect, { attr: { y: liq.bottom - (liq.bottom - liq.top) * f, height: (liq.bottom - liq.top) * f }, duration: dur, ease: "power1.inOut" }, at);
+// 靶：三圈＋中心
+function target(svg, cx, cy, r, id) {
+  [1, 0.66, 0.33].forEach((f, i) => SK.circle(svg, cx, cy, 2 * r * f, { id: `${id}-c${i}`, stroke: i ? "ink-2" : "ink", width: i ? 1.8 : 2.4, ...(i === 2 ? { fill: "hl", fillStyle: "solid" } : {}) }));
+  SK.line(svg, cx - 14, cy, cx + 14, cy, { id: `${id}-x0`, stroke: "accent", width: 3 });
+  SK.line(svg, cx, cy - 14, cx, cy + 14, { id: `${id}-x1`, stroke: "accent", width: 3 });
+  return [0, 1, 2].map(i => `#${id}-c${i}`).concat([`#${id}-x0`, `#${id}-x1`]).join(", ");
+}
+function dots(svg, pts, id, color) { return pts.map(([x, y], i) => (SK.circle(svg, x, y, 22, { id: `${id}${i}`, fill: color, fillStyle: "solid", stroke: color, width: 1.5 }), `#${id}${i}`)); }
+
+// 手寫標題：照筆順寫出，重點詞用螢光筆劃過
+const TITLES = {
+  r0: ["s0", "10 mL 吸管，真的放出 10 mL？", "真的", ["s0", "真的"]],
+  r1: ["s2", "不讀刻度，改用秤的", "秤", ["s2", "秤得"]],
+  r2: ["s3", "質量換體積：要看水溫", "水溫", ["s3", "水溫"]],
+  r3: ["s4", "別忘了空氣浮力", "空氣浮力", ["s4", "浮力"]],
+  r4: ["s5", "代進公式算體積", "算體積", ["s5", "毫升"]],
+  r5: ["s6", "準確度 vs 精密度", "準確度", ["s6", "準確度"]],
+  r6: ["s7", "系統誤差 vs 隨機誤差", "系統誤差", ["s7", "系統誤差"]],
+  r7: ["s8", "親手校正你的量器", "親手", ["s8", "親手"]],
+};
+
+function build() {
+  const tl = gsap.timeline({ paused: true });
+  const show = (sel, at, f = M.in) => { gsap.set(sel, { autoAlpha: 0, y: 18 }); tl.to(sel, f({ autoAlpha: 1, y: 0 }), at); };
+  const hide = (sel, at) => tl.to(sel, M.out({ autoAlpha: 0 }), at);
+  const pop = (sel, at) => { gsap.set(sel, { autoAlpha: 0, scale: 0.86, rotation: -4, transformOrigin: "50% 50%" }); tl.to(sel, M.pop({ autoAlpha: 1, scale: 1, rotation: 0 }), at); };
+  const stick = (sel, at) => { gsap.set(sel, { display: "block", autoAlpha: 0, scale: 1.15, y: -30 }); tl.to(sel, M.pop({ autoAlpha: 1, scale: 1, y: 0 }), at); };
+  const draw = (ids, at, o) => { SK.hide(ids); ids.split(",").forEach((id, i) => SK.draw(tl, id.trim(), i ? ">" : at, o)); };
+
+  // ── 鏡頭：每幕平移過去時帶一點推近（1.03→1），s1 推近標線，s8 拉遠看全圖 ──
+  tl.to(cam, M.move({ s: 1, duration: M.move().duration * 4 }), 0);
+  const pan = (k, at) => tl.to(cam, M.move({ ...C(k), s: 1.03 }), at).to(cam, M.move({ s: 1, duration: M.move().duration * 4 }), ">");
+  tl.to(cam, M.move({ x: 760, y: 330, s: 1.6 }), ST("s1") - 0.3);              // 推近到標線
+  pan("r1", ST("s2") - 0.4); pan("r2", ST("s3") - 0.4); pan("r3", ST("s4") - 0.4);
+  pan("r4", ST("s5") - 0.4); pan("r5", ST("s6") - 0.4); pan("r6", ST("s7") - 0.4); pan("r7", ST("s8") - 0.4);
+  tl.to(cam, { x: 4140, y: 1180, s: 0.225, duration: 2.4, ease: STYLE.motion.ease.move }, AT("s8", "先猜猜看") - 0.4);   // lint-ok 招牌鏡頭：拉遠成全圖
+
+  Object.entries(TITLES).forEach(([k, [sc, str, hl, [hs, hw]]]) => {
+    const svg = sv(k), w = SK.write(svg, 120, 168, str, { id: `${k}-tw`, size: 72 });
+    const a = [...str.slice(0, str.indexOf(hl))].length, b = a + [...hl].length;
+    SK.marker(svg, w.x(a) + 12, w.x(b) - 20, 190, { id: `${k}-mk`, width: 38, before: w.el });
+    SK.hide(`#${k}-tw, #${k}-mk`);
+    const track = [], at = ST(sc) + 0.2;
+    SK.draw(tl, `#${k}-tw`, at, { duration: Math.min(2.4, [...str].length * 0.16), track });
+    penTrack(k, track);
+    SK.draw(tl, `#${k}-mk`, Math.max(at + 1.6, AT(hs, hw) + 0.2), { duration: D(0.6) });
+  });
+
+  // ── r0（s0）：吸管一筆畫出 → 吸到標線 → 放進燒杯；（s1）推近標線，公差帶撐開 ──
+  const v0 = sv("r0");
+  const P0 = pipette(v0, 560, 220, 1, "r0-pp");
+  const w0 = liquid(v0, P0.fill, "r0-w", P0.mark[1], P0.tip[1]);
+  SK.path(v0, "M1420 560 L1420 850 L1720 850 L1720 560 M1400 556 L1440 566 M1740 556 L1700 566", { id: "r0-bk", stroke: "ink" });
+  const wb = liquid(v0, "M1424 600 L1424 846 L1716 846 L1716 600 Z", "r0-bw", 700, 846);
+  SK.ellipse(v0, P0.mark[0], P0.mark[1], 150, 64, { id: "r0-ring", stroke: "accent", width: 4 });
+  SK.arrow(v0, 632, 286, 590, 300, { id: "r0-ma", stroke: "ink-2", width: 2, head: 14 });
+  draw("#r0-pp-body", ST("s0") + 0.6, { duration: D(1.6) }); pen("r0", "#r0-pp-body", ST("s0") + 0.6, D(1.6));
+  draw("#r0-pp-mark", AT("s0", "定量吸管"), { duration: D(0.3) });
+  pop("#r0-ml", AT("s0", "定量吸管") + 0.2);
+  level(tl, w0, 1, AT("s0", "吸到") - 0.2, 1.1);
+  draw("#r0-ring", AT("s0", "標線"), { duration: D(0.7) }); pop("#r0-mk", AT("s0", "標線") + 0.2); draw("#r0-ma", AT("s0", "標線") + 0.3, { duration: D(0.3) });
+  draw("#r0-bk", AT("s0", "標線") + 0.5, { duration: D(0.7) });
+  level(tl, w0, 0, AT("s0", "放出來") - 0.1, 1.4);
+  level(tl, wb, 1, AT("s0", "放出來") + 0.1, 1.4);
+  stick("#r0-note", AT("s0", "真的"));
+  // s1：公差帶（示意放大）
+  hide("#r0-note, #r0-ml, #r0-tw, #r0-mk, #r0-kk", ST("s1") - 0.3);
+  tl.to("#r0-ml, #r0-tw, #r0-mk, #r0-kk", M.in({ autoAlpha: 1 }), AT("s8", "先猜猜看"));
+  SK.line(v0, 500, 272, 640, 272, { id: "r1-t0", stroke: "accent", width: 2.5, dashed: true });
+  SK.line(v0, 500, 328, 640, 328, { id: "r1-t1", stroke: "accent", width: 2.5, dashed: true });
+  SK.rect(v0, 520, 272, 80, 56, { id: "r1-band", fill: "accent-wash", stroke: "none", hachureGap: 6 });
+  SK.circle(v0, 1140, 420, 150, { id: "r1-seal", stroke: "accent", width: 4 });
+  SK.text(v0, 1140, 420, "Class A", { id: "r1-st", size: "label", color: "accent", weight: 700, font: "var(--font-write)" });
+  hide("#r0-mk", ST("s1") + 0.2); hide("#r0-ring, #r0-ma", ST("s1") + 0.2);
+  show("#r1-c0", AT("s1", "製造誤差") - 0.2); show("#r1-c1", AT("s1", "手法"));
+  draw("#r1-t0, #r1-t1", AT("s1", "Class A") - 0.2, { duration: D(0.4) });
+  draw("#r1-band", AT("s1", "保證") - 0.2, { duration: D(0.6) });
+  gsap.set("#r1-band", { svgOrigin: "560 300" });
+  tl.from("#r1-band, #r1-t0, #r1-t1", M.pop({ scaleY: 0.1, immediateRender: false }), AT("s1", "保證") - 0.2);
+  show("#r1-tol", AT("s1", "正負"));
+  draw("#r1-seal, #r1-st", AT("s1", "最高等級"), { duration: D(0.5) });
+  gsap.set("#r1-seal, #r1-st", { svgOrigin: "1140 420" });
+  tl.from("#r1-seal, #r1-st", M.pop({ scale: 1.6, rotation: -14, immediateRender: false }), AT("s1", "最高等級"));
+
+  // ── r1（s2）：眼睛讀刻度（×）→ 天平＋秤重瓶，吸管放水，讀數打出 ──
+  const v1 = sv("r1");
+  SK.rect(v1, 330, 300, 60, 420, { id: "r1-tube", stroke: "ink" });
+  [0, 1, 2, 3, 4, 5, 6, 7, 8].forEach(i => SK.line(v1, 330, 340 + i * 44, i % 2 ? 352 : 365, 340 + i * 44, { id: `r1-g${i}`, stroke: "ink-2", width: 1.6 }));
+  SK.path(v1, "M150 480 Q 210 430 270 480 Q 210 530 150 480 Z", { id: "r1-eyeO", stroke: "ink" });
+  SK.circle(v1, 210, 480, 34, { id: "r1-eyeP", fill: "ink", fillStyle: "solid" });
+  SK.line(v1, 280, 480, 325, 470, { id: "r1-sight", stroke: "ink-2", width: 2, dashed: true });
+  SK.line(v1, 160, 600, 290, 720, { id: "r1-x0", stroke: "accent", width: 6 }); SK.line(v1, 290, 600, 160, 720, { id: "r1-x1", stroke: "accent", width: 6 });
+  SK.arrow(v1, 520, 520, 760, 520, { id: "r1-arr", stroke: "primary", width: 3, bend: 30 });
+  // 天平
+  SK.rect(v1, 900, 700, 560, 140, { id: "r1-base", fill: "primary-wash" });
+  SK.rect(v1, 1080, 700, 300, 90, { id: "r1-scr", fill: "surface", fillStyle: "solid" });
+  SK.line(v1, 1180, 700, 1180, 650, { id: "r1-post", stroke: "ink", width: 3 });
+  SK.ellipse(v1, 1180, 645, 300, 34, { id: "r1-pan", fill: "surface", fillStyle: "solid" });
+  // 秤重瓶與蓋子
+  SK.path(v1, "M1120 628 L1120 520 L1240 520 L1240 628", { id: "r1-bt", stroke: "ink" });
+  SK.rect(v1, 1108, 494, 144, 26, { id: "r1-lid", fill: "hl", fillStyle: "solid" });
+  const wbt = liquid(v1, "M1124 560 L1124 626 L1236 626 L1236 560 Z", "r1-bw", 560, 626);
+  // 吸管（hero，縮小）＋水滴
+  const P1 = pipette(v1, 1180, 30, 0.6, "r1-pp");
+  [0, 1, 2].forEach(i => SK.circle(v1, 1180, P1.tip[1] + 20, 16, { id: `r1-d${i}`, fill: "primary", fillStyle: "solid", stroke: "primary", width: 1 }));
+  draw("#r1-tube, #r1-g0, #r1-g1, #r1-g2, #r1-g3, #r1-g4, #r1-g5, #r1-g6, #r1-g7, #r1-g8", ST("s2") + 0.5, { duration: D(0.18) });
+  draw("#r1-eyeO, #r1-eyeP, #r1-sight", AT("s2", "眼睛") - 0.2, { duration: D(0.4) }); pop("#r1-eye", AT("s2", "眼睛"));
+  draw("#r1-x0, #r1-x1", AT("s2", "很難"), { duration: D(0.3) });
+  draw("#r1-arr", AT("s2", "質量") - 0.2, { duration: D(0.4) }); pen("r1", "#r1-arr", AT("s2", "質量") - 0.2, D(0.4));
+  draw("#r1-base, #r1-scr, #r1-post, #r1-pan", AT("s2", "質量"), { duration: D(0.4) }); pen("r1", "#r1-base", AT("s2", "質量"), D(0.4));
+  draw("#r1-bt", AT("s2", "秤重瓶") - 0.9, { duration: D(0.5) }); pop("#r1-btl", AT("s2", "秤重瓶"));
+  draw("#r1-pp-body, #r1-pp-mark", AT("s2", "把水") - 0.6, { duration: D(0.6) });
+  [0, 1, 2].forEach(i => { const t = AT("s2", "放進") + i * 0.28; gsap.set(`#r1-d${i}`, { autoAlpha: 0 }); tl.fromTo(`#r1-d${i}`, { autoAlpha: 1, y: 0 }, { y: 150, autoAlpha: 0.2, duration: 0.45, ease: "power2.in", immediateRender: false }, t).set(`#r1-d${i}`, { autoAlpha: 0 }, t + 0.46); });
+  level(tl, wbt, 1, AT("s2", "放進") + 0.2, 0.9);
+  draw("#r1-lid", AT("s2", "加蓋"), { duration: D(0.4) });
+  gsap.set("#r1-lid", { y: -40 }); tl.to("#r1-lid", M.pop({ y: 0 }), AT("s2", "加蓋"));
+  pop("#r1-bal", AT("s2", "分析天平"));
+  typewriter("#r1-disp", "9.9700 g", AT("s2", "分析天平") + 0.3, 10);
+  show("#r1-mg", AT("s2", "毫克") - 0.4);
+
+  // ── r2（s3）：溫度計升到 25 °C；密度–溫度曲線；V = m ÷ ρw ──
+  const v2 = sv("r2");
+  SK.path(v2, "M235 760 L235 300 Q 260 270 285 300 L285 760", { id: "r2-th", stroke: "ink" });
+  SK.circle(v2, 260, 800, 100, { id: "r2-bulb", fill: "accent", fillStyle: "solid" });
+  [0, 1, 2, 3, 4, 5, 6, 7].forEach(i => SK.line(v2, 285, 340 + i * 52, 305, 340 + i * 52, { id: `r2-g${i}`, stroke: "ink-2", width: 1.6 }));
+  const merc = liquid(v2, "M247 770 L247 300 L273 300 L273 770 Z", "r2-hg", 440, 770, "accent");
+  const tx = T_ => 640 + (T_ - 15) / 20 * 700, ty = r => 780 - (r - 0.9938) / (0.9993 - 0.9938) * 420;
+  const RHO = [[15, 0.999099], [18, 0.998595], [20, 0.998207], [22, 0.997773], [25, 0.997047], [28, 0.996235], [30, 0.995649], [32, 0.995025], [35, 0.994033]];
+  SK.line(v2, 620, 790, 1360, 790, { id: "r2-axx", stroke: "ink", width: 2.4 }); SK.line(v2, 630, 800, 630, 320, { id: "r2-axy", stroke: "ink", width: 2.4 });
+  SK.curve(v2, RHO.map(([a, b]) => [tx(a), ty(b)]), { id: "r2-cv", stroke: "primary", width: 4 });
+  SK.line(v2, tx(25), 790, tx(25), ty(0.997047), { id: "r2-vl", stroke: "accent", width: 2, dashed: true });
+  SK.circle(v2, tx(25), ty(0.997047), 24, { id: "r2-pt", fill: "primary", fillStyle: "solid", stroke: "primary" });
+  SK.arrow(v2, 1350, 600, 1430, 570, { id: "r2-ar", stroke: "ink-2", width: 2.4, head: 16 });
+  draw("#r2-th, #r2-bulb, #r2-g0, #r2-g1, #r2-g2, #r2-g3, #r2-g4, #r2-g5, #r2-g6, #r2-g7", ST("s3") + 0.6, { duration: D(0.2) });
+  pen("r2", "#r2-th", ST("s3") + 0.6, D(0.2));
+  show("#r2-eq", AT("s3", "換回體積") - 0.2);
+  draw("#r2-axx, #r2-axy", AT("s3", "密度") - 0.4, { duration: D(0.4) }); show("#r2-ay", AT("s3", "密度")); show("#r2-ax", AT("s3", "溫度"));
+  draw("#r2-cv", AT("s3", "改變") - 0.3, { duration: D(1.3) }); pen("r2", "#r2-cv", AT("s3", "改變") - 0.3, D(1.3));
+  level(tl, merc, 1, AT("s3", "水溫") - 0.2, 1.2);
+  show("#r2-tc", AT("s3", "25"));
+  draw("#r2-vl, #r2-pt", AT("s3", "25") + 0.2, { duration: D(0.4) });
+  show("#r2-ptl", AT("s3", "公克") - 0.5);
+  draw("#r2-ar", AT("s3", "公克"), { duration: D(0.3) });
+
+  // ── r3（s4）：空氣把水往上托 → ×Fb ──
+  const v3 = sv("r3");
+  SK.rect(v3, 380, 740, 560, 120, { id: "r3-base", fill: "primary-wash" });
+  SK.rect(v3, 500, 740, 320, 80, { id: "r3-scr", fill: "surface", fillStyle: "solid" });
+  SK.line(v3, 660, 740, 660, 690, { id: "r3-post", stroke: "ink", width: 3 });
+  SK.ellipse(v3, 660, 685, 300, 34, { id: "r3-pan", fill: "surface", fillStyle: "solid" });
+  SK.path(v3, "M590 668 L590 500 L730 500 L730 668", { id: "r3-bt", stroke: "ink" });
+  SK.rect(v3, 578, 474, 164, 26, { id: "r3-lid", fill: "hl", fillStyle: "solid" });
+  SK.rect(v3, 594, 560, 132, 104, { id: "r3-w", fill: "primary-wash", fillStyle: "solid", stroke: "none" });
+  const AIR = [[200, 420], [260, 560], [180, 650], [900, 420], [980, 540], [1010, 660], [420, 380], [860, 330], [300, 470], [1060, 450]];
+  AIR.forEach(([x, y], i) => SK.circle(v3, x, y, 14 + (i % 3) * 4, { id: `r3-a${i}`, stroke: "ink-2", width: 1.6 }));
+  const UP = [[560, 640], [560, 540], [760, 640], [760, 540], [660, 450]];
+  UP.forEach(([x, y], i) => SK.arrow(v3, x, y, x, y - 70, { id: `r3-u${i}`, stroke: "primary", width: 4, head: 16 }));
+  SK.rect(v3, 1180, 400, 560, 200, { id: "r3-card", fill: "accent-2-wash" });
+  gsap.set("#r3-base, #r3-scr, #r3-post, #r3-pan, #r3-bt, #r3-lid, #r3-w", { autoAlpha: 0 });
+  tl.to("#r3-base, #r3-scr, #r3-post, #r3-pan, #r3-bt, #r3-lid, #r3-w", M.in({ autoAlpha: 1 }), ST("s4") + 0.2);
+  show("#r3-disp", ST("s4") + 0.4);
+  draw(AIR.map((_, i) => `#r3-a${i}`).join(", "), AT("s4", "空氣") - 0.2, { duration: D(0.12) }); pop("#r3-air", AT("s4", "空氣"));
+  AIR.forEach((_, i) => drivers.push(t => { const el = document.getElementById(`r3-a${i}`); el.style.transform = `translate(${(6 * Math.sin(t * 0.9 + i)).toFixed(1)}px, ${(5 * Math.cos(t * 0.7 + i * 2)).toFixed(1)}px)`; }));
+  UP.forEach((_, i) => draw(`#r3-u${i}`, AT("s4", "往上托") - 0.3 + i * 0.15, { duration: D(0.3) }));
+  stick("#r3-note", AT("s4", "輕一點"));
+  draw("#r3-card", AT("s4", "浮力校正") - 0.4, { duration: D(0.6) }); pen("r3", "#r3-card", AT("s4", "浮力校正") - 0.4, D(0.6));
+  pop("#r3-fb", AT("s4", "浮力校正"));
+  show("#r3-pc", AT("s4", "千分之一"));
+
+  // ── r4（s5）：代進公式 → 10.010 mL，落在公差帶內 ──
+  const v4 = sv("r4");
+  const sx = v => 960 + (v - 10) / 0.02 * 400;
+  SK.rect(v4, sx(9.98), 700, sx(10.02) - sx(9.98), 70, { id: "r4-band", fill: "accent-2-wash", stroke: "accent-2", width: 2 });
+  SK.line(v4, 380, 735, 1540, 735, { id: "r4-ax", stroke: "ink", width: 3 });
+  [9.98, 10, 10.02].forEach((v, i) => SK.line(v4, sx(v), 715, sx(v), 755, { id: `r4-t${i}`, stroke: i === 1 ? "accent" : "ink", width: 3 }));
+  SK.circle(v4, sx(10.010), 735, 34, { id: "r4-dot", fill: "accent-2", fillStyle: "solid", stroke: "accent-2" });
+  SK.arrow(v4, sx(10), 670, sx(10.010) - 6, 670, { id: "r4-bias", stroke: "accent", width: 3, head: 12 });
+  SK.polyline(v4, [[1180, 470], [1205, 500], [1240, 440]], { id: "r4-ck", stroke: "accent-2", width: 7 });
+  SK.marker(v4, 300, 612, 540, { id: "r4-hl", width: 44 }).setAttribute("data-overlap-ok", "");
+  SK.hide("#r4-hl");
+  show("#r4-e0", ST("s5") + 0.4);
+  show("#r4-e1", AT("s5", "代進公式") + 0.9);
+  SK.draw(tl, "#r4-hl", AT("s5", "這次") + 0.2, { duration: D(0.6) }); show("#r4-e2", AT("s5", "這次"));
+  draw("#r4-ax, #r4-t0, #r4-t1, #r4-t2", AT("s5", "比") - 0.3, { duration: D(0.3) }); pen("r4", "#r4-ax", AT("s5", "比") - 0.3, D(0.3));
+  ["#r4-k0", "#r4-k1", "#r4-k2"].forEach((k, i) => show(k, AT("s5", "比") + i * 0.12));
+  draw("#r4-dot", AT("s5", "多了"), { duration: D(0.3) }); draw("#r4-bias", AT("s5", "多了") + 0.2, { duration: D(0.3) });
+  draw("#r4-band", AT("s5", "允許") - 0.3, { duration: D(0.5) });
+  draw("#r4-ck", AT("s5", "範圍") - 0.1, { duration: D(0.4) }); show("#r4-in", AT("s5", "範圍"));
+
+  // ── r5（s6）：靶心＋10 個點；平均離中心多遠＝準確度、散多開＝精密度 ──
+  const v5 = sv("r5");
+  const tg5 = target(v5, 560, 560, 260, "r5-tg");
+  const PTS5 = [[606, 498], [652, 530], [618, 552], [664, 482], [690, 520], [630, 470], [598, 532], [676, 556], [645, 505], [622, 510]];
+  const mx = PTS5.reduce((s, p) => s + p[0], 0) / 10, my = PTS5.reduce((s, p) => s + p[1], 0) / 10;
+  const d5 = dots(v5, PTS5, "r5-p", "primary");
+  SK.line(v5, 560, 560, mx, my, { id: "r5-acc", stroke: "accent", width: 5 });
+  SK.circle(v5, mx, my, 150, { id: "r5-pre", stroke: "primary", width: 3, dashed: true });
+  draw(tg5, ST("s6") + 0.6, { duration: D(0.3) }); pen("r5", "#r5-tg-c0", ST("s6") + 0.6, D(0.3));
+  show("#r5-ctr", ST("s6") + 1.4);
+  pop("#r5-n", AT("s6", "重複"));
+  d5.forEach((id, i) => { draw(id, AT("s6", "重複") + 0.2 + i * 0.16, { duration: D(0.15) }); gsap.set(id, { svgOrigin: `${PTS5[i][0]} ${PTS5[i][1]}` }); tl.from(id, M.pop({ scale: 2.2, immediateRender: false }), AT("s6", "重複") + 0.2 + i * 0.16); });
+  draw("#r5-acc", AT("s6", "平均"), { duration: D(0.5) }); show("#r5-d0", AT("s6", "準確度") - 0.3);
+  draw("#r5-pre", AT("s6", "散得") - 0.2, { duration: D(0.6) }); show("#r5-d1", AT("s6", "精密度") - 0.3);
+
+  // ── r6（s7）：系統誤差（集中但偏一邊）vs 隨機誤差（圍著中心散開） ──
+  const v6 = sv("r6");
+  const tga = target(v6, 560, 560, 200, "r6-ta"), tgb = target(v6, 1420, 560, 200, "r6-tb");
+  const PA = [[640, 486], [662, 470], [628, 470], [655, 498], [672, 488], [640, 462], [620, 490], [668, 455], [648, 480], [632, 500]];
+  const PB = [[1360, 500], [1490, 590], [1400, 640], [1470, 480], [1350, 610], [1440, 520], [1380, 560], [1500, 545], [1420, 460], [1335, 545]];
+  const da = dots(v6, PA, "r6-pa", "accent"), db = dots(v6, PB, "r6-pb", "primary");
+  [[560, 560], [520, 600], [600, 610]].forEach(([x, y], i) => SK.arrow(v6, x, y, x + 50, y - 50, { id: `r6-ar${i}`, stroke: "accent", width: 3, head: 14 }));
+  draw(tga, ST("s7") + 0.4, { duration: D(0.25) });
+  da.forEach((id, i) => draw(id, AT("s7", "偏向") - 0.4 + i * 0.09, { duration: D(0.1) }));
+  show("#r6-a1", AT("s7", "同一邊") - 0.2);
+  [0, 1, 2].forEach(i => draw(`#r6-ar${i}`, AT("s7", "同一邊") + 0.1 + i * 0.12, { duration: D(0.25) }));
+  show("#r6-a0", AT("s7", "系統誤差"));
+  draw(tgb, AT("s7", "忽高忽低") - 0.6, { duration: D(0.25) });
+  db.forEach((id, i) => draw(id, AT("s7", "忽高忽低") - 0.1 + i * 0.09, { duration: D(0.1) }));
+  show("#r6-b1", AT("s7", "忽高忽低")); show("#r6-b0", AT("s7", "隨機誤差"));
+
+  // ── r7（s8）：吸管（hero 回來）與滴定管 → 拉遠全圖 → 片尾卡 ──
+  const v7 = sv("r7");
+  pipette(v7, 600, 210, 0.95, "r7-pp");
+  SK.rect(v7, 1180, 220, 44, 520, { id: "r7-bu", stroke: "ink" });
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach(i => SK.line(v7, 1180, 250 + i * 46, i % 5 ? 1196 : 1206, 250 + i * 46, { id: `r7-g${i}`, stroke: "ink-2", width: 1.6 }));
+  SK.path(v7, "M1188 740 L1196 800 L1208 800 L1216 740", { id: "r7-tip", stroke: "ink" });
+  SK.rect(v7, 1160, 752, 84, 22, { id: "r7-sc", fill: "accent", fillStyle: "solid", stroke: "ink" });
+  draw("#r7-pp-body, #r7-pp-mark", AT("s8", "吸管") - 0.5, { duration: D(0.8) }); pen("r7", "#r7-pp-body", AT("s8", "吸管") - 0.5, D(0.8));
+  show("#r7-p", AT("s8", "吸管"));
+  draw("#r7-bu, #r7-g0, #r7-g1, #r7-g2, #r7-g3, #r7-g4, #r7-g5, #r7-g6, #r7-g7, #r7-g8, #r7-g9, #r7-g10, #r7-tip, #r7-sc", AT("s8", "滴定管") - 0.4, { duration: D(0.12) });
+  pen("r7", "#r7-bu", AT("s8", "滴定管") - 0.4, D(0.3));
+  show("#r7-b", AT("s8", "滴定管"));
+  pop("#cta", AT("s8", "你手上") - 0.3);
+  tl.to("#world", M.out({ opacity: 0.22, duration: D(1.3) }), AT("s8", "你手上") - 0.3);
+  gsap.set("#cta-2, #cta-3", { autoAlpha: 0 });
+  const cv = document.getElementById("cta-1"), cstr = "你手上的那支，準嗎？", cw = SK.write(cv, 550, 55, cstr, { id: "cta-tw", size: 84, anchor: "middle" });
+  SK.marker(cv, cw.x(7) + 12, cw.x(9) - 18, 78, { id: "cta-mk", width: 42, before: cw.el });
+  SK.hide("#cta-tw, #cta-mk");
+  const ctr = []; SK.draw(tl, "#cta-tw", AT("s8", "你手上"), { duration: D(3), track: ctr });
+  SK.draw(tl, "#cta-mk", AT("s8", "準嗎"), { duration: D(0.6) });
+  tl.to("#cta-2", M.in({ autoAlpha: 1 }), AT("s8", "準嗎") + 0.4).to("#cta-3", M.in({ autoAlpha: 1 }), ">");
+  tl.set({}, {}, T.total);                               // 片尾停留
+  return tl;
+}
+
+function caption(t) {
+  const q = T.cues.find(c => t >= c.t0 && t < c.t1);
+  const cap = document.getElementById("cap");
+  if ((q ? q.text : "") !== cap.textContent) cap.textContent = q ? q.text : "";
+}
+function applyCam(t) {                                    // 閒置漂移：鏡頭永遠有一點點動
+  const k = t > AT("s8", "先猜猜看") ? 0 : 1, x = cam.x + k * 6 * Math.sin(t * 0.35), y = cam.y + k * 4 * Math.cos(t * 0.3);
+  document.getElementById("world").style.transform = `translate(${960 - x * cam.s}px, ${540 - y * cam.s}px) scale(${cam.s})`;
+}
+
+addEventListener("DOMContentLoaded", async () => {
+  await document.fonts.ready;
+  const tl = build();
+  sway();
+  window.__duration = T.total;
+  window.__seek = t => { tl.seek(t, false); drivers.forEach(f => f(t)); penAt(t); caption(t); applyCam(t); };
+  window.__seek(Number(new URLSearchParams(location.search).get("t") || 0));
+  window.__ready = true;
+});
+</script>
+</body></html>

@@ -1,0 +1,4 @@
+out/
+vo/*.wav
+vo/takes/
+vo_est/
