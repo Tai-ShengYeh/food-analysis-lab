@@ -1,0 +1,24 @@
+W4 手動 vs 自動滴定｜pH 一樣，為什麼酸度不一樣？（食品分析實驗 課前導覽）
+
+上課前先看：pH 和可滴定酸度差在哪？為什麼 NaOH 要先標定？滴定曲線的緩衝區、半當量點、當量點怎麼讀？
+深色樣品看不到酚酞粉紅怎麼辦？手動和 PASCO 自動滴定要怎麼比較？
+
+▍章節
+00:00 pH 一樣，酸度卻不一樣？（pH vs 可滴定酸度）
+00:19 先標定氫氧化鈉（KHP）
+00:31 滴定曲線：緩衝區與半當量點
+00:43 當量點與酚酞
+00:58 紅酒看不到粉紅：電位滴定
+01:10 算出 % 酸
+01:21 r 高 ≠ 兩法一致（Bland–Altman）
+01:33 這週上課：手動和 PASCO 各做一次
+
+▍課程教材
+W4 實驗投影片：https://tai-shengyeh.github.io/food-analysis-lab/labs/w04_titration/index.html
+
+▍出處
+・數值取自 W4 實驗投影片（KHP 標定、醋酸 pKa 4.76、酚酞 pH 8.2、醋 4.56%）；滴定曲線以電荷平衡式計算，散佈圖為示意資料
+・配音：Voice generated with ElevenLabs；手繪：Rough.js；字型：芫荽、霞鶩文楷（OFL）
+・製作：code-animation-explainer（github.com/FW1201/code-animation-explainer）
+
+#食品分析 #滴定 #可滴定酸度 #酚酞 #BlandAltman
