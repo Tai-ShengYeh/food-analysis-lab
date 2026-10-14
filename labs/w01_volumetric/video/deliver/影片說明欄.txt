@@ -1,0 +1,25 @@
+W1 容量器具校正｜你的 10 mL 吸管，真的放出 10 mL 嗎？（食品分析實驗 課前導覽）
+
+上課前先看：為什麼不能只看刻度？秤重法怎麼把「質量」換回「體積」？
+水溫、空氣浮力各自修正了什麼？重複 10 次之後，怎麼分辨準確度與精密度、系統誤差與隨機誤差？
+
+▍章節
+00:00 你的吸管準嗎？
+00:08 Class A 也有公差（±0.02 mL）
+00:20 不讀刻度，改用秤的（秤重法）
+00:35 質量換體積：要看水溫
+00:49 別忘了空氣浮力
+01:02 代進公式：V = m × Fb ÷ ρw
+01:12 準確度 vs 精密度
+01:25 系統誤差 vs 隨機誤差
+01:38 上課見：親手校正你的量器
+
+▍課程教材
+W1 實驗投影片：https://tai-shengyeh.github.io/food-analysis-lab/labs/w01_volumetric/index.html
+
+▍出處
+・數值取自 W1 實驗投影片（ISO 4787、ASTM E969、Tanaka 2001）；靶心上的點為示意
+・配音：Voice generated with ElevenLabs；手繪：Rough.js；字型：芫荽、霞鶩文楷（OFL）
+・製作：code-animation-explainer（github.com/FW1201/code-animation-explainer）
+
+#食品分析 #容量器具校正 #秤重法 #準確度 #精密度
