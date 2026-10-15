@@ -57,10 +57,12 @@ h2{font-family:var(--serif);font-size:21px;margin:34px 0 12px}
 .links a.xl{border-color:#2F7D46;color:#2F7D46}
 .links a.or{border-color:#C4661F;color:#C4661F}
 .links a.vd{border-color:#B3261E;color:#B3261E}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .links a.xl{border-color:#7CC48F;color:#7CC48F}:root:not([data-theme="light"]) .links a.or{border-color:#F0A56A;color:#F0A56A}:root:not([data-theme="light"]) .links a.vd{border-color:#F28B82;color:#F28B82}}
+.links a.lab{border-color:#2848A8;color:#2848A8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .links a.xl{border-color:#7CC48F;color:#7CC48F}:root:not([data-theme="light"]) .links a.or{border-color:#F0A56A;color:#F0A56A}:root:not([data-theme="light"]) .links a.vd{border-color:#F28B82;color:#F28B82}:root:not([data-theme="light"]) .links a.lab{border-color:#9FB4F0;color:#9FB4F0}}
 :root[data-theme="dark"] .links a.xl{border-color:#7CC48F;color:#7CC48F}
 :root[data-theme="dark"] .links a.or{border-color:#F0A56A;color:#F0A56A}
 :root[data-theme="dark"] .links a.vd{border-color:#F28B82;color:#F28B82}
+:root[data-theme="dark"] .links a.lab{border-color:#9FB4F0;color:#9FB4F0}
 .links a:hover{border-color:var(--accent);color:var(--accent)}
 .links a.main:hover{color:var(--surface);background:var(--accent);border-color:var(--accent)}
 .st{font-size:12px;white-space:nowrap;padding-top:2px}
@@ -106,6 +108,8 @@ const COLAB = "https://colab.research.google.com/github/Tai-ShengYeh/food-analys
 const XL = {1:"EX01_volumetric_calibration.xlsx",2:"EX02_moisture_aw.xlsx",3:"EX03_ash_sodium.xlsx",4:"EX04_titration.xlsx",5:"EX05_kjeldahl_protein.xlsx",6:"EX06_fat_soxhlet.xlsx",7:"EX07_sugar_calibration.xlsx",8:"EX08_proficiency_qc.xlsx"};
 // 課前導覽影片（YouTube）
 const VID = {1:["https://youtu.be/nPiccdYaUg0", "約 2 分鐘"], 2:["https://youtu.be/ky97CfiKKWU", "約 1 分鐘"], 3:["https://youtu.be/aWerpvpFJ4E", "2 分鐘"]};
+// 互動實驗室（嵌在該週投影片內，也可另開）
+const LAB = {4:"labs/w04_titration/titration_lab.html"};
 // 儀器中文手冊
 const MAN = {3:["labs/w03_ash_sodium/na11_manual.html", "鈉離子計中文手冊"]};
 const ORG = {1:"OR01",8:"OR08",11:"OR11",12:"OR12",13:"OR13",14:"OR14",16:"OR16"};
@@ -138,6 +142,7 @@ W.forEach(w => {
   const links = [];
   if (deck) links.push(`<a class="main" href="${deck}">實驗投影片</a>`);
   if (VID[n]) links.push(`<a class="vd" href="${VID[n][0]}" target="_blank" rel="noopener">▶ 課前導覽影片（${VID[n][1]}）↗</a>`);
+  if (LAB[n]) links.push(`<a class="lab" href="${LAB[n]}" target="_blank" rel="noopener">🧪 互動實驗室（六幕預測→觀察→解釋）↗</a>`);
   if (MAN[n]) links.push(`<a href="${MAN[n][0]}">${MAN[n][1]}</a>`);
   if (XL[n]) links.push(`<a class="xl" href="excel/${XL[n]}" download>Excel 練習檔 ⬇</a>`);
   if (ORG[n]) links.push(`<a class="or" href="tools.html#${ORG[n]}">Orange 流程 ${ORG[n]}</a>`);
