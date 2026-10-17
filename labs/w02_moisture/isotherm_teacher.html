@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>吸濕曲線老師端 · W2</title>
+<style>
+:root{--bg:#eef2fb;--surface:#fff;--surface2:#f6f8fd;--ink:#14213d;--ink2:#48597a;--ink3:#7d8bab;--line:#dbe2f0;--accent:#1f6feb;--accent-soft:rgba(31,111,235,.12);--orange:#d9822b;--green:#1f9d61;--red:#d94f4f;--shadow:0 2px 10px rgba(20,33,61,.08)}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1526;--surface:#1a2238;--surface2:#151c30;--ink:#eaf0ff;--ink2:#a9b6d3;--ink3:#7d8bab;--line:#2d3858;--accent:#5b9bff;--accent-soft:rgba(91,155,255,.18);--orange:#f0a04b;--green:#3dbb82;--red:#f07070;--shadow:0 2px 10px rgba(0,0,0,.4)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.6;font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px 80px}
+header{padding:26px 0 8px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+.kicker{color:var(--accent);font-weight:800;letter-spacing:.06em;font-size:.82rem}
+h1{font-size:clamp(1.4rem,4vw,2rem);margin:.1em 0}
+h2{font-size:1.15rem;margin:0 0 10px}
+.tiny{font-size:.84rem;color:var(--ink2)}
+button,select,input{font:inherit}
+button{cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:9px;padding:5px 12px;font-weight:700}
+button:hover{background:var(--accent);color:#fff}
+button.primary{background:var(--accent);color:#fff}
+select,input[type=date],input[type=search]{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:4px 8px}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0;box-shadow:var(--shadow)}
+.filters{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.filters label{white-space:nowrap}
+.banner{border-radius:10px;padding:10px 14px;margin:12px 0;display:none}
+.banner.show{display:block}
+.banner.warn{background:rgba(217,130,43,.12);border-left:4px solid var(--orange)}
+.banner.info{background:var(--accent-soft);border-left:4px solid var(--accent)}
+.banner.err{background:rgba(217,79,79,.12);border-left:4px solid var(--red)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.tile .v{font-size:1.9rem;font-weight:800;line-height:1.1}
+.tile .l{color:var(--ink2);font-size:.85rem}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:middle}
+th{color:var(--ink2);font-weight:700;font-size:.82rem;white-space:nowrap}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{position:relative;height:14px;min-width:120px;background:var(--surface2);border-radius:4px}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:0 4px 4px 0}
+.flag{color:var(--orange);font-weight:700;white-space:nowrap}
+.mis{font-size:.82rem;color:var(--ink2)}
+.concl{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0;background:var(--surface2)}
+.concl .meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.84rem;color:var(--ink2);margin-bottom:6px}
+.concl .sid{font-weight:800;color:var(--ink);font-size:1rem}
+.concl .txt{white-space:pre-wrap;word-break:break-word}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:0 8px;font-size:.78rem;background:var(--surface)}
+details summary{cursor:pointer;color:var(--accent);font-weight:700}
+.mx td,.mx th{text-align:center;padding:4px 6px}
+.mx td.s{text-align:left;font-weight:700;white-space:nowrap}
+.c1{background:rgba(31,157,97,.14)}.c2{background:rgba(217,130,43,.14)}.c3{background:rgba(217,79,79,.14)}
+pre{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-x:auto;font-size:.82rem}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
+@media(max-width:800px){.grid2{grid-template-columns:minmax(0,1fr)}}
+#who{font-size:.86rem;color:var(--ink2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="kicker">TEACHER · W2 等溫吸濕曲線</div>
+    <h1>全班結論與答對率</h1>
+    <div class="tiny">資料來源：Firestore <code>student_events</code>（<code>game = isotherm</code>）。只有您授權的 Google 帳號讀得到。<a href="isotherm.html" target="_blank" rel="noopener">開啟學生頁 ↗</a></div>
+  </div>
+  <div class="row"><span id="who">尚未登入</span><button class="primary" id="btnLogin">用 Google 登入</button><button id="btnLogout" style="display:none">登出</button><button id="btnDemo">看示範資料</button></div>
+</header>
+
+<div class="banner info" id="bDemo">👀 目前顯示的是<b>示範資料（虛構）</b>，用來預覽版面，不是學生作答。登入後會換成真實資料。</div>
+<div class="banner err" id="bErr"></div>
+
+<section class="card" id="setup">
+  <details id="setupDet">
+    <summary>第一次使用：在 Firebase 開放「只有您」讀取（約 3 分鐘）</summary>
+    <ol>
+      <li>Firebase 主控台 → 專案 <b>my-teaching-tools-517a0</b> → <b>Authentication</b> → 登入方式 → 啟用 <b>Google</b>。</li>
+      <li>Authentication → 設定 → <b>已授權的網域</b> → 新增 <code>tai-shengyeh.github.io</code>。</li>
+      <li>Firestore Database → <b>規則</b>：在 <code>student_events</code> 的規則裡<b>加上</b>下面這行讀取規則（保留原本允許學生寫入的規則，不要整段取代），把 Gmail 換成您的帳號後按「發布」：
+        <pre>match /student_events/{doc} {
+  // …原本的 create 規則保留…
+  allow read: if request.auth != null
+              &amp;&amp; request.auth.token.email == "您的Gmail@gmail.com"
+              &amp;&amp; request.auth.token.email_verified == true;
+}</pre></li>
+      <li>回到這頁按「用 Google 登入」。看到「權限不足」代表第 3 步還沒生效或 Gmail 打錯。</li>
+    </ol>
+    <p class="tiny">這頁放在公開網址，但沒有登入或不在規則裡的人只會看到空白與錯誤訊息，讀不到任何學生資料。頁面不會改動或刪除資料。</p>
+  </details>
+</section>
+
+<section class="card">
+  <div class="filters">
+    <label>課程 <select id="fCourse"><option value="">全部</option></select></label>
+    <label>班級 <select id="fClass"><option value="">全部</option></select></label>
+    <label>從 <input type="date" id="fFrom"></label>
+    <label><input type="checkbox" id="fTest" checked> 排除測試學號（TEST／test 開頭）</label>
+    <label>學號 <input type="search" id="fSid" placeholder="搜尋" size="12"></label>
+    <button id="btnReload" disabled>重新讀取</button>
+    <span class="tiny" id="loadInfo"></span>
+  </div>
+</section>
+
+<div class="tiles" id="tiles"></div>
+
+<div class="grid2">
+  <section class="card">
+    <h2>每題答對率</h2>
+    <div class="tblwrap"><table id="tQ"><thead><tr><th>題目</th><th>首次答對率</th><th></th><th>最終答對</th><th>平均嘗試</th><th>作答人數</th></tr></thead><tbody></tbody></table></div>
+    <p class="tiny">首次答對率：該生在這題的第一筆作答（含未登入前的嘗試次數）就答對的比例。⚠ 標示首次答對率低於 50%，上課可以優先講解。</p>
+  </section>
+  <section class="card">
+    <h2>常見迷思概念（答錯原因）</h2>
+    <div class="tblwrap"><table id="tM"><thead><tr><th>迷思概念</th><th>題目</th><th>人數</th></tr></thead><tbody></tbody></table></div>
+    <p class="tiny">同一位學生在同一題的同一個錯誤只算一次。</p>
+  </section>
+</div>
+
+<section class="card">
+  <div class="row" style="justify-content:space-between"><h2 style="margin:0">學生結論</h2>
+    <div class="row"><label class="tiny">排序 <select id="sortC"><option value="time">最新上傳</option><option value="sid">學號</option><option value="score">積分</option></select></label>
+      <button id="btnCsvC">下載結論 CSV</button></div></div>
+  <div id="concl"></div>
+</section>
+
+<section class="card">
+  <div class="row" style="justify-content:space-between"><h2 style="margin:0">學生進度總表</h2><button id="btnCsvS">下載學生總表 CSV</button></div>
+  <p class="tiny">✔ 第一次就答對　△ 試了幾次後答對　✘ 還沒答對　空白：沒作答（或未登入）</p>
+  <div class="tblwrap"><table class="mx" id="tS"></table></div>
+</section>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
+  from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js';
+import { getFirestore, collection, query, where, getDocs }
+  from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
+
+const CFG = {
+  apiKey: "AIzaSyCTLhRf7jcJH_AwUzbV4MawkrKNPrIVG5Y",
+  authDomain: "my-teaching-tools-517a0.firebaseapp.com",
+  projectId: "my-teaching-tools-517a0",
+  storageBucket: "my-teaching-tools-517a0.firebasestorage.app",
+  messagingSenderId: "244288457011",
+  appId: "1:244288457011:web:4b3ff8a846a6c50b169646"
+};
+const app = initializeApp(CFG), auth = getAuth(app), db = getFirestore(app);
+const $ = id => document.getElementById(id);
+
+/* question catalogue — must match isotherm.html */
+const QS = [
+  ['MSI-1a','① 濕基→乾基計算'], ['MSI-1b','① 烘箱 vs IR 偏差'], ['MSI-2','② 等溫線區域與單分子層'],
+  ['MSI-3a','③ BET 的 C 計算'], ['MSI-3b','③ R² 高可以報告嗎'], ['MSI-4','④ 參數可辨識性'],
+  ['MSI-5','⑤ 飽和鹽補點設計'], ['MSI-6-1','⑥ 平衡與脫濕軌跡'], ['MSI-6-2','⑥ 量測不確定度'],
+  ['MSI-6-3','⑥ 內插目標水分'], ['MSI-6-4','⑥ 吸濕脫濕遲滯']
+];
+const QNAME = Object.fromEntries(QS);
+
+let RAW = [], DEMO = false;
+
+/* ---------- helpers ---------- */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct = (a,b) => b ? Math.round(a/b*100) : null;
+const fmtT = d => d ? d.toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+function banner(id,html){ const b=$(id); if(html){b.innerHTML=html;b.classList.add('show')} else b.classList.remove('show'); }
+function norm(d){
+  const ts = d.timestamp && d.timestamp.toDate ? d.timestamp.toDate() : (d.timestamp instanceof Date ? d.timestamp : null);
+  return { sid:d.student_id||'?', course:d.course_id||'', cls:d.class_id||'', ev:d.event_type||'', qid:d.question_id||null,
+           ok:d.is_correct, att:d.attempts, mis:d.misconception||null, score:d.final_score, ts, detail:d.detail||{} };
+}
+
+/* ---------- loading ---------- */
+async function load(){
+  banner('bErr'); $('loadInfo').textContent='讀取中…'; $('btnReload').disabled=true;
+  try{
+    const snap = await getDocs(query(collection(db,'student_events'), where('game','==','isotherm'), where('chapter','==','LAB-W02')));
+    RAW = snap.docs.map(x => norm(x.data())); DEMO=false; banner('bDemo');
+    $('loadInfo').textContent = `共 ${RAW.length} 筆事件，讀取於 ${new Date().toLocaleTimeString('zh-TW')}`;
+    fillFilterOptions(); render();
+  }catch(e){
+    $('loadInfo').textContent='';
+    if(String(e.code||e.message).includes('permission')){
+      banner('bErr','🔒 <b>權限不足</b>：已登入，但 Firestore 規則還沒允許這個帳號讀取 <code>student_events</code>。請照上方「第一次使用」第 3 步加規則（Gmail 要和登入的帳號一致）。');
+      $('setupDet').open = true;
+    } else banner('bErr','讀取失敗：'+esc(e.message||e));
+  }finally{ $('btnReload').disabled = !auth.currentUser; }
+}
+$('btnLogin').onclick = async () => {
+  try{ await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch(e){
+    const m = String(e.code||'');
+    if(m.includes('unauthorized-domain')) { banner('bErr','🔒 這個網域還沒加入 Firebase「已授權的網域」，請照上方第 2 步新增 <code>tai-shengyeh.github.io</code>。'); $('setupDet').open=true; }
+    else if(m.includes('operation-not-allowed')) { banner('bErr','🔒 Firebase 還沒啟用 Google 登入，請照上方第 1 步。'); $('setupDet').open=true; }
+    else if(!m.includes('popup-closed')) banner('bErr','登入失敗：'+esc(e.message||e));
+  }
+};
+$('btnLogout').onclick = () => signOut(auth);
+$('btnReload').onclick = load;
+onAuthStateChanged(auth, u => {
+  $('who').textContent = u ? `已登入：${u.email}` : '尚未登入';
+  $('btnLogin').style.display = u ? 'none' : '';
+  $('btnLogout').style.display = u ? '' : 'none';
+  $('btnReload').disabled = !u;
+  if(u) load(); else if(!DEMO){ RAW=[]; render(); }
+});
+
+/* ---------- filters ---------- */
+function fillFilterOptions(){
+  for(const [id,key] of [['fCourse','course'],['fClass','cls']]){
+    const sel=$(id), cur=sel.value, vals=[...new Set(RAW.map(r=>r[key]).filter(Boolean))].sort();
+    sel.innerHTML='<option value="">全部</option>'+vals.map(v=>`<option${v===cur?' selected':''}>${esc(v)}</option>`).join('');
+  }
+}
+['fCourse','fClass','fFrom','fTest','fSid','sortC'].forEach(id => $(id).addEventListener('input', render));
+function filtered(){
+  const c=$('fCourse').value, k=$('fClass').value, from=$('fFrom').value ? new Date($('fFrom').value+'T00:00:00') : null,
+        noTest=$('fTest').checked, q=$('fSid').value.trim().toLowerCase();
+  return RAW.filter(r => (!c||r.course===c) && (!k||r.cls===k) && (!from||(r.ts&&r.ts>=from))
+    && (!noTest || !/^test/i.test(r.sid)) && (!q || r.sid.toLowerCase().includes(q)));
+}
+
+/* ---------- aggregation ---------- */
+function aggregate(rows){
+  const byT = (a,b) => (a.ts?.getTime()??0) - (b.ts?.getTime()??0);
+  rows = rows.slice().sort(byT);
+  const students = {};
+  for(const r of rows){
+    const s = students[r.sid] ??= { sid:r.sid, course:r.course, cls:r.cls, q:{}, subs:[], score:null, missions:new Set(), last:null, first:null };
+    s.first ??= r.ts; if(r.ts) s.last = r.ts;
+    if(r.score!=null) s.score = Math.max(s.score??0, r.score);
+    if(r.ev==='mission_complete' && r.qid) s.missions.add(r.qid.replace('MSI-',''));
+    if(r.ev==='attempt_complete') ['m1','m2','m3','m4','m5','m6'].forEach(m=>s.missions.add(m));
+    if(r.ev==='submission') s.subs.push(r);
+    if(r.ev==='answer' && r.qid){
+      const q = s.q[r.qid] ??= { first:null, everOk:false, n:0, maxAtt:0, mis:new Set() };
+      if(!q.first) q.first = r;
+      q.n++; q.maxAtt = Math.max(q.maxAtt, r.att||0);
+      if(r.ok===true) q.everOk = true;
+      if(r.ok===false && r.mis) q.mis.add(r.mis);
+    }
+  }
+  const qStats = QS.map(([qid,name]) => {
+    let n=0, first=0, fin=0, att=0;
+    for(const s of Object.values(students)){ const q=s.q[qid]; if(!q) continue;
+      n++; if(q.first.ok===true && (q.first.att||1)===1) first++; if(q.everOk) fin++; att += q.maxAtt||q.n; }
+    return { qid, name, n, first, fin, attAvg: n ? att/n : null };
+  });
+  const misCount = {};
+  for(const s of Object.values(students)) for(const [qid,q] of Object.entries(s.q))
+    for(const m of q.mis){ const k=qid+'|'+m; misCount[k]=(misCount[k]||0)+1; }
+  const mis = Object.entries(misCount).map(([k,c])=>{const [qid,m]=k.split('|');return {qid,m,c}}).sort((a,b)=>b.c-a.c);
+  return { students, qStats, mis };
+}
+
+/* ---------- rendering ---------- */
+let LAST = null;
+function render(){
+  const A = aggregate(filtered()); LAST = A;
+  const S = Object.values(A.students);
+  const nSub = S.filter(s=>s.subs.length).length, nDone = S.filter(s=>s.missions.size>=6).length;
+  const scores = S.map(s=>s.score).filter(v=>v!=null);
+  const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
+  $('tiles').innerHTML = [
+    [S.length,'登入作答的學生'], [nSub, `上傳結論（${pct(nSub,S.length)??0}%）`],
+    [nDone, `完成 6 個任務（${pct(nDone,S.length)??0}%）`], [avg ?? '—','平均積分（滿分 120）']
+  ].map(([v,l])=>`<div class="tile"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join('');
+
+  $('tQ').querySelector('tbody').innerHTML = A.qStats.map(q => {
+    const p = pct(q.first,q.n);
+    return `<tr><td>${esc(q.name)}<div class="tiny">${esc(q.qid)}</div></td>
+      <td><div class="bar" title="${esc(q.name)}：首次答對 ${q.first}/${q.n} 人"><i style="width:${p??0}%"></i></div></td>
+      <td class="n">${p==null?'—':p+'%'} ${p!=null&&p<50?'<span class="flag">⚠ 需要再講</span>':''}</td>
+      <td class="n">${q.n?pct(q.fin,q.n)+'%':'—'}</td><td class="n">${q.attAvg==null?'—':q.attAvg.toFixed(1)}</td><td class="n">${q.n}</td></tr>`;
+  }).join('');
+
+  $('tM').querySelector('tbody').innerHTML = A.mis.length ? A.mis.slice(0,12).map(m =>
+    `<tr><td>${esc(m.m)}</td><td class="mis">${esc(QNAME[m.qid]||m.qid)}</td><td class="n">${m.c}</td></tr>`).join('')
+    : '<tr><td colspan="3" class="tiny">目前沒有答錯紀錄。</td></tr>';
+
+  const sortBy = $('sortC').value;
+  const withSub = S.filter(s=>s.subs.length).sort((a,b)=> sortBy==='sid' ? a.sid.localeCompare(b.sid)
+      : sortBy==='score' ? (b.score??0)-(a.score??0) : (b.subs.at(-1).ts?.getTime()??0)-(a.subs.at(-1).ts?.getTime()??0));
+  const noSub = S.filter(s=>!s.subs.length).map(s=>s.sid).sort();
+  $('concl').innerHTML = (withSub.length ? withSub.map(s => {
+    const L = s.subs.at(-1), d = L.detail||{}, m4 = d.m4||{};
+    const older = s.subs.slice(0,-1).reverse().map(v=>`<div class="concl"><div class="meta">第 ${esc(v.detail?.version??'?')} 版 · ${fmtT(v.ts)}</div><div class="txt">${esc(v.detail?.conclusion)}</div></div>`).join('');
+    return `<div class="concl"><div class="meta"><span class="sid">${esc(s.sid)}</span><span>${esc(s.course)}·${esc(s.cls)}</span>
+      <span>${fmtT(L.ts)}</span><span>積分 ${esc(L.score ?? s.score ?? '—')}</span><span>任務 ${s.missions.size}/6</span>
+      ${s.subs.length>1?`<span>共 ${s.subs.length} 版</span>`:''}
+      ${d.salts?`<span>補點：${d.salts.map(x=>`<span class="chip">${esc(x)}</span>`).join(' ')}</span>`:''}
+      ${m4.xm_min!=null?`<span>Xm 試過 ${esc(m4.xm_min)}–${esc(m4.xm_max)}，σ ${esc((m4.sigmas||[]).join('/'))}</span>`:''}</div>
+      <div class="txt">${esc(d.conclusion)}</div>${older?`<details><summary>看先前版本</summary>${older}</details>`:''}</div>`;
+  }).join('') : '<p class="tiny">還沒有人上傳結論。</p>')
+    + (noSub.length ? `<p class="tiny">有作答但還沒上傳結論（${noSub.length} 人）：${noSub.map(esc).join('、')}</p>` : '');
+
+  const head = '<tr><th style="text-align:left">學號</th>'+QS.map(([qid,n])=>`<th title="${esc(n)}">${esc(qid.replace('MSI-',''))}</th>`).join('')+'<th>積分</th><th>結論</th><th>最後活動</th></tr>';
+  const rowsS = S.sort((a,b)=>a.sid.localeCompare(b.sid)).map(s => '<tr><td class="s">'+esc(s.sid)+'</td>'+QS.map(([qid])=>{
+      const q=s.q[qid]; if(!q) return '<td></td>';
+      const first = q.first.ok===true && (q.first.att||1)===1;
+      return first ? '<td class="c1" title="第一次就答對">✔</td>' : q.everOk ? '<td class="c2" title="試了幾次後答對">△</td>' : '<td class="c3" title="還沒答對">✘</td>';
+    }).join('')+`<td>${esc(s.score??'—')}</td><td>${s.subs.length?'✔':''}</td><td class="tiny">${fmtT(s.last)}</td></tr>`).join('');
+  $('tS').innerHTML = '<thead>'+head+'</thead><tbody>'+(rowsS||`<tr><td colspan="${QS.length+4}" class="tiny">沒有資料。</td></tr>`)+'</tbody>';
+}
+
+/* ---------- CSV ---------- */
+function csv(name, rows){
+  const s = '﻿' + rows.map(r=>r.map(v=>{const t=String(v??'');return /[",\n]/.test(t)?'"'+t.replace(/"/g,'""')+'"':t}).join(',')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([s],{type:'text/csv;charset=utf-8'}));
+  a.download = name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+const stamp = () => new Date().toISOString().slice(0,10);
+$('btnCsvC').onclick = () => { if(!LAST) return;
+  const out=[['學號','課程','班級','上傳時間','版本','積分','完成任務數','補點設計','結論']];
+  for(const s of Object.values(LAST.students)) for(const v of s.subs)
+    out.push([s.sid,s.course,s.cls,v.ts?v.ts.toLocaleString('zh-TW'):'',v.detail?.version??'',v.score??'',s.missions.size,(v.detail?.salts||[]).join(' '),v.detail?.conclusion??'']);
+  csv(`isotherm_結論_${stamp()}.csv`, out); };
+$('btnCsvS').onclick = () => { if(!LAST) return;
+  const out=[['學號','課程','班級',...QS.map(q=>q[0]),'積分','完成任務數','已上傳結論','最後活動']];
+  for(const s of Object.values(LAST.students).sort((a,b)=>a.sid.localeCompare(b.sid)))
+    out.push([s.sid,s.course,s.cls,...QS.map(([qid])=>{const q=s.q[qid]; if(!q) return ''; return (q.first.ok===true&&(q.first.att||1)===1)?'首次答對':q.everOk?'後來答對':'未答對'}),
+      s.score??'',s.missions.size,s.subs.length?'是':'否',s.last?s.last.toLocaleString('zh-TW'):'']);
+  csv(`isotherm_學生總表_${stamp()}.csv`, out); };
+
+/* ---------- demo data (fictional, for previewing the layout) ---------- */
+$('btnDemo').onclick = () => {
+  let seed = 7; const rnd = () => (seed = (seed*16807) % 2147483647) / 2147483647;
+  const P = {'MSI-1a':.8,'MSI-1b':.7,'MSI-2':.6,'MSI-3a':.45,'MSI-3b':.4,'MSI-4':.35,'MSI-5':.55,'MSI-6-1':.5,'MSI-6-2':.65,'MSI-6-3':.75,'MSI-6-4':.6};
+  const MIS = {'MSI-1a':'用濕基小數、未換算乾基','MSI-1b':'把系統性偏差當隨機誤差','MSI-2':'以為點數多就夠（忽略範圍）','MSI-3a':'C 算成正值（忽略截距為負）',
+    'MSI-3b':'R² 高就代表模型適用','MSI-4':'以為 Xm 已被精準定出','MSI-5':'低 aw（≤0.45）點不足 3 個','MSI-6-1':'忽略平衡條件','MSI-6-2':'以為乾燥中會吸水','MSI-6-3':'用外插的 Xm 當目標','MSI-6-4':'遲滯方向相反'};
+  const TXT = ['aw 只到 0.558，BET 範圍內沒有點，C 還是負的，所以不能報 BET。GAB 的 Xm 大約 0.06，但 0.055–0.11 都說得通，只能說是外插。建議補 LiCl、CH3COOK、MgCl2、K2CO3。這組數據可以回答 aw 0.6 時水分約 10.5%。',
+    'BET 的 R² 有 0.98 但 C 是負的，代表模型不適用。Xm 不確定，要補低 aw 的點。',
+    '數據都在高 aw，單分子層算不出來，要加做飽和鹽罐。烘箱和 IR 有偏差，報告要寫用哪一種。'];
+  const t0 = Date.now() - 3*3600e3; RAW = [];
+  for(let i=1;i<=18;i++){
+    const sid = 'DEMO'+String(i).padStart(2,'0'), skill = .6 + rnd()*.8; let t = t0 + i*60e3, score = 0;
+    for(const [qid] of QS){ if(rnd()<.08) continue;
+      const okFirst = rnd() < Math.min(.97, P[qid]*skill);
+      t += 40e3; RAW.push({sid,course:'4y_food_analysis',cls:'A',ev:'answer',qid,ok:okFirst,att:1,mis:okFirst?null:MIS[qid],ts:new Date(t),detail:{}});
+      if(!okFirst){ t += 30e3; const ok2 = rnd()<.85; RAW.push({sid,course:'4y_food_analysis',cls:'A',ev:'answer',qid,ok:ok2,att:2,mis:ok2?null:MIS[qid],ts:new Date(t),detail:{}}); }
+      score += okFirst ? 10 : 6;
+    }
+    score = Math.min(120, Math.round(score));
+    RAW.push({sid,course:'4y_food_analysis',cls:'A',ev:'attempt_complete',qid:null,score,ts:new Date(t+20e3),detail:{}});
+    if(rnd()<.75) RAW.push({sid,course:'4y_food_analysis',cls:'A',ev:'submission',qid:'MSI-conclusion',score,ts:new Date(t+90e3),
+      detail:{version:1,conclusion:TXT[i%3],salts:['LiCl','CH₃COOK','MgCl₂','K₂CO₃'].slice(0,2+(i%3)),m4:{xm_min:.05,xm_max:+(0.09+rnd()*.05).toFixed(3),sigmas:['0.005','0.003']}}});
+  }
+  DEMO = true; banner('bDemo','👀 目前顯示的是<b>示範資料（虛構，學號 DEMO01–DEMO18）</b>，用來預覽版面，不是學生作答。登入後會換成真實資料。');
+  $('loadInfo').textContent = '示範資料'; fillFilterOptions(); render();
+};
+
+render();
+</script>
+</body>
+</html>
