@@ -1875,96 +1875,155 @@ window.scene_s4 = function ({ tl, svg, div, sc }) {
     tl, svg, div, sc,
     'SCENE 05 · 真實 QC 翻車案例',
     '真實 QC 翻車教訓：InnoSpectra 1 mm 卡匣正裝 vs 反裝',
-    '正裝（Normal）厚底座擋住低處光源導致基線飆高、水峰消失；反裝（Inverted）對準樣品窗才正確！'
+    '1 mm 薄片石英比色槽需搭配黑色 U 形支架：支架正裝（底座在下）會擋光；支架倒扣反裝（底座朝上）才正確！'
   );
 
-  // 左欄：正裝（Normal，錯誤）剖面圖
+  // 左欄：正裝（Normal，錯誤）—— 對應實拍照片 1 & 3
   const tNorm = AT('正裝', t0 + 4.5);
   panel(tl, svg, 76, 210, 540, 676, t0 + 0.6, { stroke: C.accent });
-  const nTitle = SK.txt(svg, '【錯誤】正裝 Normal（底座在下）', 104, 258, { size: 26, weight: 700, color: C.accent });
+  const nTitle = SK.txt(svg, '【錯誤】正裝 Normal（支架底座在下）', 104, 256, { size: 26, weight: 700, color: C.accent });
   tl.add(SK.fadeIn(nTitle, 0.4), t0 + 0.8);
 
-  // 光源、卡匣與偵測器幾何（正裝：厚底座在下擋光）
-  const nSrc = SK.card(svg, 112, 480, 96, 90, { fill: C.hl, stroke: C.accent, strokeWidth: 2.4 });
-  const nSrcT = SK.txt(svg, '光源', 160, 534, { size: 25, weight: 700, color: C.ink, anchor: 'middle' });
-  // 上段薄、中段樣品窗(高處)、下段厚底座(擋住低處光路)
-  const nTop = SK.card(svg, 286, 300, 120, 44, { fill: C.muted, stroke: C.ink, strokeWidth: 2.2 });
-  const nWin = SK.card(svg, 298, 348, 96, 86, { fill: C.bg, stroke: C.primary, strokeWidth: 2.2 });
-  const nWinT = SK.txt(svg, '樣品窗', 346, 398, { size: 24, weight: 700, color: C.primary, anchor: 'middle' });
-  const nBase = SK.card(svg, 286, 438, 120, 155, { fill: C.muted, stroke: C.accent, strokeWidth: 2.8 });
-  const nBaseT = SK.txt(svg, '厚底座', 346, 512, { size: 25, weight: 700, color: C.accent, anchor: 'middle' });
-  const nBaseT2 = SK.txt(svg, '(擋光!)', 346, 550, { size: 24, weight: 700, color: C.accent, anchor: 'middle' });
-  const nDet = SK.card(svg, 480, 480, 104, 90, { fill: C.surface, stroke: C.ink2, strokeWidth: 2.2 });
-  const nDetT = SK.txt(svg, '偵測器', 532, 534, { size: 24, weight: 700, color: C.ink2, anchor: 'middle' });
-  const nBeam = SK.arrow(svg, 212, 525, 280, 525, { stroke: C.accent, strokeWidth: 4.0 });
+  // 上方小圖：正面看 1 mm 圓底石英槽 + 黑色 U 形支架（正裝：厚底座在下）
+  const nSub1 = SK.txt(svg, '• 薄片石英槽：圓底透明液體腔', 104, 314, { size: 24, weight: 600, color: C.ink });
+  const nSub2 = SK.txt(svg, '• 黑色 U 形支架：厚底座在下方', 104, 360, { size: 24, weight: 700, color: C.accent });
+  const nSub3 = SK.txt(svg, '  插進卡座時底座直接沉入光路！', 104, 404, { size: 24, weight: 600, color: C.ink2 });
+  // 正面縮小示意 (x=472..580, y=276..428)
+  const nFLeft = SK.card(svg, 484, 282, 16, 142, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const nFRight = SK.card(svg, 556, 282, 16, 142, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const nFCells = SK.card(svg, 500, 278, 56, 118, { fill: C.bg, stroke: C.primary, strokeWidth: 2.0 });
+  const nFCav = SK.path(svg, 'M 512 284 L 512 372 Q 528 390 544 372 L 544 284', { stroke: C.primary, strokeWidth: 2.2, roughness: 0.4 });
+  const nFBase = SK.card(svg, 484, 392, 88, 32, { fill: C.ink2, stroke: C.accent, strokeWidth: 2.6 });
+  tl.add(SK.fadeIn(nSub1, 0.35), tNorm);
+  tl.add(SK.fadeIn(nSub2, 0.35), tNorm + 0.15);
+  tl.add(SK.fadeIn(nSub3, 0.35), tNorm + 0.3);
+  [nFLeft, nFRight, nFCells, nFBase].forEach((el, k) => tl.add(SK.fadeIn(el, 0.3), tNorm + 0.1 + k * 0.08));
+  tl.add(SK.drawIn(nFCav, 0.35), tNorm + 0.25);
 
-  [nSrc, nTop, nWin, nBase, nDet].forEach((el, k) => tl.add(SK.fadeIn(el, 0.35), tNorm + k * 0.12));
-  [nSrcT, nWinT, nBaseT, nBaseT2, nDetT].forEach((el, k) => tl.add(SK.fadeIn(el, 0.3), tNorm + 0.2 + k * 0.12));
+  // 下方主圖：InnoSpectra 左高右低階梯機身 + 卡座 + 正裝擋光剖面 (y=446..636)
+  const nBodyL = SK.path(svg, 'M 104 626 L 104 494 L 128 470 L 266 470 L 266 626 Z', { fill: C.muted, stroke: C.ink, strokeWidth: 2.4 });
+  const nLed = SK.line(svg, 122, 492, 138, 476, { stroke: C.surface, strokeWidth: 4.0, roughness: 0.2 });
+  const nBodyR = SK.path(svg, 'M 326 626 L 326 534 L 584 534 L 584 626 Z', { fill: C.muted, stroke: C.ink, strokeWidth: 2.4 });
+  const nSlot = SK.card(svg, 266, 534, 60, 92, { fill: C.surface, stroke: C.ink, strokeWidth: 2.0 });
+  // 黑色卡座與右側銀色固定螺絲
+  const nColL = SK.card(svg, 250, 492, 24, 52, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const nColR = SK.card(svg, 318, 492, 30, 52, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const nScrew = SK.card(svg, 348, 509, 16, 18, { fill: C.surface, stroke: C.ink, strokeWidth: 2.0 });
+  // 正裝：1 mm 薄石英槽在中央，但黑色支架厚底座沉在下方光路槽 (y=542..606) 擋住光束！
+  const nThinQ = SK.card(svg, 290, 446, 12, 156, { fill: C.bg, stroke: C.primary, strokeWidth: 2.2 });
+  const nHoldSide = SK.card(svg, 278, 452, 36, 90, { fill: C.surface, stroke: C.ink2, strokeWidth: 2.0 });
+  const nHoldBot = SK.card(svg, 276, 542, 40, 64, { fill: C.ink2, stroke: C.accent, strokeWidth: 2.8 });
+  const nSrcT = SK.txt(svg, '光源端', 185, 535, { size: 24, weight: 700, color: C.ink, anchor: 'middle' });
+  const nDetT = SK.txt(svg, '偵測器', 495, 590, { size: 24, weight: 700, color: C.ink, anchor: 'middle' });
+  const nBlkT = SK.txt(svg, '← 支架厚底擋光!', 468, 480, { size: 24, weight: 700, color: C.accent, anchor: 'middle' });
+  const nBeam = SK.arrow(svg, 196, 576, 272, 576, { stroke: C.accent, strokeWidth: 4.0 });
+
+  [nBodyL, nBodyR, nSlot, nColL, nColR, nScrew, nHoldSide, nThinQ, nHoldBot].forEach((el, k) =>
+    tl.add(SK.fadeIn(el, 0.3), tNorm + 0.35 + k * 0.08)
+  );
+  tl.add(SK.drawIn(nLed, 0.25), tNorm + 0.45);
+  tl.add(SK.fadeIn(nSrcT, 0.3), tNorm + 0.6);
+  tl.add(SK.fadeIn(nDetT, 0.3), tNorm + 0.7);
   tl.add(SK.drawIn(nBeam, 0.45), AT('擋住', t0 + 7.5));
+  tl.add(SK.fadeIn(nBlkT, 0.35), AT('擋住', t0 + 7.8));
 
-  const nDesc1 = SK.txt(svg, '• 光源在低處，直撞卡匣厚底座', 104, 652, { size: 24, weight: 700, color: C.accent });
-  const nDesc2 = SK.txt(svg, '• 透射光 I 極小 → A = log₁₀(I₀/I) 暴衝', 104, 702, { size: 24, weight: 600, color: C.ink });
-  const nDesc3 = SK.txt(svg, '• 結果：基線飆高，水吸收峰完全消失！', 104, 752, { size: 24, weight: 700, color: C.accent });
+  const nDesc1 = SK.txt(svg, '• 機台左高右低，光路在插槽下半部', 104, 676, { size: 24, weight: 700, color: C.accent });
+  const nDesc2 = SK.txt(svg, '• 正裝時黑支架底座沉入槽底擋住光束', 104, 724, { size: 24, weight: 600, color: C.ink });
+  const nDesc3 = SK.txt(svg, '• 結果：基線墊高至 ~0.8，水峰被壓扁！', 104, 772, { size: 24, weight: 700, color: C.accent });
   tl.add(SK.fadeIn(nDesc1, 0.35), AT('擋住', t0 + 8.0));
   tl.add(SK.fadeIn(nDesc2, 0.35), AT('基線', t0 + 10.0));
   tl.add(SK.fadeIn(nDesc3, 0.35), AT('消失', t0 + 11.5));
 
-  // 中欄：反裝（Inverted，正確）剖面圖
+  // 中欄：反裝（Inverted，正確）—— 對應實拍照片 2 & 4
   const tInv = AT('上下反裝', t0 + 13.5);
   panel(tl, svg, 646, 210, 540, 676, tInv - 0.4, { stroke: C.accent2 });
-  const iTitle = SK.txt(svg, '【正確】反裝 Inverted（底座朝上）', 674, 258, { size: 26, weight: 700, color: C.accent2 });
+  const iTitle = SK.txt(svg, '【正確】反裝 Inverted（支架倒扣）', 674, 256, { size: 26, weight: 700, color: C.accent2 });
   tl.add(SK.fadeIn(iTitle, 0.4), tInv);
 
-  const iSrc = SK.card(svg, 682, 480, 96, 90, { fill: C.hl, stroke: C.accent2, strokeWidth: 2.4 });
-  const iSrcT = SK.txt(svg, '光源', 730, 534, { size: 25, weight: 700, color: C.ink, anchor: 'middle' });
-  // 反裝：厚底座翻到上方，樣品窗落在低處光束正中央
-  const iBase = SK.card(svg, 856, 300, 120, 155, { fill: C.muted, stroke: C.ink, strokeWidth: 2.2 });
-  const iBaseT = SK.txt(svg, '底座朝上', 916, 386, { size: 24, weight: 700, color: C.ink, anchor: 'middle' });
-  const iWin = SK.card(svg, 868, 462, 96, 118, { fill: C.bg, stroke: C.primary, strokeWidth: 2.8 });
-  const iWinT = SK.txt(svg, '樣品窗', 916, 514, { size: 24, weight: 700, color: C.primary, anchor: 'middle' });
-  const iDet = SK.card(svg, 1050, 480, 104, 90, { fill: C.surface, stroke: C.accent2, strokeWidth: 2.4 });
-  const iDetT = SK.txt(svg, '偵測器', 1102, 534, { size: 24, weight: 700, color: C.accent2, anchor: 'middle' });
-  const iBeam = SK.arrow(svg, 782, 545, 1044, 545, { stroke: C.accent2, strokeWidth: 4.0 });
+  // 上方小圖：正面看 1 mm 石英槽正立 + 黑色支架翻轉 180° 倒扣在上方
+  const iSub1 = SK.txt(svg, '• 石英槽：開口維持朝上', 674, 314, { size: 24, weight: 600, color: C.ink });
+  const iSub2 = SK.txt(svg, '• 黑色支架：翻轉倒扣！', 674, 360, { size: 24, weight: 700, color: C.accent2 });
+  const iSub3 = SK.txt(svg, '  石英槽下半部伸入光路', 674, 404, { size: 24, weight: 600, color: C.ink2 });
+  // 正面縮小示意：黑支架底座在頂端 (y=276..304)，兩側黑柱夾住上半部，下方透明圓底石英槽裸露 (y=328..426)
+  const iFBase = SK.card(svg, 1054, 276, 88, 28, { fill: C.ink2, stroke: C.accent2, strokeWidth: 2.6 });
+  const iFLeft = SK.card(svg, 1054, 304, 16, 78, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const iFRight = SK.card(svg, 1126, 304, 16, 78, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const iFSpring = SK.path(svg, 'M 1070 306 Q 1082 328 1084 352', { stroke: C.ink, strokeWidth: 2.2, roughness: 0.3 });
+  const iFCells = SK.card(svg, 1082, 324, 36, 102, { fill: C.bg, stroke: C.primary, strokeWidth: 2.4 });
+  const iFCav = SK.path(svg, 'M 1090 330 L 1090 408 Q 1100 420 1110 408 L 1110 330', { stroke: C.primary, strokeWidth: 2.0, roughness: 0.4 });
+  tl.add(SK.fadeIn(iSub1, 0.35), tInv + 0.1);
+  tl.add(SK.fadeIn(iSub2, 0.35), tInv + 0.25);
+  tl.add(SK.fadeIn(iSub3, 0.35), tInv + 0.4);
+  [iFBase, iFLeft, iFRight, iFCells].forEach((el, k) => tl.add(SK.fadeIn(el, 0.3), tInv + 0.15 + k * 0.08));
+  tl.add(SK.drawIn(iFSpring, 0.3), tInv + 0.35);
+  tl.add(SK.drawIn(iFCav, 0.35), tInv + 0.4);
 
-  [iSrc, iBase, iWin, iDet].forEach((el, k) => tl.add(SK.fadeIn(el, 0.35), tInv + 0.2 + k * 0.12));
-  [iSrcT, iBaseT, iWinT, iDetT].forEach((el, k) => tl.add(SK.fadeIn(el, 0.3), tInv + 0.3 + k * 0.12));
+  // 下方主圖：InnoSpectra 機台 + 黑支架倒扣高聳在卡座上方 + 1 mm 薄石英槽伸入下方光路（完全對應照片 2 & 4）
+  const iBodyL = SK.path(svg, 'M 674 626 L 674 494 L 698 470 L 836 470 L 836 626 Z', { fill: C.muted, stroke: C.ink, strokeWidth: 2.4 });
+  const iLed = SK.line(svg, 692, 492, 708, 476, { stroke: C.surface, strokeWidth: 4.0, roughness: 0.2 });
+  const iBodyR = SK.path(svg, 'M 896 626 L 896 534 L 1154 534 L 1154 626 Z', { fill: C.muted, stroke: C.ink, strokeWidth: 2.4 });
+  const iSlot = SK.card(svg, 836, 534, 60, 92, { fill: C.surface, stroke: C.ink, strokeWidth: 2.0 });
+  const iColL = SK.card(svg, 820, 492, 24, 52, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const iColR = SK.card(svg, 888, 492, 30, 52, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const iScrew = SK.card(svg, 918, 509, 16, 18, { fill: C.surface, stroke: C.ink, strokeWidth: 2.0 });
+  // 倒扣的黑色支架拱起在卡座上方 (y=424..508)，內部弧形彈片夾持 1 mm 薄片石英槽 (y=470..606)
+  const iArchTop = SK.card(svg, 842, 424, 48, 22, { fill: C.ink2, stroke: C.accent2, strokeWidth: 2.6 });
+  const iArchL = SK.card(svg, 842, 446, 12, 62, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const iArchR = SK.card(svg, 878, 446, 12, 62, { fill: C.ink2, stroke: C.ink, strokeWidth: 2.0 });
+  const iSpring = SK.path(svg, 'M 854 448 Q 862 468 862 488', { stroke: C.ink, strokeWidth: 2.4, roughness: 0.3 });
+  const iThinQ = SK.card(svg, 860, 472, 12, 134, { fill: C.bg, stroke: C.primary, strokeWidth: 2.6 });
+  const iSrcT = SK.txt(svg, '光源端', 755, 535, { size: 24, weight: 700, color: C.ink, anchor: 'middle' });
+  const iDetT = SK.txt(svg, '偵測器', 1065, 590, { size: 24, weight: 700, color: C.accent2, anchor: 'middle' });
+  const iTopT = SK.txt(svg, '← 支架倒扣拱起', 1020, 452, { size: 24, weight: 700, color: C.accent2, anchor: 'middle' });
+  const iPassT = SK.txt(svg, '← 1 mm 薄槽透光', 1024, 494, { size: 24, weight: 700, color: C.primary, anchor: 'middle' });
+  const iBeam = SK.arrow(svg, 766, 576, 982, 576, { stroke: C.accent2, strokeWidth: 4.0 });
+
+  [iBodyL, iBodyR, iSlot, iColL, iColR, iScrew, iArchTop, iArchL, iArchR, iThinQ].forEach((el, k) =>
+    tl.add(SK.fadeIn(el, 0.3), tInv + 0.3 + k * 0.07)
+  );
+  tl.add(SK.drawIn(iLed, 0.25), tInv + 0.4);
+  tl.add(SK.drawIn(iSpring, 0.3), tInv + 0.5);
+  tl.add(SK.fadeIn(iSrcT, 0.3), tInv + 0.55);
+  tl.add(SK.fadeIn(iDetT, 0.3), tInv + 0.65);
+  tl.add(SK.fadeIn(iTopT, 0.35), tInv + 0.75);
+  tl.add(SK.fadeIn(iPassT, 0.35), AT('對準光束', t0 + 15.8));
   tl.add(SK.drawIn(iBeam, 0.5), AT('對準光束', t0 + 16.0));
 
-  const iDesc1 = SK.txt(svg, '• 底座翻到上方，避開低處光束', 674, 652, { size: 24, weight: 700, color: C.accent2 });
-  const iDesc2 = SK.txt(svg, '• 1 mm 樣品窗正對光路穿入偵測器', 674, 702, { size: 24, weight: 600, color: C.ink });
-  const iDesc3 = SK.txt(svg, '• 結果：1450/1940 nm 雙水峰完整重現！', 674, 752, { size: 24, weight: 700, color: C.primary });
+  const iDesc1 = SK.txt(svg, '• 黑支架倒扣在卡座上方（底座朝上）', 674, 676, { size: 24, weight: 700, color: C.accent2 });
+  const iDesc2 = SK.txt(svg, '• 1 mm 薄片石英槽下半部裸露對準光束', 674, 724, { size: 24, weight: 600, color: C.ink });
+  const iDesc3 = SK.txt(svg, '• 結果：1450 / 1940 nm 水峰完整重現！', 674, 772, { size: 24, weight: 700, color: C.primary });
   tl.add(SK.fadeIn(iDesc1, 0.35), AT('對準光束', t0 + 16.3));
   tl.add(SK.fadeIn(iDesc2, 0.35), AT('對準光束', t0 + 16.8));
   tl.add(SK.fadeIn(iDesc3, 0.35), AT('1450', t0 + 18.0));
 
-  // 右欄：正裝 vs 反裝 實測水光譜對照圖
+  // 右欄：正裝 vs 反裝 實測水光譜對照圖（對應實拍筆電螢幕畫面）
   panel(tl, svg, 1216, 210, 628, 676, t0 + 1.0, { stroke: C.primary });
   const gTitle = SK.txt(svg, '純水 NIR 穿透光譜對照', 1248, 258, { size: 28, weight: 700, color: C.primary });
   tl.add(SK.fadeIn(gTitle, 0.4), t0 + 1.2);
 
-  drawAxes(tl, svg, 1280, 320, 510, 380, '波長 λ (nm)：1100 → 2000 nm', '吸光度 A', t0 + 1.5);
+  drawAxes(tl, svg, 1280, 320, 510, 380, '波長 λ (nm)：900 → 2000 nm', '吸光度 A', t0 + 1.5);
 
-  // 正裝錯誤曲線（高基線平坦無峰）
+  // 正裝錯誤曲線（高基線 A≈0.75–0.90 平坦無明顯峰，完全對應照片 1 藍線）
   const badSpec = SK.path(
     svg,
-    'M 1295 375 Q 1420 362 1540 370 Q 1660 378 1775 365',
+    'M 1295 480 Q 1380 468 1450 474 Q 1520 448 1580 462 Q 1680 472 1775 476',
     { stroke: C.accent, strokeWidth: 3.8, dash: [8, 6], roughness: 0.7 }
   );
-  const badLbl = SK.txt(svg, '正裝（錯誤）：基線異常高、無水峰', 1535, 350, { size: 24, weight: 700, color: C.accent, anchor: 'middle' });
+  const badLbl = SK.txt(svg, '正裝（錯誤）：基線墊高、峰形消失', 1535, 360, { size: 24, weight: 700, color: C.accent, anchor: 'middle' });
   tl.add(SK.drawIn(badSpec, 0.7), AT('基線', t0 + 10.2));
   tl.add(SK.fadeIn(badLbl, 0.35), AT('基線', t0 + 10.6));
 
-  // 反裝正確曲線（1450 nm 與 1940 nm 雙水峰）
+  // 反裝正確曲線（基線低平 ~0.08 + 1450 nm 高聳水峰與 1940 nm 水峰，對應照片 1 & 4 橘線）
   const goodSpec = SK.path(
     svg,
-    'M 1295 675 L 1390 670 Q 1445 660 1475 505 Q 1505 660 1560 670 L 1635 668 Q 1685 650 1720 440 Q 1750 610 1780 640',
+    'M 1295 678 L 1410 672 Q 1450 662 1485 412 Q 1525 620 1585 666 L 1645 668 Q 1690 650 1725 436 Q 1755 610 1780 640',
     { stroke: C.primary, strokeWidth: 4.0, roughness: 0.6 }
   );
-  const p1450 = SK.txt(svg, '1450 nm', 1475, 488, { size: 24, weight: 700, color: C.primary, anchor: 'middle' });
-  const p1940 = SK.txt(svg, '1940 nm', 1715, 424, { size: 24, weight: 700, color: C.primary, anchor: 'middle' });
+  const p1450 = SK.txt(svg, '1450 nm 強峰', 1485, 396, { size: 24, weight: 700, color: C.primary, anchor: 'middle' });
+  const p1940 = SK.txt(svg, '1940 nm', 1720, 418, { size: 24, weight: 700, color: C.primary, anchor: 'middle' });
   const qcRule = SK.card(svg, 1236, 766, 588, 96, { fill: C.hl, stroke: C.ink, strokeWidth: 2.2 });
   const qcTxt1 = SK.txt(svg, '黃金 QC 鐵律：每次上機先量一次「純水」', 1530, 806, { size: 24, weight: 700, color: C.ink, anchor: 'middle' });
-  const qcTxt2 = SK.txt(svg, '確認 1450 / 1940 nm 雙峰正常才量樣品！', 1530, 844, { size: 24, weight: 700, color: C.accent2, anchor: 'middle' });
+  const qcTxt2 = SK.txt(svg, '確認基線低平且 1450 nm 水峰高聳才量樣品！', 1530, 844, { size: 24, weight: 700, color: C.accent2, anchor: 'middle' });
   tl.add(SK.drawIn(goodSpec, 0.8), AT('1450', t0 + 18.2));
   tl.add(SK.fadeIn(p1450, 0.35), AT('1450', t0 + 18.6));
   tl.add(SK.fadeIn(p1940, 0.35), AT('1940', t0 + 19.0));
