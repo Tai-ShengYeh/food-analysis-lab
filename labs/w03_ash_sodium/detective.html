@@ -116,7 +116,7 @@ code{font-family:"JetBrains Mono",Consolas,monospace;font-size:.9em}
   <div style="overflow-x:auto"><table id="c6tab"></table></div>
   <div class="rowin">① 1 mL 烏醋灰化、定容 25 mL、讀 180 ppm → 烏醋含 Na <input type="number" step="any" id="c6v"> mg/100 mL <button class="primary" id="c6go">對答案</button></div>
   <div class="fb" id="c6fb1"></div>
-  <div id="c6b" style="display:none"><p><b>② 這三個數字（灰化 450、直接 960、標示 1720）最合理的解讀是？</b></p><div class="opts" id="c6o"></div><div class="fb" id="c6fb2"></div></div>
+  <div id="c6b" style="display:none"><p><b>② 這幾個數字最合理的解讀是？</b></p><div class="opts" id="c6o"></div><div class="fb" id="c6fb2"></div></div>
 </section>
 
 <section class="m" id="ex">
@@ -221,32 +221,33 @@ var SUS=[['灰化溫度高、時間長，NaCl 揮發或噴濺',0],['灰分只用
   $('c5go').onclick=function(){var miss=SUS.filter(function(_,i){return $('c5s'+i).value===''});if(miss.length)return fb($('c5fb1'),'還有 '+miss.length+' 個沒選。','warn');
     var ok=0;SUS.forEach(function(s,i){var v=+$('c5s'+i).value,r=v===s[1];if(r)ok++;ans('w03-c5-'+i,r,{misconception:r?null:(i===2?'c5-k-direction':'c5-direction'),topic:'error-source'})});
     var kppm=1500/100*2/0.005,kb=0.01*kppm*22.99/39.10;
-    fb($('c5fb1'),'答對 '+ok+' / 5。<br>只有 <b>K⁺ 干擾讓讀值偏高</b>——它不能解釋「太少」，反而代表真正的鈉可能更少：以 TFND 的鉀 1500 mg/100 g 估算，5 mL 中 K 約 '+f(kppm,0)+' ppm，可貢獻約 <b>'+f(kb,0)+' ppm</b> 的假鈉讀值（讀值才 73–85！）。要確認就得實際量鉀（例如 K-11 鉀離子計）。<br>其他四個都讓結果偏低，而且可能同時發生，所以要設計對照實驗一個一個拆開。',ok===5?'good':'warn');
+    fb($('c5fb1'),'答對 '+ok+' / 5。<br>只有 <b>K⁺ 干擾讓讀值偏高</b>——它不能解釋「太少」，反而代表真正的鈉可能更少：以 TFND 的鉀 1500 mg/100 g 估算，5 mL 中 K 約 '+f(kppm,0)+' ppm，可貢獻約 <b>'+f(kb,0)+' ppm</b> 的假鈉讀值（讀值才 73–85！）。目前實驗室沒有鉀離子計，只能用 TFND 值估算——報告裡要寫明這個假設。<br>其他四個都讓結果偏低，而且可能同時發生，所以要設計對照實驗一個一個拆開。',ok===5?'good':'warn');
     $('c5b').style.display='block'};
   mc($('c5o'),['同一份黑豆粉不灰化，改用稀酸萃取（或熱水萃取）後直接測，與灰化法比較','把高溫爐溫度調得更高','多量幾次讀值取平均','換一台鈉離子計'],0,'w03-c5-test','c5-test',
     '✅ <b>同一樣品、只差「有沒有灰化」</b>，兩者的差就是灰化（揮發、噴濺、溶不出）造成的損失。再加上在灰分溶液中「加標」已知鈉，可以分辨是溶不出還是儀器讀低。','想想：要測試「灰化弄丟鈉」，對照組應該只改變哪一個步驟？',$('c5fb2'),function(){finish(5,25)},'error-source');
 })();
 
-// ===== 案件 6 =====
+// ===== 案件 6 =====（2026-10-13 實測；灰化溶液皆定容 25 mL，直接法為原液未稀釋）
 (function(){
   $('c6tab').innerHTML='<tr><th class="l">方法</th><th>Na-11 讀值</th><th>換算 mg/100 mL</th></tr>'+
-    '<tr><td class="l">1 mL 烏醋灰化 → 溶解定容 25 mL</td><td>180 ppm</td><td>？</td></tr>'+
-    '<tr><td class="l">烏醋直接稀釋後測（換算回原液）</td><td>—</td><td>960</td></tr>'+
-    '<tr><td class="l">營養標示</td><td>—</td><td>1720</td></tr>'+
-    '<tr><td colspan="3" class="l tiny">1 mL 烏醋的灰分約 21.4 mg（W3 灰分實驗值）。</td></tr>';
+    '<tr><td class="l">1 mL 烏醋灰化 → 定容 25 mL</td><td>180 ppm</td><td>？</td></tr>'+
+    '<tr><td class="l">2 mL 烏醋灰化 → 定容 25 mL（兩次）</td><td>510、440 ppm</td><td>638、550</td></tr>'+
+    '<tr><td class="l">烏醋原液直接滴上（未稀釋）</td><td>9600 ppm</td><td>960</td></tr>'+
+    '<tr><td class="l">營養標示</td><td>—</td><td>1720（＝17200 ppm）</td></tr>'+
+    '<tr><td colspan="3" class="l tiny">今天的校正點：150 與 2000 ppm。烏醋 pH 約 3。</td></tr>';
   $('c6go').onclick=function(){var v=+$('c6v').value;if(!v)return;var ok=Math.abs(v-450)<5;
     ans('w03-c6-val',ok,{misconception:Math.abs(v-180)<5||Math.abs(v-18)<1?'c6-df':'c6-calc',topic:'back-calc',qtype:'numeric'});
-    if(ok){fb($('c6fb1'),'✅ 180 mg/L × 0.025 L = 4.5 mg（在 1 mL 烏醋裡）→ <b>450 mg/100 mL</b>，只有直接稀釋法的一半。','good');$('c6b').style.display='block'}
-    else fb($('c6fb1'),'提示：稀釋倍數 25（1 mL → 25 mL）。180 × 25 = ? mg/L，再換成 mg/100 mL。','warn')};
-  mc($('c6o'),['灰化法最準，因為去除了有機物','灰化法只有直接法的一半 → 灰化過程很可能損失鈉（NaCl 揮發）；而 21.4 mg 灰分若全是 NaCl 最多只含約 8.4 mg Na（840 mg/100 mL），連直接法的 960 都只略高於這個上限 —— 標示的 1720 本身就很可疑','三個數字都對，只是單位不同','直接法被醋酸干擾，所以應該相信標示值'],1,'w03-c6-judge','c6-judge',
-    '✅ 兩條線索互相印證：<b>灰化會丟鈉</b>（同一樣品，灰化 450 vs 直接 960），而<b>灰分質量平衡</b>顯示 1720 mg/100 mL 不可能全塞進 21.4 mg 灰分裡。直接法 960 已接近灰分能容納的上限（在 Na-11 ±10 % 誤差內）。報告要同時寫出這兩點。','提示：比較「同一瓶醋、有灰化 vs 沒灰化」；再用灰分質量檢查標示值合不合理（NaCl 中 Na 占 39.3 %）。',$('c6fb2'),function(){finish(6,25)},'ashing-loss');
+    if(ok){fb($('c6fb1'),'✅ 180 mg/L × 0.025 L = 4.5 mg（在 1 mL 烏醋裡）→ <b>450 mg/100 mL</b>。2 mL 灰化則是 510 × 0.025 ÷ 2 × 100 = 638 與 550。','good');$('c6b').style.display='block'}
+    else fb($('c6fb1'),'提示：稀釋倍數 25（1 mL → 25 mL）。180 × 25 = ? mg/L，再換成 mg/100 mL（÷ 10）。','warn')};
+  mc($('c6o'),['直接法 960 最可信，因為沒有經過灰化','灰化法最準，因為去除了有機物','四個數字都還不能當真值：灰化法 450–638 彼此不一致，可能有灰化損失；直接法讀值 9600 ppm 遠高於 2000 ppm 校正點，而且原液離子強度極高、pH 在下限邊緣。要判斷 1720 對不對，應把烏醋稀釋約 25 倍（若標示正確約 690 ppm）落在兩校正點之間再測','標示值一定是錯的'],2,'w03-c6-judge','c6-judge',
+    '✅ 先看每個數字是怎麼量的：<br>• <b>直接法</b>：9600 ppm 是用 150／2000 兩點往外延伸近 5 倍的外插值；17200 ppm 等級的鹽水離子強度極高，Na⁺ 活性係數小，讀值會偏低；顯示解析度也只有 100 ppm。<br>• <b>灰化法</b>：同一瓶醋，1 mL 與 2 mL 換算結果差到 40 %，加上 NaCl 在高溫可能揮發，灰化法很可能丟鈉。<br>• 注意：灰分只剩 21.4 mg，但<b>灰化本身會丟 NaCl</b>，所以「灰分裝不下這麼多鈉」不能拿來否定標示值。<br>下一步：烏醋稀釋 25 倍直接測，並做加標回收。','提示：每一個數字都要問「它在校正範圍內嗎？」「這個方法可能損失或偏低嗎？」',$('c6fb2'),function(){finish(6,25)},'ashing-loss');
 })();
 
 // ===== 結案 =====
-var ADV={'c1-find':'灰分 % 先用「灰重 ÷ 樣品重」心算檢查，和同伴比對','c1-denominator':'灰分 % 的分母是樣品重（坩堝＋樣品 − 空坩堝），不是坩堝＋樣品','c1-calc':'灰分 % = (坩堝＋灰 − 空坩堝) ÷ (坩堝＋樣品 − 空坩堝) × 100','c2-unit':'ppm = mg/L，要乘上溶液體積（L）才是 mg','c2-calc':'mg/100 g = 讀值 × 體積(L) ÷ 樣品 g × 100','c2-pct':'實測 ÷ 資料庫值 × 100','c3-range':'能顯示 ≠ 有校正；只有兩校正點之間是內插','c3-fix':'低濃度樣品改用 15／150 ppm 校正，不要硬濃縮','c4-volume':'回推時用該組自己的溶解體積','c4-calc':'Na 總量 = 讀值 × 體積','c4-why':'讀值進校正範圍不等於準：溶劑太少會溶不完、離子強度太高','c5-k-direction':'K⁺ 干擾讓 Na 讀值偏高，不會偏低','c5-direction':'灰化損失、溶不出、離子強度、樣品本身與資料庫不同都會讓結果偏低','c5-test':'對照實驗只改一個步驟（有無灰化）','c6-df':'灰化溶液要乘回稀釋倍數（25）','c6-calc':'mg/100 mL = 讀值 × 稀釋倍數 ÷ 10','c6-judge':'灰化可能損失鈉；用灰分質量平衡檢查標示值','exit':'低鈉樣品：足量溶劑＋稀酸溶解＋15/150 校正＋對照與加標'};
+var ADV={'c1-find':'灰分 % 先用「灰重 ÷ 樣品重」心算檢查，和同伴比對','c1-denominator':'灰分 % 的分母是樣品重（坩堝＋樣品 − 空坩堝），不是坩堝＋樣品','c1-calc':'灰分 % = (坩堝＋灰 − 空坩堝) ÷ (坩堝＋樣品 − 空坩堝) × 100','c2-unit':'ppm = mg/L，要乘上溶液體積（L）才是 mg','c2-calc':'mg/100 g = 讀值 × 體積(L) ÷ 樣品 g × 100','c2-pct':'實測 ÷ 資料庫值 × 100','c3-range':'能顯示 ≠ 有校正；只有兩校正點之間是內插','c3-fix':'低濃度樣品改用 15／150 ppm 校正，不要硬濃縮','c4-volume':'回推時用該組自己的溶解體積','c4-calc':'Na 總量 = 讀值 × 體積','c4-why':'讀值進校正範圍不等於準：溶劑太少會溶不完、離子強度太高','c5-k-direction':'K⁺ 干擾讓 Na 讀值偏高，不會偏低','c5-direction':'灰化損失、溶不出、離子強度、樣品本身與資料庫不同都會讓結果偏低','c5-test':'對照實驗只改一個步驟（有無灰化）','c6-df':'灰化溶液要乘回稀釋倍數（25）','c6-calc':'mg/100 mL = 讀值(mg/L) × 稀釋倍數 ÷ 10','c6-judge':'每個數字先問：在校正範圍內嗎？方法會損失或偏低嗎？高鹽液體先稀釋到校正範圍再直接測','exit':'低鈉樣品：足量溶劑＋稀酸溶解＋15/150 校正＋對照與加標'};
 (function(){
-  mc($('exo'),['2 g 灰化、灰分溶在 1 mL，讓讀值大於 150','2 g 灰化、用少量稀酸溶解後定容 10 mL（約 40 ppm），驗 pH 3–9，改用 15／150 ppm 校正；同時做試劑空白、灰分溶液加標、不灰化的酸萃取對照，並設法量鉀','10 g 灰化、溶在 5 mL','照舊做，最後把結果乘以 3 補回來'],1,'w03-ex','exit',
-    '✅ 這個設計把今天的每一個問題都處理到：<b>溶劑足量</b>（溶得完、離子強度低）、<b>校正配合樣品</b>（15／150）、<b>pH 合規格</b>、<b>空白抓污染</b>、<b>加標抓溶不出／讀低</b>、<b>不灰化對照抓灰化損失</b>、<b>量鉀抓干擾</b>。','回顧案件 3、4、5：哪個設計同時避開「範圍外」「溶劑太少」，又能分辨誤差來源？',$('exfb'),function(){
+  mc($('exo'),['2 g 灰化、灰分溶在 1 mL，讓讀值大於 150','2 g 灰化、用少量稀酸溶解後定容 10 mL（約 40 ppm），驗 pH 3–9，改用 15／150 ppm 校正；同時做試劑空白、灰分溶液加標、不灰化的酸萃取對照，並用 TFND 鉀值估算 K⁺ 干擾','10 g 灰化、溶在 5 mL','照舊做，最後把結果乘以 3 補回來'],1,'w03-ex','exit',
+    '✅ 這個設計把今天的每一個問題都處理到：<b>溶劑足量</b>（溶得完、離子強度低）、<b>校正配合樣品</b>（15／150）、<b>pH 合規格</b>、<b>空白抓污染</b>、<b>加標抓溶不出／讀低</b>、<b>不灰化對照抓灰化損失</b>、<b>用 TFND 鉀值估算干擾</b>。','回顧案件 3、4、5：哪個設計同時避開「範圍外」「溶劑太少」，又能分辨誤差來源？',$('exfb'),function(){
     done[NCASE+1]=1;ev({event_type:'attempt_complete',final_score:pts,total:NCASE+1,chapter:'LAB-W03'});
     var el=$('recap'),ks=Object.keys(MIS).sort(function(a,b){return MIS[b]-MIS[a]}),h='<b>📋 你的學習回饋卡</b><br>',n=0;
     ks.forEach(function(k){if(ADV[k]&&n<5){h+='• '+ADV[k]+'（答錯 '+MIS[k]+' 次）<br>';n++}});
