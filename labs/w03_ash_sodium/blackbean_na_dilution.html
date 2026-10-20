@@ -122,12 +122,12 @@ footer.nav .bar{justify-content:space-between}
       <table>
         <tr><th>項目</th><th class="num">數值</th></tr>
         <tr><td>黑豆粉灰分</td><td class="num">4.4 g / 100 g</td></tr>
-        <tr><td>黑豆粉鈉（標示值）</td><td class="num">65 mg / 100 g</td></tr>
-        <tr><td>黑豆粉鉀 <span class="sim">假設值</span></td><td class="num">≈ 1700 mg / 100 g</td></tr>
+        <tr><td>黑豆粉鈉（TFND）</td><td class="num">65 mg / 100 g</td></tr>
+        <tr><td>黑豆粉鉀（TFND）</td><td class="num">1500 mg / 100 g</td></tr>
         <tr><td>儀器</td><td class="num">Horiba LAQUAtwin Na-11</td></tr>
         <tr><td>校正點</td><td class="num">150 與 2000 ppm</td></tr>
       </table>
-      <p style="font-size:.85rem;margin-top:8px">鉀含量是大豆類的典型量級，用來說明干擾；請以食品營養成分資料庫（TFND）或實測值為準。</p>
+      <p style="font-size:.85rem;margin-top:8px">鉀含量取自台灣食品營養成分資料庫（TFND）黑豆粉；同一批樣品的實際值可能不同，有鉀離子計時以實測為準。</p>
     </div>
     <div class="card">
       <h3>固體樣品為什麼要先灰化？</h3>
@@ -160,7 +160,7 @@ footer.nav .bar{justify-content:space-between}
       <div class="seg" id="segV"></div>
       <div class="formula" id="planFormula"></div>
       <div class="note">Na-11（W3 手冊）：範圍 2–9900 ppm、兩點校正 150／2000 ppm、樣品 pH 3–9、對 K⁺ 的選擇係數 1×10⁻²。</div>
-      <div class="note warn"><b>設計是依「標示值」做的預測。</b>如果實際鈉比標示低很多，讀值會掉到 150 以下 —— 這時不要硬把樣品再濃縮（離子強度更高），而是依手冊改用 <b>15 / 150 ppm 兩點校正</b>（15 ppm＝150 ppm 標準液 1 份＋純水 9 份）。</div>
+      <div class="note warn"><b>設計是依資料庫（TFND）值做的預測。</b>如果這批樣品的鈉比資料庫值低很多，讀值會掉到 150 以下 —— 這時不要硬把樣品再濃縮（離子強度更高），而是依手冊改用 <b>15 / 150 ppm 兩點校正</b>（15 ppm＝150 ppm 標準液 1 份＋純水 9 份）。</div>
     </div>
   </div>
 </section>
@@ -193,8 +193,8 @@ footer.nav .bar{justify-content:space-between}
       <table>
         <tr><th>5.00 g 黑豆粉中</th><th class="num">質量</th><th class="num">占灰分</th></tr>
         <tr><td>灰分</td><td class="num">220 mg</td><td class="num">100 %</td></tr>
-        <tr><td>Na（標示）</td><td class="num">3.25 mg</td><td class="num">1.5 %</td></tr>
-        <tr><td>K <span class="sim">假設</span></td><td class="num">≈ 85 mg</td><td class="num">≈ 39 %</td></tr>
+        <tr><td>Na（TFND）</td><td class="num">3.25 mg</td><td class="num">1.5 %</td></tr>
+        <tr><td>K（TFND）</td><td class="num">≈ 75 mg</td><td class="num">≈ 34 %</td></tr>
       </table>
       <div class="note ok">鈉只占灰分 1.5 %，數據合理。灰分的主角是<b>鉀鹽</b>（碳酸鉀、磷酸鉀）——所以灰分溶在水裡會<b>偏鹼</b>，而且鉀遠多於鈉。</div>
       <p style="font-size:.82rem;margin-top:6px">坩堝重量為示意數字。黑豆含油脂與蛋白質，進高溫爐前要先在熱板上預碳化到不冒煙。</p>
@@ -287,11 +287,11 @@ footer.nav .bar{justify-content:space-between}
     </div>
     <div class="card">
       <h3>① K⁺ 干擾（加成性）</h3>
-      <div class="formula">溶液 A：K ≈ 85 mg ÷ 0.010 L = 8500 ppm<br>偏差 ≈ 0.01 × 8500 × (22.99 ÷ 39.10)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;≈ 50 ppm Na　（A 的真值 325 → 約 +15 %）</div>
+      <div class="formula">溶液 A：K ≈ 75 mg ÷ 0.010 L = 7500 ppm<br>偏差 ≈ 0.01 × 7500 × (22.99 ÷ 39.10)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;≈ 44 ppm Na　（A 的真值 325 → 約 +14 %）</div>
       <p>K 與 Na 被<b>一起稀釋</b>，K/Na 比例不變 → <b>稀釋多少倍，偏高的百分比都一樣</b>。</p>
       <h3 style="margin-top:12px">② 離子強度（活性效應）</h3>
       <p>220 mg 灰分擠在 10 mL 裡，離子強度遠高於 150、2000 ppm 標準液 → Na⁺ 的<span class="term" title="活性 = 活性係數 γ × 濃度；離子越多，γ 越小，電極「看到」的鈉越少">活性係數</span>變小 → 讀值<b>偏低</b>。這個效應<b>稀釋後會變小</b>（W3 原理(3)）。</p>
-      <div class="note">兩個效應方向相反、會互相抵消一部分，所以「讀值剛好接近標示值」不代表沒有誤差。</div>
+      <div class="note">兩個效應方向相反、會互相抵消一部分，所以「讀值剛好接近資料庫值」不代表沒有誤差。</div>
     </div>
   </div>
 </section>
@@ -323,11 +323,11 @@ footer.nav .bar{justify-content:space-between}
       <table>
         <tr><th>溶液</th><th>配法</th><th class="num">讀值</th></tr>
         <tr><td>空白</td><td>同量稀酸＋去離子水，10 mL</td><td class="num">&lt; 2</td></tr>
-        <tr><td>A</td><td>5.00 g 灰分 → 10.0 mL</td><td class="num">340</td></tr>
+        <tr><td>A</td><td>5.00 g 灰分 → 10.0 mL</td><td class="num">330</td></tr>
         <tr><td>B</td><td>5.00 mL A → 10.0 mL（DF 2）</td><td class="num">180</td></tr>
         <tr><td>B′</td><td>5.00 mL A ＋ 1.00 mL 2000 ppm 標準 → 10.0 mL</td><td class="num">370</td></tr>
       </table>
-      <div class="note"><b>稀釋比較：</b>B × 2 = 360，比 A 高 6 % → A 太濃，離子強度讓讀值偏低。報告用 B。</div>
+      <div class="note"><b>稀釋比較：</b>B × 2 = 360，比 A 高約 9 % → A 太濃，離子強度讓讀值偏低。報告用 B。</div>
       <div class="note warn"><b>加標回收：</b>(370 − 180) ÷ 200 = 95 %，看起來很好。但 K⁺ 的偏差是「加成」的，加標前後都在 —— <b>回收率好，不代表沒有鉀干擾</b>。</div>
     </div>
   </div>
@@ -342,8 +342,8 @@ footer.nav .bar{justify-content:space-between}
       <h3>公式</h3>
       <div class="formula">Na (mg/100 g) = 讀值 (mg/L) × DF × V<sub>A</sub> (L) ÷ m (g) × 100</div>
       <div class="formula">用 B：180 × 2 × 0.010 ÷ 5.00 × 100 = <b>72 mg/100 g</b></div>
-      <div class="formula">B 中 K ≈ 4250 ppm → 偏差 ≈ 0.01 × 4250 × 0.588 = 25 ppm<br>校正後：(180 − 25) × 2 × 0.010 ÷ 5.00 × 100 = <b>62 mg/100 g</b></div>
-      <div class="note ok">校正後 62 與標示 65 相差約 5 %，在 Na-11 的 ±10 % 準確度內。沒校正的 72 則偏高約 11 %。</div>
+      <div class="formula">B 中 K ≈ 3750 ppm → 偏差 ≈ 0.01 × 3750 × 0.588 = 22 ppm<br>校正後：(180 − 22) × 2 × 0.010 ÷ 5.00 × 100 = <b>63 mg/100 g</b></div>
+      <div class="note ok">校正後 63 與 TFND 的 65 相差約 3 %，在 Na-11 的 ±10 % 準確度內。沒校正的 72 則偏高約 11 %。</div>
     </div>
     <div class="card">
       <h3>自己算算看</h3>
@@ -351,9 +351,9 @@ footer.nav .bar{justify-content:space-between}
       <label class="f">A 之後再稀釋倍數 DF（直接測 A 填 1）</label><input class="n" id="bDF" type="number" value="2" step="1" min="1">
       <label class="f">溶液 A 體積 V<sub>A</sub>（mL）</label><input class="n" id="bVA" type="number" value="10" step="1">
       <label class="f">黑豆粉質量 m（g）</label><input class="n" id="bM" type="number" value="5.00" step="0.01">
-      <label class="f">鉀含量（mg/100 g，填 0 不校正）</label><input class="n" id="bK" type="number" value="1700" step="50">
+      <label class="f">鉀含量（mg/100 g，填 0 不校正）</label><input class="n" id="bK" type="number" value="1500" step="50">
       <div style="margin-top:14px">未校正：<span class="big" id="bOut"></span> <span style="color:var(--ink-3)">mg/100 g</span></div>
-      <div>K⁺ 校正後：<span class="big" id="bOutK" style="color:var(--ok)"></span> <span style="color:var(--ink-3)">mg/100 g</span>　（標示 65）</div>
+      <div>K⁺ 校正後：<span class="big" id="bOutK" style="color:var(--ok)"></span> <span style="color:var(--ink-3)">mg/100 g</span>　（TFND 65）</div>
       <div class="note warn" id="bNote"></div>
     </div>
   </div>
@@ -380,7 +380,7 @@ footer.nav .bar{justify-content:space-between}
       </dl>
       <div class="note ok">📊 <b>實際做出來呢？</b>2026-10-13 四組各灰化約 2 g 黑豆粉：灰分約 5.5 %，鈉只有約 20 mg/100 g，和預測差很多 —— 原因要你自己在找錯題裡查。</div>
       <div class="note">🕵️ 做完這份動畫，接著挑戰 <a href="detective.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">W3 鈉離子找錯題 ↗</a>：6 個案件，用證據找出各組數據哪裡出問題。</div>
-      <div class="note warn">若實驗室有 LAQUAtwin K-11 鉀離子計，可直接量溶液 B 的 K⁺，用實測值取代假設的 1700 mg/100 g。</div>
+      <div class="note warn">若實驗室有 LAQUAtwin K-11 鉀離子計，可直接量溶液 B 的 K⁺，用實測值取代 TFND 的 1500 mg/100 g。</div>
     </div>
   </div>
 </section>
@@ -415,7 +415,7 @@ $('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
 document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
 
 /* model constants */
-const NA=65, KK=1700, ASH=4.4, SEL=0.01, KNA=22.99/39.10;
+const NA=65, KK=1500, ASH=4.4, SEL=0.01, KNA=22.99/39.10;
 
 /* 1 sample size */
 let M=5,V=10;const ms=[1,2,3,5,10],vs=[10,25,50,100];
@@ -465,7 +465,7 @@ const proc=[
   {t:'玻棒攪拌，微溫助溶',s:'鈉鹽易溶；少量不溶物（鈣、鎂磷酸鹽）最後再處理'},
   {t:'經小漏斗倒入 10 mL 定量瓶',s:'玻棒引流'},
   {t:'少量水沖洗坩堝 2 次併入',s:'每次約 1.5 mL；總體積控制在約 7 mL'},
-  {t:'加水至刻度，加塞倒轉混勻',s:'得到溶液 A：Na 約 325 ppm、K 約 8500 ppm'},
+  {t:'加水至刻度，加塞倒轉混勻',s:'得到溶液 A：Na 約 325 ppm、K 約 7500 ppm'},
   {t:'pH 試紙確認 3–9',s:'不在範圍內就不能量；記錄在報告中'},
   {t:'混濁則靜置或過濾取澄清液',s:'接著配溶液 B、B′ 與試劑空白'}];
 let pstep=0,auto=false;
@@ -512,8 +512,8 @@ $('#dfR').oninput=upd4;upd4();
 const meas=[
   {t:'兩點校正 150 → 2000 ppm',r:'CAL',s:'先低後高；每次換液用水沖洗感測器、拭乾。'},
   {t:'量試劑空白',r:'Lo',s:'同量稀酸＋去離子水定容。應低於 2 ppm（顯示 Lo）；若明顯有讀值，先找鈉污染來源。'},
-  {t:'量溶液 A（10 mL 原液）',r:'340',s:'真值約 325 ppm。示意讀值 340＝K⁺ 偏高 + 離子強度偏低 互相抵消後的結果。'},
-  {t:'量溶液 B（A 稀釋 2 倍）',r:'180',s:'B × 2 = 360，比 A 的 340 高約 6 % → A 的基質效應明顯，報告以 B 為準。'},
+  {t:'量溶液 A（10 mL 原液）',r:'330',s:'真值約 325 ppm。示意讀值 330＝K⁺ 偏高 + 離子強度偏低 互相抵消後的結果。'},
+  {t:'量溶液 B（A 稀釋 2 倍）',r:'180',s:'B × 2 = 360，比 A 的 330 高約 9 % → A 的基質效應明顯，報告以 B 為準。'},
   {t:'量加標 B′（+200 ppm）',r:'370',s:'回收率 = (370 − 180) ÷ 200 = 95 %。斜率與基質沒大問題，但 K⁺ 的加成偏差仍在。'},
   {t:'每份重複 3 次，取平均',r:'180',s:'記錄空白、A、B、B′ 與 pH，接著到「⑥ 回推計算」。'}];
 let mstep=0;
@@ -533,7 +533,7 @@ function updB(){const r=+$('#bRead').value,df=+$('#bDF').value||1,va=+$('#bVA').
   const naK=(r-bias)*df*(va/1000)/m*100;
   $('#bOut').textContent=na.toFixed(0);$('#bOutK').textContent=naK.toFixed(0);
   let n;if(r<150||r>2000)n='讀值不在 150–2000 ppm 校正區間內，考慮改變取樣量或稀釋倍數。';
-  else n=`此溶液中 K 約 ${kppm.toFixed(0)} ppm，對讀值貢獻約 ${bias.toFixed(0)} ppm（${(bias/r*100).toFixed(0)} %）。校正後與標示值相差 ${((naK/65-1)*100).toFixed(0)} %。`;
+  else n=`此溶液中 K 約 ${kppm.toFixed(0)} ppm，對讀值貢獻約 ${bias.toFixed(0)} ppm（${(bias/r*100).toFixed(0)} %）。校正後與 TFND 值相差 ${((naK/65-1)*100).toFixed(0)} %。`;
   $('#bNote').textContent=n}
 ['#bRead','#bDF','#bVA','#bM','#bK'].forEach(s=>$(s).oninput=updB);updB();
 

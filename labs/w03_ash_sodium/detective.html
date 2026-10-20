@@ -57,8 +57,8 @@ code{font-family:"JetBrains Mono",Consolas,monospace;font-size:.9em}
 <header class="hero">
   <div class="kicker">DATA DETECTIVE · W3 灰分與鈉離子</div>
   <h1>黑豆粉的鈉，<span class="hi">為什麼只剩三成？</span></h1>
-  <p class="lead">四組同學各灰化約 2 g 黑豆粉、用 LAQUAtwin Na-11 測鈉，結果只有標示值的三成。數據裡藏著計算錯誤、範圍外的讀值、太小的定容體積，還有一個「方向不對」的嫌疑犯。你要用<b>證據</b>一個一個排除。<br>題目順序不限，<b>等高溫爐的空檔隨時可以玩</b>。</p>
-  <p class="tiny"><span class="real">實測數據</span> 案件 1–5 是 2026-10-13 四組的真實紀錄（組別匿名）；案件 6 是同一天的烏醋測試。標示 <span class="sim">假設</span> 的數字（如鉀含量）是用來推理的典型值，不是實測。建議先看 <a href="blackbean_na_dilution.html" target="_blank" rel="noopener">黑豆粉測鈉動畫</a>。</p>
+  <p class="lead">四組同學各灰化約 2 g 黑豆粉、用 LAQUAtwin Na-11 測鈉，結果只有台灣食品成分資料庫（TFND）數值的三成。數據裡藏著計算錯誤、範圍外的讀值、太小的定容體積，還有一個「方向不對」的嫌疑犯。你要用<b>證據</b>一個一個排除。<br>題目順序不限，<b>等高溫爐的空檔隨時可以玩</b>。</p>
+  <p class="tiny"><span class="real">實測數據</span> 案件 1–5 是 2026-10-13 四組的真實紀錄（組別匿名）；案件 6 是同一天的烏醋測試。鉀含量取自台灣食品營養成分資料庫（TFND）黑豆粉（1500 mg/100 g），不是這批樣品的實測值。建議先看 <a href="blackbean_na_dilution.html" target="_blank" rel="noopener">黑豆粉測鈉動畫</a>。</p>
 </header>
 <p class="tiny" id="lognote" style="margin:0 0 6px">💡 登入學號後，系統會記錄你每題的作答，老師用來看全班哪裡需要再講解，並給你一張學習回饋卡；不登入也可以玩，只是不會記錄。</p>
 <div id="hud"><span id="pts">🔍 偵探積分 0</span><div id="bar"><i></i></div><span class="tiny" id="prog">案件 0 / 6</span><button id="login" style="font-size:.85rem;padding:3px 10px">🎓 登入學號（記錄進度）</button></div>
@@ -81,7 +81,7 @@ code{font-family:"JetBrains Mono",Consolas,monospace;font-size:.9em}
   <div class="rowin">① 第 1 組：73 ppm、5 mL、樣品 1.9998 g → 黑豆粉含 Na <input type="number" step="any" id="c2v"> mg/100 g <button class="primary" id="c2go">對答案</button></div>
   <div class="fb" id="c2fb1"></div>
   <div id="c2b" style="display:none">
-    <div class="rowin">② 三組平均約 19.6 mg/100 g。標示值 65 mg/100 g，平均只有標示的 <input type="number" step="any" id="c2p"> % <button class="primary" id="c2go2">對答案</button></div>
+    <div class="rowin">② 三組平均約 19.6 mg/100 g。TFND 值 65 mg/100 g，平均只有 TFND 值的 <input type="number" step="any" id="c2p"> % <button class="primary" id="c2go2">對答案</button></div>
     <div class="fb" id="c2fb2"></div>
   </div>
 </section>
@@ -103,7 +103,7 @@ code{font-family:"JetBrains Mono",Consolas,monospace;font-size:.9em}
 
 <section class="m" id="c5">
   <h2><span class="tag">案件 5</span>嫌疑犯排除：誰可能讓鈉「變少」？</h2>
-  <p>平均約 20 mg/100 g，只有標示 65 的三成。下面五個嫌疑犯，每一個選出它對結果的影響方向：</p>
+  <p>平均約 20 mg/100 g，只有 TFND 值 65 的三成。下面五個嫌疑犯，每一個選出它對結果的影響方向：</p>
   <div style="overflow-x:auto"><table id="c5tab"></table></div>
   <button class="primary" id="c5go">送出判斷</button>
   <div class="fb" id="c5fb1"></div>
@@ -188,8 +188,8 @@ var LABEL=65;
     else fb($('c2fb1'),'提示：ppm = mg/L。先算 5 mL 裡有幾 mg 鈉（73 × 0.005），再除以樣品克數，乘 100 變成每 100 g。','warn')};
   $('c2go2').onclick=function(){var v=+$('c2p').value;if(!v)return;var t=mean/LABEL*100,ok=Math.abs(v-t)<1.5;
     ans('w03-c2-pct',ok,{misconception:'c2-pct',topic:'back-calc',qtype:'numeric'});
-    if(ok){fb($('c2fb2'),'✅ '+f(mean,1)+' ÷ 65 × 100 ≈ <b>'+f(t,0)+' %</b>。若照標示值，2 g 溶在 5 mL 應該讀到約 260 ppm，實際只有 73–85。','good');finish(2,25)}
-    else fb($('c2fb2'),'提示：平均 ÷ 標示值 × 100。','warn')};
+    if(ok){fb($('c2fb2'),'✅ '+f(mean,1)+' ÷ 65 × 100 ≈ <b>'+f(t,0)+' %</b>。若照 TFND 值，2 g 溶在 5 mL 應該讀到約 260 ppm，實際只有 73–85。','good');finish(2,25)}
+    else fb($('c2fb2'),'提示：平均 ÷ TFND 值 × 100。','warn')};
 })();
 
 // ===== 案件 3 =====
@@ -212,7 +212,7 @@ var LABEL=65;
 })();
 
 // ===== 案件 5 =====
-var SUS=[['灰化溫度高、時間長，NaCl 揮發或噴濺',0],['灰分只用水溶解，部分鈉被包在熔融的鉀磷酸鹽灰中沒溶出',0],['大量 K⁺（黑豆鉀約 1700 mg/100 g，假設）干擾 Na 電極',1],['5 mL 中灰分約 22 g/L，離子強度高、活性係數變小',0],['標示值本身偏高（或批次不同），真正的鈉本來就比較少',0]];
+var SUS=[['灰化溫度高、時間長，NaCl 揮發或噴濺',0],['灰分只用水溶解，部分鈉被包在熔融的鉀磷酸鹽灰中沒溶出',0],['大量 K⁺（TFND 黑豆粉鉀 1500 mg/100 g）干擾 Na 電極',1],['5 mL 中灰分約 22 g/L，離子強度高、活性係數變小',0],['TFND 的 65 是其他黑豆粉樣品的資料，這批樣品（品種、產地、批次不同）的鈉本來就比較少',0]];
 (function(){
   var OPT=['讓結果偏低','讓結果偏高','無法判斷'];
   var h='<tr><th class="l">嫌疑犯</th><th>影響方向</th></tr>';
@@ -220,8 +220,8 @@ var SUS=[['灰化溫度高、時間長，NaCl 揮發或噴濺',0],['灰分只用
   $('c5tab').innerHTML=h;
   $('c5go').onclick=function(){var miss=SUS.filter(function(_,i){return $('c5s'+i).value===''});if(miss.length)return fb($('c5fb1'),'還有 '+miss.length+' 個沒選。','warn');
     var ok=0;SUS.forEach(function(s,i){var v=+$('c5s'+i).value,r=v===s[1];if(r)ok++;ans('w03-c5-'+i,r,{misconception:r?null:(i===2?'c5-k-direction':'c5-direction'),topic:'error-source'})});
-    var kppm=1700/100*2/0.005,kb=0.01*kppm*22.99/39.10;
-    fb($('c5fb1'),'答對 '+ok+' / 5。<br>只有 <b>K⁺ 干擾讓讀值偏高</b>——它不能解釋「太少」，反而代表真正的鈉可能更少：若鉀真有 1700 mg/100 g，5 mL 中 K 約 '+f(kppm,0)+' ppm，可貢獻約 <b>'+f(kb,0)+' ppm</b> 的假鈉讀值（讀值才 73–85！）。要確認就得實際量鉀（例如 K-11 鉀離子計）。<br>其他四個都讓結果偏低，而且可能同時發生，所以要設計對照實驗一個一個拆開。',ok===5?'good':'warn');
+    var kppm=1500/100*2/0.005,kb=0.01*kppm*22.99/39.10;
+    fb($('c5fb1'),'答對 '+ok+' / 5。<br>只有 <b>K⁺ 干擾讓讀值偏高</b>——它不能解釋「太少」，反而代表真正的鈉可能更少：以 TFND 的鉀 1500 mg/100 g 估算，5 mL 中 K 約 '+f(kppm,0)+' ppm，可貢獻約 <b>'+f(kb,0)+' ppm</b> 的假鈉讀值（讀值才 73–85！）。要確認就得實際量鉀（例如 K-11 鉀離子計）。<br>其他四個都讓結果偏低，而且可能同時發生，所以要設計對照實驗一個一個拆開。',ok===5?'good':'warn');
     $('c5b').style.display='block'};
   mc($('c5o'),['同一份黑豆粉不灰化，改用稀酸萃取（或熱水萃取）後直接測，與灰化法比較','把高溫爐溫度調得更高','多量幾次讀值取平均','換一台鈉離子計'],0,'w03-c5-test','c5-test',
     '✅ <b>同一樣品、只差「有沒有灰化」</b>，兩者的差就是灰化（揮發、噴濺、溶不出）造成的損失。再加上在灰分溶液中「加標」已知鈉，可以分辨是溶不出還是儀器讀低。','想想：要測試「灰化弄丟鈉」，對照組應該只改變哪一個步驟？',$('c5fb2'),function(){finish(5,25)},'error-source');
@@ -243,7 +243,7 @@ var SUS=[['灰化溫度高、時間長，NaCl 揮發或噴濺',0],['灰分只用
 })();
 
 // ===== 結案 =====
-var ADV={'c1-find':'灰分 % 先用「灰重 ÷ 樣品重」心算檢查，和同伴比對','c1-denominator':'灰分 % 的分母是樣品重（坩堝＋樣品 − 空坩堝），不是坩堝＋樣品','c1-calc':'灰分 % = (坩堝＋灰 − 空坩堝) ÷ (坩堝＋樣品 − 空坩堝) × 100','c2-unit':'ppm = mg/L，要乘上溶液體積（L）才是 mg','c2-calc':'mg/100 g = 讀值 × 體積(L) ÷ 樣品 g × 100','c2-pct':'回收比例 = 實測 ÷ 標示 × 100','c3-range':'能顯示 ≠ 有校正；只有兩校正點之間是內插','c3-fix':'低濃度樣品改用 15／150 ppm 校正，不要硬濃縮','c4-volume':'回推時用該組自己的溶解體積','c4-calc':'Na 總量 = 讀值 × 體積','c4-why':'讀值進校正範圍不等於準：溶劑太少會溶不完、離子強度太高','c5-k-direction':'K⁺ 干擾讓 Na 讀值偏高，不會偏低','c5-direction':'灰化損失、溶不出、離子強度、標示偏高都會讓結果偏低','c5-test':'對照實驗只改一個步驟（有無灰化）','c6-df':'灰化溶液要乘回稀釋倍數（25）','c6-calc':'mg/100 mL = 讀值 × 稀釋倍數 ÷ 10','c6-judge':'灰化可能損失鈉；用灰分質量平衡檢查標示值','exit':'低鈉樣品：足量溶劑＋稀酸溶解＋15/150 校正＋對照與加標'};
+var ADV={'c1-find':'灰分 % 先用「灰重 ÷ 樣品重」心算檢查，和同伴比對','c1-denominator':'灰分 % 的分母是樣品重（坩堝＋樣品 − 空坩堝），不是坩堝＋樣品','c1-calc':'灰分 % = (坩堝＋灰 − 空坩堝) ÷ (坩堝＋樣品 − 空坩堝) × 100','c2-unit':'ppm = mg/L，要乘上溶液體積（L）才是 mg','c2-calc':'mg/100 g = 讀值 × 體積(L) ÷ 樣品 g × 100','c2-pct':'實測 ÷ 資料庫值 × 100','c3-range':'能顯示 ≠ 有校正；只有兩校正點之間是內插','c3-fix':'低濃度樣品改用 15／150 ppm 校正，不要硬濃縮','c4-volume':'回推時用該組自己的溶解體積','c4-calc':'Na 總量 = 讀值 × 體積','c4-why':'讀值進校正範圍不等於準：溶劑太少會溶不完、離子強度太高','c5-k-direction':'K⁺ 干擾讓 Na 讀值偏高，不會偏低','c5-direction':'灰化損失、溶不出、離子強度、樣品本身與資料庫不同都會讓結果偏低','c5-test':'對照實驗只改一個步驟（有無灰化）','c6-df':'灰化溶液要乘回稀釋倍數（25）','c6-calc':'mg/100 mL = 讀值 × 稀釋倍數 ÷ 10','c6-judge':'灰化可能損失鈉；用灰分質量平衡檢查標示值','exit':'低鈉樣品：足量溶劑＋稀酸溶解＋15/150 校正＋對照與加標'};
 (function(){
   mc($('exo'),['2 g 灰化、灰分溶在 1 mL，讓讀值大於 150','2 g 灰化、用少量稀酸溶解後定容 10 mL（約 40 ppm），驗 pH 3–9，改用 15／150 ppm 校正；同時做試劑空白、灰分溶液加標、不灰化的酸萃取對照，並設法量鉀','10 g 灰化、溶在 5 mL','照舊做，最後把結果乘以 3 補回來'],1,'w03-ex','exit',
     '✅ 這個設計把今天的每一個問題都處理到：<b>溶劑足量</b>（溶得完、離子強度低）、<b>校正配合樣品</b>（15／150）、<b>pH 合規格</b>、<b>空白抓污染</b>、<b>加標抓溶不出／讀低</b>、<b>不灰化對照抓灰化損失</b>、<b>量鉀抓干擾</b>。','回顧案件 3、4、5：哪個設計同時避開「範圍外」「溶劑太少」，又能分辨誤差來源？',$('exfb'),function(){
