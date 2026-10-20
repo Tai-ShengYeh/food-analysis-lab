@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鈉離子找錯題 · W3 Data Detective</title>
+<style>
+:root{--bg:#eef2fb;--surface:#fff;--ink:#14213d;--ink2:#48597a;--line:#dbe2f0;--accent:#1f6feb;--orange:#d9822b;--green:#1f9d61;--red:#d94f4f;--yellow:#c99a00;--purple:#8a5cd6;--shadow:0 2px 10px rgba(20,33,61,.08)}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1526;--surface:#1a2238;--ink:#eaf0ff;--ink2:#a9b6d3;--line:#2d3858;--accent:#5b9bff;--orange:#f0a04b;--green:#3dbb82;--red:#f07070;--yellow:#e3b93a;--purple:#b08cf0;--shadow:0 2px 10px rgba(0,0,0,.4)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.7;font-size:17px}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 80px}
+header.hero{padding:34px 0 10px}
+.kicker{color:var(--accent);font-weight:800;letter-spacing:.06em;font-size:.85rem}
+h1{font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.25;margin:.2em 0}
+h1 .hi{color:var(--orange)}
+h2{font-size:1.3rem;margin:.1em 0 .4em}
+.lead{color:var(--ink2)}
+#hud{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#bar{flex:1;min-width:120px;height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+#bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--orange));transition:width .4s}
+#pts{font-weight:800}
+section.m{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 20px 24px;margin:20px 0;box-shadow:var(--shadow)}
+.tag{display:inline-block;background:var(--accent);color:#fff;border-radius:99px;padding:1px 12px;font-size:.8rem;font-weight:800;margin-right:8px}
+.done .tag{background:var(--green)}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+button{font:inherit;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:6px 14px;font-weight:700;text-align:left}
+button:hover{background:var(--accent);color:#fff}
+button.primary{background:var(--accent);color:#fff}
+button.ok{background:var(--green);border-color:var(--green);color:#fff}
+button.bad{background:var(--red);border-color:var(--red);color:#fff}
+button:disabled{opacity:.6;cursor:default}
+input[type=number],select{font:inherit;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 9px}
+input[type=number]{width:7.5em}
+.fb{margin-top:10px;padding:10px 14px;border-radius:10px;background:rgba(31,111,235,.08);border-left:4px solid var(--accent);display:none}
+.fb.show{display:block}
+.fb.good{border-color:var(--green);background:rgba(31,157,97,.1)}
+.fb.warn{border-color:var(--orange);background:rgba(217,130,43,.1)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+td,th{border-bottom:1px solid var(--line);padding:5px 8px;text-align:center}
+td.l{text-align:left}
+.tiny{font-size:.85rem;color:var(--ink2)}
+.rowin{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.note{border-left:4px solid var(--orange);background:rgba(217,130,43,.1);padding:8px 12px;border-radius:8px;margin:10px 0}
+a{color:var(--accent);font-weight:700}
+.badge{text-align:center;padding:18px}
+.badge .big{font-size:2.4rem}
+.afb-pill{top:auto!important;bottom:12px}
+.real{display:inline-block;background:var(--green);color:#fff;border-radius:6px;padding:0 8px;font-size:.78rem;font-weight:800;vertical-align:middle}
+.sim{display:inline-block;background:var(--orange);color:#fff;border-radius:6px;padding:0 8px;font-size:.78rem;font-weight:800;vertical-align:middle}
+label{white-space:nowrap}
+code{font-family:"JetBrains Mono",Consolas,monospace;font-size:.9em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="kicker">DATA DETECTIVE · W3 灰分與鈉離子</div>
+  <h1>黑豆粉的鈉，<span class="hi">為什麼只剩三成？</span></h1>
+  <p class="lead">四組同學各灰化約 2 g 黑豆粉、用 LAQUAtwin Na-11 測鈉，結果只有標示值的三成。數據裡藏著計算錯誤、範圍外的讀值、太小的定容體積，還有一個「方向不對」的嫌疑犯。你要用<b>證據</b>一個一個排除。<br>題目順序不限，<b>等高溫爐的空檔隨時可以玩</b>。</p>
+  <p class="tiny"><span class="real">實測數據</span> 案件 1–5 是 2026-10-13 四組的真實紀錄（組別匿名）；案件 6 是同一天的烏醋測試。標示 <span class="sim">假設</span> 的數字（如鉀含量）是用來推理的典型值，不是實測。建議先看 <a href="blackbean_na_dilution.html" target="_blank" rel="noopener">黑豆粉測鈉動畫</a>。</p>
+</header>
+<p class="tiny" id="lognote" style="margin:0 0 6px">💡 登入學號後，系統會記錄你每題的作答，老師用來看全班哪裡需要再講解，並給你一張學習回饋卡；不登入也可以玩，只是不會記錄。</p>
+<div id="hud"><span id="pts">🔍 偵探積分 0</span><div id="bar"><i></i></div><span class="tiny" id="prog">案件 0 / 6</span><button id="login" style="font-size:.85rem;padding:3px 10px">🎓 登入學號（記錄進度）</button></div>
+
+<section class="m" id="c1">
+  <h2><span class="tag">案件 1</span>灰分表裡有一格算錯了</h2>
+  <p>四組的秤重紀錄（g）與各組自己填的灰分 %：</p>
+  <div style="overflow-x:auto"><table id="c1tab"></table></div>
+  <p><b>① 哪一組的灰分 % 算錯了？</b></p><div class="opts" id="c1o"></div><div class="fb" id="c1fb1"></div>
+  <div id="c1b" style="display:none">
+    <div class="rowin">② 用原始重量算出這一組正確的灰分 %（小數 2 位）：<input type="number" step="any" id="c1v"> % <button class="primary" id="c1go">對答案</button></div>
+    <div class="fb" id="c1fb2"></div>
+  </div>
+</section>
+
+<section class="m" id="c2">
+  <h2><span class="tag">案件 2</span>從讀值回推 mg/100 g</h2>
+  <p>第 1–3 組把灰分溶在 <b>5 mL</b> 水中，直接滴上鈉離子計：</p>
+  <div style="overflow-x:auto"><table id="c2tab"></table></div>
+  <div class="rowin">① 第 1 組：73 ppm、5 mL、樣品 1.9998 g → 黑豆粉含 Na <input type="number" step="any" id="c2v"> mg/100 g <button class="primary" id="c2go">對答案</button></div>
+  <div class="fb" id="c2fb1"></div>
+  <div id="c2b" style="display:none">
+    <div class="rowin">② 三組平均約 19.6 mg/100 g。標示值 65 mg/100 g，平均只有標示的 <input type="number" step="any" id="c2p"> % <button class="primary" id="c2go2">對答案</button></div>
+    <div class="fb" id="c2fb2"></div>
+  </div>
+</section>
+
+<section class="m" id="c3">
+  <h2><span class="tag">案件 3</span>讀值落在校正範圍裡嗎？</h2>
+  <p>今天用預設的兩點校正：<b>150 ppm 與 2000 ppm</b>。第 1–3 組的讀值是 73、85、78 ppm。</p>
+  <p><b>① 這三個讀值的狀況是？</b></p><div class="opts" id="c3o1"></div><div class="fb" id="c3fb1"></div>
+  <div id="c3b" style="display:none"><p><b>② 下一次最好的改法是？</b></p><div class="opts" id="c3o2"></div><div class="fb" id="c3fb2"></div></div>
+</section>
+
+<section class="m" id="c4">
+  <h2><span class="tag">案件 4</span>第 4 組：讀值最大，結果卻最小</h2>
+  <p>第 4 組想讓讀值進入校正範圍，把同樣約 0.11 g 的灰分只溶在 <b>1 mL</b> 水中，讀到 <b>190 ppm</b>（在 150–2000 之間了）。</p>
+  <div class="rowin">① 回推第 4 組（樣品 1.9824 g）的鈉含量：<input type="number" step="any" id="c4v"> mg/100 g <button class="primary" id="c4go">對答案</button></div>
+  <div class="fb" id="c4fb1"></div>
+  <div id="c4b" style="display:none"><p><b>② 讀值進了校正範圍，結果反而只有別組的一半。最合理的解釋是？</b></p><div class="opts" id="c4o"></div><div class="fb" id="c4fb2"></div></div>
+</section>
+
+<section class="m" id="c5">
+  <h2><span class="tag">案件 5</span>嫌疑犯排除：誰可能讓鈉「變少」？</h2>
+  <p>平均約 20 mg/100 g，只有標示 65 的三成。下面五個嫌疑犯，每一個選出它對結果的影響方向：</p>
+  <div style="overflow-x:auto"><table id="c5tab"></table></div>
+  <button class="primary" id="c5go">送出判斷</button>
+  <div class="fb" id="c5fb1"></div>
+  <div id="c5b" style="display:none"><p><b>想確認「是不是灰化弄丟了鈉」，最直接的對照實驗是？</b></p><div class="opts" id="c5o"></div><div class="fb" id="c5fb2"></div></div>
+</section>
+
+<section class="m" id="c6">
+  <h2><span class="tag">案件 6</span>烏醋：灰化法 vs 直接稀釋</h2>
+  <p>同一天的烏醋測試（標示鈉 <b>1720 mg/100 mL</b>）：</p>
+  <div style="overflow-x:auto"><table id="c6tab"></table></div>
+  <div class="rowin">① 1 mL 烏醋灰化、定容 25 mL、讀 180 ppm → 烏醋含 Na <input type="number" step="any" id="c6v"> mg/100 mL <button class="primary" id="c6go">對答案</button></div>
+  <div class="fb" id="c6fb1"></div>
+  <div id="c6b" style="display:none"><p><b>② 這三個數字（灰化 450、直接 960、標示 1720）最合理的解讀是？</b></p><div class="opts" id="c6o"></div><div class="fb" id="c6fb2"></div></div>
+</section>
+
+<section class="m" id="ex">
+  <h2><span class="tag">結案</span>Exit ticket：重新設計黑豆粉實驗</h2>
+  <p>已知黑豆粉鈉大約只有 20 mg/100 g。下一班要重做，你會選哪一個設計？</p>
+  <div class="opts" id="exo"></div><div class="fb" id="exfb"></div>
+  <div class="note" id="recap" style="display:none"></div>
+  <div class="badge" id="badge" style="display:none"><div class="big">🕵️</div><h2>結案！鈉離子偵探</h2><div id="badgetxt"></div>
+    <p><a href="index.html">回 W3 投影片</a>　·　<a href="blackbean_na_dilution.html">黑豆粉測鈉動畫</a>　·　<a href="na11_manual.html">鈉離子計手冊</a></p></div>
+</section>
+</div>
+
+<script type="module" src="assess_firebase.js"></script>
+<script>
+function $(id){return document.getElementById(id)}
+function f(x,d){return x.toFixed(d==null?2:d)}
+var NCASE=6,pts=0,done={},MIS={},ATT={},LOGGING=false;
+function add(n){pts+=n;$('pts').textContent='🔍 偵探積分 '+pts}
+function finish(n,bonus){if(done[n])return;done[n]=1;add(bonus);var k=Object.keys(done).filter(function(x){return x<=NCASE}).length;$('prog').textContent='案件 '+k+' / '+NCASE;$('bar').firstChild.style.width=(k/NCASE*100)+'%';$('c'+n).classList.add('done')}
+function fb(el,html,cls){el.className='fb show '+(cls||'');el.innerHTML=html}
+function ev(o){if(!LOGGING||!window.AssessFB)return;try{window.AssessFB.log(o)}catch(e){}}
+function ans(qid,ok,o){o=o||{};ATT[qid]=(ATT[qid]||0)+1;if(ok===false&&o.misconception)MIS[o.misconception]=(MIS[o.misconception]||0)+1;
+  ev({event_type:'answer',question_id:qid,is_correct:ok,attempts:ATT[qid],qtype:o.qtype||'mcq',bloom:o.bloom||null,topic:o.topic||null,misconception:(ok===false&&o.misconception)?o.misconception:null,chapter:'LAB-W03'})}
+function login(){var btn=$('login');btn.disabled=true;btn.textContent='連線中…';var t=0;
+  (function poll(){
+    if(window.AssessFB){window.AssessFB.init({chapter:'LAB-W03',game:'detective'}).then(function(){LOGGING=true;btn.textContent='✅ 已記錄進度（'+window.AssessFB.getStudentId()+'）'}).catch(function(){btn.disabled=false;btn.textContent='🎓 登入學號（記錄進度）'});return}
+    if(++t>120){btn.disabled=false;btn.textContent='🎓 登入學號（連線失敗，稍後再試）';return}
+    setTimeout(poll,50)})()}
+$('login').onclick=login;
+try{if(localStorage.getItem('food_analysis_student_id'))login()}catch(e){}
+function mc(box,opts,right,qid,mis,okmsg,badmsg,fbEl,onOk,topic){
+  opts.forEach(function(t,i){var b=document.createElement('button');b.textContent=t;b.onclick=function(){
+    ans(qid,i===right,{misconception:mis,topic:topic,bloom:'分析'});
+    if(i===right){b.classList.add('ok');[].forEach.call(box.children,function(x){x.disabled=true});fb(fbEl,okmsg,'good');onOk()}
+    else{b.classList.add('bad');fb(fbEl,badmsg,'warn')}};box.appendChild(b)})}
+
+// 2026-10-13 實測（組別匿名）：空坩堝 x1、坩堝+樣品 x2、坩堝+灰 x3、各組填報灰分%、Na-11 讀值、溶解體積
+var G=[{n:'第 1 組',x1:33.5472,x2:35.5470,x3:33.6569,rep:5.49,r:73,v:5},
+       {n:'第 2 組',x1:47.9150,x2:49.9399,x3:48.0249,rep:5.43,r:85,v:5},
+       {n:'第 3 組',x1:34.3542,x2:36.3510,x3:34.4647,rep:5.53,r:78,v:5},
+       {n:'第 4 組',x1:35.7644,x2:37.7468,x3:35.8742,rep:5.86,r:190,v:1}];
+G.forEach(function(g){g.m=g.x2-g.x1;g.ash=g.x3-g.x1;g.ap=g.ash/g.m*100;g.na=g.r*g.v/1000/g.m*100});
+var LABEL=65;
+
+// ===== 案件 1 =====
+(function(){
+  var h='<tr><th>組別</th><th>空坩堝</th><th>坩堝＋樣品</th><th>坩堝＋灰</th><th>填報灰分 %</th></tr>';
+  G.forEach(function(g){h+='<tr><td>'+g.n+'</td><td>'+f(g.x1,4)+'</td><td>'+f(g.x2,4)+'</td><td>'+f(g.x3,4)+'</td><td><b>'+f(g.rep)+'</b></td></tr>'});
+  $('c1tab').innerHTML=h;
+  var g4=G[3];
+  mc($('c1o'),G.map(function(g){return g.n}),3,'w03-c1-find','c1-find',
+    '✅ 第 4 組填 5.86 %，但它的灰重（'+f(g4.ash,4)+' g）和別組幾乎一樣、樣品也約 2 g —— 灰分不可能高出 0.3 個百分點。','提示：四組的「灰重」都約 0.110 g、樣品都約 2.0 g，哪一組的 % 和這個比例對不上？',$('c1fb1'),function(){$('c1b').style.display='block'},'ash-calc');
+  $('c1go').onclick=function(){var v=+$('c1v').value;if(!v)return;var ok=Math.abs(v-g4.ap)<0.02;
+    ans('w03-c1-val',ok,{misconception:Math.abs(v-g4.ash/(g4.x2)*100)<0.05?'c1-denominator':'c1-calc',topic:'ash-calc',qtype:'numeric'});
+    if(ok){fb($('c1fb2'),'✅ 灰分 % = (35.8742 − 35.7644) ÷ (37.7468 − 35.7644) × 100 = 0.1098 ÷ 1.9824 × 100 = <b>'+f(g4.ap)+' %</b>。修正後四組是 5.43–5.54 %，非常一致。<br>報告前用「灰重 ÷ 樣品重」再算一次；Excel 公式要點開檢查參照的儲存格。','good');finish(1,25)}
+    else fb($('c1fb2'),'提示：灰重 = 坩堝＋灰 − 空坩堝；樣品重 = 坩堝＋樣品 − 空坩堝；兩者相除 × 100。','warn')};
+})();
+
+// ===== 案件 2 =====
+(function(){
+  var h='<tr><th>組別</th><th>樣品 g</th><th>溶解體積</th><th>Na-11 讀值</th></tr>';
+  G.slice(0,3).forEach(function(g){h+='<tr><td>'+g.n+'</td><td>'+f(g.m,4)+'</td><td>'+g.v+' mL</td><td>'+g.r+' ppm</td></tr>'});
+  $('c2tab').innerHTML=h;
+  var g1=G[0],mean=(G[0].na+G[1].na+G[2].na)/3;
+  $('c2go').onclick=function(){var v=+$('c2v').value;if(!v)return;var ok=Math.abs(v-g1.na)<0.3;
+    var mis=Math.abs(v-73*5/1.9998)<1?'c2-unit':Math.abs(v-g1.na*1000)<300?'c2-unit':'c2-calc';
+    ans('w03-c2-val',ok,{misconception:ok?null:mis,topic:'back-calc',qtype:'numeric'});
+    if(ok){fb($('c2fb1'),'✅ 73 mg/L × 0.005 L = 0.365 mg Na；0.365 ÷ 1.9998 g × 100 = <b>'+f(g1.na,1)+' mg/100 g</b>。<br>第 2 組 '+f(G[1].na,1)+'、第 3 組 '+f(G[2].na,1)+' mg/100 g。三組 RSD 約 7 %，<b>彼此很一致</b>——所以問題不是誰操作不小心，而是整個方法。','good');$('c2b').style.display='block'}
+    else fb($('c2fb1'),'提示：ppm = mg/L。先算 5 mL 裡有幾 mg 鈉（73 × 0.005），再除以樣品克數，乘 100 變成每 100 g。','warn')};
+  $('c2go2').onclick=function(){var v=+$('c2p').value;if(!v)return;var t=mean/LABEL*100,ok=Math.abs(v-t)<1.5;
+    ans('w03-c2-pct',ok,{misconception:'c2-pct',topic:'back-calc',qtype:'numeric'});
+    if(ok){fb($('c2fb2'),'✅ '+f(mean,1)+' ÷ 65 × 100 ≈ <b>'+f(t,0)+' %</b>。若照標示值，2 g 溶在 5 mL 應該讀到約 260 ppm，實際只有 73–85。','good');finish(2,25)}
+    else fb($('c2fb2'),'提示：平均 ÷ 標示值 × 100。','warn')};
+})();
+
+// ===== 案件 3 =====
+(function(){
+  mc($('c3o1'),['都在量測範圍內，沒有問題','在量測範圍（2–9900）內，但低於 150 ppm 校正點，是「外插」，準確度沒有保證','低於量測下限，儀器無法讀','高於 2000，要再稀釋'],1,'w03-c3-range','c3-range',
+    '✅ Na-11 能顯示 2–9900 ppm，但只有兩個校正點之間（150–2000）是「內插」。73–85 ppm 落在 150 以下，等於拿 150 與 2000 兩點畫的直線往外延伸。','再看一次：「能顯示」和「有校正」是兩回事。今天的校正點是哪兩個？',$('c3fb1'),function(){$('c3b').style.display='block';
+    mc($('c3o2'),['把灰分溶在更少的水裡，讓讀值超過 150','依手冊改用 15 ppm 與 150 ppm 兩點校正（15 ppm＝150 ppm 標準液 1：9 稀釋），讓 20–150 ppm 的樣品落在校正範圍內','不用改，外插也很準','改用 2000 與 9000 ppm 校正'],1,'w03-c3-fix','c3-fix',
+      '✅ 手冊的「如何選擇標準液」表：目標濃度 15–150 ppm 就用 15／150 ppm 校正。<b>讓校正去配合樣品</b>，不要硬把樣品濃縮（下一個案件會看到濃縮的後果）。','想想：讓樣品變濃會同時帶來什麼副作用？手冊有一張「目標樣品濃度 vs 標準液」的表。',$('c3fb2'),function(){finish(3,25)},'calibration')},'calibration');
+})();
+
+// ===== 案件 4 =====
+(function(){
+  var g4=G[3];
+  $('c4go').onclick=function(){var v=+$('c4v').value;if(!v)return;var ok=Math.abs(v-g4.na)<0.3;
+    ans('w03-c4-val',ok,{misconception:Math.abs(v-190*5/1000/g4.m*100)<1?'c4-volume':'c4-calc',topic:'back-calc',qtype:'numeric'});
+    if(ok){fb($('c4fb1'),'✅ 190 × 0.001 L = 0.19 mg；0.19 ÷ 1.9824 × 100 = <b>'+f(g4.na,1)+' mg/100 g</b>，只有第 1–3 組（約 20）的一半。','good');$('c4b').style.display='block'}
+    else fb($('c4fb1'),'提示：第 4 組只用了 1 mL，所以 Na 總量 = 190 mg/L × 0.001 L。','warn')};
+  mc($('c4o'),['讀值在校正範圍內，所以第 4 組才是對的，其他組錯了','0.11 g 灰分擠在 1 mL：可能沒有全部溶解；離子強度極高（約 110 g/L）讓 Na⁺ 活性變低；1 mL 也很難定量轉移','第 4 組的鈉被別組偷走了','1 mL 讓 K⁺ 干擾變小，所以讀值比較低'],1,'w03-c4-why','c4-why',
+    '✅ <b>讀值落進校正範圍，不等於結果比較準。</b>溶劑太少：溶解不完全、殘渣卡在坩堝、活性係數大幅下降，每一項都讓鈉「看起來變少」。K⁺ 也被一起濃縮，若有影響會讓讀值變高，不會變低。','再想想：同樣的灰分只給 1 mL 水，溶得完嗎？W3 原理(3) 說離子強度高時讀數會怎樣？',$('c4fb2'),function(){finish(4,25)},'matrix');
+})();
+
+// ===== 案件 5 =====
+var SUS=[['灰化溫度高、時間長，NaCl 揮發或噴濺',0],['灰分只用水溶解，部分鈉被包在熔融的鉀磷酸鹽灰中沒溶出',0],['大量 K⁺（黑豆鉀約 1700 mg/100 g，假設）干擾 Na 電極',1],['5 mL 中灰分約 22 g/L，離子強度高、活性係數變小',0],['標示值本身偏高（或批次不同），真正的鈉本來就比較少',0]];
+(function(){
+  var OPT=['讓結果偏低','讓結果偏高','無法判斷'];
+  var h='<tr><th class="l">嫌疑犯</th><th>影響方向</th></tr>';
+  SUS.forEach(function(s,i){h+='<tr><td class="l">'+s[0]+'</td><td><select id="c5s'+i+'"><option value="">選…</option>'+OPT.map(function(t,k){return '<option value="'+k+'">'+t+'</option>'}).join('')+'</select></td></tr>'});
+  $('c5tab').innerHTML=h;
+  $('c5go').onclick=function(){var miss=SUS.filter(function(_,i){return $('c5s'+i).value===''});if(miss.length)return fb($('c5fb1'),'還有 '+miss.length+' 個沒選。','warn');
+    var ok=0;SUS.forEach(function(s,i){var v=+$('c5s'+i).value,r=v===s[1];if(r)ok++;ans('w03-c5-'+i,r,{misconception:r?null:(i===2?'c5-k-direction':'c5-direction'),topic:'error-source'})});
+    var kppm=1700/100*2/0.005,kb=0.01*kppm*22.99/39.10;
+    fb($('c5fb1'),'答對 '+ok+' / 5。<br>只有 <b>K⁺ 干擾讓讀值偏高</b>——它不能解釋「太少」，反而代表真正的鈉可能更少：若鉀真有 1700 mg/100 g，5 mL 中 K 約 '+f(kppm,0)+' ppm，可貢獻約 <b>'+f(kb,0)+' ppm</b> 的假鈉讀值（讀值才 73–85！）。要確認就得實際量鉀（例如 K-11 鉀離子計）。<br>其他四個都讓結果偏低，而且可能同時發生，所以要設計對照實驗一個一個拆開。',ok===5?'good':'warn');
+    $('c5b').style.display='block'};
+  mc($('c5o'),['同一份黑豆粉不灰化，改用稀酸萃取（或熱水萃取）後直接測，與灰化法比較','把高溫爐溫度調得更高','多量幾次讀值取平均','換一台鈉離子計'],0,'w03-c5-test','c5-test',
+    '✅ <b>同一樣品、只差「有沒有灰化」</b>，兩者的差就是灰化（揮發、噴濺、溶不出）造成的損失。再加上在灰分溶液中「加標」已知鈉，可以分辨是溶不出還是儀器讀低。','想想：要測試「灰化弄丟鈉」，對照組應該只改變哪一個步驟？',$('c5fb2'),function(){finish(5,25)},'error-source');
+})();
+
+// ===== 案件 6 =====
+(function(){
+  $('c6tab').innerHTML='<tr><th class="l">方法</th><th>Na-11 讀值</th><th>換算 mg/100 mL</th></tr>'+
+    '<tr><td class="l">1 mL 烏醋灰化 → 溶解定容 25 mL</td><td>180 ppm</td><td>？</td></tr>'+
+    '<tr><td class="l">烏醋直接稀釋後測（換算回原液）</td><td>—</td><td>960</td></tr>'+
+    '<tr><td class="l">營養標示</td><td>—</td><td>1720</td></tr>'+
+    '<tr><td colspan="3" class="l tiny">1 mL 烏醋的灰分約 21.4 mg（W3 灰分實驗值）。</td></tr>';
+  $('c6go').onclick=function(){var v=+$('c6v').value;if(!v)return;var ok=Math.abs(v-450)<5;
+    ans('w03-c6-val',ok,{misconception:Math.abs(v-180)<5||Math.abs(v-18)<1?'c6-df':'c6-calc',topic:'back-calc',qtype:'numeric'});
+    if(ok){fb($('c6fb1'),'✅ 180 mg/L × 0.025 L = 4.5 mg（在 1 mL 烏醋裡）→ <b>450 mg/100 mL</b>，只有直接稀釋法的一半。','good');$('c6b').style.display='block'}
+    else fb($('c6fb1'),'提示：稀釋倍數 25（1 mL → 25 mL）。180 × 25 = ? mg/L，再換成 mg/100 mL。','warn')};
+  mc($('c6o'),['灰化法最準，因為去除了有機物','灰化法只有直接法的一半 → 灰化過程很可能損失鈉（NaCl 揮發）；而 21.4 mg 灰分若全是 NaCl 最多只含約 8.4 mg Na（840 mg/100 mL），連直接法的 960 都只略高於這個上限 —— 標示的 1720 本身就很可疑','三個數字都對，只是單位不同','直接法被醋酸干擾，所以應該相信標示值'],1,'w03-c6-judge','c6-judge',
+    '✅ 兩條線索互相印證：<b>灰化會丟鈉</b>（同一樣品，灰化 450 vs 直接 960），而<b>灰分質量平衡</b>顯示 1720 mg/100 mL 不可能全塞進 21.4 mg 灰分裡。直接法 960 已接近灰分能容納的上限（在 Na-11 ±10 % 誤差內）。報告要同時寫出這兩點。','提示：比較「同一瓶醋、有灰化 vs 沒灰化」；再用灰分質量檢查標示值合不合理（NaCl 中 Na 占 39.3 %）。',$('c6fb2'),function(){finish(6,25)},'ashing-loss');
+})();
+
+// ===== 結案 =====
+var ADV={'c1-find':'灰分 % 先用「灰重 ÷ 樣品重」心算檢查，和同伴比對','c1-denominator':'灰分 % 的分母是樣品重（坩堝＋樣品 − 空坩堝），不是坩堝＋樣品','c1-calc':'灰分 % = (坩堝＋灰 − 空坩堝) ÷ (坩堝＋樣品 − 空坩堝) × 100','c2-unit':'ppm = mg/L，要乘上溶液體積（L）才是 mg','c2-calc':'mg/100 g = 讀值 × 體積(L) ÷ 樣品 g × 100','c2-pct':'回收比例 = 實測 ÷ 標示 × 100','c3-range':'能顯示 ≠ 有校正；只有兩校正點之間是內插','c3-fix':'低濃度樣品改用 15／150 ppm 校正，不要硬濃縮','c4-volume':'回推時用該組自己的溶解體積','c4-calc':'Na 總量 = 讀值 × 體積','c4-why':'讀值進校正範圍不等於準：溶劑太少會溶不完、離子強度太高','c5-k-direction':'K⁺ 干擾讓 Na 讀值偏高，不會偏低','c5-direction':'灰化損失、溶不出、離子強度、標示偏高都會讓結果偏低','c5-test':'對照實驗只改一個步驟（有無灰化）','c6-df':'灰化溶液要乘回稀釋倍數（25）','c6-calc':'mg/100 mL = 讀值 × 稀釋倍數 ÷ 10','c6-judge':'灰化可能損失鈉；用灰分質量平衡檢查標示值','exit':'低鈉樣品：足量溶劑＋稀酸溶解＋15/150 校正＋對照與加標'};
+(function(){
+  mc($('exo'),['2 g 灰化、灰分溶在 1 mL，讓讀值大於 150','2 g 灰化、用少量稀酸溶解後定容 10 mL（約 40 ppm），驗 pH 3–9，改用 15／150 ppm 校正；同時做試劑空白、灰分溶液加標、不灰化的酸萃取對照，並設法量鉀','10 g 灰化、溶在 5 mL','照舊做，最後把結果乘以 3 補回來'],1,'w03-ex','exit',
+    '✅ 這個設計把今天的每一個問題都處理到：<b>溶劑足量</b>（溶得完、離子強度低）、<b>校正配合樣品</b>（15／150）、<b>pH 合規格</b>、<b>空白抓污染</b>、<b>加標抓溶不出／讀低</b>、<b>不灰化對照抓灰化損失</b>、<b>量鉀抓干擾</b>。','回顧案件 3、4、5：哪個設計同時避開「範圍外」「溶劑太少」，又能分辨誤差來源？',$('exfb'),function(){
+    done[NCASE+1]=1;ev({event_type:'attempt_complete',final_score:pts,total:NCASE+1,chapter:'LAB-W03'});
+    var el=$('recap'),ks=Object.keys(MIS).sort(function(a,b){return MIS[b]-MIS[a]}),h='<b>📋 你的學習回饋卡</b><br>',n=0;
+    ks.forEach(function(k){if(ADV[k]&&n<5){h+='• '+ADV[k]+'（答錯 '+MIS[k]+' 次）<br>';n++}});
+    if(!n)h+='這一輪沒有明顯迷思，做得很好 👍';
+    el.innerHTML=h;el.style.display='block';$('badge').style.display='block';
+    var k=Object.keys(done).filter(function(x){return x<=NCASE}).length;
+    $('badgetxt').innerHTML='偵探積分 <b>'+pts+'</b> · 完成 '+k+' / '+NCASE+' 案件'+(k<NCASE?'（還有案件沒破，隨時回來）':'')},'exit');
+})();
+</script>
+</body>
+</html>
