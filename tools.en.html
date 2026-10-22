@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data Analysis Tools Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --ink:#18221F; --muted:#5B6964; --line:#D5DDD9;
+  --accent:#B3306A; --accent-soft:#F7E3EC; --teal:#1E6B66; --teal-soft:#DDEFEC;
+  --xl:#2F7D46; --xl-soft:#E2EFDA; --or:#C4661F; --or-soft:#FBE7D6; --py:#3A5F9E; --py-soft:#E1E8F5;
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+    --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+    --xl:#7CC48F; --xl-soft:#1D2E22; --or:#F0A56A; --or-soft:#3A2A1C; --py:#8FB0E8; --py-soft:#1F2839;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+  --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+  --xl:#7CC48F; --xl-soft:#1D2E22; --or:#F0A56A; --or-soft:#3A2A1C; --py:#8FB0E8; --py-soft:#1F2839;
+}
+*{box-sizing:border-box}
+img{max-width:100%;height:auto}
+.ladder>*,.grid2>*,.principles>*{min-width:0}
+html,body{overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.7;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:1040px;margin:0 auto}
+a{color:var(--teal)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{padding-block:36px 12px;display:grid;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--teal)}
+.eyebrow a{color:inherit}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin:0}
+.lede{max-width:70ch;color:var(--muted);margin:0}
+h2{font-family:var(--serif);font-size:21px;margin:40px 0 12px;scroll-margin-top:12px}
+h3{font-size:16px;margin:22px 0 8px}
+p{margin:8px 0}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.toc a{font-size:13.5px;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 12px;border-radius:999px}
+.toc a:hover{border-color:var(--teal);color:var(--teal)}
+.ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.step{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:8px;padding:14px 16px}
+.step .lv{font-family:var(--mono);font-size:12px;color:var(--c)}
+.step h3{margin:2px 0 6px;font-size:18px}
+.step p{font-size:13.5px;color:var(--muted);margin:4px 0}
+.step ul{margin:6px 0 0;padding-left:18px;font-size:13.5px}
+.s-xl{--c:var(--xl)} .s-or{--c:var(--or)} .s-py{--c:var(--py)}
+.note{background:var(--teal-soft);border-radius:8px;padding:12px 16px;font-size:14px;margin:14px 0}
+.warn{background:var(--accent-soft)}
+.tbl{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:700;background:var(--bg);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.wk{font-family:var(--mono);color:var(--teal);white-space:nowrap}
+.pill{display:inline-block;font-size:12.5px;border-radius:4px;padding:1px 8px;margin:2px 4px 2px 0;text-decoration:none;white-space:nowrap;border:1px solid var(--c);color:var(--c);background:var(--s)}
+.p-xl{--c:var(--xl);--s:var(--xl-soft)} .p-or{--c:var(--or);--s:var(--or-soft)} .p-py{--c:var(--py);--s:var(--py-soft)}
+.pill:hover{filter:brightness(.95)}
+.dash{color:var(--muted)}
+code{font-family:var(--mono);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+ol,ul{padding-left:22px}
+li{margin:3px 0}
+details{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0}
+summary{cursor:pointer;font-weight:500}
+details img{display:block;margin-top:10px;border-radius:6px;border:1px solid var(--line);background:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+.card h3{margin-top:0}
+footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
+@media (max-width:760px){.ladder,.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow"><a href="index.en.html">Food Analysis Lab</a> · Data analysis</div>
+  <h1>Data Analysis Tools Guide</h1>
+  <p class="lede">You can do every week’s data analysis without writing code. Start with Excel to understand the calculations, then use Orange in the second half of the semester to build spectral models by dragging and dropping widgets. If you want to go further, run Python in Colab or Jupyter. All three tools use the same data and should give the same answers.</p>
+  <nav class="toc" aria-label="On this page">
+    <a href="#weeks">Weekly overview</a><a href="#excel">Excel</a><a href="#orange">Orange</a><a href="#python">Colab / Jupyter</a><a href="#tips">Study tips</a><a href="assessment.en.html">Learning assessment →</a>
+  </nav>
+</header>
+
+<section class="ladder" aria-label="Three-stage tools">
+  <div class="step s-xl"><div class="lv">Beginner · Every student</div><h3>Excel</h3>
+    <p>One practice workbook per week for W1–W8. The formulas are already written, with a note beside every cell; paste in the class data and everything recalculates.</p>
+    <ul><li>Mean, SD, confidence interval, t-test, ANOVA</li><li>Calibration curve, LOD/LOQ, z-score, control chart</li></ul></div>
+  <div class="step s-or"><div class="lv">Beginner · Main tool for the second half</div><h3>Orange</h3>
+    <p>Analyze by dragging widgets and connecting them, no coding needed. Ready-made workflow files cover spectral preprocessing, PCA, and PLS.</p>
+    <ul><li>Box plot and ANOVA (W1, W8)</li><li>Preprocessing, similarity, PCA, PLS, classification (W11–W16)</li></ul></div>
+  <div class="step s-py"><div class="lv">Advanced · Optional bonus</div><h3>Colab / Jupyter</h3>
+    <p>A Python notebook for each week. They can do what Excel and Orange cannot: VIP, PLS-DA, T² and Q, NNLS, simulation.</p>
+    <ul><li>Colab: opens in the browser, no installation</li><li>Jupyter: download to your own computer, runs offline</li></ul></div>
+</section>
+
+<h2 id="weeks">Weekly overview</h2>
+<p>Click <span class="pill p-xl">Excel</span> to download the practice workbook. The <span class="pill p-or">Orange</span> workflow files are all in <a href="orange/orange_workflows.zip">one zip file</a> (data included). <span class="pill p-py">Colab</span> opens in your browser; <span class="pill p-py">.ipynb</span> downloads the notebook for Jupyter.</p>
+<div class="tbl"><table>
+<thead><tr><th>Week</th><th>Topic</th><th>Beginner: Excel</th><th>Beginner: Orange</th><th>Advanced: Python</th></tr></thead>
+<tbody id="rows"></tbody>
+</table></div>
+<div class="note">Everything built in is <strong>simulated teaching data</strong>. With the built-in data, the instructions sheet (sheet 0) of each Excel workbook has an answer-check table that should show ✔ in every row, meaning your Excel and Colab give the same results.</div>
+
+<h2 id="excel">How to use the Excel practice workbooks</h2>
+<div class="grid2">
+  <div class="card"><h3>Every workbook has the same layout</h3>
+    <ol>
+      <li><strong>Sheet 0 (instructions)</strong>: learning goals, steps, and the answer-check table.</li>
+      <li><strong>Sheet 1 (raw data)</strong>: the same long format as Colab (group, student, item, rep, value…).</li>
+      <li><strong>Sheets 2, 3…</strong>: one sheet per step, with a note beside each formula saying what the function does.</li>
+      <li><strong>Practice questions</strong>: write your answers in the yellow cells and hand them in with your report.</li>
+    </ol>
+    <p><span class="pill p-or" style="--c:#8a6d00;--s:#FFF2CC">Yellow</span> type or paste · <span class="pill p-xl">Green</span> formulas, do not edit · <span class="pill p-or">Orange</span> results to copy into your report</p>
+  </div>
+  <div class="card"><h3>Switching to the class data</h3>
+    <ol>
+      <li>Open the class Google Sheet, select the data (without the header row) → copy.</li>
+      <li>In the workbook’s raw-data sheet (sheet 1), click A2 → paste. The column order must match the header.</li>
+      <li>If the class has fewer rows than the example, <strong>delete the entire extra rows</strong> of old data.</li>
+      <li>If the student list or number of groups is different, edit the yellow column at the far left of each step sheet.</li>
+    </ol>
+  </div>
+</div>
+<h3>Quick reference: common functions</h3>
+<div class="tbl"><table>
+<thead><tr><th>What you want to do</th><th>Function</th><th>First appears</th></tr></thead>
+<tbody>
+<tr><td>Mean, sample standard deviation</td><td><code>AVERAGE</code>, <code>STDEV.S</code> (not STDEV.P)</td><td>W1</td></tr>
+<tr><td>Half-width of the 95% confidence interval</td><td><code>T.INV.2T(0.05, n−1) * SD / SQRT(n)</code></td><td>W1</td></tr>
+<tr><td>Conditional mean, count, sum</td><td><code>AVERAGEIFS</code>, <code>COUNTIFS</code>, <code>SUMIFS</code></td><td>W1</td></tr>
+<tr><td>Conditional SD (array formula)</td><td><code>{=STDEV.S(IF(condition, values))}</code>; in older Excel press Ctrl+Shift+Enter</td><td>W1</td></tr>
+<tr><td>p-value of a t-test</td><td><code>T.DIST.2T(|t|, df)</code>, or <code>T.TEST(range1, range2, 2, 1)</code> (paired)</td><td>W1, W2</td></tr>
+<tr><td>Find where the maximum is (equivalence point)</td><td><code>MAX</code> + <code>MATCH</code> + <code>INDEX</code></td><td>W4</td></tr>
+<tr><td>Calibration curve</td><td><code>SLOPE</code>, <code>INTERCEPT</code>, <code>RSQ</code>, <code>STEYX</code>, <code>LINEST</code></td><td>W7</td></tr>
+<tr><td>F-test, ANOVA p-value</td><td><code>F.DIST.RT(F, df1, df2)</code>, <code>F.INV.RT(α, df1, df2)</code></td><td>W7, W8</td></tr>
+<tr><td>Expanded uncertainty</td><td><code>SQRT(SUMSQ(each u))</code> × k</td><td>W8</td></tr>
+</tbody></table></div>
+<details><summary>Cross-check with the Analysis ToolPak (t-test, ANOVA, regression)</summary>
+<p>The workbooks calculate everything with formulas so you can follow each step. To cross-check with Excel’s built-in tools:</p>
+<ul>
+<li><strong>Windows</strong>: File → Options → Add-ins → at the bottom, “Manage: Excel Add-ins” → Go → check “Analysis ToolPak”. Afterward, “Data Analysis” appears at the far right of the Data tab.</li>
+<li><strong>Mac</strong>: Tools → Excel Add-ins → check “Analysis ToolPak”.</li>
+<li>The ToolPak produces fixed numbers that do not update when the data change. This is the biggest difference from formulas.</li>
+</ul></details>
+<details><summary>No Excel?</summary>
+<ul>
+<li><strong>Google Sheets</strong>: File → Import → Upload the .xlsx. All formulas work, and array formulas are converted to ARRAYFORMULA automatically.</li>
+<li><strong>LibreOffice Calc</strong> (free) can open them too.</li>
+<li>Numbers on Mac does not support some functions, so please do not use it. If you see <code>#NAME?</code>, your software is too old.</li>
+</ul></details>
+
+<h2 id="orange">How to use the Orange workflow files</h2>
+<div class="grid2">
+  <div class="card"><h3>Installation (once only)</h3>
+    <ol>
+      <li>Download and install from <a href="https://orangedatamining.com/download/" target="_blank" rel="noopener">orangedatamining.com</a> (Windows and Mac available).</li>
+      <li>Open Orange → Options → Add-ons → check <strong>Spectroscopy</strong> → OK, then restart Orange. Required for the spectroscopy weeks (from W11).</li>
+      <li>Download <a href="orange/orange_workflows.zip">orange_workflows.zip</a> and <strong>extract</strong> it into one folder (keep the .ows workflow files and the .csv data together).</li>
+      <li>Orange → File → Open → choose that week’s .ows.</li>
+    </ol>
+    <p class="dash">The workflows were made and tested with Orange 3.40 and Spectroscopy 0.9; please use these or newer versions.</p>
+  </div>
+  <div class="card"><h3>Switching to your class data</h3>
+    <ol>
+      <li>Double-click the leftmost <strong>File</strong> widget → click the folder icon → choose your CSV.</li>
+      <li>In the column table below File, double-click “Role” to set each column: set the Y value (e.g., acidity_pct, oil) to <strong>target</strong>; set text or ID columns such as sample_id, group, rep to <strong>meta</strong>; leave the spectral wavelength columns as feature.</li>
+      <li>Click Apply, and the widgets downstream recalculate automatically.</li>
+    </ol>
+    <p class="dash">Tip: if the CSV headers are written as <code>c#acidity_pct</code> and <code>m#sample_id</code>, Orange automatically recognizes them as target and meta. All the example data on this page are set up this way.</p>
+  </div>
+</div>
+<div class="note warn"><strong>The three most common mistakes</strong>: ① In the PCA widget, <strong>uncheck</strong> “Normalize variables” (spectra are only mean-centered); ② connect the score plot to the PCA <strong>Data</strong> output so you can color points by class; ③ in Test and Score, use “Cross validation by feature → sample_id” so replicates of the same sample are not split apart, otherwise RMSECV is too optimistic.</div>
+<div id="flows"></div>
+
+<h2 id="python">Colab and Jupyter (advanced)</h2>
+<div class="grid2">
+  <div class="card"><h3>Colab: no installation</h3>
+    <ol>
+      <li>In the weekly overview, click <span class="pill p-py">Colab</span> and sign in with your Google account.</li>
+      <li>Runtime → Run all. The notebook has built-in simulated data, so it runs right away.</li>
+      <li>To use the class data: follow the “How to use” section in the notebook, either publish the Google Sheet as a CSV link or upload the file.</li>
+      <li>To keep your own changes: File → Save a copy in Drive.</li>
+    </ol></div>
+  <div class="card"><h3>Jupyter: download to your computer</h3>
+    <ol>
+      <li>Install <a href="https://www.anaconda.com/download" target="_blank" rel="noopener">Anaconda</a> (includes numpy, pandas, scipy, matplotlib, scikit-learn) or <a href="https://github.com/jupyterlab/jupyterlab-desktop" target="_blank" rel="noopener">JupyterLab Desktop</a>.</li>
+      <li>Download <a href="downloads/food-analysis-notebooks.zip">all notebooks + data (zip)</a> and extract it; or click <span class="pill p-py">.ipynb</span> in the overview to download a single notebook.</li>
+      <li>Open JupyterLab, go to the extracted folder → open a notebook in notebooks/ → Run → Run All Cells.</li>
+    </ol>
+    <p class="dash">All 13 notebooks were tested in a standard Jupyter environment, so they run completely without Colab.</p></div>
+</div>
+
+<h2 id="tips">Study tips for students and teachers</h2>
+<ul>
+<li><strong>Excel first, then Orange, then Python</strong>. W1–W8 require only Excel; from W11 only Orange is required; Colab is an advanced option that earns bonus points (see the <a href="assessment.en.html">assessment page</a>).</li>
+<li><strong>Check your answers with a second tool</strong>. Run the same data in two tools; you are done only when the numbers agree. For example, get the RMSEP in Orange for W13, then confirm it in Colab NB11. Being able to explain why the two agree matters more than just pressing buttons.</li>
+<li><strong>Look at the plot before the numbers</strong>. Glance at the box plot, residual plot, and score plot first, then read the p-value and RMSE.</li>
+<li><strong>One “tool tutor” per group</strong>. Take turns; the tutor helps teammates solve software problems, so the teacher only needs to answer the tutor in class.</li>
+<li><strong>5-minute warm-up before class</strong>. At the start of each week, have students answer one question using last week’s file (e.g., “Why is the CI for G1_S3 especially large?”), which also checks that everyone can open the files.</li>
+<li><strong>Errors are teaching material too</strong>. The example data deliberately include recording errors, outliers, and spectra from the wrong instrument, so students can practice finding them.</li>
+</ul>
+
+<footer>The answers in the Excel workbooks were checked one by one against the Colab notebooks; the Orange workflows’ PCA explained variance, ANOVA F value, and PLS RMSECV/RMSEP also match the notebooks. <a href="index.en.html">Back to course home</a></footer>
+</div>
+
+<script>
+const COLAB = "https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/";
+// [週, 主題, Excel 檔, Orange 代碼, 筆記本]
+const W = [
+  [1,"Volumetric glassware calibration","EX01_volumetric_calibration.xlsx","OR01","NB01_volumetric_calibration.ipynb"],
+  [2,"Moisture and water activity","EX02_moisture_aw.xlsx","","NB02_moisture_aw.ipynb"],
+  [3,"Ash and sodium","EX03_ash_sodium.xlsx","","NB03_ash_sodium.ipynb"],
+  [4,"Manual vs. automatic titration","EX04_titration.xlsx","","NB04_titration.ipynb"],
+  [5,"Protein (Kjeldahl method)","EX05_kjeldahl_protein.xlsx","","NB05_kjeldahl_protein.ipynb"],
+  [6,"Fat","EX06_fat_soxhlet.xlsx","","NB06_fat_soxhlet.ipynb"],
+  [7,"Sugar: Brix and phenol–sulfuric acid method","EX07_sugar_calibration.xlsx","","NB07_sugar_phenolsulfuric.ipynb"],
+  [8,"Class proficiency test","EX08_proficiency_qc.xlsx","OR08","NB08_proficiency_qc.ipynb"],
+  [9,"Midterm exam","Exam in Excel or Colab (your choice)","",""],
+  [11,"Preprocessing and spectral similarity","","OR11","NB09_preprocess_similarity.ipynb"],
+  [12,"PCA","","OR12","NB10_pca.ipynb"],
+  [13,"PLS I: acetic acid quantification","","OR13","NB11_pls_acetic.ipynb"],
+  [14,"PLS II: classification and outliers","","OR14","NB12_vip_plsda_outliers.ipynb"],
+  [16,"Artificial sweetener project II","","OR16","NB13_sweetener_model.ipynb"],
+  [18,"Final exam","","Exam in Orange or Colab (your choice)",""]
+];
+const OR = {
+  OR01:["OR01_intro_boxplot","W1 Orange basics: view distributions, find outliers","Load the file, view the table, and draw a box plot by student; select the far-off points on the plot and read their notes in the table."],
+  OR08:["OR08_proficiency_anova","W8 Group comparison (ANOVA) and proximate composition table","Box Plot runs ANOVA automatically when grouped by group (ash F = 14.24, matches NB08); Pivot Table builds the proximate composition table."],
+  OR11:["OR11_library_similarity","W11 Preprocessing and spectral library matching","ALS baseline removal → vector normalization → Pearson distance. The library sample with the smallest distance in the Distance Matrix is the answer for the unknown sample."],
+  OR12:["OR12_pca_oils","W12 PCA: six edible oils","PCA without Normalize; PC1 and PC2 explain 46.3% and 28.3% (matches NB10). Color the score plot by oil type and read the characteristic peaks in the loadings."],
+  OR13:["OR13_pls_acetic","W13 PLS: acetic acid quantification","SNV → PLS (2 LV). Grouped cross-validation by sample_id gives RMSECV = 0.400; test set RMSEP = 0.427 (matches NB11)."],
+  OR14:["OR14_classification_outlier","W14 Classification model and outlier samples","First half: PCA scores → logistic regression, then read the confusion matrix. Second half: build the PCA with the calibration set only, project new samples onto it, and find samples outside the model."],
+  OR16:["OR16_pls_sweetener","W16 Sweetener project: PLS quantification","PLS (4 LV) aspartame RMSECV = 0.711, blind-sample RMSEP = 0.557 (matches NB13); load or16_sucralose.csv instead for the sucralose model."]
+};
+const pill = (cls, href, text, extra="") => `<a class="pill ${cls}" href="${href}" ${extra}>${text}</a>`;
+let rows = "";
+W.forEach(([n, t, xl, or, nb]) => {
+  const x = xl.endsWith(".xlsx") ? pill("p-xl", "excel/" + xl, xl.slice(0,4) + " ⬇", "download") : (xl ? `<span class="dash">${xl}</span>` : `<span class="dash">—</span>`);
+  const o = OR[or] ? pill("p-or", "#" + or, or) : (or ? `<span class="dash">${or}</span>` : `<span class="dash">—</span>`);
+  const p = nb ? pill("p-py", COLAB + nb, "Colab ↗", 'target="_blank" rel="noopener"') + pill("p-py", "notebooks/" + nb, ".ipynb ⬇", "download") : `<span class="dash">—</span>`;
+  rows += `<tr><td class="wk">W${n}</td><td>${t}</td><td>${x}</td><td>${o}</td><td>${p}</td></tr>`;
+});
+document.getElementById("rows").innerHTML = rows;
+let flows = "";
+Object.entries(OR).forEach(([code, [file, title, desc]]) => {
+  flows += `<details id="${code}"><summary>${code}　${title}</summary><p>${desc}</p>
+    <p>${pill("p-or", "orange/" + file + ".ows", "Download only " + file + ".ows", "download")} <span class="dash">(keep it in the same folder as the data CSV; we recommend downloading the whole zip)</span></p>
+    <img src="orange/img/${file}.png" alt="Orange workflow: ${title}" loading="lazy" width="1400"></details>`;
+});
+document.getElementById("flows").innerHTML = flows;
+if (location.hash) { const d = document.querySelector(location.hash); if (d && d.tagName === "DETAILS") d.open = true; }
+</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en]{--sans:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif;--serif:Georgia,"Times New Roman","Noto Serif TC",serif}html[lang=en] body{font-family:var(--sans,"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif)}</style><a id="langToggle" href="tools.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='tools.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><!--/i18n-toggle--></body>
+</html>

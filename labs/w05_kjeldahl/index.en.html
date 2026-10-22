@@ -1,0 +1,558 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W5 Protein (Kjeldahl) · Food Analysis Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto}table.cmp th,table.cmp td{white-space:normal;padding:9px 10px;min-width:56px}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">Food Analysis Lab · W5</div><div id="pageInfo"></div><div id="hint">← → / Space to change slide · F fullscreen · Tap either side to turn pages</div><section class="slide" data-slide="1" data-section="Hook" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Food Analysis Lab · W5</div><h1>Protein <span style='color:var(--accent-2)'>Kjeldahl Nitrogen Method</span></h1><div class="en">Protein — The Kjeldahl Method</div><div class="meta">Food Analysis Lab · 4-hour session<br>Digestion · Distillation · Titration · Conversion factor · Melamine scandal · Recovery QC</div><div style="margin-top:24px"><span class="pill">Conc. H₂SO₄ digestion</span><span class="pill">40% NaOH distillation</span><span class="pill">4% boric acid traps NH₃</span><span class="pill">Factors 5.7/6.25/6.38</span><span class="pill">Melamine scandal</span></div></div></div></section><section class="slide" data-slide="2" data-section="Hook"><div class="slide-inner"><div class="kicker">Pre-lab video (2.5 min) (Chinese narration)</div><h2 class="slide-title">Watch before class: how does a single nitrogen atom become the number “26% protein”?</h2><div style="max-width:min(900px,100%,calc(52vh*16/9));margin:14px auto 0">
+  <div style="position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000">
+  <iframe src="https://www.youtube-nocookie.com/embed/kQLy29ZE59w" title="W5 Kjeldahl pre-lab: a nitrogen’s journey" style="position:absolute;inset:0;width:100%;height:100%;border:0" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+  <p class="subtitle" style="margin-top:10px;text-align:center">Contents: ① Digestion (conc. H₂SO₄ + catalyst tablet, N → NH₄⁺) → ② Distillation (NaOH; NH₃ is collected in boric acid) → ③ Titration (1 HCl = 1 NH₃ = 1 N) → %N × 6.38 = 26.0%. Melamine takes the same route; pick the right factor. <a href="https://youtu.be/kQLy29ZE59w" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Open on YouTube →</a></p></div></div></section><section class="slide" data-slide="3" data-section="Hook"><div class="slide-inner"><div class="no-nav" style="text-align:center">
+  <div class="kicker" style="justify-content:center">Before you start, watch two factory videos</div>
+  <div class="hook">Does the Kjeldahl method measure <span class="hi">nitrogen</span> or <span class="hi">protein</span>?</div>
+  <p class="subtitle" style="max-width:920px;margin:18px auto 0">
+    <a href="https://www.youtube.com/watch?v=lNDuk_JpkV8&t=1014s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800"> Milk powder factory (16:54–18:08, the melamine scandal: how protein testing was fooled)</a> <a href="https://www.youtube.com/watch?v=01xiYD63EAc&t=911s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800"> Flour factory (15:11–16:14, NIR measures protein/moisture/ash together; 8–13% protein decides bread or cake)</a>
+  </p>
+  <div class="note" style="max-width:920px;margin:18px auto 0;text-align:left">
+    <strong>Key question for today:</strong> The Kjeldahl method (like the Dumas combustion method we will mention later) only measures <strong>“total nitrogen”</strong>, then uses a <strong>conversion factor</strong> to turn nitrogen into “protein”. When does this assumption go wrong? The melamine scandal is the most famous case.
+  </div>
+  <p class="subtitle" style="max-width:920px;margin:14px auto 0"><strong>Work out one number and keep it in mind:</strong> Melamine is ≈ 66.6% N. Mixing in <b>1 g per 100 g</b> of sample inflates the apparent protein (total N × factor, with non-protein nitrogen not subtracted; using the dairy factor 6.38) by about <b>4.25</b> percentage points. We will recalculate it together shortly.</p>
+</div></div></section><section class="slide" data-slide="4" data-section="Hook"><div class="slide-inner"><div class="kicker">interactive lab</div><h2 class="slide-title">A nitrogen’s journey: <span class='hi'>Predict → Observe → Explain</span></h2><div class="no-nav" id="w05lab-wrap" style="max-width:min(1100px,100%);margin:10px auto 0">
+  <style>#w05lab-wrap{max-width:min(1400px,100%)!important}#w05lab-box{position:relative;width:100%;aspect-ratio:1100/506;max-height:min(66vh,760px);border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}@media(max-width:700px){#w05lab-box{aspect-ratio:auto;height:min(78vh,620px);max-height:none}}</style>
+  <div id="w05lab-box">
+    <iframe id="w05lab" src="kjeldahl_lab.html?embed=1" title="W5 Kjeldahl interactive lab: six scenes, predict → observe → explain (Chinese)" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+  </div>
+  <p class="subtitle" style="margin-top:8px;text-align:center">Six scenes: Predict → ① Digestion → ② Distillation → ③ Titration → Melamine → Conversion factor. Answer correctly to unlock the next scene. <a class="no-nav" href="kjeldahl_lab.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open the lab in a new tab ↗</a></p>
+  <script>(function(){var sec=document.currentScript.closest('.slide');var f=document.getElementById('w05lab');
+    new MutationObserver(function(){if(!sec.classList.contains('active')&&f.contentWindow)f.contentWindow.postMessage({type:'w05-lab-pause'},location.origin==='null'?'*':location.origin);}).observe(sec,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('message',function(e){if(e.source===f.contentWindow&&e.data&&e.data.type==='w05-lab-goto'&&typeof show==='function'){show(cur+1);}});})();</script>
+</div></div></section><section class="slide" data-slide="5" data-section="Hook"><div class="slide-inner"><div class="kicker">Today’s learning goals</div><h2 class="slide-title">After W5 you should be able to…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>State the <strong>three stages</strong> of the Kjeldahl method (digestion, distillation, titration) and the purpose of each</li><li>Distinguish <strong>protein nitrogen</strong> from <strong>non-protein nitrogen (NPN)</strong> and explain why melamine can fool the Kjeldahl method</li><li>Choose the right <strong>conversion factor</strong> (general 6.25 / wheat and cereals 5.7 / dairy 6.38) and know how large the error is if you choose wrong</li></ul><ul class='clean'><li>Use %N=(V<sub>sample</sub>−V<sub>blank</sub>)×N<sub>HCl</sub>×14.007/W×100 to calculate a sample’s <strong>%N and protein %</strong></li><li>Explain what the distillation recovery standard (ammonium sulfate) and the digestion efficiency standard (an amino acid) each check</li><li>Follow the <strong>safety</strong> rules for conc. sulfuric acid and NaOH, and complete the 4-hour division of work and station rotation</li></ul></div><p class="subtitle" style="margin-top:10px">Theory review: the full principles of protein qualitative/quantitative methods are not repeated in this lesson. See the full content in <a href="https://tai-shengyeh.github.io/food-analysis-decks/ch18_protein_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 Full-principles deck (Nielsen Ch18) →</a>.</p></div></section><section class="slide" data-slide="6" data-section="Focus"><div class="slide-inner"><div class="kicker">Principle: three stages</div><h2 class="slide-title">Digestion → Distillation → Titration</h2><div class="svgwrap" style="margin-top:2px">
+<svg viewBox="0 0 640 260">
+ <text x="320" y="20" text-anchor="middle" class="lblb" style="font-size:14px">Three stages of the Kjeldahl method</text>
+ <rect x="14" y="42" width="190" height="120" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="109" y="66" text-anchor="middle" class="lblb" style="font-size:13px">① Digestion</text>
+ <text x="109" y="86" text-anchor="middle" class="lbl" style="font-size:11px">Conc. H₂SO₄ + K₂SO₄ (raises boiling point) + CuSO₄ (catalyst)</text>
+ <text x="109" y="102" text-anchor="middle" class="lbl" style="font-size:11px">Heat to ~420°C until clear</text>
+ <text x="109" y="120" text-anchor="middle" class="lbl" style="font-size:11px">Organic N → (NH₄)₂SO₄</text>
+ <text x="109" y="144" text-anchor="middle" class="lbl" style="font-size:10px" fill="#d9822b">Releases white SO₂/SO₃ fumes</text>
+ <path d="M208 100 h24" stroke="#48597a" stroke-width="2" marker-end="url(#ar5)"/>
+ <rect x="236" y="42" width="190" height="120" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="331" y="66" text-anchor="middle" class="lblb" style="font-size:13px">② Distillation</text>
+ <text x="331" y="86" text-anchor="middle" class="lbl" style="font-size:11px">Add excess 40% NaOH</text>
+ <text x="331" y="102" text-anchor="middle" class="lbl" style="font-size:11px">Steam distillation releases NH₃</text>
+ <text x="331" y="120" text-anchor="middle" class="lbl" style="font-size:11px">Collected in 4% boric acid</text>
+ <text x="331" y="144" text-anchor="middle" class="lbl" style="font-size:10px" fill="#1f6feb">Bromocresol green–methyl red mixed indicator</text>
+ <path d="M430 100 h24" stroke="#48597a" stroke-width="2" marker-end="url(#ar5)"/>
+ <rect x="458" y="42" width="168" height="120" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="542" y="66" text-anchor="middle" class="lblb" style="font-size:13px">③ Titration</text>
+ <text x="542" y="86" text-anchor="middle" class="lbl" style="font-size:11px">Titrate with standardized HCl</text>
+ <text x="542" y="102" text-anchor="middle" class="lbl" style="font-size:11px">Titrate to the indicator’s color change (end point)</text>
+ <text x="542" y="120" text-anchor="middle" class="lbl" style="font-size:11px">Convert V(HCl) to N</text>
+ <text x="542" y="144" text-anchor="middle" class="lbl" style="font-size:10px" fill="#1f9d6b">Boric acid itself does not need standardizing</text>
+ <text x="320" y="200" text-anchor="middle" class="lbl" style="font-size:12px">What is measured is “total nitrogen”: protein nitrogen + non-protein nitrogen (NPN) are both counted</text>
+ <text x="320" y="222" text-anchor="middle" class="lbl" style="font-size:12px">Protein % = %N × conversion factor (general 6.25 / wheat 5.7 / dairy 6.38)</text>
+ <defs><marker id="ar5" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
+</svg></div><div class="note" style="margin-top:8px"><strong>Key point:</strong> <strong>Boric acid itself does not need to be standardized</strong>. It only “traps” NH₃; the quantification is done by the <strong>standardized</strong> HCl used afterward.<br><strong>Two roles of the catalyst tablet:</strong> K₂SO₄ raises the boiling point of sulfuric acid (so digestion can reach about 420°C); CuSO₄ is the catalyst that speeds up oxidative breakdown of organic matter. <a href="https://tai-shengyeh.github.io/food-analysis-decks/ch18_protein_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 Full-principles deck (Nielsen Ch18) →</a></div></div></section><section class="slide" data-slide="7" data-section="Focus"><div class="slide-inner"><div class="kicker">Apparatus diagram</div><h2 class="slide-title">Digestion block and <span class='hi'>steam distillation unit</span></h2><div class="svgwrap" style="margin-top:2px">
+<svg viewBox="0 0 900 380" style="max-height:52vh;width:100%">
+ <defs>
+  <marker id="kar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker>
+  <marker id="kag" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#1f9d6b"/></marker>
+  <marker id="kab" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#1f6feb"/></marker>
+ </defs>
+ <!-- ============ LEFT: digestion block ============ -->
+ <text x="200" y="22" text-anchor="middle" class="lblb" style="font-size:15px">① Digestion: block + fume extraction</text>
+ <!-- exhaust manifold + scrubber -->
+ <rect x="96" y="92" width="232" height="16" rx="4" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.6"/>
+ <path d="M328 100 H350 V64" fill="none" stroke="#1f6feb" stroke-width="6" stroke-linecap="round"/>
+ <rect x="318" y="30" width="64" height="34" rx="6" fill="#f6f9fd" stroke="#1f6feb" stroke-width="1.6"/>
+ <text x="350" y="46" text-anchor="middle" class="lbl" style="font-size:10px">Scrubber/suction</text>
+ <text x="350" y="59" text-anchor="middle" class="lbl" style="font-size:10px">(neutralizes SO₂/SO₃)</text>
+ <!-- four of the eight straight digestion tubes -->
+ <g stroke="#48597a" stroke-width="1.8">
+  <path d="M108 108 V288 a11 11 0 0 0 22 0 V108" fill="#ffffff"/>
+  <path d="M164 108 V288 a11 11 0 0 0 22 0 V108" fill="#ffffff"/>
+  <path d="M220 108 V288 a11 11 0 0 0 22 0 V108" fill="#ffffff"/>
+  <path d="M276 108 V288 a11 11 0 0 0 22 0 V108" fill="#ffffff"/>
+ </g>
+ <g fill="#9fd8c8" opacity=".9">
+  <path d="M109 236 V288 a10 10 0 0 0 20 0 V236 Z"/><path d="M165 236 V288 a10 10 0 0 0 20 0 V236 Z"/>
+  <path d="M221 236 V288 a10 10 0 0 0 20 0 V236 Z"/><path d="M277 236 V288 a10 10 0 0 0 20 0 V236 Z"/>
+ </g>
+ <!-- heating block (lower part of tubes sits inside) -->
+ <rect x="92" y="252" width="244" height="56" rx="6" fill="#fbeede" stroke="#d9822b" stroke-width="2" opacity=".96"/>
+ <text x="214" y="284" text-anchor="middle" class="lblb" style="font-size:13px;fill:#d9822b">Heating block ~420 °C</text>
+ <text x="214" y="300" text-anchor="middle" class="lbl" style="font-size:10px">8 positions: 5 blind samples + blank + recovery + flour</text>
+ <path d="M72 170 H104" stroke="#48597a" stroke-width="1.2" marker-end="url(#kar)"/>
+ <text x="68" y="166" text-anchor="end" class="lbl" style="font-size:11px">Digestion tube</text>
+ <text x="68" y="181" text-anchor="end" class="lbl" style="font-size:10px">(long, straight)</text>
+ <path d="M72 242 H104" stroke="#48597a" stroke-width="1.2" marker-end="url(#kar)"/>
+ <text x="68" y="232" text-anchor="end" class="lbl" style="font-size:10px">Digest</text>
+ <text x="68" y="246" text-anchor="end" class="lbl" style="font-size:10px">When clear</text>
+ <text x="68" y="260" text-anchor="end" class="lbl" style="font-size:10px">Pale blue-green</text>
+ <text x="214" y="332" text-anchor="middle" class="lbl" style="font-size:11px">Conc. H₂SO₄ + catalyst tablet (K₂SO₄/CuSO₄)</text>
+ <text x="214" y="349" text-anchor="middle" class="lbl" style="font-size:11px">Organic N → (NH₄)₂SO₄</text>
+
+ <!-- ============ RIGHT: steam distillation unit ============ -->
+ <text x="650" y="18" text-anchor="middle" class="lblb" style="font-size:15px">② Steam distillation: NH₃ collected in boric acid</text>
+ <!-- steam generator -->
+ <rect x="424" y="196" width="72" height="104" rx="10" fill="#f6f9fd" stroke="#48597a" stroke-width="1.8"/>
+ <rect x="428" y="232" width="64" height="64" rx="7" fill="#e7f0fe"/>
+ <polyline points="432,290 442,282 452,290 462,282 472,290 482,282 488,288" fill="none" stroke="#d9822b" stroke-width="2"/>
+ <text x="460" y="216" text-anchor="middle" class="lbl" style="font-size:10px">Steam generator</text>
+ <!-- steam line into digestion tube -->
+ <path d="M496 212 H520 V278 H548" fill="none" stroke="#d9822b" stroke-width="3" stroke-dasharray="6 3" marker-end="url(#kar)"/>
+ <text x="522" y="192" class="lbl" style="font-size:10px;fill:#d9822b">Steam</text>
+ <!-- digestion tube on the distillation unit -->
+ <path d="M552 150 V288 a12 12 0 0 0 24 0 V150" fill="#ffffff" stroke="#48597a" stroke-width="1.8"/>
+ <path d="M553 236 V288 a11 11 0 0 0 22 0 V236 Z" fill="#9fd8c8"/>
+ <text x="564" y="330" text-anchor="middle" class="lbl" style="font-size:10px">Move digestion tube to distillation unit</text>
+ <!-- NaOH reservoir -->
+ <path d="M470 52 h40 v10 l8 8 v46 h-56 v-46 l8 -8 Z" fill="#fbeede" stroke="#d9822b" stroke-width="1.6"/>
+ <text x="490" y="96" text-anchor="middle" class="lbl" style="font-size:10px">40% NaOH</text>
+ <path d="M518 96 H540 Q560 96 560 150" fill="none" stroke="#d9822b" stroke-width="2" marker-end="url(#kar)"/>
+ <text x="490" y="132" text-anchor="middle" class="lbl" style="font-size:10px">Added in excess</text>
+ <!-- splash head + vapour path to condenser -->
+ <path d="M570 150 V60 Q570 44 586 44 H686 Q700 44 700 56" fill="none" stroke="#1f9d6b" stroke-width="3" marker-end="url(#kag)"/>
+ <circle cx="570" cy="112" r="10" fill="#ffffff" stroke="#48597a" stroke-width="1.6"/>
+ <text x="592" y="120" class="lbl" style="font-size:10px">Splash head</text>
+ <text x="630" y="38" text-anchor="middle" class="lbl" style="font-size:10px;fill:#1f9d6b">NH₃ + steam</text>
+ <!-- vertical condenser -->
+ <rect x="686" y="66" width="28" height="164" rx="8" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.8"/>
+ <rect x="696" y="60" width="8" height="190" fill="#ffffff" stroke="#48597a" stroke-width="1.4"/>
+ <path d="M740 214 H714" stroke="#1f6feb" stroke-width="2" marker-end="url(#kab)"/>
+ <path d="M714 84 H740" stroke="#1f6feb" stroke-width="2" marker-end="url(#kab)"/>
+ <text x="744" y="218" class="lbl" style="font-size:10px;fill:#1f6feb">Cooling water in</text>
+ <text x="744" y="88" class="lbl" style="font-size:10px;fill:#1f6feb">Cooling water out</text>
+ <text x="744" y="150" class="lbl" style="font-size:11px">Condenser</text>
+ <!-- delivery tube into receiving flask, tip under the boric acid -->
+ <path d="M700 250 V318" stroke="#48597a" stroke-width="3"/>
+ <path d="M672 282 h56 v8 l22 44 a6 6 0 0 1 -5 9 h-90 a6 6 0 0 1 -5 -9 l22 -44 Z" fill="#ffffff" stroke="#48597a" stroke-width="1.8"/>
+ <path d="M660 312 H740 L752 334 a6 6 0 0 1 -5 9 h-90 a6 6 0 0 1 -5 -9 Z" fill="#b8e5c9"/>
+ <path d="M700 250 V326" stroke="#48597a" stroke-width="3"/>
+ <text x="776" y="306" class="lbl" style="font-size:10px">Receiving flask: 4% boric acid</text>
+ <text x="776" y="320" class="lbl" style="font-size:10px">+ mixed indicator</text>
+ <text x="776" y="334" class="lbl" style="font-size:10px">(outlet below the liquid surface)</text>
+ <text x="650" y="366" text-anchor="middle" class="lbl" style="font-size:11px">NH₄⁺ + OH⁻ → NH₃↑; NH₃ + H₃BO₃ → NH₄⁺ + H₂BO₃⁻; then titrate H₂BO₃⁻ with standard HCl</text>
+</svg></div><div class="note" style="margin-top:6px">During distillation, keep the receiving flask’s outlet <strong>below the boric acid surface</strong> so NH₃ does not escape. When distillation ends, lower the flask so the outlet leaves the liquid before turning off the steam, to prevent suck-back. Schematic only; the actual appearance varies by brand.</div></div></section><section class="slide" data-slide="8" data-section="Focus"><div class="slide-inner"><div class="kicker">Protein = %N × conversion factor</div><h2 class="slide-title">The Kjeldahl method measures “total nitrogen”, not “protein”</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Conversion factor</th><th>Applies to</th><th>Reason (brief)</th></tr></thead><tbody><tr><td class="c">6.25</td><td>General foods (default)</td><td>Assumes protein averages 16% nitrogen (1/0.16 = 6.25)</td></tr><tr><td class="c">5.7</td><td>Wheat / cereals</td><td>Cereal gluten proteins have a higher nitrogen fraction, so a smaller factor is needed</td></tr><tr><td class="c">6.38</td><td>Dairy</td><td>Milk proteins such as casein have a lower nitrogen fraction, so a larger factor is needed</td></tr></tbody></table><div class="note" style="margin-top:12px"><strong>The Kjeldahl method (like the Dumas combustion method) measures “total nitrogen”</strong>, which includes protein nitrogen and also <strong>non-protein nitrogen (NPN)</strong>, such as melamine, urea, free amino acids and nucleic acids. The conversion factor is an approximation that “assumes all nitrogen comes from protein”. Once a sample contains a nitrogen-rich non-protein substance, the calculated “protein %” is <strong>inflated</strong>.<br><strong>Dumas combustion method:</strong> the sample is fully combusted at high temperature and the nitrogen gas is measured directly. It is faster than Kjeldahl (minutes vs hours), but it still measures total nitrogen and is still fooled by NPN. We do not run it in this lab; it is included for comparison only.<br><span style="font-size:.85em;color:var(--ink-3)">Note: the 5.7 factor for wheat/cereals is the long-standing traditional factor from Jones/Codex.</span></div></div></section><section class="slide" data-slide="9" data-section="Focus" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">Mini-game ①</span><span class="gt">Does this nitrogen count as “protein nitrogen”?</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">Sort 8 nitrogen sources into “Protein nitrogen” or “Non-protein nitrogen (NPN)”.</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">Check answer</button><button class="btn ghost" id="g1reset">Reset</button></div></div></div></section><section class="slide" data-slide="10" data-section="Focus"><div class="slide-inner"><div class="kicker">Reset</div><h2 class="slide-title">The melamine scandal: why was the Kjeldahl method fooled?</h2><div class="grid2" style="margin-top:10px"><div><p class="lead">Melamine (C₃H₆N₆): MW = 126.12, nitrogen content as high as <b>66.63%</b></p><ul class="clean" style="margin-top:10px"><li>In normal milk, almost all nitrogen comes from <strong>milk proteins such as casein</strong> (protein nitrogen)</li><li>Unscrupulous producers deliberately added melamine to milk powder that had been diluted with water. It is <strong>not protein</strong>, but its nitrogen content is very high</li><li>The Kjeldahl method only sees “total nitrogen” and cannot tell whether a nitrogen came from protein or from melamine</li></ul></div><div class="note"><strong>Let’s calculate:</strong> for every <b>1 g melamine / 100 g sample</b> (i.e., 1% w/w):<br>Contribution to %N = 1% × 66.63% ≈ <b>0.6663 percentage points</b><br>Using the dairy factor 6.38, the inflated apparent protein ≈ 0.6663 × 6.38 ≈ <b>4.25 percentage points</b><br><br>In other words, adding only about 1% melamine raises the Kjeldahl “protein %” by <b>~4.3</b> percentage points. That is enough to disguise watered-down milk powder with too little protein as “passing”.</div></div></div></section><section class="slide" data-slide="11" data-section="Focus" data-chart="melamine"><div class="slide-inner"><div class="kicker">Incident reconstruction · illustrative data</div><h2 class="slide-title">Adulteration curve: melamine fraction vs <span class='hi'>apparent protein</span></h2><div class="chartbox" style="height:46vh"><canvas id="chart_melamine"></canvas></div><div class="cap">Illustrative data: based on whole milk powder (true protein about 26.0%). The x-axis is the melamine fraction (% w/w, evenly spaced) and the y-axis is the apparent protein % measured by Kjeldahl. The curve rises as a straight line because the Kjeldahl method cannot tell where the nitrogen comes from.</div></div></section><section class="slide" data-slide="12" data-section="Focus"><div class="slide-inner"><div class="kicker">Calibration and quality control (QC)</div><h2 class="slide-title">4 things to confirm before and during the run</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">⚗️</div><div class="ct">HCl standardization</div><div class="cb">The HCl used for titration must first be standardized against a primary standard such as Na₂CO₃ or THAM (Tris) to get its exact concentration before it can be used to calculate %N</div></div><div class="card a"><div class="ic">🧪</div><div class="ct">Reagent blank</div><div class="cb">An empty tube goes through the whole digestion + distillation + titration procedure (no sample) to subtract the trace nitrogen introduced by the reagents themselves</div></div></div><div class="grid2" style="margin-top:14px"><div class="card g"><div class="ic">♻️</div><div class="ct">Distillation recovery standard</div><div class="cb">Run <strong>ammonium sulfate</strong> of known nitrogen content (theoretical %N = 21.20%) through distillation + titration to check whether NH₃ is fully distilled out and trapped</div></div><div class="card b"><div class="ic">🔬</div><div class="ct">Digestion efficiency standard</div><div class="cb">Run an organic nitrogen standard such as <strong>lysine hydrochloride or tryptophan</strong> through the whole procedure to check whether digestion fully converts the organic nitrogen</div></div></div></div></section><section class="slide" data-slide="13" data-section="Focus"><div class="slide-inner"><div class="kicker">Calibration and quality control (QC)</div><h2 class="slide-title">Let’s calculate: recovery and end-point reading</h2><div class="note" style="margin-top:12px"><strong>Let’s calculate (distillation recovery):</strong> Weigh 0.0500 g ammonium sulfate (theoretical %N = 21.20%); distillation + titration gives %N = 21.01%, so recovery = 21.01/21.20×100 ≈ <b>99.1%</b> (AOAC 991.20: ammonium sulfate ≥99%, lysine hydrochloride ≥98%).<br><strong>Let’s calculate (digestion efficiency):</strong> Lysine hydrochloride has a theoretical %N of 15.34%; the full procedure gives %N = 15.10%, so recovery ≈ <b>98.4%</b>. This semester the TA demonstrates one tube of these two standards so the whole class understands the principle; they are not in the 8-tube group schedule below.</div><div class="note" style="margin-top:12px"><strong>Consistent indicator end point:</strong> The whole class uses the same batch of 4% boric acid + mixed indicator and must read the same end point: after absorbing NH₃ the receiving solution is <b>green</b>; titrate with HCl until the green fades to <b>grayish purple / pale pink</b>, which is the end point. This avoids differences in interpretation between groups.</div></div></section><section class="slide" data-slide="14" data-section="Focus"><div class="slide-inner"><div class="kicker">Samples and station rotation</div><h2 class="slide-title">One Kjeldahl setup (digestion block + distillation unit) holds only 8 tubes</h2><div class="grid2" style="margin-top:10px"><div><ul class="clean"><li><strong>Blind sample:</strong> the semester-wide whole milk powder, tested for moisture in W2 and ash in W3 and now for protein. <strong>Each of the 5 groups digests 1 tube</strong> of the blind sample, giving the class <b>n=5</b> (one value per group), pooled into mean ± SD</li><li><strong>The other 3 tubes are for QC and comparison:</strong> 1 reagent blank, 1 distillation recovery standard (ammonium sulfate), and 1 <strong>bread flour</strong>. One group runs the bread flour tube and the whole class shares the result</li><li>The result for <strong>cake flour (low-gluten)</strong> is <strong>provided by the TA</strong> (data from a previous run) for comparison with bread flour. The digestion block schedule is already full at 8 tubes, so it cannot be added on the spot</li><li>The digestion efficiency standard (lysine hydrochloride) is still demonstrated by the TA as one tube and does not take up class schedule space</li><li>Total: <b>5 (blind sample) + 1 (blank) + 1 (recovery standard) + 1 (bread flour) = 8 tubes</b></li></ul></div><div class="note"><strong>⚠️ TA, please confirm before class:</strong> the digestion block and distillation unit can truly <strong>hold 8 tubes</strong> at once. This schedule uses the full 8-tube capacity with no spare room; if the equipment holds fewer than 8 tubes, adjust the groups or digest in batches beforehand.<br><br><strong>Only one setup:</strong> all tubes are <strong>digested together</strong>, then distilled + titrated in turn, about 8–10 minutes per tube.</div></div></div></section><section class="slide" data-slide="15" data-section="Focus"><div class="slide-inner"><div class="kicker">4-hour lab schedule</div><h2 class="slide-title">Digest together, then rotate through distillation and titration</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Time</th><th>Contents</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:20</td><td>Briefing + safety: hazards of conc. sulfuric acid and NaOH, and emergency response</td></tr>
+    <tr><td class="c">0:20–0:50</td><td>Each group weighs its sample and adds the catalyst tablet and conc. sulfuric acid (in a fume hood)</td></tr>
+    <tr><td class="c">0:50–2:20</td><td>Digestion (all 8 tubes heated together until clear). Use the wait for the conversion factor discussion, the melamine case, and calculation practice</td></tr>
+    <tr><td class="c">2:20–2:35</td><td>Cool to room temperature, then dilute by adding a small amount of water slowly down the tube wall</td></tr>
+    <tr><td class="c">2:35–4:00</td><td>Distillation + titration rotation: 8 tubes × about 8–10 min each ≈ 65–80 min, so the 85-minute slot is enough. Each group records the titration volume for its own sample</td></tr>
+    </tbody></table>
+    <div class="note" style="margin-top:12px"><strong>If time runs short:</strong> Digested tubes can be capped and stored, and the TA can finish the distillation and titration after class or next week; this does not affect the chemical reactions already completed in digestion.</div></div></section><section class="slide" data-slide="16" data-section="Focus"><div class="slide-inner"><div class="kicker">Safety rules</div><h2 class="slide-title">Conc. sulfuric acid · NaOH · Waste</h2><div class="grid2" style="margin-top:14px"><div class="card a"><div class="ic">🥽</div><div class="ct">Hot conc. sulfuric acid + white fumes</div><div class="cb">Digestion produces irritating SO₂/SO₃ gases. Work <strong>in the fume hood/scrubber throughout</strong>; wear a face shield and acid-resistant gloves</div></div><div class="card b"><div class="ic">💧</div><div class="ct">Dilute by adding water slowly down the tube wall</div><div class="cb">Only after cooling to room temperature, add water <strong>slowly and in small amounts</strong> down the tube wall. Never add a lot of water quickly, or the violent heat release will splatter and burn</div></div><div class="card a"><div class="ic">⚠️</div><div class="ct">40% NaOH is strongly corrosive</div><div class="cb">The NaOH added for distillation is highly concentrated. If it gets on skin or eyes, rinse immediately with plenty of water and tell the TA</div></div><div class="card g"><div class="ic">♻️</div><div class="ct">Collect copper catalyst waste separately</div><div class="cb">Copper-containing waste after digestion is heavy-metal waste and must be <strong>collected separately</strong> as required; do not mix it with general waste</div></div></div></div></section><section class="slide" data-slide="17" data-section="Focus" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">Mini-game ②</span><span class="gt">Order the Kjeldahl procedure</span><span class="score" id="g4score">— / 7</span></div><div class="game-q">Use ▲▼ to arrange the 7 steps of the Kjeldahl method in the correct order.</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">Check order</button><button class="btn ghost" id="g4reset">Shuffle</button></div></div></div></section><section class="slide" data-slide="18" data-section="Focus" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">Mini-game ③</span><span class="gt">Match each food to its conversion factor</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">Sort 6 foods into the “conversion factor” each should use.</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">Check answer</button><button class="btn ghost" id="g3reset">Reset</button></div></div></div></section><section class="slide" data-slide="19" data-section="Focus"><div class="slide-inner"><div class="kicker">Calculation: from titration volume to % protein</div><h2 class="slide-title">Subtract the blank first, then multiply by the conversion factor</h2><div class="eq" style="margin-top:10px">%N = <span class="frac"><b>(V<sub>sample</sub> − V<sub>blank</sub>) × N<sub>HCl</sub> × 14.007</b><span>W<sub>sample</sub>(g) × 1000</span></span> × 100 Protein % = %N × conversion factor</div><p class="subtitle">Each 1 mmol HCl ↔ 1 mmol NH₃ ↔ 1 mmol N = 14.007 mg N; ÷(W×1000) converts mg to g, and ×100 gives %.</p><div class="grid2" style="margin-top:14px"><div class="note"><strong>Whole milk powder (blind sample) example:</strong> 0.5000 g weighed, blank 0.30 mL, titrant used 14.86 mL, 0.1000 N HCl<br>%N = (14.86−0.30)×0.1000×14.007/(0.5000×1000)×100 ≈ <b>4.079%</b><br>Protein % = 4.079 × 6.38 ≈ <b>26.02%</b> (dairy factor)</div><div class="note"><strong>Bread flour example (the tube shared by the whole class):</strong> 1.0000 g weighed, blank 0.30 mL, titrant used 16.58 mL, 0.1000 N HCl<br>%N ≈ <b>2.280%</b>; protein % (factor 5.7) = 2.280×5.7 ≈ <b>13.00%</b></div></div><div class="note" style="margin-top:10px"><strong>⚠️ The cost of the wrong factor:</strong> For the same bread flour %N, using the general factor 6.25 instead of the wheat factor 5.7 changes the protein % from 13.00% to 14.25%, which is <strong>about 9.6% too high</strong> (relative error). This is a <strong>systematic error</strong>. Like melamine, it comes from the assumption that “nitrogen equals protein”, only for a different reason (wrong factor vs adulterated sample).<br>Cake flour (low-gluten) has %N ≈ 1.404% and protein % (factor 5.7) ≈ <b>8.00%</b>. <strong>This time it is provided by the TA (data from a previous run)</strong>; our class did not run this tube. It is lower than bread flour, which is why “bread flour makes bread and cake flour makes cake” in baking.</div></div></section><section class="slide" data-slide="20" data-section="Focus" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">Mini-game ④</span><span class="gt">Calculation challenge: protein % of whole milk powder</span><span class="score" id="g6score">Unanswered</span></div><div class="game-q"><b>0.5020 g</b> of whole milk powder is weighed, the reagent blank is <b>0.32 mL</b>, and the titration uses <b>15.02 mL</b> of <b>0.1000 N</b> HCl. Find the protein % (dairy conversion factor 6.38). Formula: %N=(V_sample−V_blank)×N×14.007/(W×1000)×100, protein %=%N×6.38.</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span><button class="btn" id="g6check">Check answer</button><button class="btn ghost" id="g6hint">Hint</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="21" data-section="Focus" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">Mini-game ⑤</span><span class="gt">Kjeldahl principles: live quiz</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="22" data-section="Focus" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">Mini-game ⑥</span><span class="gt">Decision challenge: QC and interpretation</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="23" data-section="Act"><div class="slide-inner"><div class="kicker">Homework</div><h2 class="slide-title">Colab NB05</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📥</div><div class="ct">Load titration records</div><div class="cb">Load your group’s and the class’s raw titration volumes and sample weights</div></div><div class="card a"><div class="ic">🧮</div><div class="ct">Calculate %N and protein %</div><div class="cb">For both flours and the blind sample: calculate %N and protein %, and pool the class blind-sample results into mean ± SD (n=5)</div></div><div class="card g"><div class="ic">♻️</div><div class="ct">Recovery and factor discussion</div><div class="cb">Discuss the meaning of distillation recovery and the digestion efficiency standard, and the effect of choosing the wrong conversion factor or encountering NPN</div></div></div><p class="subtitle" style="margin-top:12px">Colab NB05: <a class="no-nav" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB05_kjeldahl_protein.ipynb" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open NB05 in Colab ↗</a><span style="white-space:nowrap"> · Beginner (no coding): <a class="no-nav" href="../../excel/EX05_kjeldahl_protein.xlsx" download style="color:var(--accent);font-weight:800">Excel practice workbook EX05 ⬇</a></span>.<br>Your report should include: %N and protein % for both flours and the blind sample (blind sample as the class mean ± SD), distillation recovery, and a discussion of the “conversion factor” and “non-protein nitrogen”.<br><strong>Keep your blind-sample result:</strong> this week’s whole milk powder protein % will be reviewed in <strong>W8</strong> together with moisture (W2) and ash (W3).</p></div></section><section class="slide" data-slide="24" data-section="Act"><div class="slide-inner"><div class="kicker">Self-check</div><h2 class="slide-title">By the end of today you should be able to…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>State the three stages of the Kjeldahl method (digestion, distillation, titration) and the purpose of each</li><li data-k><span class="bx">✓</span>Explain why the Kjeldahl method measures “total nitrogen” rather than “protein”, and distinguish protein nitrogen from non-protein nitrogen (NPN)</li><li data-k><span class="bx">✓</span>Recalculate the melamine scandal: how much apparent protein a given mix-in fraction adds</li><li data-k><span class="bx">✓</span>Choose the right conversion factor (general 6.25 / wheat and cereals 5.7 / dairy 6.38) and state the consequences of a wrong choice</li><li data-k><span class="bx">✓</span>Use the %N formula to calculate a sample’s %N and protein % from the titration volume</li><li data-k><span class="bx">✓</span>Explain what the distillation recovery standard (ammonium sulfate) and the digestion efficiency standard (an amino acid) each check</li><li data-k><span class="bx">✓</span>Complete one group run of the Kjeldahl method (digestion + distillation + titration)</li><li data-k><span class="bx">✓</span>Follow the safety rules for conc. sulfuric acid and NaOH</li></ul><p class="subtitle" style="margin-top:12px">Tap to tick — make sure you really can do it.</p></div></section><script>window.CFG={"charts": {"melamine": {"type": "line", "yTitle": "Apparent protein % (x-axis: melamine fraction, % w/w)", "zero": false, "labels": ["0", "0.2", "0.4", "0.6", "0.8", "1"], "datasets": [{"label": "Whole milk powder baseline 26.0% + melamine (illustrative data)", "data": [26.02, 26.87, 27.72, 28.57, 29.42, 30.27], "color": "#d94f4f"}]}}, "bucket": {"g1": {"cats": ["Protein nitrogen", "Non-protein nitrogen (NPN)"], "items": [{"t": "Casein (main milk protein)", "c": "Protein nitrogen"}, {"t": "Gluten (wheat protein)", "c": "Protein nitrogen"}, {"t": "Muscle protein (actin/myosin)", "c": "Protein nitrogen"}, {"t": "Enzyme (a protein by nature)", "c": "Protein nitrogen"}, {"t": "Melamine", "c": "Non-protein nitrogen (NPN)"}, {"t": "Urea", "c": "Non-protein nitrogen (NPN)"}, {"t": "Free amino acids", "c": "Non-protein nitrogen (NPN)"}, {"t": "Nucleic acids (DNA/RNA)", "c": "Non-protein nitrogen (NPN)"}], "ok": "🎉 All correct! Nitrogen that makes up the protein’s peptide chains → protein nitrogen; nitrogen-containing small molecules that do not form protein structure → non-protein nitrogen.", "tip": "Hint: Ask whether this molecule is protein formed by amino acids “strung together”. If not, it is usually NPN."}, "g3": {"cats": ["General 6.25", "Wheat/cereals 5.7", "Dairy 6.38"], "items": [{"t": "Bread flour", "c": "Wheat/cereals 5.7"}, {"t": "Cake flour (low-gluten)", "c": "Wheat/cereals 5.7"}, {"t": "Whole milk powder", "c": "Dairy 6.38"}, {"t": "Fresh milk", "c": "Dairy 6.38"}, {"t": "Beef / meat", "c": "General 6.25"}, {"t": "Eggs", "c": "General 6.25"}], "ok": "🎉 Correct! Wheat/cereal products use 5.7; dairy uses 6.38; all other foods use the general 6.25.", "tip": "Hint: First ask “is it made from wheat/cereal?” → 5.7; then “is it dairy?” → 6.38; if neither → use the general 6.25."}}, "mcq": {"g2": [{"q": "What is the main purpose of adding the K₂SO₄/CuSO₄ catalyst tablet in digestion?", "o": ["To change the solution’s color for easier observation", "K₂SO₄ raises the boiling point of sulfuric acid; CuSO₄ speeds up oxidative breakdown of organic matter", "To lower the reaction temperature", "To neutralize excess acid"], "a": 1, "e": "K₂SO₄ lets the sulfuric acid reach a higher temperature (~420°C), while CuSO₄ acts as a catalyst to speed up oxidation of organic nitrogen to ammonium salt. Together they shorten digestion time."}, {"q": "Why doesn’t the boric acid used to trap NH₃ need to be standardized beforehand?", "o": ["Boric acid is too cheap to be worth standardizing", "Boric acid only traps NH₃; the quantification relies on the standardized HCl titration afterward", "Boric acid concentration is inherently constant", "Because NH₃ does not react with boric acid"], "a": 1, "e": "Boric acid only needs to be in excess to trap NH₃. The trapped ammonia is finally titrated with HCl of known concentration, so the exact concentration of the boric acid does not affect the result."}, {"q": "What does the reagent blank mainly correct for?", "o": ["Error in weighing the sample", "Trace nitrogen introduced by the reagents themselves (sulfuric acid, catalyst, water, etc.), to avoid overestimating the sample’s %N", "Error in the burette graduations", "Volume error caused by room temperature changes"], "a": 1, "e": "The blank tube has no sample and goes through the whole procedure. Its titration volume represents the background nitrogen of the reagents and must be subtracted from the sample reading."}, {"q": "In the melamine scandal, what is the root cause of the inflated protein % from the Kjeldahl method?", "o": ["Melamine makes the burette malfunction", "The Kjeldahl method only measures “total nitrogen” and cannot tell whether the nitrogen came from protein or melamine", "Melamine is itself a protein", "The HCl concentration used for titration was wrong"], "a": 1, "e": "The Kjeldahl method (and the Dumas method) assumes “all nitrogen comes from protein”. Melamine is high in nitrogen but is not protein, so it is miscounted as protein once mixed in, inflating the result."}, {"q": "Which conversion factor should be used for wheat flour and whole milk powder, respectively?", "o": ["Use 6.25 for both", "Wheat uses 5.7, dairy uses 6.38", "Wheat uses 6.38, dairy uses 5.7", "Either one is fine"], "a": 1, "e": "By convention, wheat/cereals use 5.7 and dairy uses 6.38. Both factors are set from the actual average nitrogen fraction of each type of protein, and are not the generic 6.25."}], "g5": [{"q": "After digestion, the solution in the tube is still dark brown and opaque, not the expected clear state. What does this mean?", "o": ["Digestion is complete; go ahead to distillation", "Digestion is incomplete and the organic matter is not fully oxidized; keep heating until clear", "The sample contains no nitrogen at all", "Dilute with water immediately"], "a": 1, "e": "The digestion end point is when the solution turns clear (usually pale blue-green, from CuSO₄). If it is not clear, oxidation is incomplete and the nitrogen measured afterward will be underestimated."}, {"q": "The distillation recovery standard (ammonium sulfate) gives a clearly low recovery (e.g., 85%). Where is the problem most likely?", "o": ["The catalyst formulation in digestion", "The distillation stage: not enough NaOH, insufficient steam, or a leak at the condenser end, so NH₃ is not fully trapped", "Calibration of the balance used to weigh the sample", "Burette graduation error"], "a": 1, "e": "Ammonium sulfate is already an inorganic ammonium salt and needs no digestion, so testing it directly checks whether the distillation step (releasing and trapping NH₃) is complete. Low recovery usually points to the distillation conditions or the apparatus seals."}, {"q": "To quickly screen many samples for total nitrogen without needing to distinguish the nitrogen source, which method could you consider instead?", "o": ["Dumas combustion method", "Measure moisture content only", "Measure ash content only", "Judge by eye"], "a": 0, "e": "The Dumas combustion method fully combusts the sample and measures nitrogen gas directly. It is much faster than Kjeldahl, but it still measures total nitrogen and is still fooled by NPN, and it is a common alternative/complementary method."}, {"q": "For the same batch of bread flour, %N is unchanged. If the general factor 6.25 is wrongly used instead of the wheat factor 5.7, the result will…", "o": ["Underestimate the protein %", "Overestimate the protein %, as a systematic conversion error", "Not be affected at all", "Make %N itself change too"], "a": 1, "e": "6.25 is larger than 5.7, so multiplying the same %N by the larger factor systematically gives a higher protein % (about 9.6% relative error). This has nothing to do with instrument accuracy; it is an error caused by choosing the wrong factor."}, {"q": "When reporting the protein % of whole milk powder (the class’s shared blind sample), what is the more rigorous approach?", "o": ["Use only your own group’s single value", "Pool the replicate results of all 5 groups and report the mean ± standard deviation (SD)", "Pick the group whose number looks best", "Take the maximum value as the representative"], "a": 1, "e": "With 5 groups each measuring the same blind sample once, you have n=5 replicates. The pooled mean ± SD reflects the true variability and reliability better than any single group’s number."}]}, "sort": {"g4": {"steps": ["Accurately weigh a fixed amount of sample into the digestion tube", "Add the catalyst tablet and conc. sulfuric acid", "Heat to digest until the solution is clear (organic N becomes ammonium salt)", "Cool to room temperature, then slowly add a small amount of water down the tube wall", "Add 40% NaOH and distill to release NH₃, collected in boric acid", "Titrate with standardized HCl to the indicator end point", "Calculate with the %N formula, then multiply by the conversion factor to get protein %"], "shuffle": [4, 1, 6, 0, 5, 2, 3], "ok": "🎉 Correct order! Weigh sample → add catalyst and sulfuric acid → digest until clear → cool and dilute → distill into boric acid → titrate with HCl → calculate.", "tip": "Hint: Always digest until clear before distilling; titration comes after the distillate is collected; calculation is the last step."}}, "calc": {"g6": {"answer": 26.17, "tol": 0.3, "ok": "🎉 Correct! %N = (15.02−0.32)×0.1000×14.007/(0.5020×1000)×100 ≈ 4.102%; protein % = 4.102×6.38 ≈ <b>26.17%<\/b>.", "bad": "Try again: first calculate %N=(V_sample−V_blank)×N×14.007/(W×1000)×100, then multiply by the dairy factor 6.38 to get protein %.", "hint": "Hint: (15.02−0.32)=14.70 mL; 14.70×0.1000×14.007≈20.5903; divide by (0.5020×1000) and ×100 ≈ 4.102%; ×6.38 ≈ 26.17%."}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
+}
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 All correct!','good');
+    else fb(g+'fb','Correct '+ok+'/'+N+'. '+(cfg.tip||'Adjust and try again.'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ Correct!':'❌ Answer: '+d.o[d.a]+'. ')+'<br>'+d.e+(done?'<br><b>Done! Total score: '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 Perfect order!','good');
+    else fb(g+'fb','Got '+ok+'/'+N+' positions right.'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','Enter a number first.','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ Correct'); fb(g+'fb',cfg.ok||('🎉 Correct! The answer is '+cfg.answer),'good');
+    } else { setScore(g+'score','Try again'); fb(g+'fb',cfg.bad||'Recalculate and try again.','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'Hint: substitute step by step using the formula.','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en] body,html[lang=en] .lbl,html[lang=en] .lblb{font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif}html[lang=en] body{font-size:16.5px}html[lang=en] .slide-title{font-size:clamp(1.3rem,2.7vw,2.05rem)}html[lang=en] .cover h1{font-size:clamp(2rem,5vw,3.8rem)}html[lang=en] .hook{font-size:clamp(1.5rem,3.6vw,2.6rem)}html[lang=en] p,html[lang=en] li{line-height:1.55}html[lang=en] .kicker{letter-spacing:.1em}html[lang=en] p,html[lang=en] li{font-size:clamp(.86rem,1.3vw,1.04rem)}html[lang=en] .card .cb{font-size:clamp(.8rem,1.15vw,.94rem)}html[lang=en] .card .ct{font-size:clamp(.95rem,1.4vw,1.1rem)}html[lang=en] .chip{font-size:.84rem;padding:7px 12px}html[lang=en] .opt{font-size:clamp(.82rem,1.2vw,.98rem);padding:11px 15px}html[lang=en] .game-q{font-size:clamp(.9rem,1.35vw,1.08rem)}html[lang=en] .bucket .bh{font-size:.88rem}html[lang=en] table.cmp{font-size:clamp(.78rem,1.1vw,.95rem)}html[lang=en] table.cmp th,html[lang=en] table.cmp td{padding:9px 11px}html[lang=en] .note{font-size:clamp(.85rem,1.2vw,.98rem)}html[lang=en] .subtitle{font-size:clamp(.9rem,1.4vw,1.1rem)}html[lang=en] .checklist li{font-size:.86rem}html[lang=en] .cap{font-size:.82rem}html[lang=en] .pill{font-size:.78rem;padding:4px 10px}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><script>(function(){
+function fit(){var sl=document.querySelector('.slide.active');if(!sl)return;
+ sl.querySelectorAll('svg').forEach(function(svg){var sb=svg.getBoundingClientRect();if(!sb.width)return;
+  var rects=[].slice.call(svg.querySelectorAll('rect')).map(function(r){return r.getBoundingClientRect()});
+  [].slice.call(svg.querySelectorAll('text')).forEach(function(t){
+   if(t.dataset.fit)return; var s=(t.textContent||'').trim(); if(!s)return;
+   var b=t.getBoundingClientRect(); if(!b.width)return;
+   var cx=(b.left+b.right)/2, cy=(b.top+b.bottom)/2;
+   var host=rects.filter(function(r){return r.width>20&&r.width<480&&cx>r.left&&cx<r.right&&cy>r.top&&cy<r.bottom})
+             .sort(function(p,q){return p.width-q.width})[0];
+   var maxW=host?host.width-10:Math.min(b.right,sb.right-2)-Math.max(b.left,sb.left+2);
+   if(host&&(b.right>sb.right||b.left<sb.left))maxW=Math.min(maxW,sb.width-4);
+   if(b.width<=maxW+1)return;
+   t.dataset.fit='1';
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13;
+   var k=b.width/((t.getBBox().width)||b.width); /* client px per user unit */
+   var hasTspan=t.querySelector('tspan'); var canWrap=!hasTspan&&s.indexOf(' ')>0&&host&&host.height>=fs*2.3;
+   if(canWrap){var others=[].slice.call(svg.querySelectorAll('text')).filter(function(o){if(o===t)return false;var ob=o.getBoundingClientRect();var ox=(ob.left+ob.right)/2,oy=(ob.top+ob.bottom)/2;return ox>host.left&&ox<host.right&&oy>host.top&&oy<host.bottom;});
+     if(others.length){var free=host.bottom-b.bottom;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.top>=b.top)free=Math.min(free,ob.top-b.bottom)});var freeTop=b.top-host.top;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.bottom<=b.bottom)freeTop=Math.min(freeTop,b.top-ob.bottom)});if(free+freeTop<fs*1.15)canWrap=false;}}
+   if(canWrap){var w=s.split(' '),best=null;
+     for(var i=1;i<w.length;i++){var a=w.slice(0,i).join(' '),c=w.slice(i).join(' ');var d=Math.abs(a.length-c.length);if(!best||d<best.d)best={d:d,a:a,c:c};}
+     var x=t.getAttribute('x')||'0',y=parseFloat(t.getAttribute('y')||'0');
+     t.textContent='';var t1=document.createElementNS('http://www.w3.org/2000/svg','tspan'),t2=t1.cloneNode();
+     t1.setAttribute('x',x);t1.setAttribute('y',(y-fs*0.55/k).toFixed(2));t1.textContent=best.a;
+     t2.setAttribute('x',x);t2.setAttribute('y',(y+fs*0.6/k).toFixed(2));t2.textContent=best.c;
+     t.appendChild(t1);t.appendChild(t2);b=t.getBoundingClientRect();if(b.width<=maxW+1)return;}
+   var sc=Math.max(0.7,maxW/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   b=t.getBoundingClientRect(); if(b.width>maxW+1&&!t.querySelector('tspan')){t.setAttribute('textLength',(maxW/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+  /* second pass: free labels that collide with a neighbour on the same row */
+  var ts=[].slice.call(svg.querySelectorAll('text')).filter(function(x){return (x.textContent||'').trim()});
+  for(var i=0;i<ts.length;i++)for(var j=i+1;j<ts.length;j++){var A=ts[i].getBoundingClientRect(),B=ts[j].getBoundingClientRect();
+   var ox=Math.min(A.right,B.right)-Math.max(A.left,B.left),oy=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
+   if(ox<=2||oy<=Math.min(A.height,B.height)*0.5)continue;
+   var t=A.width>=B.width?ts[i]:ts[j],b=A.width>=B.width?A:B; if(t.querySelector('tspan')||t.dataset.fit2)continue; t.dataset.fit2='1';
+   var want=b.width-ox-6; if(want<b.width*0.55)continue;
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13,k=b.width/((t.getBBox().width)||b.width);
+   var sc=Math.max(0.75,want/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   var nb=t.getBoundingClientRect(); if(nb.width>want+1){t.setAttribute('textLength',(want/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  }});}
+ if(typeof show==='function'){var _s=show;show=function(i){_s(i);fit();};}
+ fit();setTimeout(fit,400);window.addEventListener('load',function(){setTimeout(fit,200)});
+})();</script><!--/i18n-toggle--></body></html>

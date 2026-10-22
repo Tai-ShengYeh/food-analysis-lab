@@ -1,0 +1,519 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W4 Manual vs Automatic Titration · Food Analysis Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto}table.cmp th,table.cmp td{white-space:normal;padding:9px 10px;min-width:56px}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">Food Analysis Lab · W4</div><div id="pageInfo"></div><div id="hint">← → / Space to change slide · F fullscreen · Tap either side to turn pages</div><section class="slide" data-slide="1" data-section="Hook" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Food Analysis Lab · W4</div><h1>Manual Titration <span style='color:var(--accent-2)'>vs</span> PASCO Automatic Titration</h1><div class="en">Manual vs Automated Titration — Titratable Acidity</div><div class="meta">Food Analysis Lab · 4-hour session<br>Titratable acidity · KHP standardization · titration-curve inflection point · method-comparison QC</div><div style="margin-top:24px"><span class="pill">0.1 N NaOH</span><span class="pill">KHP standardization</span><span class="pill">Phenolphthalein pH 8.2</span><span class="pill">PASCO real-time curve</span><span class="pill">Bland–Altman</span></div></div></div></section><section class="slide" data-slide="2" data-section="Hook"><div class="slide-inner"><div class="kicker">Pre-lab video (2 min) (Chinese narration)</div><h2 class="slide-title">Watch before class: two drinks both at pH 3.5 — is their acidity the same?</h2><div style="max-width:min(900px,100%,calc(52vh*16/9));margin:14px auto 0">
+  <div style="position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000">
+  <iframe src="https://www.youtube-nocookie.com/embed/QDBgHWn-DMQ" title="W4 Titration: The Journey of One Drop of NaOH, Pre-lab Video" style="position:absolute;inset:0;width:100%;height:100%;border:0" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+  <p class="subtitle" style="margin-top:10px;text-align:center">Contents: titration curve (buffer region → half-equivalence point pH = pKa → equivalence point) → phenolphthalein vs dpH/dV to find the end point → why red wine needs potentiometric titration → from mL to % acid, and standardizing NaOH with KHP first. <a href="https://youtu.be/QDBgHWn-DMQ" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Open on YouTube →</a></p></div></div></section><section class="slide" data-slide="3" data-section="Hook"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">Before you start, watch two factory videos</div>
+  <div class="hook">How do beverage factories watch pH <span class="hi">and</span> titratable acidity at the same time?</div>
+  <p class="subtitle" style="max-width:900px;margin:18px auto 0">
+    <a href="https://www.youtube.com/watch?v=ZCKqbXU0uYs&t=596s" target="_blank" style="color:var(--accent);font-weight:800"> Yakult production-line QC (09:56–11:25, titratable acidity + Brix)</a> <a href="https://www.youtube.com/watch?v=zFI6oTQLxhM&t=758s" target="_blank" style="color:var(--accent);font-weight:800"> Yogurt production-line QC (12:38–13:39, pH 4.4, titratable acidity 0.9%)</a>
+  </p>
+  <div class="note" style="max-width:900px;margin:18px auto 0;text-align:left">
+    <strong>A note on the video:</strong> The Yakult video calls its 130–150 °C treatment “pasteurization,” but that temperature is actually <strong>sterilization</strong> — watch first, and we’ll come back to this wording difference in class.
+  </div>
+  <p class="subtitle" style="max-width:900px;margin:14px auto 0"><strong>Today’s question:</strong> Why does factory QC measure pH <span class="hi">and</span> titratable acidity together? Wouldn’t one of them do?</p>
+</div></div></section><section class="slide" data-slide="4" data-section="Hook"><div class="slide-inner"><div class="kicker">Today’s learning goals</div><h2 class="slide-title">After W4 you should be able to…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>Carry out one <strong>manual titration</strong> (phenolphthalein end point) and one <strong>PASCO potentiometric titration</strong>, and compare the two</li><li>Use <strong>KHP</strong> to standardize the true concentration of 0.1 N NaOH, and understand why standardization is needed</li><li>Read a titration curve’s <strong>buffer region, half-equivalence point and equivalence point</strong>, and see how the first derivative finds the <strong>inflection point</strong></li></ul><ul class='clean'><li>Use N×V×equivalent weight/(W×1000)×100 to calculate <strong>% acid</strong>, and know which predominant acid to report it as</li><li>Use a <strong>Bland–Altman</strong> plot to check whether the manual and PASCO methods agree (not just the correlation coefficient r)</li><li>Follow NaOH/phenolphthalein <strong>safety</strong> rules and complete the 4-hour division of labor and station rotation</li></ul></div><p class="subtitle" style="margin-top:10px">Theory review: the definitions and principles of pH and titratable acidity are not repeated in this lesson — the full content is in the <a href="https://tai-shengyeh.github.io/food-analysis-decks/ch22_acidity_soil/index.html" target="_blank" style="color:var(--accent);font-weight:800">Ch22 pH and Titratable Acidity</a> materials.</p></div></section><section class="slide" data-slide="5" data-section="Focus"><div class="slide-inner"><div class="kicker">Terms first</div><h2 class="slide-title">Titratable acidity, standardization, N, equivalent weight</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">🍋</div><div class="ct">Titratable acidity (TA)</div><div class="cb">The <b>total</b> amount of acid neutralized by a standard base titrated to a specified end point (phenolphthalein pH 8.2), expressed as % of the predominant acid</div></div><div class="card a"><div class="ic">⚖️</div><div class="ct">Standardization and primary standards</div><div class="cb">NaOH absorbs moisture and CO₂, so its concentration is uncertain; use a pure, stable, non-hygroscopic primary standard (KHP) whose moles are known from its weight to back-calculate its true concentration</div></div><div class="card g"><div class="ic">🔢</div><div class="ct">N (normality)</div><div class="cb">Moles of H⁺ that can be given/accepted per liter; NaOH and HCl exchange one H⁺ each, so N = M</div></div><div class="card b"><div class="ic">🧮</div><div class="ct">Equivalent weight</div><div class="cb">Molecular weight ÷ number of neutralizable H⁺: acetic acid 60.05, lactic acid 90.08, tartaric acid 150.09÷2=75.04, citric acid 192.12÷3=64.04</div></div></div></div></section><section class="slide" data-slide="6" data-section="Focus"><div class="slide-inner"><div class="kicker">How to read a titration curve</div><h2 class="slide-title">Six terms</h2><ul class="clean" style="margin-top:12px"><li>Equivalence point: moles of NaOH added = moles of acid in the sample (theoretically exact neutralization)</li><li>End point: the point at which completion is “seen” experimentally (phenolphthalein color change or dpH/dV peak); a good method makes the end point ≈ the equivalence point</li><li>pKa: the pH at which a weak acid is half dissociated; acetic acid 4.76</li><li>Half-equivalence point: when NaOH added is half the equivalence amount, [HA]=[A⁻], and from Henderson–Hasselbalch pH=pKa+log([A⁻]/[HA]) we get pH=pKa</li><li>Buffer region: the plateau near the half-equivalence point where pH barely changes as base is added</li><li>Inflection point = steepest part of the curve = equivalence point; the first derivative dpH/dV = how much pH rises per 1 mL added (slope), and its peak is the inflection point</li></ul><div class="note" style="margin-top:12px"><a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-decks/ch22_acidity_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Ch22 pH and Titratable Acidity ↗</a></div></div></section><section class="slide" data-slide="7" data-section="Focus" data-chart="titration"><div class="slide-inner"><div class="kicker">Simulated curve · review</div><h2 class="slide-title">Titration-curve principle: <span class='hi'>0.075 M acetic acid</span> / 0.1 M NaOH</h2><div class="chartbox" style="height:42vh"><canvas id="chart_titration"></canvas></div><div class="cap">Simulated curve (computed with a Python charge-balance equation, not hand-drawn). Half-equivalence point pH=pKa≈4.76; equivalence point V≈18.75 mL, pH≈8.69; phenolphthalein pH 8.2 falls at V≈18.744 mL, only 0.006 mL from the equivalence point (less than one drop). See the Ch22 materials link for the full theory.</div></div></section><section class="slide" data-slide="8" data-section="Focus" data-chart="titration_deriv"><div class="slide-inner"><div class="kicker">Simulated curve · derivative</div><h2 class="slide-title">Finding the end point in potentiometric titration: <span class='hi'>dpH/dV</span> peak = inflection point</h2><div class="chartbox" style="height:42vh"><canvas id="chart_titration_deriv"></canvas></div><div class="cap">Same simulated data, finite differences at 0.25 mL spacing; the peak is at V≈18.62 mL with dpH/dV≈8.3, nearly coinciding with the theoretical equivalence point of 18.75 mL. On a real instrument the peak is lower and broader, but its position is still usable — the benefit is that it doesn’t depend on color, so even dark-colored samples get an objective end point.</div></div></section><section class="slide" data-slide="9" data-section="Focus"><div class="slide-inner"><div class="kicker">Calibration before titrating</div><h2 class="slide-title">NaOH standardization · CO₂-free water · pH sensor calibration</h2><div class="svgwrap" style="margin-top:2px">
+<svg viewBox="0 0 600 200" style="max-height:190px;width:auto">
+ <text x="300" y="20" text-anchor="middle" class="lblb" font-size="15">Before use: two/three-point pH sensor calibration (done in the software)</text>
+ <g>
+  <rect x="40" y="60" width="70" height="90" rx="8" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+  <text x="75" y="110" text-anchor="middle" class="lblb" fill="#d9822b">pH 4</text>
+  <rect x="150" y="60" width="70" height="90" rx="8" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+  <text x="185" y="110" text-anchor="middle" class="lblb" fill="#1f6feb">pH 7</text>
+  <rect x="260" y="60" width="70" height="90" rx="8" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+  <text x="295" y="110" text-anchor="middle" class="lblb" fill="#1f9d6b">pH 9</text>
+ </g>
+ <text x="185" y="172" text-anchor="middle" class="lbl">Standard buffers covering the sample pH range</text>
+ <path d="M360 100 h40" stroke="#48597a" stroke-width="2" marker-end="url(#arrow)"/>
+ <rect x="410" y="55" width="150" height="90" rx="10" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+ <text x="485" y="85" text-anchor="middle" class="lblb" font-size="13">Calibration complete ✓</text>
+ <text x="485" y="108" text-anchor="middle" class="lbl">Temperature compensation is done at the same time</text>
+ <text x="485" y="128" text-anchor="middle" class="lbl">Only then can titration begin</text>
+ <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#48597a"/></marker></defs>
+</svg></div><div class="note" style="margin-top:10px"><strong>Standardize NaOH with KHP:</strong> potassium hydrogen phthalate (KHP, MW 204.22, must be dried first) is pure and non-hygroscopic, an ideal primary standard acid — NaOH is strongly hygroscopic and also absorbs CO₂ from air, so every batch must be re-standardized.<br><strong>Reagents and probe:</strong> prepare NaOH with <strong>CO₂-free water</strong> (boiled or sparged with nitrogen); calibrate the pH sensor in the PASCO software with <strong>pH 4/7/9</strong> buffers (two/three points) and apply temperature compensation (electrode slope varies with temperature; the software corrects it automatically) before titrating (Nielsen §22.3.2.2: choose two buffers about 3 pH units apart that bracket the sample; the titration end point is about pH 8.2–8.7, between 7 and 9).<br><strong>If the system measures volume by drop count:</strong> first calibrate “mL per drop” by the gravimetric method (same approach as W1); drop count itself is not a volume unit.<br><strong>Dilute samples with CO₂-free water too:</strong> dissolved CO₂ forms carbonic acid, consuming extra NaOH and making the measured % acid too high.</div></div></section><section class="slide" data-slide="10" data-section="Focus"><div class="slide-inner"><div class="kicker">Titration procedure</div><h2 class="slide-title">Manual Titration <span class='hi'>vs</span> PASCO Automatic Titration</h2><p class="subtitle">Manual: add 0.1 N NaOH from a burette; a persistent pink with phenolphthalein is the end point; each sample in triplicate. PASCO: motorized burette + pH probe wirelessly send the pH–volume curve to a laptop in real time and project it, so the whole class watches the curve form together.</p><div class="svgwrap" style="margin-top:8px">
+<svg viewBox="0 0 620 290" style="max-height:250px;width:auto">
+ <text x="310" y="20" text-anchor="middle" class="lblb" font-size="15">PASCO teaching-type automatic titration: wireless real-time transmission, whole class watches the curve together</text>
+ <!-- stand + clamp -->
+ <rect x="22" y="270" width="150" height="8" rx="2" fill="#cfd8e6"/>
+ <rect x="36" y="36" width="5" height="236" fill="#9aa8bf"/>
+ <rect x="38" y="62" width="56" height="5" rx="2" fill="#9aa8bf"/>
+ <!-- burette: straight graduated tube, 0 at top, stopcock, tip into beaker -->
+ <rect x="92" y="40" width="12" height="140" fill="#ffffff" stroke="#1f6feb" stroke-width="2"/>
+ <rect x="93" y="70" width="10" height="109" fill="#e7f0fe"/>
+ <g stroke="#1f6feb" stroke-width="1">
+  <line x1="92" y1="50" x2="100" y2="50"/><line x1="92" y1="76" x2="100" y2="76"/><line x1="92" y1="102" x2="100" y2="102"/>
+  <line x1="92" y1="128" x2="100" y2="128"/><line x1="92" y1="154" x2="100" y2="154"/>
+  <line x1="92" y1="63" x2="96" y2="63"/><line x1="92" y1="89" x2="96" y2="89"/><line x1="92" y1="115" x2="96" y2="115"/><line x1="92" y1="141" x2="96" y2="141"/><line x1="92" y1="167" x2="96" y2="167"/>
+ </g>
+ <text x="110" y="54" class="lbl" font-size="10" fill="#1f6feb">0</text>
+ <rect x="84" y="182" width="28" height="4" rx="2" fill="#1f6feb"/>
+ <path d="M95 180 H101 L99.5 204 H96.5 Z" fill="#ffffff" stroke="#1f6feb" stroke-width="1.5"/>
+ <text x="118" y="112" class="lbl" font-size="11">Burette</text>
+ <text x="118" y="127" class="lbl" font-size="11">NaOH</text>
+ <!-- beaker on stir plate -->
+ <path d="M58 200 V258 a6 6 0 0 0 6 6 H138 a6 6 0 0 0 6 -6 V200" fill="none" stroke="#48597a" stroke-width="2"/>
+ <path d="M59 222 H143 V258 a5 5 0 0 1 -5 5 H64 a5 5 0 0 1 -5 -5 Z" fill="#f7d6e6"/>
+ <rect x="86" y="256" width="24" height="5" rx="2.5" fill="#48597a"/>
+ <rect x="48" y="266" width="106" height="6" rx="2" fill="#48597a"/>
+ <text x="100" y="288" text-anchor="middle" class="lbl" font-size="11">Sample + phenolphthalein, magnetic stirring</text>
+ <!-- pH probe + wireless sensor -->
+ <rect x="122" y="160" width="8" height="90" rx="3" fill="#fbeede" stroke="#d9822b" stroke-width="1.8"/>
+ <circle cx="126" cy="248" r="4" fill="#d9822b"/>
+ <path d="M126 160 C 126 140, 150 140, 168 146" fill="none" stroke="#48597a" stroke-width="1.5"/>
+ <rect x="168" y="136" width="66" height="24" rx="5" fill="#fbeede" stroke="#d9822b" stroke-width="1.8"/>
+ <text x="201" y="152" text-anchor="middle" class="lbl" font-size="10">pH sensor</text>
+ <!-- wireless -->
+ <g stroke="#1f9d6b" stroke-width="2" fill="none">
+  <path d="M244 140 q8 8 0 16"/><path d="M252 134 q14 14 0 28"/><path d="M260 128 q20 20 0 40"/>
+ </g>
+ <text x="290" y="152" class="lbl" fill="#1f9d6b">Wireless transmission</text>
+ <!-- laptop with S-shaped weak-acid titration curve -->
+ <rect x="390" y="60" width="200" height="120" rx="8" fill="#f6f9fd" stroke="#1f6feb" stroke-width="2"/>
+ <path d="M372 180 H608 L596 192 H384 Z" fill="#cfd8e6" stroke="#48597a" stroke-width="1.5"/>
+ <line x1="405" y1="160" x2="572" y2="160" stroke="#48597a" stroke-width="1.2"/>
+ <line x1="405" y1="160" x2="405" y2="84" stroke="#48597a" stroke-width="1.2"/>
+ <text x="400" y="80" class="lbl" font-size="10" text-anchor="middle">pH</text>
+ <text x="545" y="173" class="lbl" font-size="10" text-anchor="middle">V NaOH (mL)</text>
+ <line x1="405" y1="122.8" x2="572" y2="122.8" stroke="#d9822b" stroke-width="1" stroke-dasharray="3 3"/>
+ <polyline points="405,154.6 410.5,149.8 421.5,146.8 438,145 454.5,143.2 471,141.4 487.5,139 498.5,136 504,133 506.8,128.8 508.1,119.8 509.5,109.6 512.3,106 520.5,102.4 537,100 570,98.2"
+   fill="none" stroke="#1f6feb" stroke-width="2.4"/>
+ <circle cx="508" cy="122.8" r="4" fill="#e0569b"/>
+ <text x="516" y="150" class="lbl" font-size="10" fill="#e0569b">Phenolphthalein pH 8.2</text>
+ <text x="440" y="136" class="lbl" font-size="10" fill="#48597a">Buffer region</text>
+ <text x="490" y="210" text-anchor="middle" class="lbl">Laptop + projector: real-time pH–volume curve (schematic)</text>
+ <text x="440" y="236" text-anchor="middle" class="lbl">Teaching point: the whole class watches the curve form together and compares the phenolphthalein end point with the inflection point</text>
+</svg></div></div></section><section class="slide" data-slide="11" data-section="Focus"><div class="slide-inner"><div class="kicker">4-hour lab schedule</div><h2 class="slide-title">Division of labor and PASCO station rotation</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Time</th><th>Contents</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:40</td><td>Lecture + demo: titration-curve terms, how to read the PASCO real-time curve, phenolphthalein end point vs inflection point</td></tr>
+    <tr><td class="c">0:40–1:15</td><td>Each group standardizes its own 0.1 N NaOH with KHP (manual titration; calculate the actual N)</td></tr>
+    <tr><td class="c">1:15–3:45</td><td>Manual titration of 4 samples (vinegar / orange juice / yogurt / red wine) × 3 replicates; PASCO station in rotation</td></tr>
+    <tr><td class="c">3:45–4:00</td><td>Export PASCO CSV; groups enter data into the summary table</td></tr>
+    </tbody></table>
+    <div class="note" style="margin-top:12px"><strong>PASCO station rotation (5 groups, about 30 min each):</strong> when it is a group’s turn, it runs one automatic titration of vinegar and one of red wine (about 8–12 min each plus rinsing and sample change), and the rest of the time that group does manual titration in parallel. <strong>TAs, please do a timed trial run before class</strong> — if a single titration is clearly faster than expected, let the group do one more replicate.</div></div></section><section class="slide" data-slide="12" data-section="Focus"><div class="slide-inner"><div class="kicker">In-class activity</div><h2 class="slide-title">Predict–Observe–Explain</h2><div class="grid2" style="margin-top:10px"><div><ul class="clean"><li><strong>Before</strong> PASCO starts titrating, each group first <strong>sketches its predicted</strong> pH–volume curve on paper</li><li><strong>Add a few drops of phenolphthalein</strong> to the PASCO beaker too — during titration, at the moment you see it turn pink, <strong>mark</strong> that point on the projected real-time curve</li><li>Compare this mark with the <strong>inflection point</strong> calculated by the software: do they coincide?</li></ul></div><div class="note"><strong>Vinegar (a clean weak acid):</strong> near the equivalence point the curve rises almost vertically, and the phenolphthalein color change <strong>almost coincides</strong> with the inflection point (theoretically less than one drop apart).<br><br><strong>Red wine (many organic acids + color):</strong> the curve climbs more gently, the equivalence point is less distinct, and the red color <strong>masks</strong> the phenolphthalein pink, so the visual end point is <strong>harder to judge and seen later</strong> than the inflection point — which is exactly why dark samples need potentiometric titration.</div></div></div></section><section class="slide" data-slide="13" data-section="Focus"><div class="slide-inner"><div class="kicker">interactive lab</div><h2 class="slide-title">The journey of one drop of NaOH: <span class='hi'>Predict → Observe → Explain</span></h2><div class="no-nav" id="w04lab-wrap" style="max-width:min(1100px,100%);margin:10px auto 0">
+  <style>#w04lab-wrap{max-width:min(1400px,100%)!important}#w04lab-box{position:relative;width:100%;aspect-ratio:1100/506;max-height:min(66vh,760px);border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}@media(max-width:700px){#w04lab-box{aspect-ratio:auto;height:min(78vh,620px);max-height:none}}</style>
+  <div id="w04lab-box">
+    <iframe id="w04lab" src="titration_lab.html?embed=1" title="W4 Titration interactive lab: six acts, Predict → Observe → Explain (Chinese)" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+  </div>
+  <p class="subtitle" style="margin-top:8px;text-align:center">Six acts: predict the curve → equivalence point → phenolphthalein end point → slope peak → red wine → % acid; you must answer correctly to unlock the next act. <a class="no-nav" href="titration_lab.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open lab in new tab ↗</a></p>
+  <script>(function(){var sec=document.currentScript.closest('.slide');var f=document.getElementById('w04lab');
+    new MutationObserver(function(){if(!sec.classList.contains('active')&&f.contentWindow)f.contentWindow.postMessage({type:'w04-lab-pause'},location.origin==='null'?'*':location.origin);}).observe(sec,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('message',function(e){if(e.source===f.contentWindow&&e.data&&e.data.type==='w04-lab-goto'&&typeof show==='function'){show(cur+1);}});})();</script>
+</div></div></section><section class="slide" data-slide="14" data-section="Focus" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">Mini-game ①</span><span class="gt">Manual titration vs PASCO automatic titration: where are the advantages?</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">Sort 8 statements into “Manual titration” or “PASCO automatic titration.”</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">Check answer</button><button class="btn ghost" id="g1reset">Reset</button></div></div></div></section><section class="slide" data-slide="15" data-section="Focus"><div class="slide-inner"><div class="kicker">Safety rules</div><h2 class="slide-title">NaOH · phenolphthalein · glassware</h2><div class="grid2" style="margin-top:14px"><div class="card a"><div class="ic">🥽</div><div class="ct">NaOH is corrosive</div><div class="cb">Wear <strong>goggles and gloves</strong> throughout; if it gets on skin or eyes, rinse immediately with plenty of water and tell the TA</div></div><div class="card b"><div class="ic">🧴</div><div class="ct">Rinse the burette after use</div><div class="cb">NaOH corrodes/seizes the stopcock; right after titrating, rinse the burette and stopcock thoroughly with water</div></div><div class="card g"><div class="ic">🔥</div><div class="ct">Phenolphthalein is dissolved in ethanol</div><div class="cb">It is a <strong>flammable liquid</strong>; keep away from flames, use small amounts, and cap the bottle tightly right after use</div></div><div class="card a"><div class="ic">⚠️</div><div class="ct">PASCO motorized burette</div><div class="cb">Do not touch the dispensing tip or probe connector while it is running; disassemble and clean only after finishing</div></div></div></div></section><section class="slide" data-slide="16" data-section="Focus" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">Mini-game ②</span><span class="gt">Order the manual titration steps</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">Use ▲▼ to arrange the 6 steps of manual titratable-acidity titration in the correct order.</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">Check order</button><button class="btn ghost" id="g4reset">Shuffle</button></div></div></div></section><section class="slide" data-slide="17" data-section="Focus"><div class="slide-inner"><div class="kicker">Calculation: from titrant volume to % acid</div><h2 class="slide-title">Standardize NaOH first, then calculate the sample’s % acid</h2><div class="grid2" style="margin-top:10px"><div class="eq">N<sub>NaOH</sub> = <span class="frac"><b>m(KHP)</b><span>204.22 × V(L)</span></span></div><div class="eq" style="margin-top:14px">% acid = <span class="frac"><b>N × V × equivalent weight</b><span>W × 1000</span></span> × 100</div></div><div class="grid2" style="margin-top:14px"><div class="note"><strong>KHP standardization example:</strong> weigh 0.5105 g KHP, titration uses 24.85 mL NaOH<br>N = 0.5105 / (204.22 × 0.02485) = <b>0.1006 M</b></div><div class="note"><strong>Vinegar example:</strong> take 2.00 mL vinegar, uses 15.1 mL of 0.1006 M NaOH (acetic acid equivalent weight 60.05)<br>% acid = 0.1006×15.1×60.05/(2.00×1000)×100 ≈ <b>4.56%</b></div></div><p class="subtitle" style="margin-top:10px"><strong>Yogurt is sampled by weight</strong> (not volume) — same formula, but W is the sample “grams” and the result is reported as % (w/w) rather than % (w/v); lactic acid equivalent weight 90.08. Citrus/red wine → citric acid (64.04)/tartaric acid (75.04); always expressed as the <strong>predominant acid</strong>.</p><p class="subtitle"><strong>Keep your vinegar results:</strong> this week’s manual-titration vinegar acidity data will be used as reference values when we build the NIR–PLS model in W13.</p></div></section><section class="slide" data-slide="18" data-section="Focus" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">Mini-game ③</span><span class="gt">Calculation challenge: standardizing NaOH concentration</span><span class="score" id="g6score">Unanswered</span></div><div class="game-q">Weigh <b>0.5105 g</b> of dried KHP (MW=204.22); titrating to the end point uses <b>24.85 mL</b> NaOH. Find the <b>N (M)</b> of the NaOH. Formula: N = m/(204.22×V<sub>L</sub>).</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">M</span><button class="btn" id="g6check">Check answer</button><button class="btn ghost" id="g6hint">Hint</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="19" data-section="Focus"><div class="slide-inner"><div class="kicker">Method-comparison QC</div><h2 class="slide-title">Manual vs PASCO: <span class='hi'>Bland–Altman</span> plot</h2><div class="grid2-1" style="margin-top:8px"><div class="svgwrap"><svg viewBox="0 0 620 320"><text x="310" y="18" text-anchor="middle" class="lblb" font-size="14">Bland–Altman: difference (PASCO − manual) vs mean (illustrative data, n=12)</text><line x1="64.0" y1="176.0" x2="590.0" y2="176.0" stroke="#8493ad" stroke-width="1.4"/><line x1="64.0" y1="28.0" x2="64.0" y2="274.0" stroke="#8493ad" stroke-width="1.4"/><line x1="64.0" y1="176.0" x2="590.0" y2="176.0" stroke="#dde5f0" stroke-width="1"/><line x1="64.0" y1="149.7" x2="590.0" y2="149.7" stroke="#1f6feb" stroke-width="2.2"/><text x="472.0" y="141.7" class="lblb" fill="#1f6feb" font-size="12">Bias = 0.036%</text><line x1="64.0" y1="50.3" x2="590.0" y2="50.3" stroke="#d9822b" stroke-width="1.6" stroke-dasharray="6,5"/><text x="68.0" y="45.3" class="lbl" fill="#d9822b" font-size="11">+1.96SD=0.170</text><line x1="64.0" y1="249.1" x2="590.0" y2="249.1" stroke="#d9822b" stroke-width="1.6" stroke-dasharray="6,5"/><text x="68.0" y="244.1" class="lbl" fill="#d9822b" font-size="11">-1.96SD=-0.099</text><circle cx="545.0" cy="160.3" r="6" fill="#1f6feb" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="556.4" cy="129.3" r="6" fill="#1f6feb" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="541.6" cy="154.0" r="6" fill="#1f6feb" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="153.8" cy="148.3" r="6" fill="#d9822b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="150.2" cy="144.8" r="6" fill="#d9822b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="161.1" cy="95.3" r="6" fill="#d9822b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="147.3" cy="134.8" r="6" fill="#1f9d6b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="145.1" cy="70.2" r="6" fill="#1f9d6b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="140.2" cy="112.9" r="6" fill="#1f9d6b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="99.7" cy="251.7" r="6" fill="#8b2f4b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="97.6" cy="228.5" r="6" fill="#8b2f4b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="114.5" cy="166.0" r="6" fill="#8b2f4b" fill-opacity=".82" stroke="#fff" stroke-width="1.2"/><circle cx="70.0" cy="38.0" r="5" fill="#1f6feb"/><text x="80.0" y="42.0" class="lbl" font-size="11">White vinegar</text><circle cx="170.0" cy="38.0" r="5" fill="#d9822b"/><text x="180.0" y="42.0" class="lbl" font-size="11">Orange juice</text><circle cx="270.0" cy="38.0" r="5" fill="#1f9d6b"/><text x="280.0" y="42.0" class="lbl" font-size="11">Yogurt</text><circle cx="370.0" cy="38.0" r="5" fill="#8b2f4b"/><text x="380.0" y="42.0" class="lbl" font-size="11">Red wine</text><text x="310" y="312" text-anchor="middle" class="lbl" font-size="12">Mean (average of the two methods, % acid)</text><text x="14" y="160" text-anchor="middle" class="lbl" font-size="12" transform="rotate(-90 14 160)">Difference (%)</text></svg></div><div><ul class="clean"><li>Paired design: for the same sample, measure <strong>once with each</strong> of manual and PASCO, and plot one point per sample: x = mean of the two methods, y = difference between them</li><li>Bias = mean difference = <b>0.036%</b> (illustrative data, PASCO − manual)</li><li>Limits of agreement (LoA) = bias ± 1.96×SD = <b>[-0.099, 0.170]</b>: 95% of between-method differences are expected to fall within it; the two methods are interchangeable only if this width is acceptable in practice (SD=0.068, n=12)</li><li>Paired t-test (tests whether the mean difference is nonzero): t=1.80 (df=11) < critical value 2.20 → no significant systematic bias; but the <strong>red wine</strong> points are clearly more scattered</li></ul></div></div></div></section><section class="slide" data-slide="20" data-section="Focus"><div class="slide-inner"><div class="kicker">Method-comparison QC (2)</div><h2 class="slide-title">High r ≠ the two methods agree</h2><div class="note" style="margin-top:6px"><strong>Why not look only at the correlation coefficient r?</strong> The correlation coefficient r (−1 to 1, how much the two rise and fall together) is 0.999 in this illustrative data set (nearly perfect correlation!), yet the two methods can still be biased, and agreement for red wine is clearly worse — r only looks at “whether the two move together,” not “how big the difference is or how stable it is,” which is exactly why Bland–Altman exists.</div></div></section><section class="slide" data-slide="21" data-section="Focus"><div class="slide-inner"><div class="kicker">Back to the two opening questions</div><h2 class="slide-title">pH <span class='hi'>vs</span> titratable acidity; pasteurization <span class='hi'>vs</span> sterilization</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">🧪</div><div class="ct">Why measure both pH and titratable acidity?</div><div class="cb"><ul class='clean' style='margin:0'><li><strong>pH</strong> = how much <b>free H⁺</b> is in the solution → determines whether microbes can grow and how strong a heat treatment is needed</li><li><strong>Titratable acidity</strong> = the <b>total amount</b> of all acid that can be neutralized by base (including undissociated weak acid) → relates to sourness intensity, fermentation progress, and quality specifications</li><li>The two are <strong>not interchangeable</strong>: proteins, phosphates and organic-acid salts in food <b>buffer</b> pH. Two drinks with the same pH 3.5 can differ several-fold in titratable acidity, and taste different in sourness</li></ul></div></div><div class="card a"><div class="ic">🔥</div><div class="ct">Pasteurization vs sterilization</div><div class="cb"><ul class='clean' style='margin:0'><li><strong>Pasteurization</strong>: about 63 °C for 30 min or 72 °C for 15 s, kills pathogens and most vegetative cells; the product <b>still needs refrigeration</b></li><li><strong>Sterilization</strong>: UHT at about 135–150 °C for a few seconds, or canning at 121 °C under pressure, kills even <b>bacterial spores</b> → commercial sterility, shelf-stable at room temperature. The video’s 130–150 °C falls in this category</li><li><strong>Relation to pH</strong>: low-acid foods (pH &gt; 4.6 and a<sub>w</sub> &gt; 0.85) must use conditions that can destroy botulinum spores; acidic foods can use milder heating — this is one reason factories measure pH</li></ul></div></div></div><p class="cap" style="margin-top:8px">In industry slang, UHT is also often called “ultra-high-temperature pasteurization”; in reports and regulatory documents, please use precise terms.</p></div></section><section class="slide" data-slide="22" data-section="Focus" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">Mini-game ④</span><span class="gt">pH and titratable acidity live quiz</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="23" data-section="Focus" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">Mini-game ⑤</span><span class="gt">Match the sample to its predominant acid</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">Sort 6 samples into the “predominant acid” used to express their results.</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">Check answer</button><button class="btn ghost" id="g3reset">Reset</button></div></div></div></section><section class="slide" data-slide="24" data-section="Focus" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">Mini-game ⑥</span><span class="gt">Decision challenge: choosing a titration method</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="25" data-section="Act"><div class="slide-inner"><div class="kicker">Homework</div><h2 class="slide-title">Colab NB04</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📥</div><div class="ct">Load the PASCO CSV</div><div class="cb">Load your group’s exported raw PASCO pH–volume data</div></div><div class="card a"><div class="ic">📈</div><div class="ct">Find the equivalence point with the derivative</div><div class="cb">Compute the first derivative; the peak position = potentiometric titration end point</div></div><div class="card g"><div class="ic">🆚</div><div class="ct">Compare with manual titration</div><div class="cb">Same sample: manual % acid vs % acid back-calculated from PASCO</div></div><div class="card b"><div class="ic">📊</div><div class="ct">Bland–Altman + paired t-test</div><div class="cb">Plot difference vs mean and test whether the two methods have a systematic bias</div></div></div><p class="subtitle" style="margin-top:12px">Colab NB04: <a class="no-nav" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB04_titration.ipynb" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open NB04 in Colab ↗</a><span style="white-space:nowrap"> · Beginner (no coding): <a class="no-nav" href="../../excel/EX04_titration.xlsx" download style="color:var(--accent);font-weight:800">Excel practice workbook EX04 ⬇</a></span>. Don’t forget: your manual-titration vinegar acidity data will be used for the W13 NIR–PLS model, so record and keep it carefully.</p></div></section><section class="slide" data-slide="26" data-section="Act"><div class="slide-inner"><div class="kicker">Self-check</div><h2 class="slide-title">By the end of today you should be able to…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>Say why factories measure both pH and titratable acidity</li><li data-k><span class="bx">✓</span>Explain the titration curve’s half-equivalence point (pH=pKa), equivalence point, and that the first-derivative peak = inflection point</li><li data-k><span class="bx">✓</span>Complete the KHP standardization of NaOH and calculate the correct N</li><li data-k><span class="bx">✓</span>Say why we calibrate the pH sensor, use CO₂-free water, and calibrate mL per drop</li><li data-k><span class="bx">✓</span>Complete one manual titration and one PASCO automatic titration, and compare the results</li><li data-k><span class="bx">✓</span>Use N×V×equivalent weight/(W×1000)×100 to calculate the sample’s % acid</li><li data-k><span class="bx">✓</span>Explain why Bland–Altman is more reliable than the correlation coefficient r alone when comparing two methods</li><li data-k><span class="bx">✓</span>Follow the safety rules for NaOH/phenolphthalein</li></ul><p class="subtitle" style="margin-top:12px">Tap to tick — make sure you really can do it.</p></div></section><script>window.CFG={"charts": {"titration": {"type": "line", "yTitle": "pH (x-axis: NaOH volume, mL)", "zero": true, "labels": ["0", "0.5", "1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10", "10.5", "11", "11.5", "12", "12.5", "13", "13.5", "14", "14.5", "15", "15.5", "16", "16.5", "17", "17.5", "18", "18.5", "19", "19.5", "20", "20.5", "21", "21.5", "22", "22.5", "23", "23.5", "24", "24.5", "25", "25.5", "26", "26.5", "27", "27.5", "28", "28.5", "29", "29.5", "30"], "datasets": [{"label": "Simulated curve (0.075 M acetic acid 25 mL + 0.1 M NaOH)", "data": [2.95, 3.3, 3.54, 3.71, 3.84, 3.95, 4.04, 4.12, 4.19, 4.26, 4.32, 4.38, 4.43, 4.48, 4.53, 4.58, 4.63, 4.68, 4.72, 4.77, 4.82, 4.86, 4.91, 4.96, 5.01, 5.06, 5.11, 5.17, 5.23, 5.29, 5.36, 5.44, 5.52, 5.62, 5.74, 5.9, 6.14, 6.63, 10.75, 11.23, 11.44, 11.59, 11.69, 11.77, 11.84, 11.9, 11.95, 11.99, 12.03, 12.07, 12.1, 12.13, 12.15, 12.18, 12.2, 12.22, 12.24, 12.26, 12.28, 12.3, 12.31], "color": "#1f6feb"}]}, "titration_deriv": {"type": "line", "yTitle": "dpH/dV (x-axis: NaOH volume, mL)", "zero": true, "labels": ["15.1", "15.4", "15.6", "15.9", "16.1", "16.4", "16.6", "16.9", "17.1", "17.4", "17.6", "17.9", "18.1", "18.4", "18.6", "18.9", "19.1", "19.4", "19.6", "19.9", "20.1", "20.4", "20.6", "20.9", "21.1", "21.4", "21.6", "21.9"], "datasets": [{"label": "First derivative (0.25 mL spacing, simulated)", "data": [0.149, 0.157, 0.167, 0.178, 0.192, 0.21, 0.231, 0.258, 0.293, 0.342, 0.412, 0.524, 0.728, 1.228, 8.273, 8.24, 1.194, 0.695, 0.49, 0.378, 0.307, 0.258, 0.222, 0.195, 0.174, 0.156, 0.142, 0.13], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["Manual titration", "PASCO automatic titration"], "items": [{"t": "Low equipment cost, simple setup", "c": "Manual titration"}, {"t": "No extra power supply or computer needed", "c": "Manual titration"}, {"t": "In this class all groups can work at the same time (PASCO has only one unit and needs rotation)", "c": "Manual titration"}, {"t": "Trains basic titration technique and end-point reading skills", "c": "Manual titration"}, {"t": "Plots the pH–volume curve in real time, visible to the whole class", "c": "PASCO automatic titration"}, {"t": "Uses the inflection point (potentiometric method) to find the end point, unaffected by color", "c": "PASCO automatic titration"}, {"t": "Data sent wirelessly and exportable as CSV, convenient for later analysis", "c": "PASCO automatic titration"}, {"t": "Finds the end point objectively from the dpH/dV peak, without relying on visual color judgment", "c": "PASCO automatic titration"}], "ok": "🎉 All correct! Manual titration has a low barrier and high throughput; PASCO is objective, reproducible, and makes it easy to keep data.", "tip": "Hint: “cheap, many groups at once, practice the basics” → manual; “real-time curve, potentiometric end point, wireless export” → PASCO."}, "g3": {"cats": ["Acetic acid", "Citric acid", "Lactic acid", "Tartaric acid"], "items": [{"t": "White vinegar", "c": "Acetic acid"}, {"t": "White (industrial) vinegar / grain vinegar", "c": "Acetic acid"}, {"t": "Orange juice", "c": "Citric acid"}, {"t": "Lemon", "c": "Citric acid"}, {"t": "Yogurt", "c": "Lactic acid"}, {"t": "Red wine", "c": "Tartaric acid"}], "ok": "🎉 Correct! Vinegar → acetic acid; citrus → citric acid; fermented dairy → lactic acid; grapes/wine → tartaric acid.", "tip": "Hint: fermented vinegars are acetic acid; citrus is citric acid; fermented dairy is lactic acid; grapes/wine are tartaric acid."}}, "mcq": {"g2": [{"q": "At the half-equivalence point of a titration, the pH is approximately equal to?", "o": ["0", "pKa", "7", "14"], "a": 1, "e": "At the half-equivalence point [HA]=[A⁻]; by Henderson–Hasselbalch, pH = pKa (acetic acid pKa≈4.76)."}, {"q": "Why must 0.1 N NaOH be standardized with KHP for every batch?", "o": ["KHP is cheaper", "NaOH is strongly hygroscopic and also absorbs CO₂ from the air, so its concentration is uncertain", "KHP has a nice color that is easy to read", "To speed up the titration"], "a": 1, "e": "NaOH is not a primary standard; its concentration changes as it absorbs moisture/CO₂, so a pure, stable KHP is used to standardize its true concentration."}, {"q": "In this simulated curve, about how far apart (in volume) are the phenolphthalein end point (pH 8.2) and the true equivalence point?", "o": ["More than 5 mL apart", "Less than one drop apart (< 0.01 mL)", "No difference at all", "Cannot be compared"], "a": 1, "e": "The calculation shows only about 0.006 mL apart, far less than one drop — for clean acetic acid, the phenolphthalein end point is almost the equivalence point."}, {"q": "How does potentiometric titration determine the end point?", "o": ["By watching the color change", "By finding the maximum of dpH/dV (first derivative)", "By stopping at a fixed 20 mL", "By measuring how dark the solution is"], "a": 1, "e": "Inflection point = the first-derivative peak; the PASCO software uses this to find the end point objectively, unaffected by color."}, {"q": "Which acid should the titratable acidity of red wine be expressed as?", "o": ["Citric acid", "Malic acid", "Tartaric acid", "Lactic acid"], "a": 2, "e": "The main organic acid in grapes/red wine is tartaric acid, so by convention results are expressed as tartaric acid (equivalent weight 75.04)."}], "g5": [{"q": "Red wine is dark and the phenolphthalein pink is hard to see during titration; what is the best approach?", "o": ["Add more drops of phenolphthalein", "Switch to PASCO potentiometric titration and find the inflection point", "Dilute until completely colorless and then titrate", "Use a more concentrated NaOH"], "a": 1, "e": "For dark samples use potentiometric titration and judge the end point objectively from the curve shape (derivative peak), free from color interference."}, {"q": "The two methods have correlation coefficient r=0.999, but the Bland–Altman LoA is very wide; what does this mean?", "o": ["The two methods agree perfectly and can be used interchangeably", "A high correlation coefficient does not mean good agreement; you still need to check bias and LoA", "A high r always means no bias", "This data set is wrong"], "a": 1, "e": "r only reflects the trend of “rising and falling together”; even if the trends agree, the two methods can still have a systematic bias or scattered differences — exactly the “r=0.999 but red wine is widely scattered” situation in this data set."}, {"q": "If the Bland–Altman bias is negative (PASCO − manual < 0), what does it mean?", "o": ["PASCO readings are systematically lower than manual", "PASCO readings are systematically higher than manual", "The two methods show no difference at all", "The data must be wrong"], "a": 0, "e": "Bias is defined as PASCO − manual; a negative value means the mean PASCO reading is lower than the manual method."}, {"q": "If PASCO records the added volume by “drop count” rather than continuous volume, what should be done first before class?", "o": ["First calibrate mL per drop (gravimetric method)", "Start titrating right away", "Just use manual titration only", "Multiply the drop count by 2 to estimate mL"], "a": 0, "e": "Drop count is not a volume unit; first use the W1 gravimetric method to establish the “mL per drop” conversion, otherwise the volume readings can’t be trusted."}, {"q": "At the PASCO station a single titration takes much longer than expected, so 30 minutes won’t fit; what should you do?", "o": ["Skip that group and deal with it later", "Shorten the titration and stop reading early", "The TA does a timed trial run before class and, if needed, reduces the number of replicates per group", "Extend the whole class past its time"], "a": 2, "e": "When designing the schedule, have the TA do a timed trial run to get the actual time per titration, then decide how many replicates each group can do, to avoid running out of time at the last minute."}]}, "sort": {"g4": {"steps": ["Standardize the true concentration of 0.1 N NaOH with KHP", "Accurately measure (or weigh) a fixed amount of sample into an Erlenmeyer flask", "Dilute the sample with an appropriate amount of CO₂-free water", "Add 2–3 drops of phenolphthalein indicator (use a pH meter for dark samples)", "Titrate slowly with 0.1 N NaOH while swirling, until a persistent pink that does not fade marks the end point", "Calculate % acid with N×V×equivalent weight/(W×1000)×100"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 Correct order! Standardize base → take sample → dilute → add indicator → titrate to end point → calculate.", "tip": "Hint: standardize the base concentration first; sampling, dilution and adding indicator all come before titrating; calculating % acid is the last step."}}, "calc": {"g6": {"answer": 0.1006, "tol": 0.0005, "ok": "🎉 Correct! N = 0.5105 / (204.22 × 0.02485) ≈ <b>0.1006 M<\/b>.", "bad": "Try again: N = m(KHP) / (204.22 × V(L)); remember to convert V to liters.", "hint": "Hint: 204.22 × 0.02485 ≈ 5.0749; 0.5105 / 5.0749 ≈ 0.1006."}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
+}
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 All correct!','good');
+    else fb(g+'fb','Correct '+ok+'/'+N+'. '+(cfg.tip||'Adjust and try again.'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ Correct!':'❌ Answer: '+d.o[d.a]+'. ')+'<br>'+d.e+(done?'<br><b>Done! Total score: '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 Perfect order!','good');
+    else fb(g+'fb','Got '+ok+'/'+N+' positions right.'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','Enter a number first.','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ Correct'); fb(g+'fb',cfg.ok||('🎉 Correct! The answer is '+cfg.answer),'good');
+    } else { setScore(g+'score','Try again'); fb(g+'fb',cfg.bad||'Recalculate and try again.','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'Hint: substitute step by step using the formula.','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en] body,html[lang=en] .lbl,html[lang=en] .lblb{font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif}html[lang=en] body{font-size:16.5px}html[lang=en] .slide-title{font-size:clamp(1.3rem,2.7vw,2.05rem)}html[lang=en] .cover h1{font-size:clamp(2rem,5vw,3.8rem)}html[lang=en] .hook{font-size:clamp(1.5rem,3.6vw,2.6rem)}html[lang=en] p,html[lang=en] li{line-height:1.55}html[lang=en] .kicker{letter-spacing:.1em}html[lang=en] p,html[lang=en] li{font-size:clamp(.86rem,1.3vw,1.04rem)}html[lang=en] .card .cb{font-size:clamp(.8rem,1.15vw,.94rem)}html[lang=en] .card .ct{font-size:clamp(.95rem,1.4vw,1.1rem)}html[lang=en] .chip{font-size:.84rem;padding:7px 12px}html[lang=en] .opt{font-size:clamp(.82rem,1.2vw,.98rem);padding:11px 15px}html[lang=en] .game-q{font-size:clamp(.9rem,1.35vw,1.08rem)}html[lang=en] .bucket .bh{font-size:.88rem}html[lang=en] table.cmp{font-size:clamp(.78rem,1.1vw,.95rem)}html[lang=en] table.cmp th,html[lang=en] table.cmp td{padding:9px 11px}html[lang=en] .note{font-size:clamp(.85rem,1.2vw,.98rem)}html[lang=en] .subtitle{font-size:clamp(.9rem,1.4vw,1.1rem)}html[lang=en] .checklist li{font-size:.86rem}html[lang=en] .cap{font-size:.82rem}html[lang=en] .pill{font-size:.78rem;padding:4px 10px}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><script>(function(){
+function fit(){var sl=document.querySelector('.slide.active');if(!sl)return;
+ sl.querySelectorAll('svg').forEach(function(svg){var sb=svg.getBoundingClientRect();if(!sb.width)return;
+  var rects=[].slice.call(svg.querySelectorAll('rect')).map(function(r){return r.getBoundingClientRect()});
+  [].slice.call(svg.querySelectorAll('text')).forEach(function(t){
+   if(t.dataset.fit)return; var s=(t.textContent||'').trim(); if(!s)return;
+   var b=t.getBoundingClientRect(); if(!b.width)return;
+   var cx=(b.left+b.right)/2, cy=(b.top+b.bottom)/2;
+   var host=rects.filter(function(r){return r.width>20&&r.width<480&&cx>r.left&&cx<r.right&&cy>r.top&&cy<r.bottom})
+             .sort(function(p,q){return p.width-q.width})[0];
+   var maxW=host?host.width-10:Math.min(b.right,sb.right-2)-Math.max(b.left,sb.left+2);
+   if(host&&(b.right>sb.right||b.left<sb.left))maxW=Math.min(maxW,sb.width-4);
+   if(b.width<=maxW+1)return;
+   t.dataset.fit='1';
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13;
+   var k=b.width/((t.getBBox().width)||b.width); /* client px per user unit */
+   var hasTspan=t.querySelector('tspan'); var canWrap=!hasTspan&&s.indexOf(' ')>0&&host&&host.height>=fs*2.3;
+   if(canWrap){var others=[].slice.call(svg.querySelectorAll('text')).filter(function(o){if(o===t)return false;var ob=o.getBoundingClientRect();var ox=(ob.left+ob.right)/2,oy=(ob.top+ob.bottom)/2;return ox>host.left&&ox<host.right&&oy>host.top&&oy<host.bottom;});
+     if(others.length){var free=host.bottom-b.bottom;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.top>=b.top)free=Math.min(free,ob.top-b.bottom)});var freeTop=b.top-host.top;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.bottom<=b.bottom)freeTop=Math.min(freeTop,b.top-ob.bottom)});if(free+freeTop<fs*1.15)canWrap=false;}}
+   if(canWrap){var w=s.split(' '),best=null;
+     for(var i=1;i<w.length;i++){var a=w.slice(0,i).join(' '),c=w.slice(i).join(' ');var d=Math.abs(a.length-c.length);if(!best||d<best.d)best={d:d,a:a,c:c};}
+     var x=t.getAttribute('x')||'0',y=parseFloat(t.getAttribute('y')||'0');
+     t.textContent='';var t1=document.createElementNS('http://www.w3.org/2000/svg','tspan'),t2=t1.cloneNode();
+     t1.setAttribute('x',x);t1.setAttribute('y',(y-fs*0.55/k).toFixed(2));t1.textContent=best.a;
+     t2.setAttribute('x',x);t2.setAttribute('y',(y+fs*0.6/k).toFixed(2));t2.textContent=best.c;
+     t.appendChild(t1);t.appendChild(t2);b=t.getBoundingClientRect();if(b.width<=maxW+1)return;}
+   var sc=Math.max(0.7,maxW/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   b=t.getBoundingClientRect(); if(b.width>maxW+1&&!t.querySelector('tspan')){t.setAttribute('textLength',(maxW/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+  /* second pass: free labels that collide with a neighbour on the same row */
+  var ts=[].slice.call(svg.querySelectorAll('text')).filter(function(x){return (x.textContent||'').trim()});
+  for(var i=0;i<ts.length;i++)for(var j=i+1;j<ts.length;j++){var A=ts[i].getBoundingClientRect(),B=ts[j].getBoundingClientRect();
+   var ox=Math.min(A.right,B.right)-Math.max(A.left,B.left),oy=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
+   if(ox<=2||oy<=Math.min(A.height,B.height)*0.5)continue;
+   var t=A.width>=B.width?ts[i]:ts[j],b=A.width>=B.width?A:B; if(t.querySelector('tspan')||t.dataset.fit2)continue; t.dataset.fit2='1';
+   var want=b.width-ox-6; if(want<b.width*0.55)continue;
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13,k=b.width/((t.getBBox().width)||b.width);
+   var sc=Math.max(0.75,want/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   var nb=t.getBoundingClientRect(); if(nb.width>want+1){t.setAttribute('textLength',(want/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  }});}
+ if(typeof show==='function'){var _s=show;show=function(i){_s(i);fit();};}
+ fit();setTimeout(fit,400);window.addEventListener('load',function(){setTimeout(fit,200)});
+})();</script><!--/i18n-toggle--></body></html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Food Analysis Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --ink:#18221F; --muted:#5B6964; --line:#D5DDD9;
+  --accent:#B3306A; --accent-soft:#F7E3EC; --teal:#1E6B66; --teal-soft:#DDEFEC;
+  --exam:#18221F; --exam-ink:#FFFFFF;
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+    --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+    --exam:#E3EAE7; --exam-ink:#111615;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+  --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+  --exam:#E3EAE7; --exam-ink:#111615;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:1040px;margin:0 auto}
+a{color:var(--teal)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{padding-block:36px 20px;display:grid;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--teal)}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(30px,4.6vw,44px);line-height:1.2;margin:0}
+.lede{max-width:68ch;color:var(--muted);margin:0}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.quick a{font-size:13.5px;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 12px;border-radius:999px}
+.quick a:hover{border-color:var(--teal);color:var(--teal)}
+h2{font-family:var(--serif);font-size:21px;margin:34px 0 12px}
+.weeks{display:grid;gap:10px}
+.wk{display:grid;grid-template-columns:64px 1fr auto;gap:6px 16px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.wk .n{font-family:var(--mono);font-size:14px;color:var(--teal);padding-top:2px}
+.wk.b .n{color:var(--accent)}
+.wk h3{margin:0;font-size:16px}
+.wk p{margin:2px 0 0;font-size:13.5px;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.links a,.links span{font-size:12.5px;border:1px solid var(--line);border-radius:4px;padding:1px 8px;text-decoration:none;color:var(--muted);white-space:nowrap}
+.links a.main{background:var(--teal);border-color:var(--teal);color:var(--surface);font-weight:500}
+.links a.nb{border-color:var(--teal);color:var(--teal)}
+.links a.xl{border-color:#2F7D46;color:#2F7D46}
+.links a.or{border-color:#C4661F;color:#C4661F}
+.links a.vd{border-color:#B3261E;color:#B3261E}
+.links a.lab{border-color:#2848A8;color:#2848A8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .links a.xl{border-color:#7CC48F;color:#7CC48F}:root:not([data-theme="light"]) .links a.or{border-color:#F0A56A;color:#F0A56A}:root:not([data-theme="light"]) .links a.vd{border-color:#F28B82;color:#F28B82}:root:not([data-theme="light"]) .links a.lab{border-color:#9FB4F0;color:#9FB4F0}}
+:root[data-theme="dark"] .links a.xl{border-color:#7CC48F;color:#7CC48F}
+:root[data-theme="dark"] .links a.or{border-color:#F0A56A;color:#F0A56A}
+:root[data-theme="dark"] .links a.vd{border-color:#F28B82;color:#F28B82}
+:root[data-theme="dark"] .links a.lab{border-color:#9FB4F0;color:#9FB4F0}
+.links a:hover{border-color:var(--accent);color:var(--accent)}
+.links a.main:hover{color:var(--surface);background:var(--accent);border-color:var(--accent)}
+.st{font-size:12px;white-space:nowrap;padding-top:2px}
+.st.ok{color:var(--teal)}
+.st.soon{color:var(--muted)}
+.wk.exam{background:var(--exam);border-color:var(--exam)}
+.wk.exam .n,.wk.exam h3,.wk.exam p,.wk.exam .st{color:var(--exam-ink)}
+.part{font-family:var(--serif);font-weight:700;font-size:15px;color:var(--muted);margin:18px 0 2px}
+footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
+@media (max-width:560px){
+  .wk{grid-template-columns:48px 1fr}
+  .wk .st{grid-column:2}
+}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">FOOD ANALYSIS LAB · 4 hours per week</div>
+  <h1>Food Analysis Lab</h1>
+  <p class="lede">Open the week’s lab slides before each class. After-class data analysis has two levels: beginners use Excel practice workbooks (W1–W8) and Orange workflows (spectroscopy weeks), with no coding; advanced students use Colab, or download the notebooks to run Python in Jupyter. For the underlying principles, see the Nielsen slides for each chapter.</p>
+  <div class="quick">
+    <a href="tools.en.html">Data analysis tools guide (Excel / Orange / Colab)</a> <a href="assessment.en.html">Learning assessment</a> <a href="video-map.html">Factory video map (Chinese)</a> <a href="https://tai-shengyeh.github.io/food-analysis-decks/" target="_blank" rel="noopener">Nielsen chapter slides (Chinese) ↗</a> <a href="https://tai-shengyeh.github.io/food-analysis-statistics/" target="_blank" rel="noopener">Food analysis statistics (Chinese) ↗</a> <a href="https://tai-shengyeh.github.io/chemometrics-teaching/" target="_blank" rel="noopener">Chemometrics (Chinese) ↗</a>
+  </div>
+</header>
+
+<main id="weeks"></main>
+
+<footer>Weeks marked “coming soon” will go online over time. The Excel practice workbooks, Orange workflows, and notebooks all use simulated teaching data; replace it with the whole class’s actual data when you do the assignments. Jupyter users can download <a href="downloads/food-analysis-notebooks.zip">all notebooks + data (zip)</a>.</footer>
+</div>
+
+<script>
+const DECKS = "https://tai-shengyeh.github.io/food-analysis-decks/";
+const COLAB = "https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/";
+// 入門工具：Excel 練習檔（W1–W8）與 Orange 流程（說明在 tools.html）
+const XL = {1:"EX01_volumetric_calibration.xlsx",2:"EX02_moisture_aw.xlsx",3:"EX03_ash_sodium.xlsx",4:"EX04_titration.xlsx",5:"EX05_kjeldahl_protein.xlsx",6:"EX06_fat_soxhlet.xlsx",7:"EX07_sugar_calibration.xlsx",8:"EX08_proficiency_qc.xlsx"};
+// 課前導覽影片（YouTube）
+const VID = {1:["https://youtu.be/nPiccdYaUg0", "about 2 min"], 2:["https://youtu.be/ky97CfiKKWU", "about 1 min"], 3:["https://youtu.be/aWerpvpFJ4E", "2 min"], 4:["https://youtu.be/QDBgHWn-DMQ", "2 min"], 5:["https://youtu.be/kQLy29ZE59w", "2.5 min"], 6:["https://youtu.be/cahqlfnhYFs", "a bit over 2 min"], 7:["https://youtu.be/aXm-Gml6toc", "3 min"], 10:["https://youtu.be/54MmyCVqTmA", "about 4.5 min"]};
+// 互動實驗室（嵌在該週投影片內，也可另開）
+const LAB = {1:"labs/w01_volumetric/volumetric_lab.html", 2:"labs/w02_moisture/moisture_lab.html", 3:"labs/w03_ash_sodium/ash_sodium_lab.html", 4:"labs/w04_titration/titration_lab.html", 5:"labs/w05_kjeldahl/kjeldahl_lab.html", 6:"labs/w06_fat/fat_lab.html", 7:"labs/w07_sugar/sugar_lab.html", 10:"labs/w10_spectro_calib/spectro_calib_lab.html"};
+// 儀器中文手冊
+const MAN = {3:["labs/w03_ash_sodium/na11_manual.html", "Sodium ion meter manual (Chinese)"]};
+const ORG = {1:"OR01",8:"OR08",11:"OR11",12:"OR12",13:"OR13",14:"OR14",16:"OR16"};
+// [週, 標題, 說明, 投影片路徑(空=準備中), 筆記本檔名, 理論章節[名稱, 路徑], 類型 a/b/x]
+const W = [
+  [1,"Volumetric glassware calibration","Gravimetric calibration of pipettes and burettes; mean, SD, confidence interval, accuracy and precision","labs/w01_volumetric/index.en.html","NB01_volumetric_calibration.ipynb",null,"a"],
+  [2,"Moisture & water activity","Oven-drying vs infrared moisture analyzer; water activity meter verified with saturated salts","labs/w02_moisture/index.en.html","NB02_moisture_aw.ipynb",["Ch15 Moisture","ch15_moisture_soil/index.html"],"a"],
+  [3,"Ash & sodium","Dry ashing; pen-type sodium ion meter, standard-addition recovery, nutrition label comparison","labs/w03_ash_sodium/index.en.html","NB03_ash_sodium.ipynb",["Ch16 Ash","ch16_ash_soil/index.html"],"a"],
+  [4,"Manual vs automatic titration","Standardizing NaOH with KHP; PASCO real-time titration curve; Bland–Altman method comparison","labs/w04_titration/index.en.html","NB04_titration.ipynb",["Ch22 pH & Acidity","ch22_acidity_soil/index.html"],"a"],
+  [5,"Protein (Kjeldahl method)","Digestion, distillation, titration; recovery and conversion factor","labs/w05_kjeldahl/index.en.html","NB05_kjeldahl_protein.ipynb",["Ch18 Protein","ch18_protein_soil/index.html"],"a"],
+  [6,"Fat (Soxhlet & acid hydrolysis)","Solvent extraction; why milk powder reads low; Pearson square","labs/w06_fat/index.en.html","NB06_fat_soxhlet.ipynb",["Ch17 Fat","ch17_fat_soil/index.html"],"a"],
+  [7,"Sugar: Brix & phenol–sulfuric acid method","Refractometer and non-destructive NIR Brix; phenol–sulfuric acid calibration curve; intro to the Class B Somogyi and Bertrand methods","labs/w07_sugar/index.en.html","NB07_sugar_phenolsulfuric.ipynb",["Ch19 Carbohydrates","ch19_carb_soil/index.html"],"a"],
+  [8,"Class proficiency test","Pooled blind-sample results; control chart, outliers, ANOVA, uncertainty","labs/w08_proficiency/index.en.html","NB08_proficiency_qc.ipynb",null,"a"],
+  [9,"Midterm exam","Written exam + practical (Excel or Colab, your choice)","","",null,"x"],
+  [10,"Vibrational spectroscopy & spectrometer calibration","Raman 532/785 nm and NIR calibration; pure-substance spectra","labs/w10_spectro_calib/index.en.html","",["Ch8 Infrared Spectroscopy","ch8_ir/index.html"],"b"],
+  [11,"Preprocessing & spectral similarity","Baseline, SNV, derivatives; spectral library matching","labs/w11_preprocess_similarity/index.en.html","NB09_preprocess_similarity.ipynb",null,"b"],
+  [12,"PCA","Edible oil classification; score plot and loadings","labs/w12_pca/index.en.html","NB10_pca.ipynb",null,"b"],
+  [13,"PLS I: Acetic acid quantification","W4 titration values as Y; cross-validation, RMSEP","labs/w13_pls_acetic/index.en.html","NB11_pls_acetic.ipynb",null,"b"],
+  [14,"PLS II: VIP & PLS-DA","VIP, classification models, outliers","labs/w14_vip_plsda/index.en.html","NB12_vip_plsda_outliers.ipynb",null,"b"],
+  [15,"Sweetener Project I","Grid preparation and measurement of aspartame × sucralose","labs/w15_sweetener_prep/index.en.html","",null,"b"],
+  [16,"Sweetener Project II","PLS and NNLS modeling; predicting commercial sweeteners","labs/w16_sweetener_model/index.en.html","NB13_sweetener_model.ipynb",null,"b"],
+  [17,"Project presentation","Model report card & peer review","labs/w17_presentation/index.en.html","",null,"b"],
+  [18,"Final exam","Written exam + practical (Orange or Colab, your choice)","","",null,"x"]
+];
+let html = "";
+W.forEach(w => {
+  const [n, t, d, deck, nb, ch, k] = w;
+  if (n === 1) html += `<div class="part">First half: General composition × calibration × data quality control</div>`;
+  if (n === 10) html += `<div class="part">Second half: NIR × Raman × chemometrics</div>`;
+  const links = [];
+  if (deck) links.push(`<a class="main" href="${deck}">Lab slides</a>`);
+  if (VID[n]) links.push(`<a class="vd" href="${VID[n][0]}" target="_blank" rel="noopener">▶ Pre-lab video (${VID[n][1]}) (Chinese) ↗</a>`);
+  if (LAB[n]) links.push(`<a class="lab" href="${LAB[n]}" target="_blank" rel="noopener">🧪 Interactive lab (six acts: predict → observe → explain) (Chinese) ↗</a>`);
+  if (MAN[n]) links.push(`<a href="${MAN[n][0]}">${MAN[n][1]}</a>`);
+  if (XL[n]) links.push(`<a class="xl" href="excel/${XL[n]}" download>Excel practice workbook ⬇</a>`);
+  if (ORG[n]) links.push(`<a class="or" href="tools.en.html#${ORG[n]}">Orange workflow ${ORG[n]}</a>`);
+  if (nb) links.push(`<a class="nb" href="${COLAB}${nb}" target="_blank" rel="noopener">Colab notebook ↗</a>`);
+  if (nb) links.push(`<a href="notebooks/${nb}" download>Jupyter .ipynb ⬇</a>`);
+  if (ch) links.push(`<a href="${DECKS}${ch[1]}" target="_blank" rel="noopener">${ch[0]} ↗</a>`);
+  const st = k === "x" ? "" : (deck ? `<span class="st ok">Online</span>` : `<span class="st soon">Coming soon</span>`);
+  html += `<div class="wk ${k === "b" ? "b" : ""} ${k === "x" ? "exam" : ""}" id="w${n}">
+    <div class="n">W${n}</div>
+    <div><h3>${t}</h3><p>${d}</p>${links.length ? `<div class="links">${links.join("")}</div>` : ""}</div>
+    ${st}</div>`;
+});
+document.getElementById("weeks").innerHTML = html;
+</script>
+
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en]{--sans:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif;--serif:Georgia,"Times New Roman","Noto Serif TC",serif}html[lang=en] body{font-family:var(--sans,"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif)}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><!--/i18n-toggle--></body>
+</html>

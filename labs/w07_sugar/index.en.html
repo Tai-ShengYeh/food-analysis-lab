@@ -1,0 +1,592 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W7 Sugar: Brix and the Phenol–Sulfuric Acid Method · Food Analysis Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto}table.cmp th,table.cmp td{white-space:normal;padding:9px 10px;min-width:56px}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">Food Analysis Lab · W7</div><div id="pageInfo"></div><div id="hint">← → / Space to change slide · F fullscreen · Tap either side to turn pages</div><section class="slide" data-slide="1" data-section="Hook" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Food Analysis Lab · W7</div><h1>Sugar: <span style='color:var(--accent-2)'>Brix</span> and Total Sugar by the Phenol–Sulfuric Acid Method</h1><div class="en">Sugar — Refractometry (Brix) and the Phenol–Sulfuric Acid Method</div><div class="meta">Food Analysis Lab · 4-hour session<br>Refractometer Brix · Total sugar by phenol–sulfuric acid · Calibration-curve QC · Class B copper-reduction method (introduction)</div><div style="margin-top:24px"><span class="pill">Brix</span><span class="pill">Phenol–sulfuric 490nm</span><span class="pill">Calibration curve</span><span class="pill">LOD/LOQ</span><span class="pill">Somogyi/Bertrand (Class B)</span></div></div></div></section><section class="slide" data-slide="2" data-section="Hook"><div class="slide-inner"><div class="kicker">Pre-lab video (3 min) (Chinese narration)</div><h2 class="slide-title">Watch before class: a journey of measuring sugar with a beam of light and a drop of acid</h2><div style="max-width:min(900px,100%,calc(52vh*16/9));margin:14px auto 0">
+  <div style="position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000">
+  <iframe src="https://www.youtube-nocookie.com/embed/aXm-Gml6toc" title="W7 Sugar: A Journey of Measuring Sugar with a Beam of Light and a Drop of Acid (Brix and Total Sugar by Phenol–Sulfuric Acid)" style="position:absolute;inset:0;width:100%;height:100%;border:0" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+  <p class="subtitle" style="margin-top:10px;text-align:center">Contents: ① Refractometer Brix (soluble solids ≠ pure sugar) → ② Handheld NIR Brix meter (1050 nm subtracts the scattering background) → ③ PLS modeling without data leakage → ④ Total sugar by phenol–sulfuric acid at 490 nm → ⑤ Standard bias and sugar alcohols that give no color → ⑥ Residual plot, LOD/LOQ and the Class B Somogyi titration method. <a href="https://youtu.be/aXm-Gml6toc" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Open on YouTube →</a></p></div></div></section><section class="slide" data-slide="3" data-section="Hook"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">Before we start, watch three factory videos</div>
+  <div class="hook">The maple syrup factory says: <span class="hi">40</span> gallons of sap → 1 gallon of syrup?</div>
+  <p class="subtitle" style="max-width:960px;margin:18px auto 0">
+    <a class="no-nav" href="https://www.youtube.com/watch?v=GxPFViYRsjM&t=610s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800"> Maple syrup line (10:10–11:13, boiled to about 4°C above the boiling point of water ↔ 66 °Brix)</a> <a class="no-nav" href="https://www.youtube.com/watch?v=jwZ9Xl79dNE&t=416s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800"> Orange juice line QC (06:56–07:57, in-line refractometer monitoring)</a> <a class="no-nav" href="https://www.youtube.com/watch?v=fXiG20TBmA4&t=925s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800"> Beet sugar line (15:25–17:09, lime purification)</a>
+  </p>
+  <div class="note" style="max-width:960px;margin:18px auto 0;text-align:left">
+    <strong>A small caution about the videos:</strong> the beet sugar video describes lime purification (liming) as “raising concentration,” but what it actually does is <strong>raise purity</strong> — watch the video first; we will come back to this wording difference in class.
+  </div>
+  <p class="subtitle" style="max-width:960px;margin:14px auto 0"><strong>Today's question:</strong> the “40:1” in the maple syrup video sounds like a catchy rhyme — <span class="hi">does it survive a mass-balance check?</span> (We come back to answer it in the “Data” section.)</p>
+</div></div></section><section class="slide" data-slide="4" data-section="Hook"><div class="slide-inner"><div class="kicker">interactive lab</div><h2 class="slide-title">A journey of measuring sugar with a beam of light and a drop of acid: <span class='hi'>Predict → Observe → Explain</span></h2><div class="no-nav" id="w07lab-wrap" style="max-width:min(1100px,100%);margin:10px auto 0">
+  <style>#w07lab-wrap{max-width:min(1400px,100%)!important}#w07lab-box{position:relative;width:100%;aspect-ratio:1100/506;max-height:min(66vh,760px);border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}@media(max-width:700px){#w07lab-box{aspect-ratio:auto;height:min(78vh,620px);max-height:none}}</style>
+  <div id="w07lab-box">
+    <iframe id="w07lab" src="sugar_lab.html?embed=1" title="W7 Sugar Analysis Interactive Lab: Six Acts of Predict → Observe → Explain (Chinese)" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+  </div>
+  <p class="subtitle" style="margin-top:8px;text-align:center">Six acts: Predict → ① Refractometer Brix → ② Handheld NIR with background subtraction → ③ PLS without data leakage → ④ Phenol–sulfuric acid at 490 nm → ⑤ Standard bias and sugar alcohols → ⑥ Residuals and the Class B Somogyi method. <a class="no-nav" href="sugar_lab.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open the lab in a new tab ↗</a></p>
+  <script>(function(){var sec=document.currentScript.closest('.slide');var f=document.getElementById('w07lab');
+    new MutationObserver(function(){if(!sec.classList.contains('active')&&f.contentWindow)f.contentWindow.postMessage({type:'sugar-lab-pause'},location.origin==='null'?'*':location.origin);}).observe(sec,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('message',function(e){if(e.source===f.contentWindow&&e.data&&e.data.type==='sugar-lab-goto'&&typeof show==='function'){show(cur+1);}});})();</script>
+</div></div></section><section class="slide" data-slide="5" data-section="Hook"><div class="slide-inner"><div class="kicker">Today’s learning goals</div><h2 class="slide-title">After W7 you should be able to…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>Use a <strong>refractometer</strong> to measure Brix, and know that Brix measures “soluble solids,” not “pure sugar”</li><li>Complete a <strong>phenol–sulfuric acid (DuBois)</strong> total-sugar calibration curve and calculate the total sugar of an unknown sample (g/100mL glucose equivalent)</li><li>Understand why choosing <strong>glucose vs fructose</strong> as the standard causes systematic bias</li></ul><ul class='clean'><li>Distinguish <strong>reducing vs non-reducing sugars</strong> and understand why sugar alcohols give no color in the phenol–sulfuric acid method</li><li>Know the <strong>Somogyi / Bertrand methods</strong> (copper reduction + titration) of the Ministry of Labor's Class B certification (Food Inspection and Analysis, Class B technician), and tell how they differ from the Somogyi–Nelson colorimetric method in Nielsen</li><li>Follow the safety rules for concentrated sulfuric acid and phenol, and complete the 4-hour division of work and data QC (calibration curve, residuals, LOD/LOQ)</li></ul></div><p class="subtitle" style="margin-top:10px">Theory review: this session does not repeat the full definitions of Brix, reducing sugars and total sugar, or the textbook vs Class B method comparison — see the full content in <a href="https://tai-shengyeh.github.io/food-analysis-decks/ch19_carb_soil/index.html" target="_blank" style="color:var(--accent);font-weight:700">📖 Full-principles deck (Nielsen Ch19, including the “textbook vs Class B” comparison) →</a>.</p></div></section><section class="slide" data-slide="6" data-section="Focus"><div class="slide-inner"><div class="kicker">Principle 1</div><h2 class="slide-title">Refractometer Brix: <span class='hi'>refractive index</span> ↔ soluble solids</h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 620 260">
+ <text x="310" y="20" text-anchor="middle" class="lblb" style="font-size:14px">Light is refracted by the sample; the eye reads the scale at the light–dark boundary</text>
+ <defs>
+  <marker id="arBx" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#d9822b"/></marker>
+  <clipPath id="eyeClip"><circle cx="372" cy="140" r="74"/></clipPath>
+ </defs>
+ <!-- incident daylight -->
+ <g stroke="#d9822b" stroke-width="1.8" marker-end="url(#arBx)">
+  <line x1="84" y1="38" x2="100" y2="72"/><line x1="134" y1="38" x2="150" y2="72"/><line x1="184" y1="38" x2="200" y2="72"/>
+ </g>
+ <text x="214" y="50" class="lbl" style="font-size:11px">Incident light</text>
+ <!-- daylight plate, sample film, prism (cross-section) -->
+ <rect x="60" y="76" width="180" height="10" fill="#f6f9fd" stroke="#48597a" stroke-width="1.4"/>
+ <rect x="60" y="86" width="180" height="6" fill="#1f9d6b" fill-opacity=".45"/>
+ <polygon points="60,92 240,92 210,170 90,170" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <polygon points="80,92 225,130 210,170 90,170" fill="#d9822b" fill-opacity=".16"/>
+ <polygon points="80,92 240,92 225,130" fill="#48597a" fill-opacity=".22"/>
+ <line x1="80" y1="92" x2="225" y2="130" stroke="#1f9d6b" stroke-width="2.4"/>
+ <line x1="225" y1="130" x2="262" y2="140" stroke="#1f9d6b" stroke-width="2.4"/>
+ <text x="246" y="84" class="lbl" style="font-size:11px">Illumination cover</text>
+ <text x="246" y="100" class="lbl" style="font-size:11px">Thin sample layer</text>
+ <text x="104" y="124" class="lbl" style="font-size:11px;fill:#1f9d6b">Critical-angle ray</text>
+ <text x="150" y="160" text-anchor="middle" class="lbl" style="font-size:11px">Illuminated zone</text>
+ <text x="150" y="188" text-anchor="middle" class="lbl" style="font-size:11px">Prism (high-index glass)</text>
+ <text x="150" y="208" text-anchor="middle" class="lbl" style="font-size:11px">Sample refractive index ↑ → critical angle ↑ → boundary moves toward the dark zone</text>
+ <ellipse cx="266" cy="140" rx="5" ry="18" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.4"/>
+ <line x1="271" y1="140" x2="296" y2="140" stroke="#1f9d6b" stroke-width="2" stroke-dasharray="3 2"/>
+ <!-- eyepiece field of view -->
+ <text x="372" y="58" text-anchor="middle" class="lblb" style="font-size:12px">Eyepiece view (schematic)</text>
+ <g clip-path="url(#eyeClip)">
+  <rect x="298" y="66" width="148" height="148" fill="#ffffff"/>
+  <rect x="298" y="66" width="148" height="83.4" fill="#48597a" fill-opacity=".85"/>
+  <g stroke="#15233f" stroke-width="1"><line x1="386" y1="200.0" x2="396" y2="200.0"/><line x1="386" y1="195.6" x2="391" y2="195.6"/><line x1="386" y1="191.2" x2="391" y2="191.2"/><line x1="386" y1="186.8" x2="391" y2="186.8"/><line x1="386" y1="182.4" x2="391" y2="182.4"/><line x1="386" y1="178.0" x2="396" y2="178.0"/><line x1="386" y1="173.6" x2="391" y2="173.6"/><line x1="386" y1="169.2" x2="391" y2="169.2"/><line x1="386" y1="164.8" x2="391" y2="164.8"/><line x1="386" y1="160.4" x2="391" y2="160.4"/><line x1="386" y1="156.0" x2="396" y2="156.0"/><line x1="386" y1="151.6" x2="391" y2="151.6"/><line x1="386" y1="147.2" x2="391" y2="147.2"/><line x1="386" y1="142.8" x2="391" y2="142.8"/><line x1="386" y1="138.4" x2="391" y2="138.4"/><line x1="386" y1="134.0" x2="396" y2="134.0"/><line x1="386" y1="129.6" x2="391" y2="129.6"/><line x1="386" y1="125.2" x2="391" y2="125.2"/><line x1="386" y1="120.8" x2="391" y2="120.8"/><line x1="386" y1="116.4" x2="391" y2="116.4"/><line x1="386" y1="112.0" x2="396" y2="112.0"/><line x1="386" y1="107.6" x2="391" y2="107.6"/><line x1="386" y1="103.2" x2="391" y2="103.2"/><line x1="386" y1="98.8" x2="391" y2="98.8"/><line x1="386" y1="94.4" x2="391" y2="94.4"/><line x1="386" y1="90.0" x2="396" y2="90.0"/></g>
+  <line x1="298" y1="149.4" x2="446" y2="149.4" stroke="#d94f4f" stroke-width="2.4"/>
+ </g>
+ <circle cx="372" cy="140" r="74" fill="none" stroke="#48597a" stroke-width="2.4"/>
+ <text x="400" y="203.5" class="lbl" style="font-size:10px;fill:#15233f">0</text><text x="400" y="181.5" class="lbl" style="font-size:10px;fill:#15233f">5</text><text x="400" y="159.5" class="lbl" style="font-size:10px;fill:#15233f">10</text><text x="400" y="137.5" class="lbl" style="font-size:10px;fill:#ffffff">15</text><text x="400" y="115.5" class="lbl" style="font-size:10px;fill:#ffffff">20</text><text x="400" y="93.5" class="lbl" style="font-size:10px;fill:#ffffff">25</text>
+ <text x="340" y="110" text-anchor="middle" class="lbl" style="font-size:11px;fill:#ffffff">Dark zone</text>
+ <text x="340" y="182" text-anchor="middle" class="lbl" style="font-size:11px">Bright zone</text>
+ <text x="372" y="232" text-anchor="middle" class="lbl" style="font-size:11px">Scale: °Brix (increases toward the dark zone)</text>
+ <line x1="448" y1="149.4" x2="468" y2="149.4" stroke="#d94f4f" stroke-width="1.6"/>
+ <rect x="470" y="96" width="140" height="92" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="540" y="124" text-anchor="middle" class="lblb" style="font-size:16px;fill:#b5651d">11.5 °Brix</text>
+ <text x="540" y="148" text-anchor="middle" class="lbl" style="font-size:11px">Light–dark boundary = reading</text>
+ <text x="540" y="168" text-anchor="middle" class="lbl" style="font-size:11px">Temperature is compensated automatically by ATC</text>
+ <text x="310" y="252" text-anchor="middle" class="lbl" style="font-size:12px">Acids, salts and other solutes also raise the refractive index → juice Brix ≈ soluble solids, not “pure sugar”</text>
+</svg></div><div class="note" style="margin-top:10px"><strong>Definition:</strong> The Brix scale relates refractive index at 20°C to “sucrose % (w/w).” Besides sugar, juices and syrups contain <strong>acids, salts</strong> and other solutes that also raise the refractive index — so a sample's °Brix ≈ total <b>soluble solids</b>, not exactly “pure sugar content.” This is also why we compare orange juice Brix with phenol–sulfuric total sugar later.<br><strong>Temperature compensation:</strong> Most modern handheld/benchtop refractometers have ATC (automatic temperature compensation), but you should still work within the recommended temperature range.</div></div></section><section class="slide" data-slide="7" data-section="Focus"><div class="slide-inner"><div class="kicker">Extension: non-destructive Brix</div><h2 class="slide-title">ATAGO PAL-HIKARi: read Brix <span class='hi'>without cutting</span> the fruit</h2><div class="grid2" style="margin-top:8px"><div class="svgwrap">
+<svg viewBox="0 0 520 332" style="max-height:46vh;width:100%">
+ <defs><marker id="nfa" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#d9822b"/></marker></defs>
+ <!-- fruit cross-section -->
+ <circle cx="200" cy="190" r="104" fill="#fdecc8" stroke="#d9822b" stroke-width="3"/>
+ <circle cx="200" cy="190" r="100" fill="none" stroke="#e8a33a" stroke-width="5" opacity=".6"/>
+ <text x="200" y="250" text-anchor="middle" class="lbl" style="font-size:11px">Flesh (sugar, water)</text>
+ <text x="318" y="262" class="lbl" style="font-size:11px">Skin</text>
+ <path d="M312 256 L296 240" stroke="#48597a" stroke-width="1.2"/>
+ <!-- meter head touching the peel: LED source and detector side by side, separated by a light seal -->
+ <rect x="150" y="40" width="100" height="46" rx="8" fill="#e7ecf4" stroke="#48597a" stroke-width="2"/>
+ <rect x="162" y="80" width="22" height="10" rx="2" fill="#d9822b"/>
+ <rect x="216" y="80" width="22" height="10" rx="2" fill="#1f6feb"/>
+ <rect x="194" y="80" width="12" height="10" fill="#15233f"/>
+ <text x="173" y="30" text-anchor="middle" class="lbl" style="font-size:11px;fill:#d9822b">IR LED source</text>
+ <text x="227" y="30" text-anchor="middle" class="lbl" style="font-size:11px;fill:#1f6feb">Detector</text>
+ <text x="300" y="60" class="lbl" style="font-size:11px">Light-blocking baffle: blocks the skin surface</text>
+ <text x="300" y="75" class="lbl" style="font-size:11px">Directly reflected light</text>
+ <path d="M296 64 L208 84" stroke="#48597a" stroke-width="1.2"/>
+ <!-- light path: into flesh, scattered, back out to detector -->
+ <path d="M173 92 C 160 150, 200 190, 215 150 C 222 128, 226 108, 227 94" fill="none" stroke="#d9822b" stroke-width="2.4" stroke-dasharray="6 3" marker-end="url(#nfa)"/>
+ <circle cx="186" cy="150" r="3" fill="#d9822b"/><circle cx="206" cy="170" r="3" fill="#d9822b"/><circle cx="214" cy="138" r="3" fill="#d9822b"/>
+ <text x="200" y="208" text-anchor="middle" class="lbl" style="font-size:11px">Light scatters in the flesh; some is absorbed by sugar and water</text>
+ <text x="260" y="322" text-anchor="middle" class="lbl" style="font-size:11px">Schematic of interactance measurement: light source and detector sit side by side on the skin (illustration)</text>
+</svg></div><div><ul class="clean"><li>An <strong>infrared LED</strong> shines light into the fruit and the detector picks up light scattered back from the flesh — <strong>no cutting or juicing</strong>; measure on the tree or after harvest</li><li>The instrument has <strong>built-in conversion models for each fruit</strong>, so models are sold by fruit type (grape, strawberry, apple, pear, mango, melon, watermelon, corn… over 25 kinds) and users need no calibration of their own</li><li>The reading is a <strong>model-estimated Brix</strong>; such models are generally built with refractometer Brix of juice as the reference, so accuracy still has to be checked against the <strong>refractometer</strong></li><li>Strong outdoor sunlight interferes; the display shows “nnn” to prompt you to shade the fruit and remeasure (ambient-light interference detected)</li></ul><div class="note" style="margin-top:10px">The manufacturer's webpage does not publish the wavelengths used or the accuracy specification; however ATAGO's <strong>US patent US11099127</strong> discloses a design for a handheld non-destructive sugar meter, which we take apart on the next page (a patent design is not necessarily the specification of this product). <a class="no-nav" href="https://www.atago.net/en/products-hikari-top.php" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">ATAGO PAL-HIKARi product page ↗</a></div></div></div></div></section><section class="slide" data-slide="8" data-section="Focus"><div class="slide-inner"><div class="kicker">Extension: taking a handheld sugar meter apart</div><h2 class="slide-title">ATAGO patent US11099127: how the light travels</h2><div class="grid2" style="margin-top:6px"><div class="svgwrap">
+<svg viewBox="0 0 520 340" style="max-height:54vh;width:100%">
+ <defs><marker id="apt" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#d9822b"/></marker>
+  <marker id="aptb" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#1f6feb"/></marker></defs>
+ <text x="260" y="16" text-anchor="middle" class="lbl" style="font-size:12px">Redrawn in simplified form from patent FIG. 17 (schematic, not to scale)</text>
+ <!-- fruit (cut away) sitting on the ring-shaped abutting portion -->
+ <path d="M60 160 C 60 40, 460 40, 460 160 Z" fill="#fdecc8" stroke="#d9822b" stroke-width="3"/>
+ <text x="260" y="66" text-anchor="middle" class="lbl" style="font-size:13px">Flesh: light is absorbed and scattered</text>
+ <!-- measurement head -->
+ <rect x="90" y="160" width="340" height="16" fill="#48597a"/>
+ <rect x="120" y="176" width="60" height="16" rx="3" fill="#2f8f9d"/><rect x="340" y="176" width="60" height="16" rx="3" fill="#2f8f9d"/>
+ <text x="150" y="208" text-anchor="middle" class="lbl" style="font-size:12px;fill:#2f8f9d">Ring lens</text>
+ <text x="370" y="208" text-anchor="middle" class="lbl" style="font-size:12px;fill:#2f8f9d">Ring lens</text>
+ <g fill="#d9822b"><circle cx="135" cy="228" r="6"/><circle cx="165" cy="228" r="6"/><circle cx="355" cy="228" r="6"/><circle cx="385" cy="228" r="6"/></g>
+ <text x="150" y="252" text-anchor="middle" class="lbl" style="font-size:12px;fill:#d9822b">LEDs arranged around the circumference</text>
+ <text x="370" y="252" text-anchor="middle" class="lbl" style="font-size:12px;fill:#d9822b">6 center wavelengths</text>
+ <rect x="236" y="176" width="48" height="94" fill="#15233f"/>
+ <text x="260" y="228" text-anchor="middle" class="lbl" style="font-size:11px;fill:#ffffff">Light guide</text>
+ <rect x="200" y="274" width="120" height="18" fill="#1f6feb" fill-opacity=".25" stroke="#1f6feb"/>
+ <text x="260" y="287" text-anchor="middle" class="lbl" style="font-size:11px">7 bandpass filters</text>
+ <rect x="226" y="296" width="68" height="12" fill="#1f6feb"/>
+ <text x="260" y="324" text-anchor="middle" class="lbl" style="font-size:12px;fill:#1f6feb">Sensor: returned light intensity at each wavelength Iₛ</text>
+ <text x="12" y="336" class="lbl" style="font-size:11px">Dark gray band = ring-shaped contact part: presses on the skin and blocks outside light</text>
+ <!-- light path: ring out → flesh → back through the centre -->
+ <path d="M150 176 L 190 104 L 250 140" fill="none" stroke="#d9822b" stroke-width="2.4" stroke-dasharray="6 3" marker-end="url(#apt)"/>
+ <path d="M370 176 L 330 104 L 270 140" fill="none" stroke="#d9822b" stroke-width="2.4" stroke-dasharray="6 3" marker-end="url(#apt)"/>
+ <path d="M260 144 L 260 178" stroke="#1f6feb" stroke-width="2.4" marker-end="url(#aptb)"/>
+</svg></div><div><ul class="clean" style="margin-top:8px"><li><strong>Light path:</strong> LED light enters the flesh from the outer ring through the <strong>ring lens</strong>; the scattered light is collected by the <strong>central light guide</strong> and passes through the filters to the sensor — illumination and collection are separated, which blocks direct reflection from the skin surface</li><li>The 875 nm filter is paired with an 880 nm LED; the 1050 and 1064 nm filters share a 1064 nm LED — <strong>LED wavelength ≠ filter wavelength</strong></li></ul><div class='note' style='margin-top:8px'>The patent <strong>does not disclose the regression coefficients b0–b8 or any accuracy figures</strong>, so it cannot be used to rebuild or evaluate product performance; it is “one design,” not the actual specification of the PAL-HIKARi. <a class="no-nav" href="https://patents.google.com/patent/US11099127B2/en" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Original text on Google Patents ↗</a></div><ul class="clean" style="margin-top:8px"><li>Bandpass filter: lets only a narrow band of wavelengths through, so the sensor measures one wavelength at a time</li></ul></div></div></div></section><section class="slide" data-slide="9" data-section="Focus"><div class="slide-inner"><div class="kicker">Extension: taking a handheld sugar meter apart</div><h2 class="slide-title">Calculating Brix from light intensity</h2><div class="grid2" style="margin-top:6px"><div><style>.pairt td,.pairt th{padding:3px 10px!important}</style><table class="cmp pairt" style="font-size:clamp(.72rem,1vw,.88rem)"><thead><tr><th>Filter center (nm)</th><th>Paired LED center (nm)</th><th>Purpose</th></tr></thead><tbody><tr><td class='c'>875</td><td>880</td><td>x1 = A875 − A1050</td></tr><tr><td class='c'>900</td><td>900</td><td>x2 = A900 − A1050</td></tr><tr><td class='c'>950</td><td>950</td><td>x3 = A950 − A1050</td></tr><tr><td class='c'>980</td><td>980</td><td>x4 = A980 − A1050</td></tr><tr><td class='c'>1020</td><td>1020</td><td>x5 = A1020 − A1050</td></tr><tr><td class='c'>1050</td><td>1064</td><td><strong>Common reference</strong></td></tr><tr><td class='c'>1064</td><td>1064</td><td>x6 = A1064 − A1050</td></tr></tbody></table></div><div><ul class="clean"><li>Absorbance A=log₁₀(I₀/Iₛ): I₀ is the intensity sent in, Iₛ the intensity collected</li><li>Subtract A1050 from all: sugar barely absorbs at 1050 nm, so it serves as a common reference that removes the overall offset from skin thickness and scattering</li><li>Multiple regression Ŷ=b0+b1x1+…: several x (wavelength differences, two temperatures) each multiplied by a coefficient and summed; the coefficients must be fitted to refractometer Brix of many fruit (PLS in W13 is the advanced version)</li></ul></div></div></div></section><section class="slide" data-slide="10" data-section="Focus" data-game="g7"><div class="slide-inner"><div class="game no-nav" data-game="g7"><div class="game-head"><span class="tag a">Mini-game ①</span><span class="gt">Calculation challenge: intensity → absorbance → Brix (simulated data)</span><span class="score" id="g7score">Unanswered</span></div><div class="game-q">Work it out by hand following the patent's method. 875 nm: I₀ = <b>1000</b>, Iₛ = <b>500</b>; 1050 nm: I₀ = <b>1000</b>, Iₛ = <b>800</b> (same instrument units, a.u.). ① A = log₁₀(I₀/Iₛ) gives A875 and A1050; ② x1 = A875 − A1050; ③ substitute into the <strong>teaching assumption equation</strong> Ŷ = 8 + 20·x1. Find the predicted sugar content Ŷ. (This equation is for practicing the calculation only; it is not the manufacturer's coefficient and cannot be used for real fruit.)</div><div class="btnrow"><input class="numin" id="g7in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">°Brix</span><button class="btn" id="g7check">Check answer</button><button class="btn ghost" id="g7hint">Hint</button></div><div class="fb" id="g7fb"></div></div></div></section><section class="slide" data-slide="11" data-section="Focus"><div class="slide-inner"><div class="kicker">Extension: full-spectrum handheld NIR</div><h2 class="slide-title">Felix F-750: inside is a <span class='hi'>Carl Zeiss MMS-1</span> spectrometer</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li><strong>Spectrometer:</strong> Zeiss MMS-1 (enhanced VIS–NIR version), <strong>310–1100 nm</strong> continuous spectrum, 256-pixel silicon photodiode array, about 3 nm sampling, resolution about 10 nm</li><li><strong>Why it is stable:</strong> the grating, fiber inlet and detector are all fixed on <strong>a single glass body</strong>, aligned at the factory; thermal drift &lt; 0.01 nm/K, suitable for taking to the orchard</li><li><strong>Measurement:</strong> a tungsten lamp shines broadband light on a ring-shaped area of the skin, and after scattering in the flesh it is collected <strong>in the center</strong> (interactance) — the same concept as the ATAGO patent on the previous page</li><li><strong>Predicts:</strong> soluble solids (°Brix), dry matter (DM), flesh and skin color, titratable acidity</li></ul></div><div><ul class='clean'><li><strong>You build the model:</strong> measure 10–200 training fruit plus destructive reference values (refractometer Brix, oven-dried DM), then use the manufacturer's Model Builder to build a model with <strong>PLS</strong> (second-derivative absorbance spectra) — exactly what W10–W13 do</li><li><strong>Common in research:</strong> Walsh's group at CQU in Australia built fruit sugar models with the MMS-1 as early as 2000; more recently the F-750 measured mango <strong>dry matter</strong> with an RMSEP of about 0.8 %FW (Walsh et al., 2024; this is dry matter, not °Brix)</li><li>Note: the <strong>F-751 series</strong> (dedicated mango, avocado, etc. units) uses a Hamamatsu 640–1050 nm spectrometer with factory built-in models and is <strong>not the MMS-1</strong></li></ul><div class='note' style='margin-top:8px'>The manufacturer claims a prediction error RMSEP of about ±0.5 °Brix (see the “Understanding validation metrics” page for what RMSEP is); this is the vendor's own figure, and a new cultivar or season requires revalidation. Our department's <strong>Avantes 300–1100 nm</strong> covers almost the same band as the MMS-1 (310–1100 nm), so you can compare your own PLS results against it.<br><a class="no-nav" href="https://felixinstruments.com/food-science-instruments/nir-spectroscopy/f-750-produce-quality-meter/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Felix F-750 product page ↗</a> <a class="no-nav" href="https://doi.org/10.1016/j.saa.2024.124003" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Walsh et al. 2024 ↗</a></div></div></div></div></section><section class="slide" data-slide="12" data-section="Focus"><div class="slide-inner"><div class="kicker">Near-infrared Brix measurement</div><h2 class="slide-title">Four approaches compared: <span class='hi'>a few wavelengths</span> vs <span class='hi'>the whole spectrum</span></h2><table class="cmp" style="margin-top:8px;font-size:clamp(.74rem,1.05vw,.92rem)"><thead><tr><th>Approach</th><th>What is measured</th><th>Wavelength</th><th>Model and calibration</th><th>Main error sources</th></tr></thead><tbody><tr><td class='c'>Refractometer (this week's method)</td><td>Refractive index of squeezed juice</td><td>— (visible light)</td><td>Zero with pure water, sucrose check solution</td><td>Temperature, uneven juice, where the juice is taken from</td></tr><tr><td class='c'>ATAGO handheld (patent design)</td><td>Light scattered by the flesh, non-destructive</td><td>6 LEDs, 7 filters (875–1064 nm)</td><td>Multiple linear regression + two temperatures, built per fruit by the manufacturer</td><td>Cultivar, skin thickness, temperature, measurement position, ambient light</td></tr><tr><td class='c'>Felix F-750 (MMS-1)</td><td>Light scattered by the flesh, non-destructive</td><td>310–1100 nm continuous spectrum</td><td>User builds the PLS model</td><td>Same as above, plus the model's applicability range</td></tr><tr><td class='c'>This course: NIR + PLS (W10–W13)</td><td>Reflectance spectra of skin or flesh</td><td>Avantes 300–1100, 900–1650 nm; InnoSpectra NIR-S-G1 900–1700 nm</td><td>Build a PLS model yourself using refractometer Brix as the reference</td><td>Same as above, plus probe contact and fiber position</td></tr></tbody></table><ul class="clean" style="margin-top:10px"><li><strong>Why NIR can see sugar:</strong> the O–H and C–H bonds of sugar and water have overtone and combination absorptions in the near-infrared; fruit sugar absorption is weak and masked by water absorption, so a <strong>chemometric model</strong> is essential (see W10–W13)</li><li>Fruit sorting lines and handheld meters mostly use <strong>short-wave near-infrared</strong> (from the edge of visible light to about 1100 nm), which can penetrate into the flesh; using few wavelengths (ATAGO) is cheaper and uses less power, while the whole spectrum (Felix) makes it easier to change fruit or target and rebuild the model yourself</li></ul><p class="subtitle" style="margin-top:10px">For extended terms (overtone/combination, PLS, RMSECV) see <a class="no-nav" href="../w10_spectro_calib/index.en.html" style="color:var(--accent);font-weight:700">W10 Principles ↗</a> <a class="no-nav" href="../w13_pls_acetic/index.en.html" style="color:var(--accent);font-weight:700">W13 Quality metrics ↗</a></p></div></section><section class="slide" data-slide="13" data-section="Focus"><div class="slide-inner"><div class="kicker">Extension activity</div><h2 class="slide-title">Use this course's NIR instruments to <span class='hi'>verify</span> non-destructive Brix yourself</h2><div class="grid2" style="margin-top:10px"><div class="note"><strong>Class extension activity:</strong> take 10 fruit of one kind (e.g., apples or oranges) and mark 2 spots on each at the equator → measure with <strong>both instruments</strong>: <strong>Avantes 300–1100 nm</strong> (fiber reflectance probe) and <strong>InnoSpectra NIR-S-G1</strong> (900–1700 nm, placed on the skin), 3 replicates per spot → <strong>finish all NIR measurements before cutting the fruit</strong>, then cut flesh from <strong>the same spot</strong>, juice it, and measure Brix with the refractometer as the reference → first see which wavelengths correlate with Brix; in W13 use this data to build a PLS model and compare the two instruments. In general, short-wave NIR penetrates deeper into the flesh, while longer wavelengths mostly see only the part near the skin — which is exactly what makes the two instruments worth comparing.<br><br><strong>Downloads:</strong><a class="no-nav" href="materials/nir_brix_handout.pdf" target="_blank" rel="noopener" download style="color:var(--accent);font-weight:700">Student handout PDF</a> <a class="no-nav" href="materials/nir_brix_record_sheet.csv" target="_blank" rel="noopener" download style="color:var(--accent);font-weight:700">Blank lab record sheet CSV</a></div><div><ul class="clean"><li><strong>How to judge accuracy:</strong> plot “refractometer Brix vs NIR prediction” as a scatter plot with a y = x line; calculate <strong>Bias</strong>, <strong>MAE</strong> (mean absolute error) and <strong>RMSEP</strong> (root mean square error of prediction) — explained in plain language on the next page</li><li><strong>60 readings ≠ 60 fruit:</strong> 10 fruit × 2 spots × 3 replicates gives 60 readings, but there are only 10 independent samples; replicates only reflect repeatability</li><li><strong>Avoid data leakage:</strong> all readings from the same fruit must go together into the training set or the test set; splitting them randomly makes RMSEP look too good</li><li><strong>Practice:</strong> calculate Bias, MAE and RMSEP using a test set of 8 simulated fruit (<a class="no-nav" href="materials/nir_brix_sim_testset.csv" target="_blank" rel="noopener" download style="color:var(--accent);font-weight:700">test set CSV</a>); the seven-channel intensity conversion can be checked against the <a class="no-nav" href="materials/nir_brix_sim_intensity.csv" target="_blank" rel="noopener" download style="color:var(--accent);font-weight:700">simulated intensity CSV</a>. Both are <strong>teaching simulation data</strong>, not patent measurements or instrument performance</li></ul></div></div></div></section><section class="slide" data-slide="14" data-section="Focus"><div class="slide-inner"><div class="kicker">Understanding validation metrics</div><h2 class="slide-title">Bias, MAE, RMSEP: <span class='hi'>how far off are the predictions</span></h2><div class="grid2" style="margin-top:6px"><div><table class="cmp pairt" style="font-size:clamp(.8rem,1.12vw,.98rem)"><thead><tr><th>Abbreviation</th><th>Name</th><th>Formula</th><th>In plain words</th></tr></thead><tbody><tr><td class='c'>Bias</td><td>Bias</td><td style='white-space:nowrap'>Σ(ŷ − y) / n</td><td>Whether predictions are <strong>too high or too low</strong> on average (positive = overestimate); positive and negative errors cancel, so Bias ≈ 0 does not mean accurate</td></tr><tr><td class='c'>MAE</td><td>Mean absolute error<br><span style='font-size:.85em'>MAE</span></td><td style='white-space:nowrap'>Σ|ŷ − y| / n</td><td>Ignoring sign, <strong>the average miss per fruit in °Brix</strong>; the most intuitive</td></tr><tr><td class='c'>RMSEP</td><td>Root mean square error of prediction<br><span style='font-size:.85em'>RMSEP</span></td><td style='white-space:nowrap'>√[ Σ(ŷ − y)² / n ]</td><td>Square, average, then take the square root, so <strong>large errors are amplified</strong>; also in °Brix, and the one most often reported in papers and by manufacturers</td></tr></tbody></table><p class="subtitle" style="margin-top:6px;font-size:clamp(.72rem,1vw,.88rem)">y = refractometer reference value, ŷ = NIR predicted value, n = <strong>number of independent fruit</strong>. The same formula is called <strong>RMSEC</strong> when computed on the training set, <strong>RMSECV</strong> with cross-validation, and <strong>RMSEP</strong> only when computed on a test set that took no part in model building. Other abbreviations: NIR = near-infrared, PLS = partial least squares regression, DM = dry matter.</p></div><div><div class="note"><strong>A small worked example with 3 fruit (illustrative data):</strong> reference 10.0 / 12.0 / 14.0, predicted 10.5 / 11.5 / 14.6 °Brix → error e = ŷ − y = +0.5 / -0.5 / +0.6<br>Bias = <b>+0.20</b> MAE = <b>0.53</b> RMSEP = <b>0.54</b> °Brix<br>Bias is only +0.20 because +0.5 and −0.5 cancel; every fruit is actually off by about half a degree, so you need MAE and RMSEP to see that.</div><div style="margin-top:10px"><strong>Want to learn more: chemometrics courses</strong><ul class="clean" style="margin-top:4px;font-size:clamp(.72rem,1vw,.9rem)"><li><a class="no-nav" href="https://tai-shengyeh.github.io/chemometrics-teaching/beginner-tecator.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Near-infrared spectroscopy × food analysis chemometrics: beginner Tecator course ↗</a><br><span style="font-size:.9em">From spectra to PLS models; understand the “predicted vs actual” plot and RMSEP (Python / Orange)</span></li><li><a class="no-nav" href="https://tai-shengyeh.github.io/libpls-course/#lesson-3" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">libPLS hands-on course: Lesson 3, PLS regression modeling ↗</a><br><span style="font-size:.9em">How RMSEP is calculated and how to split training/test sets (R)</span></li><li><a class="no-nav" href="https://tai-shengyeh.github.io/libpls-course/#lesson-4" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">libPLS hands-on course: Lesson 4, cross-validation and tuning ↗</a><br><span style="font-size:.9em">RMSECV, why cross-validate, nested cross-validation (R)</span></li><li><a class="no-nav" href="https://tai-shengyeh.github.io/nir-egg-freshness/#valid" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">NIR egg freshness: validation pitfalls ↗</a><br><span style="font-size:.9em">Measuring the same egg 22 times and splitting randomly causes data leakage — the same logic as 60 readings from the same fruit</span></li></ul></div></div></div></div></section><section class="slide" data-slide="15" data-section="Focus"><div class="slide-inner"><div class="kicker">Principle 2</div><h2 class="slide-title">Phenol–sulfuric acid method (DuBois, 1956): colorimetric determination of <span class='hi'>total sugar</span></h2><div class="grid2" style="margin-top:10px"><div><ul class="clean"><li>Concentrated sulfuric acid causes sugars to undergo <strong>hydrolysis + dehydration</strong>, forming furfural derivatives</li><li>These derivatives condense with <strong>phenol</strong> to give a stable orange-yellow product, read colorimetrically at <b>490 nm</b></li><li>Measures <strong>total sugar (total carbohydrate)</strong>, including sucrose and oligosaccharides (unlike copper-reduction methods, which measure only reducing sugars); note this is not the “sugars” on a nutrition label, which count only free monosaccharides and disaccharides</li><li><strong>Sugar alcohols do not react</strong> (sorbitol, erythritol, etc.) — the g3 game will verify this shortly</li><li>Different sugars (e.g., fructose vs glucose) have different <strong>molar color yields</strong>, so changing the standard causes systematic bias</li><li>Color development is <strong>not strictly stoichiometric</strong>, so you must always run your own <strong>calibration curve</strong></li><li>Add the concentrated sulfuric acid <strong>quickly in one go onto the liquid surface</strong>: the instant heat release makes the dehydration fast and uniform; adding slowly down the wall tends to layer and gives inconsistent color</li></ul></div><div class='svgwrap'>
+<svg viewBox="0 0 620 300">
+ <text x="310" y="20" text-anchor="middle" class="lblb" font-size="14">Phenol–sulfuric acid (DuBois) procedure</text>
+ <rect x="14" y="42" width="180" height="66" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="104" y="68" text-anchor="middle" class="lblb" font-size="12">① Take 2 mL sample/standard</text>
+ <text x="104" y="86" text-anchor="middle" class="lbl" font-size="11">Place in a test tube</text>
+ <rect x="220" y="42" width="180" height="66" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="310" y="68" text-anchor="middle" class="lblb" font-size="12">② Add 1 mL of 5% phenol</text>
+ <text x="310" y="86" text-anchor="middle" class="lbl" font-size="11">Mix</text>
+ <rect x="426" y="42" width="180" height="66" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="516" y="68" text-anchor="middle" class="lblb" font-size="12">③ Quickly add 5 mL concentrated sulfuric acid</text>
+ <text x="516" y="86" text-anchor="middle" class="lbl" font-size="11">Add directly onto the liquid surface (in a fume hood)</text>
+ <path d="M194 75 h26" stroke="#48597a" stroke-width="2" marker-end="url(#ar7)"/>
+ <path d="M400 75 h26" stroke="#48597a" stroke-width="2" marker-end="url(#ar7)"/>
+ <rect x="426" y="140" width="180" height="66" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="516" y="163" text-anchor="middle" class="lblb" font-size="12">④ Stand for 10 minutes</text>
+ <text x="516" y="181" text-anchor="middle" class="lbl" font-size="11">then mix well</text>
+ <rect x="220" y="140" width="180" height="66" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="310" y="163" text-anchor="middle" class="lblb" font-size="12">⑤ 25–30°C water bath</text>
+ <text x="310" y="181" text-anchor="middle" class="lbl" font-size="11">10–20 minutes for color development</text>
+ <rect x="14" y="140" width="180" height="66" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="104" y="163" text-anchor="middle" class="lblb" font-size="12">⑥ Read absorbance at 490 nm</text>
+ <text x="104" y="181" text-anchor="middle" class="lbl" font-size="11">Orange-yellow; compare with the calibration curve</text>
+ <path d="M516 108 v22" stroke="#48597a" stroke-width="2" marker-end="url(#ar7)"/>
+ <path d="M426 173 h-26" stroke="#48597a" stroke-width="2" marker-end="url(#ar7)"/>
+ <path d="M220 173 h-26" stroke="#48597a" stroke-width="2" marker-end="url(#ar7)"/>
+ <rect x="120" y="234" width="380" height="46" rx="10" fill="#fbe7e7" stroke="#d94f4f" stroke-width="1.6"/>
+ <text x="310" y="253" text-anchor="middle" class="lblb" font-size="12" fill="#d94f4f">⚠ Concentrated sulfuric acid releases intense heat + phenol is toxic</text>
+ <text x="310" y="270" text-anchor="middle" class="lbl" font-size="11">Work in a fume hood throughout, wearing a face shield and acid-resistant gloves</text>
+ <defs><marker id="ar7" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
+</svg></div></div></div></section><section class="slide" data-slide="16" data-section="Focus"><div class="slide-inner"><div class="kicker">Colorimetric determination</div><h2 class="slide-title">From color to concentration: the calibration curve</h2><ul class="clean" style="margin-top:12px"><li>Absorbance A: the darker the color, the more light absorbed and the larger A; within a range A is proportional to concentration (Beer–Lambert: A=εbc)</li><li>Calibration curve: measure A of standards of known concentration, use linear regression (least squares) to draw the best-fit line A=slope×C+intercept, then back-calculate C from the unknown sample's A</li><li>R²: the fraction of data variation explained by the line (0–1), but insensitive to “curvature”</li><li>Residual = measured A − A predicted by the line; it should scatter randomly around 0</li><li>LOD (limit of detection) = the lowest concentration at which you can reliably say “present”; LOQ (limit of quantitation) = the lowest concentration at which you can reliably report “how much”</li><li>Molar color yield: each mole of sugar gives a different amount of color, so results are written as “glucose equivalents”</li></ul><p class="subtitle" style="margin-top:10px"><a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/ch04.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Statistics Ch04 Calibration curve ↗</a> <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-decks/ch7_uvvis/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">📖 Full-principles deck (UV-Vis colorimetry) →</a></p></div></section><section class="slide" data-slide="17" data-section="Focus"><div class="slide-inner"><div class="kicker">Reducing vs non-reducing sugars</div><h2 class="slide-title">Check whether the <span class='hi'>anomeric carbon</span> is free</h2><ul class="clean" style="margin-top:12px"><li>Anomeric carbon: the carbon on the sugar ring bonded to two oxygens (glucose C1, fructose C2), originally the aldehyde/ketone carbon</li><li>Reducing sugar: at least one anomeric carbon is free (hemiacetal/hemiketal, which can open to an aldehyde or ketone) and can reduce Cu²⁺ to Cu₂O: glucose, fructose, lactose, maltose</li><li>Non-reducing sugar: all anomeric carbons are used in glycosidic bonds: sucrose (C1–C2, head to head), trehalose (C1–C1), raffinose (contains a sucrose unit), cyclodextrin (cyclic, no end)</li><li>Inversion: cleaving sucrose with acid or invertase → glucose + fructose, so that it can be measured by copper reduction</li></ul></div></section><section class="slide" data-slide="18" data-section="Focus" data-game="cmp"><div class="slide-inner"><div class="kicker">Class B vs textbook</div><h2 class="slide-title">Class B introduction: how the <span class='hi'>copper-reduction method</span> quantifies reducing sugars (not performed in this session)</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="method" data-t="s">Method <span class="ar">⇅</span></th><th data-k="quant" data-t="s">Quantitation <span class="ar">⇅</span></th><th data-k="reagent" data-t="s">Color reagent/titrant <span class="ar">⇅</span></th><th data-k="endpoint" data-t="s">End point/wavelength <span class="ar">⇅</span></th><th data-k="sugar" data-t="s">Applicable sugars <span class="ar">⇅</span></th><th data-k="cat" data-t="s">Category <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">In all four methods, reducing sugars first reduce Cu²⁺ to Cu₂O; the difference is “how the amount of Cu₂O is read out.” Click a column header to sort and compare. Sucrose must first be <strong>inverted</strong> to reducing sugars with acid or invertase before the first three methods can measure it.</div></div></section><section class="slide" data-slide="19" data-section="Focus" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">Mini-game ②</span><span class="gt">Reducing vs non-reducing sugars: which side do these 8 sugars go on?</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">Sort the 8 sugars into “Reducing sugar” or “Non-reducing sugar.”</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">Check answer</button><button class="btn ghost" id="g1reset">Reset</button></div></div></div></section><section class="slide" data-slide="20" data-section="Focus"><div class="slide-inner"><div class="kicker">Calibration</div><h2 class="slide-title">Before starting, calibrate three things</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">💧</div><div class="ct">Zero the refractometer</div><div class="cb">Zero with <strong>distilled water</strong> at 20°C; then check with a <strong>10.0% (w/w) sucrose standard solution</strong>, which should read 10.0 °Brix</div></div><div class="card a"><div class="ic">⬛</div><div class="ct">Zero the spectrophotometer</div><div class="cb">Zero with the <strong>reagent blank</strong> (no sugar, only phenol + concentrated sulfuric acid) to subtract the absorbance background of the reagents</div></div><div class="card g"><div class="ic">📈</div><div class="ct">Run a calibration curve every time</div><div class="cb">Glucose standards 0, 20, 40, 60, 80, 100 µg/mL; prepare a new curve for <strong>each batch</strong> and never reuse an old one</div></div></div></div></section><section class="slide" data-slide="21" data-section="Focus"><div class="slide-inner"><div class="kicker">4-hour lab schedule</div><h2 class="slide-title">Division of work and fume-hood rotation</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Time</th><th>Contents</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:30</td><td>Briefing + safety demonstration: rules for concentrated sulfuric acid/phenol, fume hood use</td></tr>
+    <tr><td class="c">0:30–1:15</td><td>Refractometer calibration (distilled water zero + sucrose standard check) and Brix measurement of each sample</td></tr>
+    <tr><td class="c">1:15–1:45</td><td>Prepare glucose standards, dilute samples (maple syrup / orange juice / sports drink / winter melon tea)</td></tr>
+    <tr><td class="c">1:45–3:00</td><td>Phenol–sulfuric acid color reaction and 490 nm readings (all in the fume hood)</td></tr>
+    <tr><td class="c">3:00–3:40</td><td>Class B method introduction + calculation practice (Somogyi/Bertrand, no hands-on work)</td></tr>
+    <tr><td class="c">3:40–4:00</td><td>Plot the calibration curve, enter data into the summary table</td></tr>
+    </tbody></table></div></section><section class="slide" data-slide="22" data-section="Focus"><div class="slide-inner"><div class="kicker">Safety rules</div><h2 class="slide-title">Concentrated sulfuric acid · phenol · fume hood</h2><div class="grid2" style="margin-top:14px"><div class="card a"><div class="ic">🥽</div><div class="ct">Concentrated sulfuric acid releases intense heat when mixed with water</div><div class="cb">Wear a <strong>face shield + acid-resistant gloves</strong> throughout; add the acid quickly onto the liquid surface <strong>inside the fume hood</strong>, and never add water to acid</div></div><div class="card b"><div class="ic">☠️</div><div class="ct">Phenol is toxic and is absorbed through the skin</div><div class="cb">Wear gloves and avoid skin contact; phenol waste <strong>must not be mixed with general waste</strong> and must be collected separately</div></div><div class="card g"><div class="ic">🌡️</div><div class="ct">Do not hold hot test tubes directly</div><div class="cb">Tubes are very hot after the water bath; handle them with tube holders and let them cool before using the spectrophotometer</div></div><div class="card a"><div class="ic">🧴</div><div class="ct">Collect concentrated sulfuric acid/phenol waste separately</div><div class="cb">Sort and collect according to the lab SOP; never pour down the sink</div></div></div></div></section><section class="slide" data-slide="23" data-section="Focus" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">Mini-game ③</span><span class="gt">Order the phenol–sulfuric acid procedure steps</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">Use ▲▼ to put the 6 steps of the phenol–sulfuric acid (DuBois) color reaction in the correct order.</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">Check order</button><button class="btn ghost" id="g4reset">Shuffle</button></div></div></div></section><section class="slide" data-slide="24" data-section="Focus" data-chart="stdcurve"><div class="slide-inner"><div class="kicker">Data · calibration curve</div><h2 class="slide-title">Phenol–sulfuric acid calibration curve: <span class='hi'>glucose 0–100 µg/mL</span></h2><div class="chartbox" style="height:38vh"><canvas id="chart_stdcurve"></canvas></div><div class="cap">Illustrative data (not measured by this class). Regression: A = 0.0101×C + 0.0308, R² = 0.9994.</div></div></section><section class="slide" data-slide="25" data-section="Focus"><div class="slide-inner"><div class="kicker">QC</div><h2 class="slide-title">The R² myth: a <span class='hi'>high R²</span> does not mean good regression quality</h2><div class="grid2-1" style="margin-top:6px"><div><div style="height:190px"><canvas id="residChart"></canvas></div><div class="cap">Residual plot (illustrative data)</div></div><div><ul class="clean"><li>This group's calibration curve has R² = <b>0.9994</b> (looks beautiful), but the residuals are negative at both ends and positive in the middle, forming an arc — a sign that you should <strong>check the residuals, not just R²</strong></li><li>LOD = 3.3σ/slope ≈ <b>3.50 µg/mL</b>; LOQ = 10σ/slope ≈ <b>10.62 µg/mL</b> (here σ is the SD of the regression residuals; in practice the SD of multiple blank readings is often used directly, with the same principle)</li><li>Sample readings below the LOQ can only be qualitative and should not be reported as quantitative results</li></ul></div></div></div></section><section class="slide" data-slide="26" data-section="Focus"><div class="slide-inner"><div class="kicker">Samples and data</div><h2 class="slide-title">Four samples, one comparison to discuss</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li><strong>Maple syrup</strong>: must be diluted heavily first to fall within the calibration range</li><li><strong>Orange juice</strong>: measure both Brix and phenol–sulfuric total sugar and compare them</li><li><strong>Sports drink</strong>: often contains high-fructose corn syrup (HFCS); watch for bias from the choice of standard</li><li><strong>Winter melon tea</strong>: a dark sample; check whether the color after dilution still interferes with colorimetry, and subtract the background color with a sample blank without phenol</li></ul><div class="note" style="margin-top:10px"><strong>Orange juice comparison (illustrative data):</strong> Brix ≈ <b>11.5</b> °Brix vs phenol–sulfuric total sugar ≈ <b>9.5</b> g/100mL (glucose equivalent), a difference of ≈ <b>2.0</b>. The gap mainly arises because Brix also counts <strong>acids and other soluble solids</strong>, while the phenol–sulfuric method colors only sugars; differences in color yield between sugars such as fructose and glucose also cause a small discrepancy.</div></div><div><div class="eq" style="text-align:left">Mass conservation (illustrative calculation, answering the opening 40:1):<br><br>Sap 2%, syrup 66% → mass ratio = 66/2 = <b>33 : 1</b><br><br>The volume ratio needs a density correction:<br>33 × (syrup density 1.33 / sap density 1.008) ≈ <b>43.5 : 1</b></div><p class="subtitle" style="margin-top:10px">Rule of 86: 86/2% ≈ <b>43 : 1</b>, consistent with the volume ratio calculated above; the video's “40:1” fits exactly if the sap is just slightly sweeter (about 2.18%) — the order of magnitude matches, so <strong>this claim survives a mass-balance check</strong>.</p></div></div></div></section><section class="slide" data-slide="27" data-section="Focus" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">Mini-game ④</span><span class="gt">Calculation challenge: sports drink total sugar (g/100mL)</span><span class="score" id="g6score">Unanswered</span></div><div class="game-q">A sports drink is diluted <b>1000-fold</b>; 2 mL is developed by the phenol–sulfuric acid method and reads A = <b>0.637</b> at 490 nm. The calibration curve is A = 0.0101×C + 0.0308 (C in µg/mL). Find the total sugar of the original sample (g/100mL, glucose equivalent). Formulas: C=(A−b)/slope; total sugar = C×dilution factor×10⁻⁴.</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">g/100mL</span><button class="btn" id="g6check">Check answer</button><button class="btn ghost" id="g6hint">Hint</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="28" data-section="Focus" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">Mini-game ⑤</span><span class="gt">Brix and phenol–sulfuric acid method: live quiz</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="29" data-section="Focus" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">Mini-game ⑥</span><span class="gt">Phenol–sulfuric acid method: detected vs not detected</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">Sort the 6 substances into “Detected by the phenol–sulfuric acid method” or “Not detected by the phenol–sulfuric acid method.”</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">Check answer</button><button class="btn ghost" id="g3reset">Reset</button></div></div></div></section><section class="slide" data-slide="30" data-section="Focus" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">Mini-game ⑦</span><span class="gt">Decision challenge: choose the method (including Class B question types)</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="31" data-section="Act"><div class="slide-inner"><div class="kicker">Homework</div><h2 class="slide-title">Colab NB07</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📥</div><div class="ct">Organize the calibration curve data</div><div class="cb">Using your group's glucose standard absorbances, calculate the regression equation and R²</div></div><div class="card a"><div class="ic">📊</div><div class="ct">Calculate LOD / LOQ</div><div class="cb">Use the residual SD (or blank SD) to calculate 3.3σ/slope and 10σ/slope</div></div><div class="card g"><div class="ic">🆚</div><div class="ct">Orange juice Brix vs total sugar</div><div class="cb">Discuss why the two differ, and explain clearly that “acids also count toward Brix”</div></div><div class="card b"><div class="ic">🧮</div><div class="ct">One Class B calculation</div><div class="cb">Convert the titration volume of the Bertrand or Somogyi method into reducing sugar content</div></div></div><p class="subtitle" style="margin-top:12px">Colab NB07: <a class="no-nav" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB07_sugar_phenolsulfuric.ipynb" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open NB07 in Colab ↗</a><span style="white-space:nowrap"> · Beginner (no coding): <a class="no-nav" href="../../excel/EX07_sugar_calibration.xlsx" download style="color:var(--accent);font-weight:800">Excel practice workbook EX07 ⬇</a></span>. The report must include: Brix and total sugar results for each sample, calibration curve and residuals, LOD/LOQ, the orange juice Brix vs total sugar discussion, and one Class B calculation.</p></div></section><section class="slide" data-slide="32" data-section="Act"><div class="slide-inner"><div class="kicker">Self-check</div><h2 class="slide-title">By the end of today you should be able to…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>Explain that Brix measures soluble solids, not pure sugar, and know that acids/salts also affect the reading</li><li data-k><span class="bx">✓</span>Operate the refractometer and complete calibration with a 10.0% (w/w) sucrose standard solution</li><li data-k><span class="bx">✓</span>State the chemistry of the phenol–sulfuric acid (DuBois) method: concentrated sulfuric acid dehydrates sugars to furan derivatives, which develop color with phenol and are read colorimetrically at 490 nm</li><li data-k><span class="bx">✓</span>Complete a phenol–sulfuric acid calibration curve and calculate the total sugar of unknown samples (g/100mL glucose equivalent)</li><li data-k><span class="bx">✓</span>Explain why using glucose or fructose as the standard causes systematic bias, and why sugar alcohols give no color</li><li data-k><span class="bx">✓</span>Distinguish reducing from non-reducing sugars, and state that sucrose must first be inverted before copper reduction can measure it</li><li data-k><span class="bx">✓</span>Distinguish the Somogyi/Bertrand methods (Class B, titration) from Nielsen's Somogyi–Nelson (colorimetric)</li><li data-k><span class="bx">✓</span>Follow the safety rules for concentrated sulfuric acid and phenol (fume hood / face shield / acid-resistant gloves)</li></ul><p class="subtitle" style="margin-top:12px">Tap to tick — make sure you really can do it.</p></div></section><script>window.CFG={"charts": {"stdcurve": {"type": "line", "yTitle": "Absorbance A (490nm) (x-axis: glucose concentration µg/mL)", "zero": true, "labels": ["0", "20", "40", "60", "80", "100"], "datasets": [{"label": "Measured absorbance (illustrative data)", "data": [0.021, 0.233, 0.447, 0.64, 0.847, 1.029], "color": "#1f6feb"}, {"label": "Regression line (fitted values)", "data": [0.031, 0.233, 0.435, 0.637, 0.839, 1.042], "color": "#d9822b"}]}}, "cmp": {"cols": [{"k": "method", "t": "s"}, {"k": "quant", "t": "s"}, {"k": "reagent", "t": "s"}, {"k": "endpoint", "t": "s"}, {"k": "sugar", "t": "s"}, {"k": "cat", "t": "s"}], "rows": [{"method": "Somogyi method", "quant": "Iodometric titration", "reagent": "Iodine solution/sodium thiosulfate", "endpoint": "Titration end point (starch indicator decolorizes)", "sugar": "Reducing sugars", "cat": "Ministry of Labor Class B"}, {"method": "Bertrand method", "quant": "Cu₂O dissolved in ferric sulfate; titrate the Fe²⁺ formed", "reagent": "KMnO₄", "endpoint": "Titration end point (faint pink)", "sugar": "Reducing sugars", "cat": "Ministry of Labor Class B"}, {"method": "Somogyi–Nelson (Nielsen colorimetric method)", "quant": "Arsenomolybdate colorimetric method", "reagent": "Arsenomolybdate reagent", "endpoint": "~520 nm colorimetry", "sugar": "Reducing sugars", "cat": "Nielsen textbook colorimetric method (not Class B)"}, {"method": "Phenol–sulfuric acid (DuBois, this session’s method)", "quant": "Phenol + concentrated sulfuric acid colorimetric method", "reagent": "5% phenol + concentrated sulfuric acid", "endpoint": "490 nm colorimetry", "sugar": "Total sugar (including disaccharides/oligosaccharides)", "cat": "Nielsen textbook colorimetric method"}]}, "bucket": {"g1": {"cats": ["Reducing sugar", "Non-reducing sugar"], "items": [{"t": "Glucose", "c": "Reducing sugar"}, {"t": "Fructose", "c": "Reducing sugar"}, {"t": "Lactose", "c": "Reducing sugar"}, {"t": "Maltose", "c": "Reducing sugar"}, {"t": "Sucrose", "c": "Non-reducing sugar"}, {"t": "Trehalose", "c": "Non-reducing sugar"}, {"t": "Raffinose", "c": "Non-reducing sugar"}, {"t": "Cyclodextrin", "c": "Non-reducing sugar"}], "ok": "🎉 All correct! A sugar with a free reducing end (hemiacetal) is a reducing sugar; in sucrose and trehalose the two anomeric carbons are bonded to each other, leaving no free reducing end, so they are non-reducing sugars.", "tip": "Hint: glucose, fructose, lactose and maltose keep a free hemiacetal/hemiketal → reducing sugars; in sucrose, trehalose, raffinose and cyclodextrin the reducing end is already bonded → non-reducing sugars."}, "g3": {"cats": ["Detected by the phenol–sulfuric acid method", "Not detected by the phenol–sulfuric acid method"], "items": [{"t": "Glucose", "c": "Detected by the phenol–sulfuric acid method"}, {"t": "Sucrose", "c": "Detected by the phenol–sulfuric acid method"}, {"t": "Maltooligosaccharides", "c": "Detected by the phenol–sulfuric acid method"}, {"t": "Sorbitol", "c": "Not detected by the phenol–sulfuric acid method"}, {"t": "Erythritol", "c": "Not detected by the phenol–sulfuric acid method"}, {"t": "Xylitol", "c": "Not detected by the phenol–sulfuric acid method"}], "ok": "🎉 Correct! Sugars (mono-, di- and oligosaccharides) can dehydrate and develop color with phenol; sugar alcohols lack the structure needed to dehydrate into furan derivatives and give almost no color.", "tip": "Hint: names with “-ol” are usually sugar alcohols, which are not detected; ordinary sugars are detected."}}, "mcq": {"g2": [{"q": "What does a juice’s °Brix reading actually represent?", "o": ["Pure sucrose content", "Soluble solids converted from refractive index (including sugar, acid, salt, etc.)", "Only the fructose content", "Only the water content"], "a": 1, "e": "Brix is the percentage corresponding to refractive index calibrated with sucrose, but acids, salts and other solutes also raise the refractive index, so juice Brix ≈ soluble solids, not pure sugar."}, {"q": "In the phenol–sulfuric acid method, why is the concentrated sulfuric acid added “quickly” onto the sample surface instead of slowly down the tube wall?", "o": ["It saves time", "The heat of dilution is concentrated and the temperature rises instantly, making the reaction fast and uniform, with better reproducibility", "Adding along the wall is more dangerous, so it is avoided", "No particular reason, just habit"], "a": 1, "e": "Mixing concentrated sulfuric acid with water releases a lot of heat; adding it quickly onto the surface makes the reaction occur quickly and uniformly, whereas running it slowly down the wall tends to layer and react incompletely, reducing reproducibility."}, {"q": "What effect can using fructose instead of glucose as the standard in the phenol–sulfuric acid method have?", "o": ["No difference at all", "Different sugars have different molar color yields, so changing the standard causes systematic bias", "It affects only precision, not accuracy", "This problem only occurs in protein analysis"], "a": 1, "e": "Different sugars react with phenol–sulfuric acid with different efficiency, so the choice of standard sugar causes systematic bias in the converted “sugar equivalent.”"}, {"q": "How do sugar alcohols (e.g., sorbitol) behave in the phenol–sulfuric acid method?", "o": ["Violent reaction with deeper color", "Almost no color (not detected by the phenol–sulfuric acid method)", "Exactly the same as glucose", "Color develops only at high temperature"], "a": 1, "e": "Sugar alcohols lack the structure that concentrated sulfuric acid can dehydrate into furan derivatives and hardly develop color with phenol, so the phenol–sulfuric acid method cannot detect them."}, {"q": "Which pair consists of two reducing sugars?", "o": ["Sucrose and trehalose", "Lactose and maltose", "Raffinose and cyclodextrin", "Sucrose and raffinose"], "a": 1, "e": "Lactose and maltose both keep a free reducing end (hemiacetal) and are reducing sugars; all the other options are pairs of non-reducing sugars."}], "g5": [{"q": "(Class B question type) How does the Somogyi method quantify the Cu₂O produced by reducing sugars?", "o": ["Weigh the Cu₂O directly", "Iodometric titration", "Ultraviolet spectroscopy", "Flame photometry"], "a": 1, "e": "In the Somogyi method Cu₂O reacts with iodine, and the remaining iodine is titrated with sodium thiosulfate; this is iodometric titration."}, {"q": "(Class B question type) After the Bertrand method dissolves Cu₂O in ferric sulfate, what is used to titrate the Fe²⁺ formed?", "o": ["NaOH", "KMnO₄ (potassium permanganate)", "AgNO₃", "EDTA"], "a": 1, "e": "In the Bertrand method Cu₂O reduces Fe³⁺ to Fe²⁺, the Fe²⁺ is titrated with KMnO₄, and the reducing sugar content is read from a table according to the volume consumed."}, {"q": "How does the “Somogyi–Nelson method” in Nielsen differ from the Class B “Somogyi method”?", "o": ["Exactly the same, only the translated names differ", "Somogyi–Nelson is colorimetric (arsenomolybdate color, about 520nm); the Class B Somogyi method is iodometric titration, and the end point is judged differently", "Somogyi–Nelson cannot measure reducing sugars", "The Class B Somogyi method is 10 times more accurate than Somogyi–Nelson"], "a": 1, "e": "Both come from Somogyi’s copper-reduction chemistry, but they differ in “how the amount of Cu₂O is read out”: one is colorimetric and one is titrimetric. This is easily confused in exams, so pay special attention."}, {"q": "What must be done before determining sucrose by a copper-reduction method (Somogyi/Bertrand)?", "o": ["Measure directly", "First hydrolyze (invert) the sucrose to reducing sugars with acid or invertase", "Freeze the sample first", "Add phenolphthalein indicator first"], "a": 1, "e": "Sucrose is a non-reducing sugar that copper reduction cannot detect; it must first be hydrolyzed with acid or invertase to glucose + fructose (reducing sugars) before it can be quantified."}, {"q": "Winter melon tea is very dark. What needs the most attention when measuring total sugar by the phenol–sulfuric acid method?", "o": ["Sample color interferes with colorimetry, so dilute appropriately and subtract a blank", "Dark samples contain no sugar", "Dark samples cannot be used with a spectrophotometer", "It must be heated to 100°C before measurement"], "a": 0, "e": "The color of a dark sample adds to the absorbance of the colored product, so interference from background color must be removed by suitable dilution together with a sample blank."}]}, "sort": {"g4": {"steps": ["Place 2 mL sample/standard in a test tube", "Add 1 mL of 5% phenol and mix", "In the fume hood, quickly add 5 mL concentrated sulfuric acid directly onto the liquid surface", "Stand for 10 minutes, then mix well", "25–30°C water bath for 10–20 minutes for color development", "Read absorbance at 490 nm and compare with the calibration curve"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 Correct order! Sample → add phenol → add acid quickly → stand and mix → water bath color development → colorimetric reading.", "tip": "Hint: the phenol goes in before the concentrated sulfuric acid; the acid goes quickly onto the liquid surface; standing and mixing come before the water bath; reading is the last step."}}, "calc": {"g6": {"answer": 5.9976, "tol": 0.25, "ok": "🎉 Correct! C=(0.637−0.0308)/0.0101≈59.98 µg/mL; total sugar=59.98×1000×10⁻⁴≈<b>6.00 g/100mL<\/b>.", "bad": "Try again: first use C=(A−intercept)/slope to get the diluted concentration (µg/mL), then multiply by the dilution factor to convert back to the original sample, and finally ×10⁻⁴ to convert to g/100mL.", "hint": "Hint: C=(0.637−0.0308)/0.0101≈59.98 µg/mL; 59.98×1000×0.0001≈6.00 g/100mL."}, "g7": {"answer": 12.08, "tol": 0.1, "ok": "🎉 Correct! A875=log(1000/500)=0.301, A1050=log(1000/800)=0.097, x1=0.204; Ŷ=8+20×0.204≈<b>12.08 °Brix<\/b>. The b0–b8 of a real instrument must be fitted with refractometer Brix from dozens to hundreds of fruit, and the patent does not disclose them.", "bad": "Try again: calculate A=log₁₀(I₀/Iₛ) for each of the two wavelengths (this question uses the common logarithm log₁₀; the patent text just writes log), subtract to get x1, then substitute into Ŷ=8+20·x1.", "hint": "Hint: A875=log₁₀2≈0.301, A1050=log₁₀1.25≈0.097, x1≈0.204, Ŷ≈8+20×0.204."}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
+}
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 All correct!','good');
+    else fb(g+'fb','Correct '+ok+'/'+N+'. '+(cfg.tip||'Adjust and try again.'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ Correct!':'❌ Answer: '+d.o[d.a]+'. ')+'<br>'+d.e+(done?'<br><b>Done! Total score: '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 Perfect order!','good');
+    else fb(g+'fb','Got '+ok+'/'+N+' positions right.'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','Enter a number first.','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ Correct'); fb(g+'fb',cfg.ok||('🎉 Correct! The answer is '+cfg.answer),'good');
+    } else { setScore(g+'score','Try again'); fb(g+'fb',cfg.bad||'Recalculate and try again.','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'Hint: substitute step by step using the formula.','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+
+<script>(function(){
+  function draw(){
+    if(typeof Chart==='undefined') return;
+    var el=document.getElementById('residChart'); if(!el) return;
+    new Chart(el,{type:'bar',
+      data:{labels:["0", "20", "40", "60", "80", "100"],datasets:[{label:'Residual (A_measured − A_fitted)',data:[-0.0098, 0.0, 0.0119, 0.0028, 0.0076, -0.0125],backgroundColor:'#d9822b'}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{y:{title:{display:true,text:'Residual'}}}}});
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',draw);} else {draw();}
+})();</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en] body,html[lang=en] .lbl,html[lang=en] .lblb{font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif}html[lang=en] body{font-size:16.5px}html[lang=en] .slide-title{font-size:clamp(1.3rem,2.7vw,2.05rem)}html[lang=en] .cover h1{font-size:clamp(2rem,5vw,3.8rem)}html[lang=en] .hook{font-size:clamp(1.5rem,3.6vw,2.6rem)}html[lang=en] p,html[lang=en] li{line-height:1.55}html[lang=en] .kicker{letter-spacing:.1em}html[lang=en] p,html[lang=en] li{font-size:clamp(.86rem,1.3vw,1.04rem)}html[lang=en] .card .cb{font-size:clamp(.8rem,1.15vw,.94rem)}html[lang=en] .card .ct{font-size:clamp(.95rem,1.4vw,1.1rem)}html[lang=en] .chip{font-size:.84rem;padding:7px 12px}html[lang=en] .opt{font-size:clamp(.82rem,1.2vw,.98rem);padding:11px 15px}html[lang=en] .game-q{font-size:clamp(.9rem,1.35vw,1.08rem)}html[lang=en] .bucket .bh{font-size:.88rem}html[lang=en] table.cmp{font-size:clamp(.78rem,1.1vw,.95rem)}html[lang=en] table.cmp th,html[lang=en] table.cmp td{padding:9px 11px}html[lang=en] .note{font-size:clamp(.85rem,1.2vw,.98rem)}html[lang=en] .subtitle{font-size:clamp(.9rem,1.4vw,1.1rem)}html[lang=en] .checklist li{font-size:.86rem}html[lang=en] .cap{font-size:.82rem}html[lang=en] .pill{font-size:.78rem;padding:4px 10px}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><script>(function(){
+function fit(){var sl=document.querySelector('.slide.active');if(!sl)return;
+ sl.querySelectorAll('svg').forEach(function(svg){var sb=svg.getBoundingClientRect();if(!sb.width)return;
+  var rects=[].slice.call(svg.querySelectorAll('rect')).map(function(r){return r.getBoundingClientRect()});
+  [].slice.call(svg.querySelectorAll('text')).forEach(function(t){
+   if(t.dataset.fit)return; var s=(t.textContent||'').trim(); if(!s)return;
+   var b=t.getBoundingClientRect(); if(!b.width)return;
+   var cx=(b.left+b.right)/2, cy=(b.top+b.bottom)/2;
+   var host=rects.filter(function(r){return r.width>20&&r.width<480&&cx>r.left&&cx<r.right&&cy>r.top&&cy<r.bottom})
+             .sort(function(p,q){return p.width-q.width})[0];
+   var maxW=host?host.width-10:Math.min(b.right,sb.right-2)-Math.max(b.left,sb.left+2);
+   if(host&&(b.right>sb.right||b.left<sb.left))maxW=Math.min(maxW,sb.width-4);
+   if(b.width<=maxW+1)return;
+   t.dataset.fit='1';
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13;
+   var k=b.width/((t.getBBox().width)||b.width); /* client px per user unit */
+   var hasTspan=t.querySelector('tspan'); var canWrap=!hasTspan&&s.indexOf(' ')>0&&host&&host.height>=fs*2.3;
+   if(canWrap){var others=[].slice.call(svg.querySelectorAll('text')).filter(function(o){if(o===t)return false;var ob=o.getBoundingClientRect();var ox=(ob.left+ob.right)/2,oy=(ob.top+ob.bottom)/2;return ox>host.left&&ox<host.right&&oy>host.top&&oy<host.bottom;});
+     if(others.length){var free=host.bottom-b.bottom;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.top>=b.top)free=Math.min(free,ob.top-b.bottom)});var freeTop=b.top-host.top;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.bottom<=b.bottom)freeTop=Math.min(freeTop,b.top-ob.bottom)});if(free+freeTop<fs*1.15)canWrap=false;}}
+   if(canWrap){var w=s.split(' '),best=null;
+     for(var i=1;i<w.length;i++){var a=w.slice(0,i).join(' '),c=w.slice(i).join(' ');var d=Math.abs(a.length-c.length);if(!best||d<best.d)best={d:d,a:a,c:c};}
+     var x=t.getAttribute('x')||'0',y=parseFloat(t.getAttribute('y')||'0');
+     t.textContent='';var t1=document.createElementNS('http://www.w3.org/2000/svg','tspan'),t2=t1.cloneNode();
+     t1.setAttribute('x',x);t1.setAttribute('y',(y-fs*0.55/k).toFixed(2));t1.textContent=best.a;
+     t2.setAttribute('x',x);t2.setAttribute('y',(y+fs*0.6/k).toFixed(2));t2.textContent=best.c;
+     t.appendChild(t1);t.appendChild(t2);b=t.getBoundingClientRect();if(b.width<=maxW+1)return;}
+   var sc=Math.max(0.7,maxW/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   b=t.getBoundingClientRect(); if(b.width>maxW+1&&!t.querySelector('tspan')){t.setAttribute('textLength',(maxW/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+  /* second pass: free labels that collide with a neighbour on the same row */
+  var ts=[].slice.call(svg.querySelectorAll('text')).filter(function(x){return (x.textContent||'').trim()});
+  for(var i=0;i<ts.length;i++)for(var j=i+1;j<ts.length;j++){var A=ts[i].getBoundingClientRect(),B=ts[j].getBoundingClientRect();
+   var ox=Math.min(A.right,B.right)-Math.max(A.left,B.left),oy=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
+   if(ox<=2||oy<=Math.min(A.height,B.height)*0.5)continue;
+   var t=A.width>=B.width?ts[i]:ts[j],b=A.width>=B.width?A:B; if(t.querySelector('tspan')||t.dataset.fit2)continue; t.dataset.fit2='1';
+   var want=b.width-ox-6; if(want<b.width*0.55)continue;
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13,k=b.width/((t.getBBox().width)||b.width);
+   var sc=Math.max(0.75,want/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   var nb=t.getBoundingClientRect(); if(nb.width>want+1){t.setAttribute('textLength',(want/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  }});}
+ if(typeof show==='function'){var _s=show;show=function(i){_s(i);fit();};}
+ fit();setTimeout(fit,400);window.addEventListener('load',function(){setTimeout(fit,200)});
+})();</script><!--/i18n-toggle--></body></html>

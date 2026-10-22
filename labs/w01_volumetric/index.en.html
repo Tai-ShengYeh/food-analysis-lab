@@ -1,0 +1,586 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W1 Volumetric Glassware Calibration · Food Analysis Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px;-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:100%}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  /* one consistent type scale on phones (clamp() minimums differed per element) */
+  p,li,.subtitle,.card .cb,.note,.cover .meta,table.cmp,.game-q,.opt,.sortrow .txt,.fb{font-size:.95rem!important}
+  .lead,.card .ct,.game-head .gt{font-size:1.05rem!important}
+  .svgwrap svg{min-width:560px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto}table.cmp th,table.cmp td{white-space:normal;padding:9px 10px;min-width:56px}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">Food Analysis Lab · W1</div><div id="pageInfo"></div><div id="hint">← → / Space to change slide · F fullscreen · Tap either side to turn pages</div><section class="slide" data-slide="1" data-section="Hook" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Food Analysis Lab · LAB WEEK 1</div><h1>Volumetric glassware calibration<span style='color:var(--accent-2)'> (gravimetric method)</span></h1><div class="en">Volumetric Glassware Calibration by Gravimetry</div><div class="meta">Food Analysis Lab · 4-hour session · 6 interactive mini-games<br>ISO 4787 gravimetric method · Tanaka density equation · buoyancy correction · intro to data QC</div><div style="margin-top:24px"><span class="pill">TC (To Contain) vs TD (To Deliver)</span><span class="pill">Class A ±0.02 mL</span><span class="pill">Buoyancy correction</span><span class="pill">RSD% / 95% CI</span><span class="pill">ISO/IEC 17025</span></div></div></div></section><section class="slide" data-slide="2" data-section="Hook"><div class="slide-inner"><div class="kicker">Pre-lab video (about 2 min) (Chinese narration)</div><h2 class="slide-title">Watch before class: does your 10 mL pipette really deliver 10 mL?</h2><div style="max-width:min(900px,100%,calc(52vh*16/9));margin:14px auto 0">
+  <div style="position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000">
+  <iframe src="https://www.youtube-nocookie.com/embed/nPiccdYaUg0?cc_load_policy=1&amp;cc_lang_pref=zh-TW" title="W1 Volumetric glassware calibration pre-lab video" style="position:absolute;inset:0;width:100%;height:100%;border:0" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+  <p class="subtitle" style="margin-top:10px;text-align:center">Contents: gravimetric method → convert water temperature to density → air buoyancy correction → accuracy vs precision, systematic vs random error. (Hand-drawn animation) <a href="https://youtu.be/nPiccdYaUg0" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Open on YouTube →</a></p></div></div></section><section class="slide" data-slide="3" data-section="Hook"><div class="slide-inner"><div class="kicker">interactive lab</div><h2 class="slide-title">The truth about a tube of water: <span class='hi'>Predict → Observe → Explain</span></h2><div class="no-nav" id="w01lab-wrap" style="max-width:min(1100px,100%);margin:10px auto 0">
+  <style>#w01lab-wrap{max-width:min(1400px,100%)!important}#w01lab-box{position:relative;width:100%;aspect-ratio:1100/506;max-height:min(66vh,760px);border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}@media(max-width:700px){#w01lab-box{aspect-ratio:auto;height:min(78vh,620px);max-height:none}}</style>
+  <div id="w01lab-box">
+    <iframe id="w01lab" src="volumetric_lab.html?embed=1" title="W1 Volumetric glassware calibration interactive lab: six scenes, predict → observe → explain (Chinese)" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+  </div>
+  <p class="subtitle" style="margin-top:8px;text-align:center">Six scenes: predict → TC/TD last drop → read the scale → weigh to get volume → significant ≠ failing → class forest plot; answer correctly to unlock the next scene. <a class="no-nav" href="volumetric_lab.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open the lab in a new tab ↗</a></p>
+  <script>(function(){var sec=document.currentScript.closest('.slide');var f=document.getElementById('w01lab');
+    new MutationObserver(function(){if(!sec.classList.contains('active')&&f.contentWindow)f.contentWindow.postMessage({type:'w01-lab-pause'},location.origin==='null'?'*':location.origin);}).observe(sec,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('message',function(e){if(e.source===f.contentWindow&&e.data&&e.data.type==='w01-lab-goto'&&typeof show==='function'){show(cur+1);}});})();</script>
+</div></div></section><section class="slide" data-slide="4" data-section="Hook"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">Think first</div>
+  <div class="hook">Does the <span class="hi">10 mL pipette</span> in your hand<br>really deliver <span class="hi">10 mL</span>?</div>
+  <p class="subtitle" style="max-width:860px;margin:22px auto 0">Testing labs must calibrate volumetric glassware regularly under <strong>ISO/IEC 17025</strong> (the international accreditation standard for the competence of testing and calibration laboratories). The international standard <strong>ISO 4787</strong> specifies how to calibrate glass volumetric ware by the “gravimetric method”.<br> Today you will verify for yourself whether your own pipette and burette are truly “accurate”.</p>
+  <div style="margin-top:24px"><span class="pill">Lab accreditation</span><span class="pill">Measurement uncertainty (W8)</span> <span class="pill">Data QC</span><span class="pill">Correct record-keeping</span></div></div></div></section><section class="slide" data-slide="5" data-section="Hook"><div class="slide-inner"><div class="kicker">Today’s learning goals</div><h2 class="slide-title">Four things you will be able to do after this class</h2><div class="grid2" style="margin-top:22px"><div class="card b"><div class="ic">⚖️</div><div class="ct">Run a gravimetric calibration</div><div class="cb">Operate the analytical balance and volumetric glassware correctly and complete a 10-replicate gravimetric calibration</div></div><div class="card a"><div class="ic">🧮</div><div class="ct">Calculate the true volume</div><div class="cb">Use the buoyancy-correction formula V=m×F_b/ρ_w to convert apparent mass into actual volume</div></div><div class="card g"><div class="ic">📊</div><div class="ct">Judge pass or fail</div><div class="cb">Judge data quality with the mean, SD, RSD%, and 95% CI, and compare with the Class A tolerance (the maximum error allowed for the highest grade of volumetric glassware)</div></div><div class="card b"><div class="ic">📝</div><div class="ct">Understand accuracy vs precision</div><div class="cb">Tell systematic error from random error, and know that “accurate” and “steady” are not the same thing</div></div></div></div></section><section class="slide" data-slide="6" data-section="Hook"><div class="slide-inner"><div class="kicker">Principles 1/2</div><h2 class="slide-title">TC (To Contain) vs TD (To Deliver), Class A tolerance</h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 760 330" style="max-height:40vh;width:100%">
+ <text x="380" y="20" text-anchor="middle" class="lblb" font-size="15">TC (To Contain) vs TD (To Deliver): three instruments</text>
+
+ <!-- 1. volumetric flask (TC): round flat-bottomed bulb + long narrow neck + stopper + one ring mark -->
+ <rect x="112" y="34" width="16" height="12" rx="3" fill="#cfd8e6" stroke="#48597a" stroke-width="1.5"/>
+ <path d="M113 46 V150 C 72 158, 62 238, 80 250 H160 C178 238, 168 158, 127 150 V46 Z"
+   fill="#ffffff" stroke="#1f6feb" stroke-width="2.2"/>
+ <path d="M113 96 V150 C 72 158, 62 238, 80 250 H160 C178 238, 168 158, 127 150 V96 Z" fill="#cfe0f6" opacity=".8"/>
+ <ellipse cx="120" cy="96" rx="9" ry="2.6" fill="none" stroke="#1f6feb" stroke-width="1.8"/>
+ <path d="M129 96 H152" stroke="#1f6feb" stroke-width="1.2"/>
+ <text x="155" y="100" class="lbl" fill="#1f6feb">Graduation mark (only one)</text>
+ <text x="120" y="276" text-anchor="middle" class="lblb" fill="#1f6feb" font-size="13">Volumetric flask</text>
+ <text x="120" y="294" text-anchor="middle" class="lbl">TC: filled to the mark = labeled volume</text>
+ <text x="120" y="311" text-anchor="middle" class="lbl">Use: make up to volume, standards</text>
+
+ <!-- 2. volumetric (transfer) pipette (TD): thin stem, central bulb, one ring mark on upper stem, tapered tip -->
+ <path d="M372 34 H378 V112 C 394 118, 394 184, 378 190 V246 L375.5 262 H374.5 L372 246 V190 C 356 184, 356 118, 372 112 Z"
+   fill="#ffffff" stroke="#d9822b" stroke-width="2.2"/>
+ <path d="M372 70 H378 V112 C 394 118, 394 184, 378 190 V246 L375.5 262 H374.5 L372 246 V190 C 356 184, 356 118, 372 112 Z" fill="#fbeede" opacity=".9"/>
+ <ellipse cx="375" cy="70" rx="5" ry="1.8" fill="none" stroke="#d9822b" stroke-width="1.8"/>
+ <path d="M380 70 H402" stroke="#d9822b" stroke-width="1.2"/>
+ <text x="405" y="74" class="lbl" fill="#d9822b">Graduation mark (only one)</text>
+ <text x="394" y="152" class="lbl" font-size="11" fill="#48597a">10 mL</text>
+ <text x="375" y="284" text-anchor="middle" class="lblb" fill="#d9822b" font-size="13">Volumetric pipette</text>
+ <text x="375" y="302" text-anchor="middle" class="lbl">TD: delivered from the mark = 10.00 mL</text>
+ <text x="375" y="319" text-anchor="middle" class="lbl">Don’t blow out the tip residue</text>
+
+ <!-- 3. burette (TD): long straight graduated tube, 0 at the TOP, stopcock, tip -->
+ <rect x="592" y="34" width="16" height="200" fill="#ffffff" stroke="#1f9d6b" stroke-width="2.2"/>
+ <rect x="593.2" y="58" width="13.6" height="175" fill="#dff3ea"/>
+ <g stroke="#1f9d6b" stroke-width="1">
+  <line x1="592" y1="44" x2="604" y2="44"/><line x1="592" y1="80" x2="604" y2="80"/>
+  <line x1="592" y1="116" x2="604" y2="116"/><line x1="592" y1="152" x2="604" y2="152"/>
+  <line x1="592" y1="188" x2="604" y2="188"/><line x1="592" y1="224" x2="604" y2="224"/>
+  <line x1="592" y1="53" x2="598" y2="53"/><line x1="592" y1="62" x2="598" y2="62"/><line x1="592" y1="71" x2="598" y2="71"/>
+  <line x1="592" y1="89" x2="598" y2="89"/><line x1="592" y1="98" x2="598" y2="98"/><line x1="592" y1="107" x2="598" y2="107"/>
+  <line x1="592" y1="125" x2="598" y2="125"/><line x1="592" y1="134" x2="598" y2="134"/><line x1="592" y1="143" x2="598" y2="143"/>
+  <line x1="592" y1="161" x2="598" y2="161"/><line x1="592" y1="170" x2="598" y2="170"/><line x1="592" y1="179" x2="598" y2="179"/>
+  <line x1="592" y1="197" x2="598" y2="197"/><line x1="592" y1="206" x2="598" y2="206"/><line x1="592" y1="215" x2="598" y2="215"/>
+ </g>
+ <g class="lbl" font-size="10" fill="#1f9d6b" text-anchor="end">
+  <text x="588" y="47">0</text><text x="588" y="83">10</text><text x="588" y="119">20</text>
+  <text x="588" y="155">30</text><text x="588" y="191">40</text><text x="588" y="227">50</text>
+ </g>
+ <rect x="596" y="234" width="8" height="8" fill="#ffffff" stroke="#1f9d6b" stroke-width="1.6"/>
+ <rect x="584" y="236" width="32" height="5" rx="2" fill="#1f9d6b"/>
+ <path d="M597 242 H603 L601 262 H599 Z" fill="#ffffff" stroke="#1f9d6b" stroke-width="1.6"/>
+ <text x="622" y="242" class="lbl" font-size="11" fill="#1f9d6b">Stopcock</text>
+ <text x="614" y="47" class="lbl" font-size="11" fill="#1f9d6b">0 at the top</text>
+ <text x="600" y="284" text-anchor="middle" class="lblb" fill="#1f9d6b" font-size="13">Burette</text>
+ <text x="600" y="302" text-anchor="middle" class="lbl">TD: final − initial reading = volume</text>
+ <text x="600" y="319" text-anchor="middle" class="lbl">0.1 mL graduations, estimate 0.01 mL</text>
+
+ <!-- meniscus reading inset -->
+ <rect x="668" y="120" width="84" height="100" rx="8" fill="#f6f9fd" stroke="#48597a" stroke-width="1.2"/>
+ <line x1="694" y1="148" x2="694" y2="210" stroke="#48597a" stroke-width="1.6"/>
+ <line x1="726" y1="148" x2="726" y2="210" stroke="#48597a" stroke-width="1.6"/>
+ <path d="M694 160 Q710 176 726 160 V210 H694 Z" fill="#cfe0f6"/>
+ <path d="M694 160 Q710 176 726 160" fill="none" stroke="#1f6feb" stroke-width="1.6"/>
+ <line x1="676" y1="168" x2="744" y2="168" stroke="#d9822b" stroke-width="1.2" stroke-dasharray="3 2"/>
+ <text x="710" y="138" text-anchor="middle" class="lbl" font-size="10">Read the bottom of the meniscus</text>
+ <text x="710" y="232" text-anchor="middle" class="lbl" font-size="10">Eye level with the bottom</text>
+ <text x="710" y="246" text-anchor="middle" class="lbl" font-size="10">Avoids parallax</text>
+</svg></div><table class="cmp" style="margin-top:10px"><thead><tr><th>Instrument</th><th>Grade</th><th>Tolerance</th><th>Standard</th></tr></thead><tbody><tr><td class="c">10 mL volumetric pipette</td><td>Class A</td><td class="c">±0.02 mL</td><td>ASTM E969</td></tr><tr><td class="c">50 mL burette</td><td>Class A</td><td class="c">±0.05 mL (full length)</td><td>ASTM E287</td></tr><tr><td>Same-capacity glassware</td><td>Class B</td><td>Tolerance is about 2× that of Class A</td><td>—</td></tr></tbody></table></div></section><section class="slide" data-slide="7" data-section="Hook"><div class="slide-inner"><div class="kicker">Principles 2/2</div><h2 class="slide-title">Reading, delivery, and temperature: the fine points</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">👁️</div><div class="ct">Parallax</div><div class="cb">Read the meniscus at eye level; looking from above misjudges the volume</div></div><div class="card a"><div class="ic">⏱️</div><div class="ct">Delivery time and touching the wall</div><div class="cb">Burettes and volumetric pipettes need a fixed waiting time when delivering; finally touch the tip to the flask wall (tip touch-off). For a regular volumetric pipette (TD, To Deliver), the last small drop left in the tip must “not” be blown out — calibration never counts that drop</div></div><div class="card g"><div class="ic">🌡️</div><div class="ct">Temperature changes density</div><div class="cb">Water density varies with temperature; to convert the measured “mass” back to “volume”, you must know the water temperature at the time</div></div><div class="card b"><div class="ic">🎈</div><div class="ct">Air buoyancy correction</div><div class="cb">The balance weighs in air, and the buoyancy on the weights and on the water differs, so a buoyancy correction is needed; the magnitude is about <b>0.1%</b></div></div></div></div></section><section class="slide" data-slide="8" data-section="Hook" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">Mini-game ①</span><span class="gt">TC (To Contain) vs TD (To Deliver)</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">You just learned TC (To Contain) / TD (To Deliver): sort 6 pieces of volumetric glassware/statements into “TC (To Contain)” or “TD (To Deliver)”.</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">Check answer</button><button class="btn ghost" id="g3reset">Reset</button></div></div></div></section><section class="slide" data-slide="9" data-section="Focus"><div class="slide-inner"><div class="kicker">Before we start: instrument calibration</div><h2 class="slide-title">Balance, thermometer, and water all need to be “ready”</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">⚖️</div><div class="ct">Daily analytical balance check</div><div class="cb">Before class, check the balance with standard weights; make sure the level bubble is centered; close the draft shield</div></div><div class="card a"><div class="ic">🌡️</div><div class="ct">Thermometer</div><div class="cb">Used to measure water temperature; keep it in the same environment as the balance and read to 0.1 °C</div></div><div class="card g"><div class="ic">💧</div><div class="ct">Equilibrate water to room temperature</div><div class="cb">Place distilled/deionized water in the lab ahead of time so it matches room temperature, avoiding errors from temperature drift while weighing</div></div><div class="card b"><div class="ic">📋</div><div class="ct">Know your glassware</div><div class="cb">Confirm the model, measuring range, and whether the volumetric pipette/burette is Class A</div></div></div></div></section><section class="slide" data-slide="10" data-section="Focus"><div class="slide-inner"><div class="kicker">Core procedure</div><h2 class="slide-title">How to do the gravimetric method</h2><div class="grid2-1" style="margin-top:2px"><div class="svgwrap">
+<svg viewBox="0 0 560 220">
+ <text x="280" y="20" text-anchor="middle" class="lblb" font-size="14">Gravimetric calibration: core workflow</text>
+ <rect x="20" y="40" width="120" height="54" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="80" y="62" text-anchor="middle" class="lblb" font-size="12">Weighing bottle</text>
+ <text x="80" y="80" text-anchor="middle" class="lbl">Cap it and tare (empty bottle)</text>
+ <path d="M140 67 h35" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <rect x="180" y="40" width="120" height="54" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="240" y="62" text-anchor="middle" class="lblb" font-size="12">Measure water</text>
+ <text x="240" y="80" text-anchor="middle" class="lbl">Deliver from pipette/burette</text>
+ <path d="M300 67 h35" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <rect x="340" y="40" width="120" height="54" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="400" y="62" text-anchor="middle" class="lblb" font-size="12">Cap and weigh</text>
+ <text x="400" y="80" text-anchor="middle" class="lbl">Record apparent mass m</text>
+ <path d="M460 67 h35" stroke="#48597a" stroke-width="2" marker-end="url(#ar)"/>
+ <rect x="500" y="40" width="50" height="54" rx="10" fill="#f6f9fd" stroke="#48597a" stroke-width="1.6"/>
+ <text x="525" y="62" text-anchor="middle" class="lbl" font-size="11">Record</text>
+ <text x="525" y="78" text-anchor="middle" class="lbl" font-size="11">Water temperature</text>
+ <path d="M80 94 v20" stroke="#48597a" stroke-width="1.6" stroke-dasharray="3 3" marker-end="url(#ar2)"/>
+ <rect x="20" y="118" width="480" height="60" rx="10" fill="#e3f6ee" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="260" y="140" text-anchor="middle" class="lblb" fill="#1f9d6b" font-size="13">V = m_app × F_b / ρ_w ( look up ρ_w with the Tanaka equation )</text>
+ <text x="260" y="160" text-anchor="middle" class="lbl">Repeat 10 times per instrument → mean, SD, 95% CI</text>
+ <defs>
+  <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker>
+  <marker id="ar2" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto"><path d="M0 0 L8 0 L4 8 Z" fill="#48597a"/></marker>
+ </defs>
+</svg></div><div><ul class="clean"><li><strong>Volumetric pipette:</strong> cap the weighing bottle and tare → draw 10.00 mL of water and deliver it into the bottle → cap and weigh immediately (to 0.1 mg) → record water temperature → repeat 10 times</li><li><strong>Burette:</strong> fill and read the initial level → deliver to 25.00 mL → weigh → repeat 10 times</li><li><strong>Apparent mass m<sub>app</sub></strong>: the number read directly on the balance in air, before air buoyancy is removed; it is converted to volume in the next step</li></ul></div></div></div></section><section class="slide" data-slide="11" data-section="Focus"><div class="slide-inner"><div class="kicker">Today's schedule</div><h2 class="slide-title">How the four hours are divided</h2><div class="grid2" style="margin-top:8px"><div class="card b"><div class="ic">🕐 0:00–0:40</div><div class="ct">Explanation and demo</div><div class="cb">Balance operation, gravimetric steps, how to record long-format data</div></div><div class="card a"><div class="ic">🕑 0:40–2:00</div><div class="ct">Pipette, 10 replicates</div><div class="cb">Each person uses the 10 mL volumetric pipette to measure water, weigh, and record temperature</div></div><div class="card g"><div class="ic">🕓 2:00–3:30</div><div class="ct">Burette, 10 replicates</div><div class="cb">Operate the 50 mL burette, deliver to 25.00 mL, and weigh</div></div><div class="card b"><div class="ic">🕟 3:30–4:00</div><div class="ct">Data entry and checking</div><div class="cb">Save the data in the shared sheet and flag outliers that look like typos</div></div></div><div class="note" style="margin-top:14px">“Long format” = one row holds only one measurement; the other columns (group, student, item, rep, value, unit, temp_C, note) say who made it, which repeat, the unit, and the water temperature — so the whole class's data can be merged directly.</div></div></section><section class="slide" data-slide="12" data-section="Focus"><div class="slide-inner"><div class="kicker">Safety and waste</div><h2 class="slide-title">Three rules you must follow</h2><div class="grid3" style="margin-top:20px"><div class="card a"><div class="ic">🚫</div><div class="ct">Never pipette by mouth</div><div class="cb">Always use a pipette bulb or pipette pump; mouth pipetting is strictly forbidden</div></div><div class="card b"><div class="ic">🧹</div><div class="ct">Broken glass disposal</div><div class="cb">Put broken glassware in the dedicated broken glass box, never in the regular trash</div></div><div class="card g"><div class="ic">🧽</div><div class="ct">Clean the balance as you go</div><div class="cb">After weighing, wipe the balance pan and surroundings so water stains don't affect the next student's readings</div></div></div></div></section><section class="slide" data-slide="13" data-section="Focus" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">Mini-game ②</span><span class="gt">Ordering the gravimetric calibration steps</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">Use ▲▼ to put the 6 steps of gravimetric calibration in the correct order.</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">Check order</button><button class="btn ghost" id="g4reset">Shuffle</button></div></div></div></section><section class="slide" data-slide="14" data-section="Focus"><div class="slide-inner"><div class="kicker">Data processing</div><h2 class="slide-title">From apparent mass to true volume</h2><div class="grid2" style="margin-top:10px"><div class="eq" style="font-size:clamp(1.15rem,2vw,1.6rem)">V = m<sub>app</sub> × F<sub>b</sub> / ρ<sub>w</sub></div><div class="eq" style="font-size:clamp(1.05rem,1.75vw,1.4rem)">F<sub>b</sub> = 1 + ρ<sub>air</sub>(1/ρ<sub>w</sub> − 1/ρ<sub>weights</sub>)</div></div><p style="margin-top:10px;font-size:clamp(.9rem,1.35vw,1.1rem);color:var(--ink-2)">ρ<sub>air</sub>=0.0012 g/mL ρ<sub>weights</sub>=8.0 g/mL ρ<sub>w</sub> is obtained from the Tanaka (2001) equation — the internationally accepted “density–temperature” formula for pure water, from which the table below was calculated.</p><div class="note" style="margin-top:10px"><strong>Example:</strong> water delivered from a volumetric pipette has an apparent mass of <b>9.9700 g</b> at a water temperature of <b>25.0 °C</b>. ρ<sub>w</sub>(25.0°C) = <b>0.997047 g/mL</b>, F<sub>b</sub> ≈ <b>1.00105</b> → V ≈ <b>10.010 mL</b>.</div><table class="cmp" style="margin-top:12px"><thead><tr><th>Water temp. (°C)</th><th class="c">20</th><th class="c">22</th><th class="c">24</th><th class="c">25</th><th class="c">26</th><th class="c">28</th></tr></thead><tbody><tr><td class="c">ρ<sub>w</sub> (g/mL)</td><td class="c">0.998207</td><td class="c">0.997773</td><td class="c">0.997299</td><td class="c">0.997047</td><td class="c">0.996786</td><td class="c">0.996235</td></tr></tbody></table></div></section><section class="slide" data-slide="15" data-section="Focus" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">Mini-game ③</span><span class="gt">Calculation challenge: actual burette volume</span><span class="score" id="g6score">Unanswered</span></div><div class="game-q">The apparent mass of water delivered from the burette is <b>m_app = 24.9215 g</b> at <b>23.0 °C</b> (ρ_w = 0.997541 g/mL, F_b ≈ 1.00105). Find the actual volume V (mL) to 3 decimal places. Formula: V = m_app × F_b / ρ_w.</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">mL</span><button class="btn" id="g6check">Check answer</button><button class="btn ghost" id="g6hint">Hint</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="16" data-section="Focus"><div class="slide-inner">
+<div class="kicker">Data QC</div>
+<h2 class="slide-title">Mean, SD, RSD%, 95% CI, and <span class="hi">bias</span></h2>
+<div class="grid2" style="margin-top:14px">
+<ul class="clean">
+<li><strong>Mean, SD</strong>: central tendency and spread of the 10 replicates</li>
+<li><strong>RSD% = SD/mean × 100</strong>: relative spread; the smaller, the more “precise”</li>
+<li><strong>95% CI = mean ± t×SD/√n</strong> (n=10, t=2.262)</li>
+<li><strong>bias = mean − nominal value (10.00 or 25.00 mL)</strong>: the closer to 0, the more “accurate”</li>
+<li>Significant figures: report the CI to 1–2 significant figures and the mean to the same decimal place</li>
+</ul>
+<div class="chartbox"><canvas id="qcChart"></canvas></div>
+</div>
+<p class="cap" style="margin-top:10px">Mean bias and 95% CI range (floating bars) for 5 illustrative students; dashed lines are the ±0.02 mL tolerance — illustrative data, not real measurements.</p>
+<script>
+(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('qcChart'); if(!el||el._done) return; el._done=1;
+    var labels=['Student A (accurate and steady)','Student B (steady but biased)','Student C (unsteady but accurate)','Student D (passes)','Student E (CI contains 0 but bias exceeds limit)'];
+    var bias=[0.005,0.028,-0.006,-0.012,0.024];
+    var ci=[0.010,0.008,0.035,0.015,0.030];
+    var range=bias.map(function(b,i){return [b-ci[i], b+ci[i]]});
+    new Chart(el,{
+      data:{labels:labels,datasets:[
+        {type:'bar',label:'Mean bias ±95% CI (mL)',data:range,
+          backgroundColor:'rgba(31,111,235,.35)',borderColor:'#1f6feb',borderWidth:1.5,borderRadius:4},
+        {type:'line',label:'+0.02 mL tolerance upper limit',data:[0.02,0.02,0.02,0.02,0.02],
+          borderColor:'#d94f4f',borderDash:[6,4],pointRadius:0,borderWidth:2,fill:false},
+        {type:'line',label:'-0.02 mL tolerance lower limit',data:[-0.02,-0.02,-0.02,-0.02,-0.02],
+          borderColor:'#d94f4f',borderDash:[6,4],pointRadius:0,borderWidth:2,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:14,font:{size:10}}}},
+        scales:{y:{title:{display:true,text:'Bias (mL)'}}}}
+    });
+  }
+  draw();
+})();
+</script>
+</div></section><section class="slide" data-slide="17" data-section="Focus"><div class="slide-inner"><div class="kicker">How to read a 95% CI</div><h2 class="slide-title"><span class='hi'>Significant</span> ≠ <span class='hi'>failing</span></h2><div class="grid3" style="margin-top:14px"><div class="card b"><div class="ic">📐</div><div class="ct">SD and t</div><div class="cb">SD (standard deviation) describes how spread out the data are; t=2.262 is the multiplier from the t table for n=10 (9 degrees of freedom); the smaller n is, the larger t is</div></div><div class="card a"><div class="ic">🔍</div><div class="ct">Is the bias significant?</div><div class="cb">The 95% CI covers the nominal value (the CI of the bias contains 0) → statistically not significant, possibly just random fluctuation; if it does not cover it → significant bias</div></div><div class="card g"><div class="ic">✅</div><div class="ct">Does it pass?</div><div class="cb">Also compare with the Class A tolerance: |bias| ≤ 0.02 mL (pipette). In the figure, student E: the CI contains 0 but the bias exceeds the limit → still needs attention</div></div></div><div class="note" style="margin-top:14px"><a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/ch02.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Statistics site Ch02 Confidence interval ↗</a></div></div></section><section class="slide" data-slide="18" data-section="Focus"><div class="slide-inner"><div class="kicker">The two main types of error</div><h2 class="slide-title">Systematic error <span class='hi'>vs</span> random error</h2><table class="cmp" style="margin-top:6px"><thead><tr><th></th><th>Systematic error (determinate error)</th><th>Random error (indeterminate error)</th></tr></thead><tbody><tr><td class="c">Direction</td><td>Always off to <b>the same side</b> (always high or always low)</td><td>Sometimes positive, sometimes negative, <b>no fixed direction</b></td></tr><tr><td class="c">Cause</td><td>A <b>specific cause</b> can be found: instrument, method, operating habit</td><td>Many tiny variations add up; no single cause can be named</td></tr><tr><td class="c">Which metric it affects</td><td>Mean departs from the true value → <b>bias</b> (accuracy)</td><td>Data scatter → <b>SD, RSD%</b> (precision)</td></tr><tr><td class="c">Does repeating cancel it?</td><td><b>No</b>; even the average of 100 runs is still off</td><td>The mean becomes steadier and the CI narrower, but each run still fluctuates</td></tr><tr><td class="c">What to do</td><td>Find it → <b>calibrate or correct</b> (e.g., buoyancy correction F<sub>b</sub>)</td><td><b>Increase replicates</b> and describe with SD and 95% CI</td></tr></tbody></table><div class="grid2" style="margin-top:10px;align-items:center"><div class="svgwrap">
+<svg viewBox="0 0 420 190" style="max-height:26vh;width:100%">
+ <g transform="translate(105,92)">
+  <circle r="70" fill="none" stroke="#9aa7bd" stroke-width="1.5"/><circle r="46" fill="none" stroke="#9aa7bd" stroke-width="1.5"/>
+  <circle r="22" fill="none" stroke="#9aa7bd" stroke-width="1.5"/><circle r="4" fill="#d94f4f"/>
+  <g fill="#d9822b"><circle cx="34" cy="-30" r="5"/><circle cx="40" cy="-24" r="5"/><circle cx="30" cy="-22" r="5"/><circle cx="38" cy="-34" r="5"/><circle cx="44" cy="-28" r="5"/></g>
+  <path d="M0 0 L36 -28" stroke="#d9822b" stroke-width="2" stroke-dasharray="4 3"/>
+  <text y="92" text-anchor="middle" class="lblb" fill="#d9822b" font-size="14">Systematic: clustered, off-center</text>
+ </g>
+ <g transform="translate(315,92)">
+  <circle r="70" fill="none" stroke="#9aa7bd" stroke-width="1.5"/><circle r="46" fill="none" stroke="#9aa7bd" stroke-width="1.5"/>
+  <circle r="22" fill="none" stroke="#9aa7bd" stroke-width="1.5"/><circle r="4" fill="#d94f4f"/>
+  <g fill="#1f6feb"><circle cx="-38" cy="14" r="5"/><circle cx="30" cy="36" r="5"/><circle cx="12" cy="-44" r="5"/><circle cx="-18" cy="-20" r="5"/><circle cx="44" cy="-6" r="5"/></g>
+  <text y="92" text-anchor="middle" class="lblb" fill="#1f6feb" font-size="14">Random: scattered around center</text>
+ </g>
+</svg></div><div><div class="note" style="margin:0"><strong>The same action can cause either:</strong> the waiting time after delivery — if <b>you never wait long enough</b>, the delivered volume is always low → systematic error; if <b>the waiting time varies each time</b>, the delivered volume fluctuates → random error. The key to deciding is “<b>is the direction fixed?</b>”.</div></div></div></div></section><section class="slide" data-slide="19" data-section="Focus"><div class="slide-inner"><div class="kicker">A third type of error</div><h2 class="slide-title">Gross error: caught by <span class='hi'>checking</span></h2><ul class="clean" style="margin-top:12px"><li>Gross error = misreading, miscopying, mistyping: 10.00 read as 1.000, a misplaced decimal point, a wrong unit, weighing without the cap</li><li>It is neither systematic nor random error, and statistics cannot “average it out”</li><li>How to catch it: after entry, compare with your other 9 replicates and with classmates in your group; if it differs a lot, it is suspicious</li><li>What to do: <b>flag</b> the reason in the note column, <b>keep the original value</b>, and redo it if possible — never delete it silently</li><li>W8 will teach a formal outlier test (Grubbs)</li></ul></div></section><section class="slide" data-slide="20" data-section="Focus"><div class="slide-inner"><div class="kicker">Practice 1/3</div><h2 class="slide-title">Work through it <span class='hi'>with today's class data</span></h2><div class="grid2" style="margin-top:10px"><ol class="clean"><li><b>Predict first (2 min)</b>: write down whether you think your RSD will be below 1%. Will your mean be high or low?</li><li><b>Calculate by hand once (10 min)</b>: use only a calculator to get the mean, SD, and RSD of your own 10 values. The goal is to understand where SD comes from, not to practice button pressing</li><li><b>Check in Excel</b>: use the functions in the table at right; the range must cover all <b>10 values</b></li><li><b>Compute the 95% CI</b>: mean ± t × SD/√n; for n=10, t=2.262</li><li><b>Place it in the class plot</b>: see where you land on the forest plot (next page)</li></ol><div><table class="cmp"><thead><tr><th>What to calculate</th><th>Excel function</th><th>In plain words</th></tr></thead><tbody><tr><td class="c">Mean</td><td><code>=AVERAGE(range)</code></td><td>Add the 10 values and divide by 10</td></tr><tr><td class="c">SD</td><td><code>=STDEV(range)</code></td><td>The “typical” distance of each value from the mean</td></tr><tr><td class="c">RSD%</td><td><code>=SD/mean*100</code></td><td>SD as a percentage of the mean</td></tr><tr><td class="c">t value</td><td><code>=TINV(0.05,9)</code></td><td>Look up n=10 to get 2.262</td></tr><tr><td class="c">CI half-width</td><td><code>=t*SD/SQRT(10)</code></td><td>Mean ± this number = 95% CI</td></tr></tbody></table></div></div><div class="note" style="margin-top:12px">📥 <a class="no-nav" href="materials/w01_class_data_corrected.xlsx" download style="color:var(--accent);font-weight:800">Class measurement data (0.2 mL pipette, student IDs anonymized) + correct formulas ⬇ (Chinese)</a> Every column is a formula; click a cell to see how it was calculated.<br>🕵️ Want to play it as a challenge? <a class="no-nav" href="detective.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Data Detective ↗</a><br>🔐 Want an escape-room challenge? <a class="no-nav" href="escape.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Calibration Room Escape ↗</a></div></div></section><section class="slide" data-slide="21" data-section="Focus"><div class="slide-inner"><div class="kicker">Practice 2/3</div><h2 class="slide-title">Class <span class='hi'>forest plot</span>: see at a glance who is accurate and who is steady</h2><div class="grid2-1" style="margin-top:4px"><div class="svgwrap"><svg viewBox="0 0 660 303" style="max-height:50vh;width:100%"><line x1="128.5" x2="128.5" y1="10" y2="273" stroke="#e1e6ef"/><text x="128.5" y="287" text-anchor="middle" font-size="11" fill="#48597a">170</text><line x1="245.5" x2="245.5" y1="10" y2="273" stroke="#e1e6ef"/><text x="245.5" y="287" text-anchor="middle" font-size="11" fill="#48597a">180</text><line x1="362.6" x2="362.6" y1="10" y2="273" stroke="#e1e6ef"/><text x="362.6" y="287" text-anchor="middle" font-size="11" fill="#48597a">190</text><line x1="479.6" x2="479.6" y1="10" y2="273" stroke="#e1e6ef"/><text x="479.6" y="287" text-anchor="middle" font-size="11" fill="#48597a">200</text><line x1="596.6" x2="596.6" y1="10" y2="273" stroke="#e1e6ef"/><text x="596.6" y="287" text-anchor="middle" font-size="11" fill="#48597a">210</text><text x="345.0" y="300" text-anchor="middle" font-size="11" fill="#48597a">Volume (µL)</text><line x1="479.6" x2="479.6" y1="10" y2="273" stroke="#d94f4f" stroke-width="2" stroke-dasharray="6 4"/><text x="479.6" y="11" text-anchor="middle" font-size="11" fill="#d94f4f" font-weight="700">Nominal 200</text><text x="62" y="29.5" text-anchor="end" font-size="11" fill="#48597a">S01</text><line x1="395.2" x2="402.2" y1="26.5" y2="26.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="395.2" x2="395.2" y1="22.5" y2="30.5" stroke="#1f6feb" stroke-width="2"/><line x1="402.2" x2="402.2" y1="22.5" y2="30.5" stroke="#1f6feb" stroke-width="2"/><circle cx="398.7" cy="26.5" r="3.6" fill="#1f6feb"/><text x="62" y="46.5" text-anchor="end" font-size="11" fill="#48597a">S02</text><line x1="382.1" x2="464.2" y1="43.5" y2="43.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="382.1" x2="382.1" y1="39.5" y2="47.5" stroke="#1f6feb" stroke-width="2"/><line x1="464.2" x2="464.2" y1="39.5" y2="47.5" stroke="#1f6feb" stroke-width="2"/><circle cx="423.2" cy="43.5" r="3.6" fill="#1f6feb"/><text x="62" y="63.5" text-anchor="end" font-size="11" fill="#48597a">S03</text><line x1="356.7" x2="410.1" y1="60.5" y2="60.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="356.7" x2="356.7" y1="56.5" y2="64.5" stroke="#1f6feb" stroke-width="2"/><line x1="410.1" x2="410.1" y1="56.5" y2="64.5" stroke="#1f6feb" stroke-width="2"/><circle cx="383.4" cy="60.5" r="3.6" fill="#1f6feb"/><text x="62" y="80.5" text-anchor="end" font-size="11" fill="#48597a">S04</text><line x1="347.3" x2="402.3" y1="77.5" y2="77.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="347.3" x2="347.3" y1="73.5" y2="81.5" stroke="#1f6feb" stroke-width="2"/><line x1="402.3" x2="402.3" y1="73.5" y2="81.5" stroke="#1f6feb" stroke-width="2"/><circle cx="374.8" cy="77.5" r="3.6" fill="#1f6feb"/><text x="62" y="97.5" text-anchor="end" font-size="11" fill="#48597a">S05</text><line x1="284.4" x2="380.3" y1="94.5" y2="94.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="284.4" x2="284.4" y1="90.5" y2="98.5" stroke="#1f6feb" stroke-width="2"/><line x1="380.3" x2="380.3" y1="90.5" y2="98.5" stroke="#1f6feb" stroke-width="2"/><circle cx="332.4" cy="94.5" r="3.6" fill="#1f6feb"/><text x="62" y="114.5" text-anchor="end" font-size="11" fill="#48597a">S06</text><line x1="369.7" x2="377.9" y1="111.5" y2="111.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="369.7" x2="369.7" y1="107.5" y2="115.5" stroke="#1f6feb" stroke-width="2"/><line x1="377.9" x2="377.9" y1="107.5" y2="115.5" stroke="#1f6feb" stroke-width="2"/><circle cx="373.8" cy="111.5" r="3.6" fill="#1f6feb"/><text x="62" y="131.5" text-anchor="end" font-size="11" fill="#48597a">S07</text><line x1="358.8" x2="447.7" y1="128.5" y2="128.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="358.8" x2="358.8" y1="124.5" y2="132.5" stroke="#1f6feb" stroke-width="2"/><line x1="447.7" x2="447.7" y1="124.5" y2="132.5" stroke="#1f6feb" stroke-width="2"/><circle cx="403.3" cy="128.5" r="3.6" fill="#1f6feb"/><text x="62" y="148.5" text-anchor="end" font-size="11" fill="#48597a">S08</text><line x1="246.1" x2="489.5" y1="145.5" y2="145.5" stroke="#d9822b" stroke-width="2.2"/><line x1="246.1" x2="246.1" y1="141.5" y2="149.5" stroke="#d9822b" stroke-width="2"/><line x1="489.5" x2="489.5" y1="141.5" y2="149.5" stroke="#d9822b" stroke-width="2"/><circle cx="367.8" cy="145.5" r="3.6" fill="#d9822b"/><text x="62" y="165.5" text-anchor="end" font-size="11" fill="#48597a">S09</text><line x1="354.2" x2="398.0" y1="162.5" y2="162.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="354.2" x2="354.2" y1="158.5" y2="166.5" stroke="#1f6feb" stroke-width="2"/><line x1="398.0" x2="398.0" y1="158.5" y2="166.5" stroke="#1f6feb" stroke-width="2"/><circle cx="376.1" cy="162.5" r="3.6" fill="#1f6feb"/><text x="62" y="182.5" text-anchor="end" font-size="11" fill="#48597a">S10</text><line x1="332.6" x2="425.7" y1="179.5" y2="179.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="332.6" x2="332.6" y1="175.5" y2="183.5" stroke="#1f6feb" stroke-width="2"/><line x1="425.7" x2="425.7" y1="175.5" y2="183.5" stroke="#1f6feb" stroke-width="2"/><circle cx="379.2" cy="179.5" r="3.6" fill="#1f6feb"/><text x="62" y="199.5" text-anchor="end" font-size="11" fill="#48597a">S11</text><line x1="126.9" x2="584.4" y1="196.5" y2="196.5" stroke="#d9822b" stroke-width="2.2"/><line x1="126.9" x2="126.9" y1="192.5" y2="200.5" stroke="#d9822b" stroke-width="2"/><line x1="584.4" x2="584.4" y1="192.5" y2="200.5" stroke="#d9822b" stroke-width="2"/><circle cx="355.6" cy="196.5" r="3.6" fill="#d9822b"/><text x="62" y="216.5" text-anchor="end" font-size="11" fill="#48597a">S12</text><line x1="326.4" x2="410.4" y1="213.5" y2="213.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="326.4" x2="326.4" y1="209.5" y2="217.5" stroke="#1f6feb" stroke-width="2"/><line x1="410.4" x2="410.4" y1="209.5" y2="217.5" stroke="#1f6feb" stroke-width="2"/><circle cx="368.4" cy="213.5" r="3.6" fill="#1f6feb"/><text x="62" y="233.5" text-anchor="end" font-size="11" fill="#48597a">S13</text><line x1="355.6" x2="385.4" y1="230.5" y2="230.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="355.6" x2="355.6" y1="226.5" y2="234.5" stroke="#1f6feb" stroke-width="2"/><line x1="385.4" x2="385.4" y1="226.5" y2="234.5" stroke="#1f6feb" stroke-width="2"/><circle cx="370.5" cy="230.5" r="3.6" fill="#1f6feb"/><text x="62" y="250.5" text-anchor="end" font-size="11" fill="#48597a">S14</text><line x1="350.1" x2="394.1" y1="247.5" y2="247.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="350.1" x2="350.1" y1="243.5" y2="251.5" stroke="#1f6feb" stroke-width="2"/><line x1="394.1" x2="394.1" y1="243.5" y2="251.5" stroke="#1f6feb" stroke-width="2"/><circle cx="372.1" cy="247.5" r="3.6" fill="#1f6feb"/><text x="62" y="267.5" text-anchor="end" font-size="11" fill="#48597a">S15</text><line x1="321.0" x2="413.5" y1="264.5" y2="264.5" stroke="#1f6feb" stroke-width="2.2"/><line x1="321.0" x2="321.0" y1="260.5" y2="268.5" stroke="#1f6feb" stroke-width="2"/><line x1="413.5" x2="413.5" y1="260.5" y2="268.5" stroke="#1f6feb" stroke-width="2"/><circle cx="367.2" cy="264.5" r="3.6" fill="#1f6feb"/></svg></div><div><ul class="clean"><li><b>Dots</b> = mean, <b>horizontal lines</b> = 95% CI, <b>red dashed line</b> = nominal value 200 µL</li><li><b>Shorter line = more precise</b> (small SD); <b>closer to the red line = more accurate</b> (small bias)</li><li><span style="color:#d9822b;font-weight:800">Orange</span> = CI touches the red line (S08, S11), but that is because the line is so long, not because they are accurate</li><li>The other 13 students all fall to the <b>left</b> of the red line (mean about 191 µL, about 4% low) — a consistent direction is a sign of <b>systematic error</b>; look for the cause together</li></ul></div></div><p class="cap" style="margin-top:6px">Pipette 0.2 mL, water at 32 °C, V = m×F<sub>b</sub>/ρ<sub>w</sub> (ρ<sub>w</sub>=0.99503, F<sub>b</sub>=1.0011), n=10, measured 2026-09-29.</p></div></section><section class="slide" data-slide="22" data-section="Focus"><div class="slide-inner"><div class="kicker">Practice 3/3</div><h2 class="slide-title">Spot the error: what is wrong with this <span class='hi'>spreadsheet</span>?</h2><div class="grid3" style="margin-top:10px"><div class="card a"><div class="ic">📏</div><div class="ct">Error 1: only 8 values used</div><div class="cb">The range for mean/SD is written as <code>P2:W2</code> (8 cells), missing X and Y.<br>Example: S14's 10th value 0.1970 is left out → RSD shows <b>0.26%</b> (looks “excellent”); the correct 10-value RSD is <b>1.38%</b></div></div><div class="card b"><div class="ic">🏷️</div><div class="ct">Error 2: mislabeled column</div><div class="cb">The “95% CI” column formula is <code>=mean/0.9956</code>, which is just the <b>volume conversion</b> of mass divided by density, unrelated to the confidence interval (and it omits F<sub>b</sub> too).<br>Correct: <b>mean ± 2.262×SD/√10</b></div></div><div class="card g"><div class="ic">🎯</div><div class="ct">Error 3: two errors cancel each other</div><div class="cb">S11's 7th and 8th values are <b>0.2487</b> and <b>0.1353</b> (normal is about 0.19). The cumulative column looks smooth, but the individual values swing one high, one low → RSD <b>14%</b>. This is a <b>gross error</b>: go back to the raw record, flag it, and don't silently delete it</div></div></div><div class="note" style="margin-top:12px"><strong>How to prevent it:</strong> ① after selecting the range, check the status bar for “Count=10”; ② column titles must match the formulas; ③ a normal cumulative column ≠ normal individual values, so check both columns. <b>Think about it:</b> S11's two extreme values both inflate the SD, so a test based on “how many SDs from the mean” cannot see them — W8 covers the Grubbs test; come back to this example then.</div></div></section><section class="slide" data-slide="23" data-section="Focus" data-game="g7"><div class="slide-inner"><div class="game no-nav" data-game="g7"><div class="game-head"><span class="tag a">Mini-game ④</span><span class="gt">Spot-the-error in practice: class data</span><span class="score" id="g7score">0 / 4</span></div><div class="game-q" id="g7q"></div><div class="opts" id="g7opts"></div><div class="fb" id="g7fb"></div><div class="btnrow"><button class="btn ghost" id="g7next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="24" data-section="Focus" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">Mini-game ⑤</span><span class="gt">Systematic vs random error</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">Use the principles you just learned (is the direction fixed? can a cause be found?) to sort 8 scenarios into “systematic error” or “random error”.</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">Check answer</button><button class="btn ghost" id="g1reset">Reset</button></div></div></div></section><section class="slide" data-slide="25" data-section="Focus" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">Mini-game ⑥</span><span class="gt">Decision challenge: judging accuracy and precision</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="26" data-section="Focus" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">Mini-game ⑦</span><span class="gt">Instant quiz on common mistakes</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="27" data-section="Act"><div class="slide-inner"><div class="kicker">Homework</div><h2 class="slide-title">Open Colab and swap in the class data</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>Open <a class="no-nav" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB01_volumetric_calibration.ipynb" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">NB01_volumetric_calibration.ipynb ↗</a></li><li>Not coding yet? Start with the <a class="no-nav" href="../../excel/EX01_volumetric_calibration.xlsx" download style="color:var(--accent);font-weight:800">Excel practice workbook EX01 ⬇</a> and do the same calculations; the answers should match Colab. To see distributions and outliers, open <a class="no-nav" href="../../tools.en.html#orange" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Orange workflow OR01 ↗</a></li><li>Swap the sample data for the measured data in <strong>the class's shared Google Sheet</strong>; first use the <a class="no-nav" href="materials/w01_class_data_corrected.xlsx" download style="color:var(--accent);font-weight:800">version with correct formulas ⬇</a> to find the errors in your own sheet</li><li>Complete the <strong>5 exercises</strong> in the notebook (buoyancy correction, mean/SD/CI, comparison with tolerance…)</li></ul></div><div class="card a"><div class="ic">📄</div><div class="ct">Report requirements</div><div class="cb">Each student: one “mean ± CI” table (one row each for pipette and burette); mark whether the bias exceeds the tolerance; one paragraph discussing possible error sources (systematic/random)</div></div></div><div class="note" style="margin-top:14px">Further reading: <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Food Analysis Statistics site ↗</a> (confidence interval chapter)</div></div></section><section class="slide" data-slide="28" data-section="Act"><div class="slide-inner"><div class="kicker">Self-check</div><h2 class="slide-title">By the end of today you should be able to…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>Distinguish TC (To Contain) from TD (To Deliver) glassware and state the Class A tolerances (10 mL pipette ±0.02 mL, 50 mL burette ±0.05 mL)</li><li data-k><span class="bx">✓</span>Read the meniscus correctly and know how parallax arises</li><li data-k><span class="bx">✓</span>Carry out the full gravimetric method: tare weighing bottle → measure water → weigh → record temperature → repeat 10 times</li><li data-k><span class="bx">✓</span>Explain why the air buoyancy correction is needed and roughly how large it is (~0.1%)</li><li data-k><span class="bx">✓</span>Use V = m_app × F_b / ρ_w to calculate the actual volume</li><li data-k><span class="bx">✓</span>Calculate mean, SD, RSD%, 95% CI (and check that the spreadsheet range covers all 10 values), and read the class forest plot to judge whether bias exceeds the tolerance</li><li data-k><span class="bx">✓</span>Tell systematic error from random error and understand that “precise” does not mean “accurate”</li><li data-k><span class="bx">✓</span>Enter data correctly into the long-format shared sheet and flag suspicious data</li></ul><p class="subtitle" style="margin-top:12px">Tap to tick — make sure you really can do it.</p></div></section><section class="slide" data-slide="29" data-section="Act" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Next step · NEXT</div><h1>Turn calibration data<br><span style='color:var(--accent-2)'>into a report</span></h1><div class="en"></div><div class="meta">📌 After class: finish the 5 Colab NB01 exercises and upload the report<br>🔜 Bridge: every measurement in later lab weeks rests on “trusting your own glassware”<br>🧪 Think: if the bias exceeds the tolerance, is it systematic or random error? What should you do about it?</div><div style="margin-top:24px"><span class="pill">Gravimetric method</span><span class="pill">Buoyancy correction</span><span class="pill">95% CI</span><span class="pill">TC/TD (To Contain / To Deliver)</span><span class="pill">QC</span></div></div></div></section><script>window.CFG={"bucket": {"g1": {"cats": ["Systematic error", "Random error"], "items": [{"t": "Forgetting the air buoyancy correction", "c": "Systematic error"}, {"t": "Thermometer not calibrated; reading consistently 0.5 °C high", "c": "Systematic error"}, {"t": "Blowing out the last drop in the tip every time after delivering with a volumetric pipette", "c": "Systematic error"}, {"t": "Calibrating the balance with an uncertified weight that is itself underweight", "c": "Systematic error"}, {"t": "Slightly different eye angle each time the meniscus is read", "c": "Random error"}, {"t": "The last digit of the balance reading flickers slightly", "c": "Random error"}, {"t": "Slight ambient vibration makes the weighing drift momentarily", "c": "Random error"}, {"t": "Slightly different angle and pressure of the tip touch-off each time", "c": "Random error"}], "ok": "🎉 All correct! Systematic error is consistently biased to one side (can be removed by calibration); random error varies up and down (can only be described statistically).", "tip": "Hint: “always off to the same side, with a cause” → systematic error; “varies up and down, no fixed cause” → random error."}, "g3": {"cats": ["TC (To Contain)", "TD (To Deliver)"], "items": [{"t": "Volumetric flask", "c": "TC (To Contain)"}, {"t": "Preparing a standard solution, adding water to the mark", "c": "TC (To Contain)"}, {"t": "Glassware marked “TC 20°C”", "c": "TC (To Contain)"}, {"t": "Volumetric pipette", "c": "TD (To Deliver)"}, {"t": "Burette", "c": "TD (To Deliver)"}, {"t": "The last drop remaining in the tip is not counted in the delivered volume anyway", "c": "TD (To Deliver)"}], "ok": "🎉 Correct! TC (To Contain) = filled to the mark is the stated volume; TD (To Deliver) = the amount of liquid delivered is the stated volume.", "tip": "Hint: “filling, preparing” → TC; “delivering, titrating, dispensing” → TD."}}, "mcq": {"g7": [{"q": "A student's 10 individual values are in columns P to Y, but the mean is written as =AVERAGE(P2:W2). What happens?", "o": ["No effect", "Only the first 8 values are used and the last 2 are missed, so the mean and SD may both be wrong", "The computer fills in the rest automatically", "Only the CI will be wrong"], "a": 1, "e": "P to W is only 8 cells. If the missing values happen to be outliers, the SD is underestimated; in the example, S14's RSD was calculated as 0.26% instead of 1.38%."}, {"q": "The spreadsheet's “95% CI” column formula is =mean/0.9956. What does it calculate?", "o": ["95% confidence interval", "Volume conversion of mass divided by density, not a CI", "Standard deviation", "Relative standard deviation"], "a": 1, "e": "A 95% CI must include SD and t: mean ± t×SD/√n. Dividing the mean by a constant doesn't reflect the spread of the data at all."}, {"q": "S11's individual values include 0.2487 and 0.1353 (normal is about 0.19), yet the cumulative column looks smooth. Which type of error is this? What should you do?", "o": ["Random error; just add replicates", "Systematic error; correct with F_b", "Gross error; check the raw record, flag it, and keep the original value", "No action needed; just take the mean"], "a": 2, "e": "Misreading or miscopying that gives one high and one low value is a gross error. The mean gets masked by them, but the SD blows up; go back and check the records, and never delete them silently."}, {"q": "Looking at the class forest plot: the CIs of all 13 students are to the left of the nominal value (mean about 191 µL, nominal 200 µL). What is the most reasonable inference?", "o": ["13 people each made different random errors", "There is a shared systematic error, so look for the cause together", "The CIs were drawn wrong", "The nominal value must be wrong"], "a": 1, "e": "A consistent direction is the hallmark of systematic error. Start with common factors: pipette model and handling, water temperature and density, delivery wait and tip handling."}], "g2": [{"q": "If you forget the air buoyancy correction in calibration, what happens to the calculated volume?", "o": ["About 10% too high", "About 0.1% too low", "Not affected", "About 1% too high"], "a": 1, "e": "Ignoring the buoyancy correction means not multiplying by F_b (≈1.001), so the calculated volume is about 0.1% low."}, {"q": "What happens if you record a water temperature of 25°C as 20°C?", "o": ["No effect at all", "The wrong ρ_w is looked up, so the volume is miscalculated", "The balance corrects it automatically", "The titration end point changes"], "a": 1, "e": "ρ_w changes with temperature; a wrong temperature record leads to looking up/substituting the wrong ρ_w, making the volume calculation inaccurate."}, {"q": "After a volumetric pipette (TD, To Deliver) finishes delivering, a small drop remains in the tip. What should you do?", "o": ["Blow it out with a pipette bulb", "Leave it; do not blow it out", "Rinse it out with water", "Heat it to evaporate"], "a": 1, "e": "A regular volumetric pipette is calibrated without the drop in the tip; blowing it out makes every delivery too large, causing systematic error. (Only pipettes with a frosted ring near the mouth and marked blow-out should be blown out.)"}, {"q": "What does reading the meniscus from above (parallax) usually cause?", "o": ["The reading agrees with the true value", "The reading is systematically shifted, depending on the viewing angle", "The balance shows an error", "The scale cannot be read"], "a": 1, "e": "Parallax makes the reading systematically high or low depending on the viewing angle; keep your eye level with the liquid surface."}, {"q": "A student's 10 readings are very close to each other (very small SD), but the mean is far from the nominal value. What does this mean?", "o": ["Precise and accurate", "Precise but not accurate (systematic error)", "Accurate but not precise", "The data are invalid"], "a": 1, "e": "“Precision” describes repeatability (small SD); “accuracy” describes closeness to the true value; the two are independent concepts."}], "g5": [{"q": "When reporting a 95% CI, what is the recommended rule for significant figures?", "o": ["Write as many decimal places as possible", "Report the CI to 1–2 significant figures and the mean to the same decimal place", "Write the CI as an integer only", "No need to align decimal places"], "a": 1, "e": "The CI itself has limited precision, so 1–2 significant figures is enough; the mean's decimal places must align with the CI."}, {"q": "A data set's 95% CI covers the nominal value (the CI of the bias contains 0), but the mean bias itself already exceeds the ±0.02 mL tolerance. How should this be interpreted?", "o": ["Definitely passes", "Statistically, “no bias” can't be ruled out, but the point estimate already exceeds the practical tolerance, so it still needs attention", "Definitely fails and is random error", "Can be ignored"], "a": 1, "e": "A CI containing 0 means “not statistically significant”, but the tolerance is a practical specification; the two standards differ and must be considered together, not just one of them."}, {"q": "To judge whether the bias deviates significantly from the nominal value, which statistical tool should you use?", "o": ["Look only at RSD%", "95% CI with the t value", "Look only at the sample weight", "Look at the titration end-point color"], "a": 1, "e": "Build a 95% CI with mean ± t×SD/√n and see whether it covers the nominal value to judge whether the bias is significant."}, {"q": "What does RSD% mainly reflect?", "o": ["Accuracy", "Precision (repeatability)", "Size of the tolerance", "Amount of buoyancy correction"], "a": 1, "e": "RSD% = SD/mean × 100 is a relative measure of spread; it reflects precision, not accuracy."}, {"q": "If a data set has a large SD but a mean that happens to be close to the nominal value, what is this?", "o": ["Accurate but not precise", "Precise and accurate", "Neither accurate nor precise", "Cannot be determined"], "a": 0, "e": "A mean close to the true value means accurate; but a large SD means poor repeatability, i.e., not precise."}]}, "sort": {"g4": {"steps": ["Cap the weighing bottle and tare on the analytical balance (record the empty bottle weight)", "Measure a fixed amount of water with the volumetric pipette/burette being calibrated", "Put the water into the weighing bottle, cap immediately, and weigh (record apparent mass m_app)", "Record the water temperature at the time (°C)", "Use the Tanaka equation to get ρ_w at that temperature and calculate the buoyancy correction F_b", "Use V = m_app × F_b / ρ_w to get the actual volume; after 10 repeats, take the mean and SD"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 Correct order! Tare → measure water → weigh → record temperature → look up density and calculate buoyancy correction → calculate volume.", "tip": "Hint: tare the empty bottle first; record the temperature only after measuring and weighing the water; calculate the volume only after you have ρ_w."}}, "calc": {"g6": {"answer": 25.009, "tol": 0.002, "ok": "🎉 Correct! V = 24.9215 × 1.00105 / 0.997541 ≈ <b>25.009 mL<\/b>.", "bad": "Try again: V = m_app × F_b / ρ_w = 24.9215 × 1.00105 / 0.997541.", "hint": "Hint: 24.9215 × 1.00105 ≈ 24.9477; 24.9477 / 0.997541 ≈ 25.009 mL."}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
+}
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 All correct!','good');
+    else fb(g+'fb','Correct '+ok+'/'+N+'. '+(cfg.tip||'Adjust and try again.'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ Correct!':'❌ Answer: '+d.o[d.a]+'. ')+'<br>'+d.e+(done?'<br><b>Done! Total score: '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 Perfect order!','good');
+    else fb(g+'fb','Got '+ok+'/'+N+' positions right.'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','Enter a number first.','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ Correct'); fb(g+'fb',cfg.ok||('🎉 Correct! The answer is '+cfg.answer),'good');
+    } else { setScore(g+'score','Try again'); fb(g+'fb',cfg.bad||'Recalculate and try again.','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'Hint: substitute step by step using the formula.','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en] body,html[lang=en] .lbl,html[lang=en] .lblb{font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif}html[lang=en] body{font-size:16.5px}html[lang=en] .slide-title{font-size:clamp(1.3rem,2.7vw,2.05rem)}html[lang=en] .cover h1{font-size:clamp(2rem,5vw,3.8rem)}html[lang=en] .hook{font-size:clamp(1.5rem,3.6vw,2.6rem)}html[lang=en] p,html[lang=en] li{line-height:1.55}html[lang=en] .kicker{letter-spacing:.1em}html[lang=en] p,html[lang=en] li{font-size:clamp(.86rem,1.3vw,1.04rem)}html[lang=en] .card .cb{font-size:clamp(.8rem,1.15vw,.94rem)}html[lang=en] .card .ct{font-size:clamp(.95rem,1.4vw,1.1rem)}html[lang=en] .chip{font-size:.84rem;padding:7px 12px}html[lang=en] .opt{font-size:clamp(.82rem,1.2vw,.98rem);padding:11px 15px}html[lang=en] .game-q{font-size:clamp(.9rem,1.35vw,1.08rem)}html[lang=en] .bucket .bh{font-size:.88rem}html[lang=en] table.cmp{font-size:clamp(.78rem,1.1vw,.95rem)}html[lang=en] table.cmp th,html[lang=en] table.cmp td{padding:9px 11px}html[lang=en] .note{font-size:clamp(.85rem,1.2vw,.98rem)}html[lang=en] .subtitle{font-size:clamp(.9rem,1.4vw,1.1rem)}html[lang=en] .checklist li{font-size:.86rem}html[lang=en] .cap{font-size:.82rem}html[lang=en] .pill{font-size:.78rem;padding:4px 10px}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><script>(function(){
+function fit(){var sl=document.querySelector('.slide.active');if(!sl)return;
+ sl.querySelectorAll('svg').forEach(function(svg){var sb=svg.getBoundingClientRect();if(!sb.width)return;
+  var rects=[].slice.call(svg.querySelectorAll('rect')).map(function(r){return r.getBoundingClientRect()});
+  [].slice.call(svg.querySelectorAll('text')).forEach(function(t){
+   if(t.dataset.fit)return; var s=(t.textContent||'').trim(); if(!s)return;
+   var b=t.getBoundingClientRect(); if(!b.width)return;
+   var cx=(b.left+b.right)/2, cy=(b.top+b.bottom)/2;
+   var host=rects.filter(function(r){return r.width>20&&r.width<480&&cx>r.left&&cx<r.right&&cy>r.top&&cy<r.bottom})
+             .sort(function(p,q){return p.width-q.width})[0];
+   var maxW=host?host.width-10:Math.min(b.right,sb.right-2)-Math.max(b.left,sb.left+2);
+   if(host&&(b.right>sb.right||b.left<sb.left))maxW=Math.min(maxW,sb.width-4);
+   if(b.width<=maxW+1)return;
+   t.dataset.fit='1';
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13;
+   var k=b.width/((t.getBBox().width)||b.width); /* client px per user unit */
+   var hasTspan=t.querySelector('tspan'); var canWrap=!hasTspan&&s.indexOf(' ')>0&&host&&host.height>=fs*2.3;
+   if(canWrap){var others=[].slice.call(svg.querySelectorAll('text')).filter(function(o){if(o===t)return false;var ob=o.getBoundingClientRect();var ox=(ob.left+ob.right)/2,oy=(ob.top+ob.bottom)/2;return ox>host.left&&ox<host.right&&oy>host.top&&oy<host.bottom;});
+     if(others.length){var free=host.bottom-b.bottom;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.top>=b.top)free=Math.min(free,ob.top-b.bottom)});var freeTop=b.top-host.top;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.bottom<=b.bottom)freeTop=Math.min(freeTop,b.top-ob.bottom)});if(free+freeTop<fs*1.15)canWrap=false;}}
+   if(canWrap){var w=s.split(' '),best=null;
+     for(var i=1;i<w.length;i++){var a=w.slice(0,i).join(' '),c=w.slice(i).join(' ');var d=Math.abs(a.length-c.length);if(!best||d<best.d)best={d:d,a:a,c:c};}
+     var x=t.getAttribute('x')||'0',y=parseFloat(t.getAttribute('y')||'0');
+     t.textContent='';var t1=document.createElementNS('http://www.w3.org/2000/svg','tspan'),t2=t1.cloneNode();
+     t1.setAttribute('x',x);t1.setAttribute('y',(y-fs*0.55/k).toFixed(2));t1.textContent=best.a;
+     t2.setAttribute('x',x);t2.setAttribute('y',(y+fs*0.6/k).toFixed(2));t2.textContent=best.c;
+     t.appendChild(t1);t.appendChild(t2);b=t.getBoundingClientRect();if(b.width<=maxW+1)return;}
+   var sc=Math.max(0.7,maxW/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   b=t.getBoundingClientRect(); if(b.width>maxW+1&&!t.querySelector('tspan')){t.setAttribute('textLength',(maxW/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+  /* second pass: free labels that collide with a neighbour on the same row */
+  var ts=[].slice.call(svg.querySelectorAll('text')).filter(function(x){return (x.textContent||'').trim()});
+  for(var i=0;i<ts.length;i++)for(var j=i+1;j<ts.length;j++){var A=ts[i].getBoundingClientRect(),B=ts[j].getBoundingClientRect();
+   var ox=Math.min(A.right,B.right)-Math.max(A.left,B.left),oy=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
+   if(ox<=2||oy<=Math.min(A.height,B.height)*0.5)continue;
+   var t=A.width>=B.width?ts[i]:ts[j],b=A.width>=B.width?A:B; if(t.querySelector('tspan')||t.dataset.fit2)continue; t.dataset.fit2='1';
+   var want=b.width-ox-6; if(want<b.width*0.55)continue;
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13,k=b.width/((t.getBBox().width)||b.width);
+   var sc=Math.max(0.75,want/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   var nb=t.getBoundingClientRect(); if(nb.width>want+1){t.setAttribute('textLength',(want/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  }});}
+ if(typeof show==='function'){var _s=show;show=function(i){_s(i);fit();};}
+ fit();setTimeout(fit,400);window.addEventListener('load',function(){setTimeout(fit,200)});
+})();</script><!--/i18n-toggle--></body></html>

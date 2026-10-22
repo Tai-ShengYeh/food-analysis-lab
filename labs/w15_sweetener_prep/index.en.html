@@ -1,0 +1,454 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W15 Sweetener Project I: Preparation and Measurement · Food Analysis Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto}table.cmp th,table.cmp td{white-space:normal;padding:9px 10px;min-width:56px}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">Food Analysis Lab · W15</div><div id="pageInfo"></div><div id="hint">← → / Space to change slide · F fullscreen · Tap either side to turn pages</div><section class="slide" data-slide="1" data-section="Hook" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Food Analysis Lab · W15</div><h1>Sweetener Project I: <span style='color:var(--accent-2)'>Preparation and Measurement</span></h1><div class="en">Sweetener Blends I — Design, Preparation & Spectroscopic Measurement</div><div class="meta">Food Analysis Lab · 4-hour session<br>Aspartame × sucralose solid mixtures · 25 formulations + 7 blind samples · each group: NIR + Raman 785 · 2 re-insertions per instrument</div><div style="margin-top:24px"><span class="pill">Full factorial DOE</span><span class="pill">Latin-square division of labor</span><span class="pill">Rotating measurement</span><span class="pill">Randomization</span><span class="pill">Geometric dilution</span><span class="pill">Sampling variation RSD</span></div></div></div></section><section class="slide" data-slide="2" data-section="Hook"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">The sweetener packet on the table hides a question</div>
+  <div class="hook">The packet says “aspartame” or “sucralose”,<br>but doesn’t tell you <span class="hi">how much</span> was added.</div>
+  <p class="subtitle" style="max-width:920px;margin:18px auto 0">
+    Can spectra (Raman / NIR) plus PLS measure <strong>the amount of each of the two sweeteners in a powder</strong> at the same time?
+  </p>
+  <div class="note" style="max-width:920px;margin:18px auto 0;text-align:left">
+    <strong>Today we design first, not measure first:</strong> the task in W15 is to prepare a set of calibration samples “worth learning from”; only in W16 will we build the PLS model and use today’s spectra to predict. How well you prepare today directly decides whether W16 succeeds.
+  </div>
+  <p class="subtitle" style="max-width:920px;margin:14px auto 0"><strong>But before you start weighing, one key question needs to be thought through:</strong> can we really make a <span class="hi">solution</span> and measure it, the way we would measure an ordinary beverage? (The answer is in the next section, “Feasibility limits”.)</p>
+</div></div></section><section class="slide" data-slide="3" data-section="Hook"><div class="slide-inner"><div class="kicker">Today’s learning goals</div><h2 class="slide-title">After W15 you should be able to…</h2><div class="grid2" style="margin-top:14px;align-items:start"><ul class="clean"><li>Say why we use <strong>solid powder</strong> instead of solution (aspartame solubility, limit of detection LOD)</li><li>Explain why Y comes from <strong>weighing</strong> (gravimetric) and not from the label values of commercial products</li><li>Use factors, levels, and full factorial to explain why the 5×5 design gives corr(Y₁,Y₂)=0 and why a 1:1 dilution <strong>confounds</strong></li><li>Understand the <strong>Latin-square</strong> division of labor and complete your group’s 5 bottles: weighing, geometric dilution, sieving, sealing</li></ul><ul class='clean'><li>Measure with <strong>randomized racks + rotation</strong>: each bottle re-inserted twice on every instrument, saved separately, and say why randomizing and taking a white reference are needed</li><li>Calculate the <strong>actual mass fraction</strong> and estimate the relative uncertainty of weighing with a rectangular distribution (÷√3)</li><li>Use <strong>RSD</strong> to compare the sampling variation of Raman and NIR, and compare it with the differences between samples</li><li>Say why blind samples are placed <strong>between the grid points</strong> (interpolation) and are kept out of the calibration set</li></ul></div></div></section><section class="slide" data-slide="4" data-section="Focus"><div class="slide-inner"><div class="kicker">Feasibility limits</div><h2 class="slide-title">Why prepare a <span class='hi'>solid powder</span> instead of making a solution?</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">💧</div><div class="ct">A solution won’t work</div><div class="cb">Aspartame dissolves in water only to about 1%; beverage-level concentrations are far below the <strong>limit of detection (LOD)</strong> of NIR/Raman (= the lowest concentration that can be reliably distinguished from a blank, <a class="no-nav" href="../w07_sugar/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W07 LOD/LOQ ↗</a>) → so we prepare a <strong>solid powder</strong> far above commercial levels.</div></div><div class="card a"><div class="ic">⚖️</div><div class="ct">Y comes from weighing, not from the label</div><div class="cb">Commercial products don’t disclose how much of each sweetener is added; our Y (true value) can only come from the <strong>actual weighed mass fraction</strong> at preparation — you will practice calculating it in a moment (g6).</div></div><div class="card g"><div class="ic">🧪</div><div class="ct">Commercial packets = challenge set</div><div class="cb">High-intensity sweeteners make up only a small fraction of commercial packets (check the label or the literature for the actual fraction; no fixed number is given here); W16 treats them as an <strong>external challenge sample</strong>, and the signal may be close to or below the LOD.</div></div><div class="card b"><div class="ic">🧭</div><div class="ct">Pilot test = a prerequisite already done</div><div class="cb">The TA has already prepared <strong>0%, 5%, 10%</strong> to confirm that every instrument (Raman / each group’s NIR) can detect a signal, so you can safely do the full 25-point design today.</div></div></div></div></section><section class="slide" data-slide="5" data-section="Focus"><div class="slide-inner"><div class="kicker">The language of experimental design</div><h2 class="slide-title">Factors, levels, <span class='hi'>full factorial design</span></h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">🎛️</div><div class="ct">Factor</div><div class="cb">A variable you <strong>change on purpose</strong>. There are 2 today: aspartame % and sucralose %. The spectrum changes in response; it is a “response”, not a factor.</div></div><div class="card a"><div class="ic">🎚️</div><div class="ct">Level</div><div class="cb">The set values of each factor. Both factors use <strong>0, 2.5, 5, 7.5, 10%</strong> (w/w), 5 levels each.</div></div><div class="card g"><div class="ic">🧮</div><div class="ct">Full factorial</div><div class="cb">Every <strong>pairwise combination</strong> of levels is run: 5 × 5 = <b>25</b> formulations. Every aspartame level is paired with every sucralose level.</div></div><div class="card b"><div class="ic">⚠️</div><div class="ct">Erythritol is not a third factor</div><div class="cb">It is the filler: erythritol = 100 − aspartame − sucralose. Once the other two are set, it is determined and <strong>cannot be set independently</strong>. Example: 7.5% + 5% → 87.5%.</div></div></div><div class="note" style="margin-top:12px">Further reading: for design of experiments (DOE) see the <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Food Analysis Statistics site ↗</a> (DOE chapter).</div></div></section><section class="slide" data-slide="6" data-section="Focus"><div class="slide-inner"><div class="kicker">Comparing two designs</div><h2 class="slide-title">1:1 dilution vs. 5×5 grid: <span class='hi'>which lets the model tell them apart</span>?</h2><div class="grid2" style="margin-top:6px;grid-template-columns:1fr 1.15fr"><div class="svgwrap" style="gap:8px"><svg viewBox="0 0 250 222" width="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="1:1 dilution"><rect x="42" y="20" width="180" height="150" fill="none" stroke="var(--line)"/><text class="lbl" x="42.0" y="184" text-anchor="middle" font-size="11">0</text><text class="lbl" x="37" y="174.0" text-anchor="end" font-size="11">0</text><text class="lbl" x="132.0" y="184" text-anchor="middle" font-size="11">5</text><text class="lbl" x="37" y="99.0" text-anchor="end" font-size="11">5</text><text class="lbl" x="222.0" y="184" text-anchor="middle" font-size="11">10</text><text class="lbl" x="37" y="24.0" text-anchor="end" font-size="11">10</text><circle cx="78.0" cy="140.0" r="5.5" fill="#d94f4f"/><circle cx="114.0" cy="110.0" r="5.5" fill="#d94f4f"/><circle cx="150.0" cy="80.0" r="5.5" fill="#d94f4f"/><text class="lbl" x="132.0" y="200" text-anchor="middle" font-size="11">Aspartame %</text><text class="lbl" x="12" y="95.0" text-anchor="middle" font-size="11" transform="rotate(-90 12 95.0)">Sucralose %</text><text class="lblb" x="132.0" y="13" text-anchor="middle" font-size="13">1:1 dilution r = 1</text></svg><svg viewBox="0 0 250 222" width="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5×5 full factorial"><rect x="42" y="20" width="180" height="150" fill="none" stroke="var(--line)"/><text class="lbl" x="42.0" y="184" text-anchor="middle" font-size="11">0</text><text class="lbl" x="37" y="174.0" text-anchor="end" font-size="11">0</text><text class="lbl" x="132.0" y="184" text-anchor="middle" font-size="11">5</text><text class="lbl" x="37" y="99.0" text-anchor="end" font-size="11">5</text><text class="lbl" x="222.0" y="184" text-anchor="middle" font-size="11">10</text><text class="lbl" x="37" y="24.0" text-anchor="end" font-size="11">10</text><circle cx="42.0" cy="170.0" r="5.5" fill="#1f6feb"/><circle cx="42.0" cy="132.5" r="5.5" fill="#1f6feb"/><circle cx="42.0" cy="95.0" r="5.5" fill="#1f6feb"/><circle cx="42.0" cy="57.5" r="5.5" fill="#1f6feb"/><circle cx="42.0" cy="20.0" r="5.5" fill="#1f6feb"/><circle cx="87.0" cy="170.0" r="5.5" fill="#1f6feb"/><circle cx="87.0" cy="132.5" r="5.5" fill="#1f6feb"/><circle cx="87.0" cy="95.0" r="5.5" fill="#1f6feb"/><circle cx="87.0" cy="57.5" r="5.5" fill="#1f6feb"/><circle cx="87.0" cy="20.0" r="5.5" fill="#1f6feb"/><circle cx="132.0" cy="170.0" r="5.5" fill="#1f6feb"/><circle cx="132.0" cy="132.5" r="5.5" fill="#1f6feb"/><circle cx="132.0" cy="95.0" r="5.5" fill="#1f6feb"/><circle cx="132.0" cy="57.5" r="5.5" fill="#1f6feb"/><circle cx="132.0" cy="20.0" r="5.5" fill="#1f6feb"/><circle cx="177.0" cy="170.0" r="5.5" fill="#1f6feb"/><circle cx="177.0" cy="132.5" r="5.5" fill="#1f6feb"/><circle cx="177.0" cy="95.0" r="5.5" fill="#1f6feb"/><circle cx="177.0" cy="57.5" r="5.5" fill="#1f6feb"/><circle cx="177.0" cy="20.0" r="5.5" fill="#1f6feb"/><circle cx="222.0" cy="170.0" r="5.5" fill="#1f6feb"/><circle cx="222.0" cy="132.5" r="5.5" fill="#1f6feb"/><circle cx="222.0" cy="95.0" r="5.5" fill="#1f6feb"/><circle cx="222.0" cy="57.5" r="5.5" fill="#1f6feb"/><circle cx="222.0" cy="20.0" r="5.5" fill="#1f6feb"/><text class="lbl" x="132.0" y="200" text-anchor="middle" font-size="11">Aspartame %</text><text class="lbl" x="12" y="95.0" text-anchor="middle" font-size="11" transform="rotate(-90 12 95.0)">Sucralose %</text><text class="lblb" x="132.0" y="13" text-anchor="middle" font-size="13">5×5 full factorial r = 0</text></svg></div><ul class="clean"><li><strong>1:1 dilution</strong>: (2,2), (4,4), (6,6) — both Y rise together, correlation coefficient r = 1 (<a class="no-nav" href="../w04_titration/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W04 correlation coefficient r ↗</a>)</li><li>When a peak in the spectrum gets stronger, the model can’t tell whether there is more aspartame or more sucralose — the two Y are tied together, which is called <strong>confounding</strong>, i.e., <strong>collinearity</strong> between the Y (<a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 collinearity ↗</a>)</li><li><strong>5×5 grid</strong>: every aspartame level is paired with all 5 sucralose levels → the 25 points give corr(Y₁,Y₂) = <b>0.0000</b></li><li>r = 0 means the two Y are uncorrelated, so PLS can separate their individual contributions to the spectrum</li></ul></div></div></section><section class="slide" data-slide="7" data-section="Focus" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">Mini-game ①</span><span class="gt">Judging the design: does this recipe confound the two Y?</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">Sort the 8 design approaches below into “designs that confound the two Y” or “good designs”.</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">Check answer</button><button class="btn ghost" id="g1reset">Reset</button></div></div></div></section><section class="slide" data-slide="8" data-section="Focus"><div class="slide-inner"><div class="kicker">Who prepares which 5 bottles?</div><h2 class="slide-title"><span class='hi'>Latin-square</span> division of labor: every group touches every concentration</h2><div class="grid2-1" style="margin-top:8px;grid-template-columns:1.2fr .8fr"><div><table class="cmp" style="font-size:.8rem"><thead><tr><th>Group</th><th>A 0%</th><th>A 2.5%</th><th>A 5%</th><th>A 7.5%</th><th>A 10%</th></tr></thead><tbody><tr><td class="c">G1</td><td>S 0%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-00</span></td><td>S 2.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-06</span></td><td>S 5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-12</span></td><td>S 7.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-18</span></td><td>S 10%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-24</span></td></tr><tr><td class="c">G2</td><td>S 2.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-01</span></td><td>S 5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-07</span></td><td>S 7.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-13</span></td><td>S 10%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-19</span></td><td>S 0%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-20</span></td></tr><tr><td class="c">G3</td><td>S 5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-02</span></td><td>S 7.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-08</span></td><td>S 10%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-14</span></td><td>S 0%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-15</span></td><td>S 2.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-21</span></td></tr><tr><td class="c">G4</td><td>S 7.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-03</span></td><td>S 10%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-09</span></td><td>S 0%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-10</span></td><td>S 2.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-16</span></td><td>S 5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-22</span></td></tr><tr><td class="c">G5</td><td>S 10%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-04</span></td><td>S 0%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-05</span></td><td>S 2.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-11</span></td><td>S 5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-17</span></td><td>S 7.5%<br><span class="mono" style="font-size:.72em;color:var(--ink-3)">CAL-23</span></td></tr></tbody></table><p class="cap" style="text-align:left">A = aspartame, S = sucralose; the small print is the NB13 formulation ID CAL-xx.</p></div><ul class="clean"><li>Rule: G1 prepares the diagonal (0,0)…(10,10); the next group, at the same aspartame level, prepares sucralose <strong>one level higher</strong>, wrapping back to 0% after 10%</li><li>In every <strong>row</strong> (group) and every <strong>column</strong> (aspartame level), each of the 5 sucralose levels appears exactly once</li><li>Why? If G3 prepared all the 5% aspartame, G3’s balance bias or grinding habits would be tied to “5%” = confounding; the Latin square spreads each group’s habits evenly over every concentration</li><li>It’s fine that G1 gets exactly the diagonal (0,0)…(10,10): the model is built from <strong>all 25 bottles of the whole class combined</strong>, and r is still 0</li></ul></div></div></section><section class="slide" data-slide="9" data-section="Focus"><div class="slide-inner"><div class="kicker">Where do the blind samples go?</div><h2 class="slide-title">Blind samples lie <span class='hi'>between the grid points</span> = testing the model’s interpolation ability</h2><div class="grid2-1" style="margin-top:8px"><div class="chartbox" style="height:44vh"><canvas id="designGridChart"></canvas></div><ul class="clean"><li>The TA prepares <b>7</b> extra blind bottles: aspartame 3.55–7.73%, sucralose 1.34–6.14%, all within 0–10% but <strong>not on grid points</strong></li><li>Predicting within the calibration range = <strong>interpolation</strong>, trustworthy; beyond the range = extrapolation, not trustworthy (<a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 interpolation vs. extrapolation ↗</a>)</li><li>Blind samples must be <strong>prepared independently</strong> and <strong>kept out of the calibration set</strong>: off-grid blinds test the model’s interpolation to “concentrations it has never seen”; even if a formulation has the same concentration as some calibration point, as long as it is a <strong>freshly, independently prepared</strong> new physical sample, it can still verify the reproducibility of preparation and prediction</li><li>The triangles in the plot are the positions in the NB13 demo data; the actual blind concentrations for this class are kept secret by the TA and revealed in W16</li></ul></div>
+<script>(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('designGridChart'); if(!el||el._done) return; el._done=1;
+    var grid=[[0.0, 0.0], [0.0, 2.5], [0.0, 5.0], [0.0, 7.5], [0.0, 10.0], [2.5, 0.0], [2.5, 2.5], [2.5, 5.0], [2.5, 7.5], [2.5, 10.0], [5.0, 0.0], [5.0, 2.5], [5.0, 5.0], [5.0, 7.5], [5.0, 10.0], [7.5, 0.0], [7.5, 2.5], [7.5, 5.0], [7.5, 7.5], [7.5, 10.0], [10.0, 0.0], [10.0, 2.5], [10.0, 5.0], [10.0, 7.5], [10.0, 10.0]], blind=[[3.55, 3.38], [4.84, 1.34], [6.71, 5.23], [6.22, 5.77], [7.73, 2.48], [7.28, 1.69], [4.16, 6.14]];
+    new Chart(el,{type:'scatter',data:{datasets:[
+        {label:'25 calibration formulations (grid points)',data:grid.map(function(p){return {x:p[0],y:p[1]}}),backgroundColor:'#1f6feb',pointRadius:6},
+        {label:'7 blind samples (NB13 demo positions)',data:blind.map(function(p){return {x:p[0],y:p[1]}}),
+         backgroundColor:'#d9822b',borderColor:'#15233f',pointStyle:'triangle',pointRadius:9}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:11}}}},
+        scales:{x:{type:'linear',min:-1,max:11,title:{display:true,text:'Aspartame (%, w/w)'}},
+                y:{type:'linear',min:-1,max:11,title:{display:true,text:'Sucralose (%, w/w)'}}}}
+    });
+  }
+  draw();
+})();</script>
+</div></section><section class="slide" data-slide="10" data-section="Focus"><div class="slide-inner"><div class="kicker">Preparation workflow</div><h2 class="slide-title">Weigh → geometric dilution → sieve → seal</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">⚖️</div><div class="ct">Weigh to 0.1 mg</div><div class="cb">Target total mass per bottle 2.000 g; weigh all three components to 0.1 mg on the analytical balance; record the <strong>actual</strong> weighed mass, not the target on the recipe sheet — this is the real source of Y.</div></div><div class="card a"><div class="ic">🥣</div><div class="ct">Geometric dilution</div><div class="cb">First mix the smallest component with an <strong>equal amount</strong> of erythritol until uniform, then add the remaining erythritol in portions — so that a small amount of powder isn’t diluted unevenly by a large amount of filler.</div></div><div class="card g"><div class="ic">🧂</div><div class="ct">Sieve to a uniform particle size</div><div class="cb">Sieve after grinding so all samples have the same particle-size range, reducing differences in light scattering caused by particle size (this is also part of the sampling-variation discussion later).</div></div><div class="card b"><div class="ic">🏷️</div><div class="ct">Seal, label, watch for moisture</div><div class="cb">Fillers such as erythritol absorb moisture: work quickly, seal immediately when done, and label with the formulation ID (e.g., <span class='mono'>CAL-17</span>) and the preparing group.</div></div></div></div></section><section class="slide" data-slide="11" data-section="Focus"><div class="slide-inner"><div class="kicker">Worked example</div><h2 class="slide-title">G5 prepares CAL-17: <span class='hi'>how big</span> is the weighing error?</h2><div class="grid2" style="margin-top:8px"><div><ul class="clean"><li>Target A 7.5%, S 5.0% (total 2.000 g) → weigh 0.1500 g / 0.1000 g / 1.7500 g</li><li>Actual aspartame weighed: <b>0.1523 g</b>: first grind with an equal amount of about 0.15 g erythritol, then add the remaining ~1.60 g in portions</li><li>Finally sucralose 0.0997 g, erythritol 1.7489 g, total mass <b>2.0009 g</b></li><li>Aspartame was overweighed by 2.3 mg = 1.5% of target, about 40 times the balance uncertainty → no need to reweigh, but Y <strong>must use the actual value</strong></li></ul></div><div class='eq' style='text-align:left;font-size:clamp(.9rem,1.4vw,1.15rem)'>Balance ±a, a = 0.1 mg (rectangular distribution: any value within ±a is equally likely)<br><br>u = a / √3 = 0.1 / 1.732 = <b>0.058 mg</b><br>u<sub>rel</sub> = u / m × 100 = 0.058 / 152.3 × 100 ≈ <b>0.038%</b><p class="cap" style="text-align:left;margin-top:10px">u = standard uncertainty; a = half-width; m = aspartame mass. The origin of ÷√3 is the same as in the <a class="no-nav" href="../w08_proficiency/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W08 measurement uncertainty budget ↗</a>. Weighing is not the largest source of error — see <strong>sampling variation</strong> next.</p></div></div></div></section><section class="slide" data-slide="12" data-section="Focus" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">Mini-game ②</span><span class="gt">Calculation challenge: actual aspartame mass fraction</span><span class="score" id="g6score">Unanswered</span></div><div class="game-q">When G5 prepared <span class='mono'>CAL-17</span> (target aspartame 7.5%), the actual weights were: aspartame <b>0.1523 g</b>, sucralose <b>0.0997 g</b>, erythritol <b>1.7489 g</b>. Find the actual mass fraction of aspartame (%, w/w, to 2 decimal places) — use the <strong>actual total mass</strong> of the three as the denominator, not the 2.000 g target.</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span><button class="btn" id="g6check">Check answer</button><button class="btn ghost" id="g6hint">Hint</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="13" data-section="Focus"><div class="slide-inner"><div class="kicker">Randomization</div><h2 class="slide-title">Why can’t we measure <span class='hi'>in concentration order</span>?</h2><div class="grid2" style="margin-top:10px"><ul class="clean"><li>Instruments <strong>drift</strong> over time: the lamp warms up, laser power and room temperature change slowly</li><li>If you measure in order from 0% → 10%, “time” and “concentration” rise together → the model may mistake drift for a concentration signal = <strong>spurious correlation</strong></li><li><strong>Random order</strong> spreads the drift across all concentrations, so on average it favors no side</li><li>Take a <strong>white reference</strong> every time you change sample racks to pull the drift back (<a class="no-nav" href="../w10_spectro_calib/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W10 dark current · white reference ↗</a>)</li></ul><div class="eq" style="text-align:left;font-size:clamp(.85rem,1.3vw,1.05rem)">Excel random rack assignment (TA prepares before class)<br><br>Column A: 32 bottle IDs (CAL-00…24, BLIND-00…06)<br>Column B: <b>=RAND()</b> (random number 0–1)<br>Sort by column B → first 6 bottles R1, next 6 bottles R2, the rest 5 per rack (R3–R6)</div></div></div></section><section class="slide" data-slide="14" data-section="Focus"><div class="slide-inner"><div class="kicker">Rotating measurement</div><h2 class="slide-title">Every bottle must pass through <span class='hi'>every instrument</span></h2><div class="svgwrap" style="margin-top:4px"><svg viewBox="0 0 640 118" width="640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample rack rotation"><rect x="8" y="12" width="88" height="40" rx="8" fill="var(--accent-soft)" stroke="var(--line)"/><text class="lblb" x="52" y="37" text-anchor="middle" font-size="13">NIR-G1</text><text class="lblb" x="105" y="38" text-anchor="middle" font-size="15" fill="var(--accent)">→</text><rect x="114" y="12" width="88" height="40" rx="8" fill="var(--accent-soft)" stroke="var(--line)"/><text class="lblb" x="158" y="37" text-anchor="middle" font-size="13">NIR-G2</text><text class="lblb" x="211" y="38" text-anchor="middle" font-size="15" fill="var(--accent)">→</text><rect x="220" y="12" width="88" height="40" rx="8" fill="var(--accent-soft)" stroke="var(--line)"/><text class="lblb" x="264" y="37" text-anchor="middle" font-size="13">NIR-G3</text><text class="lblb" x="317" y="38" text-anchor="middle" font-size="15" fill="var(--accent)">→</text><rect x="326" y="12" width="88" height="40" rx="8" fill="var(--accent-soft)" stroke="var(--line)"/><text class="lblb" x="370" y="37" text-anchor="middle" font-size="13">NIR-G4</text><text class="lblb" x="423" y="38" text-anchor="middle" font-size="15" fill="var(--accent)">→</text><rect x="432" y="12" width="88" height="40" rx="8" fill="var(--accent-soft)" stroke="var(--line)"/><text class="lblb" x="476" y="37" text-anchor="middle" font-size="13">NIR-G5</text><text class="lblb" x="529" y="38" text-anchor="middle" font-size="15" fill="var(--accent)">→</text><rect x="538" y="12" width="88" height="40" rx="8" fill="var(--accent-2-soft)" stroke="var(--line)"/><text class="lblb" x="582" y="37" text-anchor="middle" font-size="13">Raman 785</text><path d="M 590 54 L 590 76 L 52 76 L 52 58" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M 46 62 L 52 52 L 58 62 Z" fill="var(--accent)"/><text class="lbl" x="320" y="100" text-anchor="middle" font-size="12">About 19 minutes per slot: when time is up, all 6 sample racks move one station to the right (Raman passes back to NIR-G1)</text></svg></div><div class="grid2" style="margin-top:6px;grid-template-columns:1.1fr .9fr"><ul class="clean"><li>Why rotate? In the old approach, if G3 prepared the whole 5% row and measured only on its own NIR, the aspartame Y seen by that instrument was <strong>all 5%</strong> — Y had no variation, so no model could be built</li><li>In W16 each instrument gets its own model: the calibration set must <strong>cover all 25 formulations</strong>, with blind samples available for validation</li><li>People stay, racks move: each group stays at its own NIR; the Raman 785 station is run by the TA (laser safety). Example: R1 passes through G1 → G2 → … → G5 → Raman</li></ul><div class='eq' style='text-align:left;font-size:clamp(.82rem,1.25vw,1rem)'>Time budget (estimate)<br>Per station: 32 bottles × 2 times = <b>64 spectra</b><br>About 1.5 min per spectrum (≈ 40 spectra/hour)<br>19 min per slot × 6 slots = <b>114 min</b> ≤ 115 min<br><span style='font-size:.85em;color:var(--ink-3)'>More than 1.5 min per spectrum won’t fit (2 min/spectrum needs 150 min) — if you fall behind, tell the TA right away; don’t cut samples or skip the blind samples on your own</span></div></div></div></section><section class="slide" data-slide="15" data-section="Focus"><div class="slide-inner"><div class="kicker">How to measure at each station</div><h2 class="slide-title">Each bottle <span class='hi'>re-inserted twice</span>, saved separately, not averaged</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">🔁</div><div class="ct">Re-insert twice (rep 1, 2)</div><div class="cb">Pour powder, level it, scan, save; pour it back, reload, scan again. <strong>Save the 2 spectra separately, don’t average</strong> — same as NB13, 2 spectra per bottle; in W16 cross-validation, keep the 2 spectra of the same bottle on the same side (<a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 cross-validation ↗</a>).</div></div><div class="card a"><div class="ic">🌗</div><div class="ct">NIR diffuse reflectance</div><div class="cb">Powder is opaque, so what is measured is the scattered-back light: R = (sample − dark)/(white − dark), then converted to log(1/R) (<a class="no-nav" href="../w10_spectro_calib/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W10 transmission vs. diffuse reflectance ↗</a>). Raman uses a rotating stage, saving 1 spectrum per loading.</div></div><div class="card g"><div class="ic">🧴</div><div class="ct">One 2 g bottle is used 12 times</div><div class="cb">6 stations × 2 times: after measuring, <strong>pour back into the original bottle and cap it immediately</strong>; clean the sample cup between bottles. The rotation takes about 2 hours and erythritol absorbs moisture — keep the cap in hand.</div></div><div class="card b"><div class="ic">🏷️</div><div class="ct">File name = upload fields</div><div class="cb"><span class='mono'>instrument_bottleID_rep</span>, e.g., <span class='mono'>NIR-G3_CAL-17_rep2</span>; the upload sheet fields sample_id, group (preparing group), instrument, rep are the same as in the NB13 data file.</div></div></div><p class="cap" style="text-align:left;margin-top:8px">Pure-component reference spectra (W10) and commercial sweeteners (W11) have already been measured and W16 uses them directly, so there is no need to remeasure today.</p></div></section><section class="slide" data-slide="16" data-section="Focus" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">Mini-game ③</span><span class="gt">Order the preparation and measurement workflow</span><span class="score" id="g4score">— / 8</span></div><div class="game-q">Use ▲▼ to put the full workflow from preparation to measurement in the correct order.</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">Check order</button><button class="btn ghost" id="g4reset">Shuffle</button></div></div></div></section><section class="slide" data-slide="17" data-section="Focus"><div class="slide-inner"><div class="kicker">RSD and sampling variation</div><h2 class="slide-title">Measure the same bottle several times — <span class='hi'>how much difference</span> counts as large?</h2><div class="grid2" style="margin-top:10px"><ul class="clean"><li><strong>RSD</strong> = SD ÷ mean × 100%: turns the spread into “a percentage of the mean” (<a class="no-nav" href="../w01_volumetric/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W01 RSD% ↗</a>)</li><li>Example (illustrative): the same bottle re-inserted 5 times, peak heights 102, 98, 105, 95, 100 → mean 100, SD 3.81, RSD <b>3.8%</b></li><li>Today each station re-inserts only 2 times: SD = |x₁ − x₂| ÷ √2, e.g., 102, 98 → 2.83; it is only reliable when all 32 bottles are viewed together</li><li>Then compare with <strong>between samples</strong>: how much does the peak height differ between two adjacent levels (2.5 percentage points apart)? If the SD of re-insertion of the same bottle is already close to that gap, the signal is buried by sampling error</li></ul><div class='eq' style='text-align:left'>RSD = <span class='frac'><b>SD</b><span>mean</span></span> × 100%<br><br>SD = √[ Σ(x − mean)² ÷ (n − 1) ]<br><span style='font-size:.8em'>= √[(2²+2²+5²+5²+0²) ÷ 4] = 3.81</span></div></div></div></section><section class="slide" data-slide="18" data-section="Focus" data-chart="samplingsd"><div class="slide-inner"><div class="kicker">Data · sampling variation</div><h2 class="slide-title">Sampling variation is QC data too: <span class='hi'>Raman</span> vs. <span class='hi'>NIR</span></h2><div class="chartbox" style="height:36vh"><canvas id="chart_samplingsd"></canvas></div><div class="cap">Illustrative data (not this class’s measurements, and not NB13). Each bar = the RSD% of 2 re-insertions of the same bottle on that instrument.</div><div class="note" style="margin-top:10px"><strong>Reading the plot:</strong> Raman re-insertion RSD is usually larger than NIR — the laser spot only hits local particles, which matters more when the powder is not uniform; NIR diffuse reflectance each time sees a larger area/depth of powder, so it is more representative.<br><strong>Sampling error</strong> = the small portion taken is not representative (segregation, packing tightness, spot position); <strong>instrument error</strong> = the instrument itself is unstable (dark current, aging white reference, laser power drift).</div></div></section><section class="slide" data-slide="19" data-section="Focus" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">Mini-game ④</span><span class="gt">Sweetener preparation and design: live quiz</span><span class="score" id="g2score">0 / 6</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="20" data-section="Focus"><div class="slide-inner"><div class="kicker">4-hour lab schedule</div><h2 class="slide-title">Design → prepare → rotating measurement → upload</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Time</th><th>Contents</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:40</td><td>Lecture: full factorial design, Latin-square division of labor, randomization, rotating measurement, uncertainty and RSD</td></tr>
+    <tr><td class="c">0:40–1:40</td><td>Prepare your group’s 5 bottles from the Latin square: weighing, geometric-dilution grinding, sieving, sealing and labeling</td></tr>
+    <tr><td class="c">1:40–3:35</td><td>Rotating measurement: 6 sample racks × 6 stations (5 NIR + Raman 785), each bottle re-inserted twice at each station</td></tr>
+    <tr><td class="c">3:35–4:00</td><td>Upload spectrum files and the actual recipe sheet (based on the actual mass fractions)</td></tr>
+    </tbody></table><div class="grid3" style="margin-top:16px"><div class="card a"><div class="ic">😷</div><div class="ct">Fine powder — avoid inhaling</div><div class="cb">Wear a mask during weighing, grinding and sieving, and move gently to avoid raising dust.</div></div><div class="card b"><div class="ic">🔦</div><div class="ct">Laser safety (Raman)</div><div class="cb">Never look directly into the 785 nm laser path; the Raman station is run by the TA, who follows laser-safety rules.</div></div><div class="card g"><div class="ic">🧬</div><div class="ct">Aspartame contains phenylalanine</div><div class="cb">Relevant to the dietary restrictions of PKU (phenylketonuria) patients — no special protection is needed when handling it, but it is common food-labeling knowledge.</div></div></div></div></section><section class="slide" data-slide="21" data-section="Focus" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">Mini-game ⑤</span><span class="gt">Sampling error vs. instrument error</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">Sort the 6 phenomena below into “sources of sampling error” or “sources of instrument error”.</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">Check answer</button><button class="btn ghost" id="g3reset">Reset</button></div></div></div></section><section class="slide" data-slide="22" data-section="Focus" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">Mini-game ⑥</span><span class="gt">Decision challenge: design and QC interpretation</span><span class="score" id="g5score">0 / 6</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="23" data-section="Act"><div class="slide-inner"><div class="kicker">Homework</div><h2 class="slide-title">Upload the data and prepare for W16 modeling</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📤</div><div class="ct">Upload spectra + actual recipe sheet</div><div class="cb">All spectra measured on the NIR your group runs (32 bottles × 2 times; Raman is uploaded by the TA), plus the actual weighed mass fractions of your group’s 5 bottles (not the target values); fields sample_id, group, instrument, rep.</div></div><div class="card a"><div class="ic">📐</div><div class="ct">Calculate re-insertion RSD</div><div class="cb">Pick 5 bottles, use SD = |x₁−x₂|÷√2 to calculate the re-insertion SD and RSD of your group’s instrument, and compare with the peak-height difference between two adjacent levels.</div></div><div class="card g"><div class="ic">🧮</div><div class="ct">Check the correlation coefficient</div><div class="cb">Using the actual mass fractions of all 25 bottles in the class, recheck whether corr(Y₁,Y₂) is close to 0.</div></div><div class="card b"><div class="ic">🔭</div><div class="ct">Preview W16</div><div class="cb">Review the pure-component peak assignments from W11; next week we will build the PLS model from today’s spectra (Orange OR16 or Colab NB13).</div></div></div></div></section><section class="slide" data-slide="24" data-section="Act"><div class="slide-inner"><div class="kicker">Self-check</div><h2 class="slide-title">By the end of today you should be able to…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>Say why we use solid powder instead of solution (aspartame solubility, limit of detection LOD)</li><li data-k><span class="bx">✓</span>Explain why Y comes from weighing (gravimetric) and not from the label values of commercial products</li><li data-k><span class="bx">✓</span>Use factors, levels, and full factorial to explain why the 5×5 design gives corr(Y₁,Y₂)=0 and why a 1:1 dilution confounds</li><li data-k><span class="bx">✓</span>Understand the Latin-square division of labor and complete your group’s 5 bottles: weighing, geometric dilution, sieving, sealing</li><li data-k><span class="bx">✓</span>Measure with randomized racks + rotation: each bottle re-inserted twice on every instrument, saved separately, and say why randomizing and taking a white reference are needed</li><li data-k><span class="bx">✓</span>Calculate the actual mass fraction and estimate the relative uncertainty of weighing with a rectangular distribution (÷√3)</li><li data-k><span class="bx">✓</span>Use RSD to compare the sampling variation of Raman and NIR, and compare it with the differences between samples</li><li data-k><span class="bx">✓</span>Say why blind samples are placed between the grid points (interpolation) and are kept out of the calibration set</li></ul><p class="subtitle" style="margin-top:12px">Tap to tick — make sure you really can do it.</p></div></section><script>window.CFG={"charts": {"samplingsd": {"type": "bar", "yTitle": "Re-insertion RSD (%) (illustrative)", "zero": true, "labels": ["0%A/0%S", "5%A/5%S", "10%A/0%S", "0%A/10%S"], "datasets": [{"label": "Raman 785 re-insertion RSD% (illustrative)", "data": [4.2, 3.8, 5.1, 4.6], "color": "#1f6feb"}, {"label": "NIR re-insertion RSD% (illustrative)", "data": [1.9, 2.1, 1.7, 2.3], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["Designs that confound the two Y", "Good designs"], "items": [{"t": "5×5 full factorial design: aspartame and sucralose each independently set at 5 levels, combined pairwise into 25 formulations", "c": "Good designs"}, {"t": "Use only 3 commercial finished products, diluted slightly according to the label ratios", "c": "Designs that confound the two Y"}, {"t": "Aspartame and sucralose fixed at the same ratio, changing only the total amount added", "c": "Designs that confound the two Y"}, {"t": "Add a few off-grid points between the 5×5 grid points, with the two components still set independently", "c": "Good designs"}, {"t": "Prepare a 1:1 sequence such as (2,2), (4,4), (6,6)", "c": "Designs that confound the two Y"}, {"t": "Each sweetener concentration is set independently and does not rise or fall with the other, corr(Y₁,Y₂)≈0", "c": "Good designs"}, {"t": "Use only two finished products with the same aspartame/sucralose ratio, each made in a “double” and a “half” version, 4 samples in total", "c": "Designs that confound the two Y"}, {"t": "Deliberately make the sucralose concentration rise proportionally whenever the aspartame concentration is high", "c": "Designs that confound the two Y"}], "ok": "🎉 All correct! Whenever the concentrations of two components are tied to the same line and change together (r≈1), they are confounded; setting the two levels independently (r=0) is the good design.", "tip": "Hint: any design with a “fixed ratio, diluted together” ties the two Y to change together; a good design makes the two factors independent and uncorrelated."}, "g3": {"cats": ["Sources of sampling error", "Sources of instrument error"], "items": [{"t": "After grinding, the sample segregates in the container because particles differ in density", "c": "Sources of sampling error"}, {"t": "The Raman laser spot hits only local particles, so the composition hit differs each time when the powder is not uniform", "c": "Sources of sampling error"}, {"t": "When the NIR sample cup is reloaded, the packing tightness (bulk density) differs each time", "c": "Sources of sampling error"}, {"t": "Dark current noise of the spectrometer detector", "c": "Sources of instrument error"}, {"t": "The white reference ages and has not been updated for a long time", "c": "Sources of instrument error"}, {"t": "Laser power drifts gradually over the measurement time", "c": "Sources of instrument error"}], "ok": "🎉 All correct! What relates to “which small portion is taken from the whole bottle of powder” is sampling error; what relates to “how stable the instrument itself is” is instrument error.", "tip": "Hint: segregation, packing tightness, where the spot lands → sampling error; dark current, aging white reference, laser power drift → instrument error."}}, "mcq": {"g2": [{"q": "Why is this sweetener mixture prepared as a “solid powder” instead of being made into a solution like a beverage?", "o": ["Powder is easier to store; there is no scientific reason", "Beverage-level concentrations are far below the spectroscopic detection limit, and the solubility of aspartame in water is only about 1%, so a solution would give no measurable signal", "Solutions would corrode the cuvettes", "It is purely what the instrument company recommends"], "a": 1, "e": "At real drinking concentrations, the signals of the two sweeteners in solution are far below the LOD of NIR/Raman; together with the solubility limit of aspartame (~1%), a solid powder mixture far above commercial concentrations is used instead."}, {"q": "What is the difference between the “nominal” mass fraction and the “actual” mass fraction on the recipe sheet? Why must modeling use the “actual” one?", "o": ["They are always the same and need not be distinguished", "The nominal value is the amount you intended to add; the actual value is the weighed record of what was really added; weighing always has a slight deviation, and the Y for modeling must use the actual value", "The actual value is just the nominal value rounded", "The nominal value is more accurate and should be used first"], "a": 1, "e": "For example, CAL-17 has a target of 7.5%, and 2.3 mg too much was actually weighed; PLS learns the relationship “spectrum ↔ true amount of component”, so Y must use the actual mass fraction."}, {"q": "Why use a 5×5 full factorial design instead of just diluting 2–3 commercial sweetener packets?", "o": ["The full factorial design saves time", "When only a few commercial products are diluted, the two sweetener concentrations change together along the same dilution line (r≈1), and the model cannot tell which component the signal comes from; the full factorial makes the two independent (r=0)", "There are not enough commercial products to buy", "The full factorial design is cheaper"], "a": 1, "e": "Diluting commercial products at a fixed ratio makes the two Y change together (confounding); the full factorial sets aspartame and sucralose levels independently, so PLS can estimate their contributions separately."}, {"q": "Why does the whole class use a “Latin square” division of labor, instead of G1 preparing the aspartame 0% row, G2 the 2.5% row, and so on?", "o": ["The Latin square is easier to remember", "If each group did one aspartame level, a group’s balance bias or grinding habits would be tied to that concentration (confounding); the Latin square has every group prepare each aspartame level and each sucralose level once, so habits are spread evenly", "The Latin square lets you prepare fewer bottles", "The Latin square makes corr(Y₁,Y₂) equal to 1"], "a": 1, "e": "In a Latin square every row (group) and every column (aspartame level) contains each of the 5 sucralose levels exactly once; the whole class together still forms the same 25-point grid (r=0), but “who prepared it” is no longer tied to concentration."}, {"q": "In geometric dilution, why mix the small-quantity component first with an “equal amount” of filler instead of pouring it straight into a big pile of filler?", "o": ["It is faster this way", "A small amount of powder added directly to a lot of filler is hard to mix uniformly; diluting step by step with equal amounts ensures each step is well mixed, so the whole batch ends up uniform", "The filler reacts chemically with the small component", "It is purely a tradition with no real effect"], "a": 1, "e": "If a small component is poured into a large amount of filler at once, the concentration gap is too large to mix by grinding; in geometric dilution the concentration gap at each step is small, scaling up step by step to ensure the final batch is uniform."}, {"q": "When measuring 32 bottles (25 formulations + 7 blind samples), why first assign racks randomly with =RAND() instead of arranging by concentration?", "o": ["Random order is easier to record", "If sorted by concentration, instrument drift over time (temperature, laser power, etc.) is superimposed on the concentration trend, and the model may mistake the time trend for a concentration signal; random order breaks up the drift", "Random order lets you measure faster", "There is no special reason; it is just convention"], "a": 1, "e": "When measuring in concentration order, any drift accumulating over time goes in the same direction as concentration, and the model may learn a spurious correlation; randomization unties time from concentration."}], "g5": [{"q": "The sampling-variation bar chart shows the Raman re-insertion RSD is clearly larger than the NIR re-insertion RSD. What does this tell you?", "o": ["The Raman instrument is poor and should be dropped", "For powder samples, the small Raman spot is less representative than NIR diffuse reflectance; mixing uniformity can be improved, or a rotating stage used to reduce single-sampling variation", "The two are actually equally precise", "It means NIR has no sampling error at all"], "a": 1, "e": "A large re-insertion RSD means a single loading is less representative; the Raman spot is small and has a clear effect when the powder is not uniform, so the Raman station uses a rotating stage to improve mixing uniformity. More re-insertions (not averaged) give a more reliable estimate of how large this variation is, but do not reduce the SD/RSD of a single re-insertion itself; only appropriately averaging multiple re-insertions can reduce the uncertainty of the mean, and W16 will use all re-insertions for evaluation."}, {"q": "The 7 blind samples in NB13 (e.g., aspartame 3.55%/sucralose 3.38%, 4.84%/1.34%) are all within 0–10% but not on grid points. What is the purpose?", "o": ["Purely to increase the TA’s workload", "Grid points are already in the calibration set; placing blinds between the grid points additionally tests the model’s interpolation to “concentrations it has never seen”", "The points on the grid have been used up", "Off-grid samples are easier to prepare"], "a": 1, "e": "Blind samples are meant to be prepared independently and kept out of the calibration set, so that validation is honest; being off-grid also tests an extra skill — interpolating to “concentrations within the range but never seen”. Even if a formulation has the same concentration as some calibration point, as long as it is a freshly, independently prepared new sample, it can still verify the reproducibility of preparation and prediction."}, {"q": "Before the semester the TA already measured 0%, 5% and 10% once on every instrument. What is the purpose of this pilot test?", "o": ["It is a formality with no real meaning", "To confirm that every Raman/NIR instrument can detect an identifiable signal in this concentration range, before the whole class commits to preparing the full 25-point design", "To save consumables", "To let the TA get familiar with the operation in advance"], "a": 1, "e": "The full factorial design takes the whole class a full session to prepare and measure; confirming the detectability of the signal beforehand with low/medium/high points is a necessary feasibility check before committing to a large design."}, {"q": "Commercial sweetener packets are planned as W16’s “external challenge samples”. What is the main difficulty?", "o": ["Commercial packets cannot be bought at all", "The actual proportion of high-intensity sweeteners in commercial packets is usually far below this calibration range, the signal may be close to or below the limit of detection (LOD), and there is no exact added amount to verify the prediction against", "The color of commercial packaging interferes with the spectra", "Commercial packets always contain preservatives, so they cannot be measured by spectroscopy"], "a": 1, "e": "The amount of high-intensity sweetener in commercial products is usually far below the deliberately raised training concentrations here; the signal is weak and there is no true value to compare against, making it a harsher external test than the training set."}, {"q": "The rotating measurement takes about 2 hours, and each bottle is opened 12 times. If a group does not put the cap back after measuring, what problem is most likely?", "o": ["No effect at all", "Erythritol absorbs moisture, so the sample mass and water content change, and the “actual mass fraction” recorded at preparation no longer matches the composition measured at later stations — and the later the station, the worse it gets", "Moisture automatically makes the sweetener concentration more accurate", "It only affects the color, not the spectrum"], "a": 1, "e": "Moisture uptake creates a gap between Y (the preparation record) and the sample’s composition at the time, and the gap grows with rotation time; it is an unrecorded systematic problem that gets mixed into the model error."}, {"q": "Suppose there is no rotation: G3 prepares only the 5% aspartame row and measures only on G3’s own NIR. What happens when W16 tries to build an aspartame model with G3’s NIR?", "o": ["No problem at all; 5 bottles are enough", "G3’s NIR has only seen samples with 5% aspartame, so Y is all the same (no variation) and no aspartame model can be built; this is why every bottle must pass through every instrument", "The model automatically extrapolates to 0–10%", "Just re-insert more times and it will be fixed"], "a": 1, "e": "Regression learns from “how the spectrum changes when Y changes”; when Y is constant there is no relationship to learn. Rotation lets every instrument measure all 25 formulations (+ 7 blind samples)."}]}, "sort": {"g4": {"steps": ["Check the Latin-square table to confirm the 5 formulations your group was assigned (one bottle for each aspartame level)", "Weigh aspartame, sucralose and erythritol to 0.1 mg and record the actual masses", "Mix initially by geometric dilution, then add the remaining erythritol in portions and grind until uniform", "Sieve to a uniform particle-size range", "Seal and label with the formulation ID (CAL-xx) and the preparing group", "Following the TA’s =RAND() rack table, place the bottles into the 6 sample racks", "Rotating measurement: re-insert each bottle twice at each station, save separately, and pass the rack to the next station when done", "Upload the spectrum files and the actual recipe sheet (sample_id, group, instrument, rep)"], "shuffle": [4, 7, 1, 5, 2, 6, 0, 3], "ok": "🎉 Correct order! Confirm assignment → weigh → geometric-dilution grinding → sieve → seal → random rack assignment → rotating measurement → upload data.", "tip": "Hint: you must weigh before grinding; seal after grinding and sieving; assign racks after sealing; each rack must go through all 6 stations; uploading is the last step."}}, "calc": {"g6": {"answer": 7.61, "tol": 0.01, "ok": "🎉 Correct! Total mass = 0.1523+0.0997+1.7489 = 2.0009 g; % aspartame = 0.1523/2.0009×100 ≈ <b>7.61%<\/b> — higher than the 7.5% target, so enter 7.61% as the Y of CAL-17.", "bad": "Try again: first add up the three actual weighed masses as the denominator (not 2.000 g), then divide the aspartame mass by this actual total mass and multiply by 100.", "hint": "Hint: total mass ≈ 2.0009 g; 0.1523 / 2.0009 × 100 ≈ ?"}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
+}
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 All correct!','good');
+    else fb(g+'fb','Correct '+ok+'/'+N+'. '+(cfg.tip||'Adjust and try again.'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ Correct!':'❌ Answer: '+d.o[d.a]+'. ')+'<br>'+d.e+(done?'<br><b>Done! Total score: '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 Perfect order!','good');
+    else fb(g+'fb','Got '+ok+'/'+N+' positions right.'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','Enter a number first.','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ Correct'); fb(g+'fb',cfg.ok||('🎉 Correct! The answer is '+cfg.answer),'good');
+    } else { setScore(g+'score','Try again'); fb(g+'fb',cfg.bad||'Recalculate and try again.','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'Hint: substitute step by step using the formula.','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en] body,html[lang=en] .lbl,html[lang=en] .lblb{font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif}html[lang=en] body{font-size:16.5px}html[lang=en] .slide-title{font-size:clamp(1.3rem,2.7vw,2.05rem)}html[lang=en] .cover h1{font-size:clamp(2rem,5vw,3.8rem)}html[lang=en] .hook{font-size:clamp(1.5rem,3.6vw,2.6rem)}html[lang=en] p,html[lang=en] li{line-height:1.55}html[lang=en] .kicker{letter-spacing:.1em}html[lang=en] p,html[lang=en] li{font-size:clamp(.86rem,1.3vw,1.04rem)}html[lang=en] .card .cb{font-size:clamp(.8rem,1.15vw,.94rem)}html[lang=en] .card .ct{font-size:clamp(.95rem,1.4vw,1.1rem)}html[lang=en] .chip{font-size:.84rem;padding:7px 12px}html[lang=en] .opt{font-size:clamp(.82rem,1.2vw,.98rem);padding:11px 15px}html[lang=en] .game-q{font-size:clamp(.9rem,1.35vw,1.08rem)}html[lang=en] .bucket .bh{font-size:.88rem}html[lang=en] table.cmp{font-size:clamp(.78rem,1.1vw,.95rem)}html[lang=en] table.cmp th,html[lang=en] table.cmp td{padding:9px 11px}html[lang=en] .note{font-size:clamp(.85rem,1.2vw,.98rem)}html[lang=en] .subtitle{font-size:clamp(.9rem,1.4vw,1.1rem)}html[lang=en] .checklist li{font-size:.86rem}html[lang=en] .cap{font-size:.82rem}html[lang=en] .pill{font-size:.78rem;padding:4px 10px}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><script>(function(){
+function fit(){var sl=document.querySelector('.slide.active');if(!sl)return;
+ sl.querySelectorAll('svg').forEach(function(svg){var sb=svg.getBoundingClientRect();if(!sb.width)return;
+  var rects=[].slice.call(svg.querySelectorAll('rect')).map(function(r){return r.getBoundingClientRect()});
+  [].slice.call(svg.querySelectorAll('text')).forEach(function(t){
+   if(t.dataset.fit)return; var s=(t.textContent||'').trim(); if(!s)return;
+   var b=t.getBoundingClientRect(); if(!b.width)return;
+   var cx=(b.left+b.right)/2, cy=(b.top+b.bottom)/2;
+   var host=rects.filter(function(r){return r.width>20&&r.width<480&&cx>r.left&&cx<r.right&&cy>r.top&&cy<r.bottom})
+             .sort(function(p,q){return p.width-q.width})[0];
+   var maxW=host?host.width-10:Math.min(b.right,sb.right-2)-Math.max(b.left,sb.left+2);
+   if(host&&(b.right>sb.right||b.left<sb.left))maxW=Math.min(maxW,sb.width-4);
+   if(b.width<=maxW+1)return;
+   t.dataset.fit='1';
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13;
+   var k=b.width/((t.getBBox().width)||b.width); /* client px per user unit */
+   var hasTspan=t.querySelector('tspan'); var canWrap=!hasTspan&&s.indexOf(' ')>0&&host&&host.height>=fs*2.3;
+   if(canWrap){var others=[].slice.call(svg.querySelectorAll('text')).filter(function(o){if(o===t)return false;var ob=o.getBoundingClientRect();var ox=(ob.left+ob.right)/2,oy=(ob.top+ob.bottom)/2;return ox>host.left&&ox<host.right&&oy>host.top&&oy<host.bottom;});
+     if(others.length){var free=host.bottom-b.bottom;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.top>=b.top)free=Math.min(free,ob.top-b.bottom)});var freeTop=b.top-host.top;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.bottom<=b.bottom)freeTop=Math.min(freeTop,b.top-ob.bottom)});if(free+freeTop<fs*1.15)canWrap=false;}}
+   if(canWrap){var w=s.split(' '),best=null;
+     for(var i=1;i<w.length;i++){var a=w.slice(0,i).join(' '),c=w.slice(i).join(' ');var d=Math.abs(a.length-c.length);if(!best||d<best.d)best={d:d,a:a,c:c};}
+     var x=t.getAttribute('x')||'0',y=parseFloat(t.getAttribute('y')||'0');
+     t.textContent='';var t1=document.createElementNS('http://www.w3.org/2000/svg','tspan'),t2=t1.cloneNode();
+     t1.setAttribute('x',x);t1.setAttribute('y',(y-fs*0.55/k).toFixed(2));t1.textContent=best.a;
+     t2.setAttribute('x',x);t2.setAttribute('y',(y+fs*0.6/k).toFixed(2));t2.textContent=best.c;
+     t.appendChild(t1);t.appendChild(t2);b=t.getBoundingClientRect();if(b.width<=maxW+1)return;}
+   var sc=Math.max(0.7,maxW/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   b=t.getBoundingClientRect(); if(b.width>maxW+1&&!t.querySelector('tspan')){t.setAttribute('textLength',(maxW/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+  /* second pass: free labels that collide with a neighbour on the same row */
+  var ts=[].slice.call(svg.querySelectorAll('text')).filter(function(x){return (x.textContent||'').trim()});
+  for(var i=0;i<ts.length;i++)for(var j=i+1;j<ts.length;j++){var A=ts[i].getBoundingClientRect(),B=ts[j].getBoundingClientRect();
+   var ox=Math.min(A.right,B.right)-Math.max(A.left,B.left),oy=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
+   if(ox<=2||oy<=Math.min(A.height,B.height)*0.5)continue;
+   var t=A.width>=B.width?ts[i]:ts[j],b=A.width>=B.width?A:B; if(t.querySelector('tspan')||t.dataset.fit2)continue; t.dataset.fit2='1';
+   var want=b.width-ox-6; if(want<b.width*0.55)continue;
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13,k=b.width/((t.getBBox().width)||b.width);
+   var sc=Math.max(0.75,want/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   var nb=t.getBoundingClientRect(); if(nb.width>want+1){t.setAttribute('textLength',(want/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  }});}
+ if(typeof show==='function'){var _s=show;show=function(i){_s(i);fit();};}
+ fit();setTimeout(fit,400);window.addEventListener('load',function(){setTimeout(fit,200)});
+})();</script><!--/i18n-toggle--></body></html>

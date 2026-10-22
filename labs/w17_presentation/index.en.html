@@ -1,0 +1,434 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W17 Project Presentation and Peer Review · Food Analysis Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto}table.cmp th,table.cmp td{white-space:normal;padding:9px 10px;min-width:56px}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">Food Analysis Lab · W17</div><div id="pageInfo"></div><div id="hint">← → / Space to change slide · F fullscreen · Tap either side to turn pages</div><section class="slide" data-slide="1" data-section="Hook" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Food Analysis Lab · W17</div><h1>Project Presentation <span style='color:var(--accent-2)'>and Peer Review</span></h1><div class="en">Capstone Presentations & Peer Review</div><div class="meta">Food Analysis Lab · 4-hour session<br>Quantifying aspartame and sucralose in erythritol by PLS/NNLS (5×5 design) · Raman 785/532 · each group’s NIR (Avantes/InnoSpectra/NeoSpectra/NIRONE)</div><div style="margin-top:24px"><span class="pill">Model report card</span><span class="pill">VIP chemical check</span><span class="pill">PLS vs NNLS</span><span class="pill">Applicability domain T²/Q</span><span class="pill">Peer review</span><span class="pill">Honest reporting &lt; LOD</span></div></div></div></section><section class="slide" data-slide="2" data-section="Hook"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">Your role today</div>
+  <div class="hook">If you were the food factory’s <span class="hi">QC manager</span>,<br>would you <span class="hi">release product</span> based on this model?</div>
+  <div class="note" style="max-width:960px;margin:20px auto 0;text-align:left">
+    <strong>Today is not “just finish the report”:</strong> everyone in the audience puts on a <strong>skeptical QC manager</strong> hat while listening. Is the model’s validation rigorous enough? Where does the error come from? Does VIP pick up real chemical signal, or coincidence? Dare the commercial-sample results be reported responsibly? Everything this semester, from the reference methods of W1–W8 to the spectroscopy and chemometrics of W10–W14, converges in today’s five group presentations.
+  </div>
+  <p class="subtitle" style="max-width:960px;margin:14px auto 0"><strong>Today’s format:</strong> each group gives a <strong>10-minute talk + 5-minute Q&amp;A</strong>, while everyone else completes a <strong>peer review form</strong>. Each person reviews <strong>two groups</strong> and writes at least <strong>one strength and one specific improvement</strong> for each.</p>
+</div></div></section><section class="slide" data-slide="3" data-section="Hook"><div class="slide-inner"><div class="kicker">Today’s learning goals</div><h2 class="slide-title">After W17 you should be able to…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>Read a complete <strong>model report card</strong>, know which fields it must contain, and judge whether it has enough information for a release decision</li><li>Tell what question each of <strong>RMSEC/RMSECV/RMSEP</strong> answers, and stop treating training error as prediction error</li><li>Use <strong>VIP against specified bands</strong> for a chemical plausibility check to judge whether the model really learned chemical signal</li></ul><ul class='clean'><li>State the differences between <strong>PLS and NNLS</strong> on this problem, and when the non-negativity constraint helps and when it does not</li><li>Give an <strong>honest report</strong> of commercial-sample predictions: distinguish “below LOD” from “outside the applicability domain (T²/Q)” and never make up numbers</li><li>Write <strong>specific, constructive</strong> peer feedback on another group’s presentation using the rubric</li></ul></div></div></section><section class="slide" data-slide="4" data-section="Hook"><div class="slide-inner"><div class="kicker">Quick glossary</div><h2 class="slide-title">Forgot something? Click back to review</h2><table class="cmp" style="font-size:.78rem;margin-top:8px"><thead><tr><th>Term</th><th>In one sentence</th><th>Review</th></tr></thead><tbody><tr><td class="c">RMSEC/RMSECV/RMSEP</td><td>Training / cross-validation / independent test error; only RMSEP represents new samples</td><td><a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 Figures of merit ↗</a></td></tr><tr><td class="c">LV (latent variables)</td><td>The composite axes PLS compresses the spectrum into; too many = overfitting</td><td><a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 Number of LV = model complexity; it must be just right ↗</a></td></tr><tr><td class="c">Data leakage</td><td>If replicate spectra of the same sample are split between the calibration and test sets, the error looks falsely low</td><td><a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 Standards must cover the range; never tune on the test set ↗</a></td></tr><tr><td class="c">RPD</td><td>SD (test-set reference values) ÷ RMSEP; &lt;2 insufficient, 2–2.5 rough screening, 2.5–3 screening, 3–5 QC quantification, &gt;5 excellent (for reference only; do not decide the use from RPD alone)</td><td><a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 Figures of merit ↗</a></td></tr><tr><td class="c">Bias + paired t</td><td>How much too high or too low overall, and whether it differs significantly from 0</td><td><a class="no-nav" href="../w04_titration/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W4 Manual vs PASCO: Bland–Altman plot ↗</a><br><a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 Figures of merit ↗</a></td></tr><tr><td class="c">VIP</td><td>How important each wavelength is; magnitude only, no positive or negative direction</td><td><a class="no-nav" href="../w14_vip_plsda/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W14 VIP: variable importance in projection, every symbol in plain words ↗</a></td></tr></tbody></table><p class="cap" style="margin-top:8px">Forgot the details? No worries: click the link to review that week (opens in a new tab).</p></div></section><section class="slide" data-slide="5" data-section="Hook"><div class="slide-inner"><div class="kicker">Quick glossary (continued)</div><h2 class="slide-title">Forgot something? Click back to review</h2><table class="cmp" style="font-size:.78rem;margin-top:8px"><thead><tr><th>Term</th><th>In one sentence</th><th>Review</th></tr></thead><tbody><tr><td class="c">T² / Q</td><td>How far from the model center / the residual the model cannot explain</td><td><a class="no-nav" href="../w14_vip_plsda/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W14 Hotelling T²: how far from the center within the model ↗</a><br><a class="no-nav" href="../w14_vip_plsda/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W14 Q residual (SPE): how far from the model plane ↗</a></td></tr><tr><td class="c">NNLS/CLS, LOD, applicability domain</td><td>Non-negative least-squares fit of pure-component spectra / limit of detection / whether a new sample looks like the calibration set</td><td><a class="no-nav" href="../w16_sweetener_model/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W16 Least squares: make the sum of (measured − fitted)² as small as possible ↗</a><br><a class="no-nav" href="../w16_sweetener_model/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W16 Carrying W07’s 3.3σ/slope over to PLS ↗</a><br><a class="no-nav" href="../w16_sweetener_model/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W16 Does the new sample look like the calibration set? W14’s T²/Q ↗</a></td></tr><tr><td class="c">SNV, Savitzky–Golay derivative</td><td>Remove particle-size scatter / smooth, then take the slope as the derivative</td><td><a class="no-nav" href="../w11_preprocess_similarity/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W11 SNV step by step ↗</a><br><a class="no-nav" href="../w11_preprocess_similarity/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W11 Savitzky–Golay smoothing and derivatives ↗</a></td></tr><tr><td class="c">Mean-centering</td><td>PCA preprocessing: subtract each wavelength’s own mean first</td><td><a class="no-nav" href="../w12_pca/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W12 Work through mean-centering and autoscale once ↗</a></td></tr><tr><td class="c">White reference, dark current</td><td>The NIR calibration baseline (white) and the background signal when the light path is fully dark (dark)</td><td><a class="no-nav" href="../w10_spectro_calib/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W10 NIR: dark current · white reference · wavelength check ↗</a></td></tr><tr><td class="c">5×5 design / Latin square</td><td>The concentration grid for the sweetener experiment, and how the work is divided when groups prepare it</td><td><a class="no-nav" href="../w15_sweetener_prep/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W15 1:1 dilution vs 5×5 grid: which lets the model separate the components? ↗</a><br><a class="no-nav" href="../w15_sweetener_prep/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W15 Latin-square division of work: every group touches every concentration ↗</a></td></tr></tbody></table><p class="cap" style="margin-top:8px">Forgot the details? No worries: click the link to review that week (opens in a new tab).</p></div></section><section class="slide" data-slide="6" data-section="Hook" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">Mini-game ①</span><span class="gt">Good practice or common pitfall?</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">Sort the 8 practices below into “Good practice” or “Common pitfall.”</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">Check answer</button><button class="btn ghost" id="g1reset">Reset</button></div></div></div></section><section class="slide" data-slide="7" data-section="Focus"><div class="slide-inner"><div class="kicker">Presentation format</div><h2 class="slide-title">Each group: <span class='hi'>10-minute talk</span> + <span class='hi'>5-minute Q&amp;A</span>, 8 required slides</h2><div class="grid2" style="margin-top:8px"><ul class="clean"><li><strong>1.</strong> Problem and design (5×5 grid, why Y is handled independently)</li><li><strong>2.</strong> Instrument and calibration records (W10 standards, white reference, cuvette orientation)</li><li><strong>3.</strong> Preprocessing choice and evidence (RMSECV comparison)</li><li><strong>4.</strong> Model report card</li></ul><ul class="clean"><li><strong>5.</strong> VIP vs specified bands (chemical plausibility check)</li><li><strong>6.</strong> PLS vs NNLS</li><li><strong>7.</strong> Commercial-sample results: honest reporting (&lt; LOD / outside applicability domain)</li><li><strong>8.</strong> Limitations and what you would change next time</li></ul></div><div class="note" style="margin-top:12px">These 8 slides are the <strong>minimum</strong>: you may add slides but not drop any; the order need not be identical, but the logic must flow. Practice putting them in a sensible order in the mini-game shortly.</div></div></section><section class="slide" data-slide="8" data-section="Focus" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">Mini-game ②</span><span class="gt">Put the 8 required slides in a sensible order</span><span class="score" id="g4score">— / 8</span></div><div class="game-q">Use ▲▼ to put the “required slides” in a sensible presentation order (design first, limitations last).</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">Check order</button><button class="btn ghost" id="g4reset">Shuffle</button></div></div></div></section><section class="slide" data-slide="9" data-section="Focus"><div class="slide-inner"><div class="kicker">Model report card</div><h2 class="slide-title">Model report card: <span class='hi'>fields you must ask for before release</span></h2><div class="grid2" style="margin-top:6px"><table class="cmp" style="font-size:.82rem"><tbody><tr><td class="c">Instrument / laser</td><td>Avantes NIR (fiber-optic)</td></tr><tr><td class="c">Spectral range</td><td>900–1650 nm</td></tr><tr><td class="c">Preprocessing</td><td>SNV + first derivative (S-G, 15 points)</td></tr><tr><td class="c">Number of LV (basis for choice)</td><td>6 (lowest RMSECV, avoids overfitting)</td></tr><tr><td class="c">RMSEC</td><td>0.28% (w/w)</td></tr><tr><td class="c">RMSECV</td><td>0.41% (w/w)</td></tr><tr><td class="c">RMSEP</td><td>0.45% (w/w)</td></tr><tr><td class="c">R²(test)</td><td>0.96</td></tr></tbody></table><table class="cmp" style="font-size:.82rem"><tbody><tr><td class="c">Bias</td><td>+0.03% (paired t-test p=0.62, no significant bias)</td></tr><tr><td class="c">RPD</td><td>4.0 (SD<sub>test</sub>/RMSEP)</td></tr><tr><td class="c">LOD (approx.)</td><td>~1.5% (w/w, estimated as 3.3×σ₀÷slope; σ₀ = SD of the cross-validated predictions for 0% samples, see W16)</td></tr><tr><td class="c">VIP–band agreement</td><td>Partial: 1450 nm (O–H) matches; the high VIP at 1200 nm has no clear assignment</td></tr><tr><td class="c">NNLS RMSEP</td><td>0.52% (w/w), slightly higher than PLS</td></tr><tr><td class="c">Applicability-domain check (T²/Q)</td><td>Commercial sample A is inside the domain; commercial sample B exceeds the Q limit</td></tr><tr><td class="c">Commercial-sample results (with caveats)</td><td>A: 1.2±0.3% (credible); B: &lt;LOD, must not be reported as 0</td></tr></tbody></table></div><p class="cap" style="margin-top:10px">Illustrative data: this is an example of what a “complete” report card looks like, not any group’s real results. If any field is missing, a QC manager has every reason to send it back.</p></div></section><section class="slide" data-slide="10" data-section="Focus"><div class="slide-inner"><div class="kicker">Peer review rubric</div><h2 class="slide-title">Each item is scored <span class='hi'>1–4</span>; write down strengths and improvements</h2><table class="cmp" style="font-size:.74rem;margin-top:6px"><thead><tr><th>Criterion</th><th>1 point</th><th>2 points</th><th>3 points</th><th>4 points</th></tr></thead><tbody><tr><td class="c">Experimental design and data completeness</td><td>Unclear design, too few samples</td><td>Design is identifiable but has obvious gaps</td><td>Complete 5×5 design, Y handled reasonably</td><td>and explains why the two Y are treated independently and how confounding is avoided</td></tr><tr><td class="c">Calibration and QC evidence</td><td>No calibration records</td><td>Mentions calibration but with no data</td><td>Includes standard/white-reference records</td><td>and links back to the W10 calibration procedure to show stability</td></tr><tr><td class="c">Model validation (independent test, no leakage)</td><td>Reports only RMSEC</td><td>Has RMSECV but the test set is not independent</td><td>RMSEC/RMSECV/RMSEP all present</td><td>and explains how the test set was kept from leaking into tuning</td></tr><tr><td class="c">Chemical interpretation (VIP/bands)</td><td>VIP not mentioned</td><td>Lists VIP but does not compare with bands</td><td>VIP matched to functional-group bands</td><td>and honestly points out high-VIP bands that cannot be assigned</td></tr><tr><td class="c">Honest disclosure of limitations</td><td>No limitations mentioned</td><td>Mentioned only in general terms</td><td>Lists 1–2 specific limitations</td><td>and explains how to improve next time, with honest reporting of commercial samples</td></tr><tr><td class="c">Figures and clarity of communication</td><td>Figures are hard to read</td><td>Figures are readable but lack labels</td><td>Figures are clear, with units and legends</td><td>and can say in one sentence what question each figure answers</td></tr></tbody></table><p class="cap" style="margin-top:8px">Each person reviews two groups; write at least one specific strength and one specific improvement. “Pretty good talk” does not count as specific feedback.</p></div></section><section class="slide" data-slide="11" data-section="Focus"><div class="slide-inner"><div class="kicker">Common pitfalls</div><h2 class="slide-title">Before presenting, check whether you made any of these mistakes</h2><div class="grid2" style="margin-top:12px"><ul class="clean"><li><strong>Tuning on the test set:</strong> using the test set to pick the preprocessing or number of LV is peeking at the answers (data leakage)</li><li><strong>Reporting RMSEC as prediction error:</strong> RMSEC only shows how well the model memorizes the training data</li><li><strong>Too many LV:</strong> RMSEC keeps falling while RMSECV has long since risen again, which means overfitting</li><li><strong>Reading VIP as a sign:</strong> VIP has meaning only in magnitude; the direction comes from the regression coefficients</li><li><strong>Treating coincidental correlation as chemical signal:</strong> with few samples and many wavelengths, some wavelengths always rise and fall with Y by chance (chance correlation); question any high-VIP band that cannot be matched to a functional group</li></ul><ul class='clean'><li><strong>Ignoring sampling variation:</strong> the 5×5 design has only 25 blends, and too few replicate measurements can misjudge how good the model is</li><li><strong>Reporting a number for a commercial sample below the LOD:</strong> report “&lt; LOD”; do not write 0 or invent a number</li><li><strong>Comparing instruments without saying the preprocessing differs:</strong> Raman vs NIR, SNV vs raw spectra; when preprocessing differs, RMSEP cannot be compared directly</li><li><strong>Ignoring the effect of the non-negativity constraint:</strong> PLS has no non-negativity constraint and may predict negative values near 0%; NNLS’s c≥0 is more sensible at the low end, but that does not mean it is more accurate over the whole range</li></ul></div></div></section><section class="slide" data-slide="12" data-section="Focus" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">Mini-game ③</span><span class="gt">Which metric answers which review question?</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="13" data-section="Focus" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">Mini-game ④</span><span class="gt">Is this item about design, validation, or interpretation?</span><span class="score" id="g3score">0 / 9</span></div><div class="game-q">Sort the 9 items below into three categories: “Design,” “Validation,” and “Interpretation.”</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">Check answer</button><button class="btn ghost" id="g3reset">Reset</button></div></div></div></section><section class="slide" data-slide="14" data-section="Focus" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">Mini-game ⑤</span><span class="gt">Judging review scenarios</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="15" data-section="Focus" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">Mini-game ⑥</span><span class="gt">Calculation challenge: work out RPD</span><span class="score" id="g6score">Unanswered</span></div><div class="game-q">For one group’s sucralose in the TA blind samples, the SD of the true concentrations = <b>1.80%</b> (w/w), and the group’s model has RMSEP = <b>0.45%</b> (w/w). Find RPD = SD / RMSEP.</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)"></span><button class="btn" id="g6check">Check answer</button><button class="btn ghost" id="g6hint">Hint</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="16" data-section="Focus" data-game="cmp"><div class="slide-inner"><div class="kicker">Wrap-up discussion</div><h2 class="slide-title">Class-wide comparison: <span class='hi'>instrument × sweetener RMSEP</span> (<span class='hi'>illustrative data</span>)</h2><table class="cmp" id="cmpTable" style="margin-top:14px"><thead><tr><th data-k="inst" data-t="s">Instrument <span class="ar">⇅</span></th><th data-k="asp" data-t="n">RMSEP-aspartame (%) <span class="ar">⇅</span></th><th data-k="suc" data-t="n">RMSEP-sucralose (%) <span class="ar">⇅</span></th></tr></thead><tbody></tbody></table><div class="cap">Click a column header to sort. After all groups have presented, the class enters the real numbers into the shared form and compares which tasks the Raman fingerprint vs the NIR bulk signal each suit.</div></div></section><section class="slide" data-slide="17" data-section="Focus"><div class="slide-inner"><div class="kicker">4-hour lab schedule</div><h2 class="slide-title">Presentations → Peer scoring → Class comparison → Reflection</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Time</th><th>Contents</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:15</td><td>Rules: presentation format, how to use the peer review form, which two groups each person reviews</td></tr>
+    <tr><td class="c">0:15–3:00</td><td>Five group presentations, each 10-minute talk + 5-minute Q&amp;A (15 minutes total), while everyone else completes peer scoring</td></tr>
+    <tr><td class="c">3:00–3:40</td><td>Class-wide comparison: enter each group’s instrument × sweetener × RMSEP into the class table and discuss which tasks Raman vs NIR suit</td></tr>
+    <tr><td class="c">3:40–4:00</td><td>Reflection and W18 final exam briefing</td></tr>
+    </tbody></table>
+    <div class="note" style="margin-top:12px"><strong>Looking back at the semester’s path:</strong> reference methods (W1–W8) → spectrometers and calibration (W10–W14) → project (W15–W17). Today is the end of this path and the starting point for the next batch of commercial-sample testing.</div></div></section><section class="slide" data-slide="18" data-section="Act"><div class="slide-inner"><div class="kicker">Reflection questions</div><h2 class="slide-title">What was the hardest <span class='hi'>QC decision</span> this semester?</h2><div class="note" style="margin-top:16px;max-width:960px">Take 2 minutes to write down: among all the judgments you made this semester (whether to re-measure, whether to flag an outlier, whether a model can be released, whether to dare write a commercial-sample result…), which decision made you hesitate most? <strong>How did you decide then? Looking back, would you make the same decision now?</strong></div><p class="subtitle" style="margin-top:14px;max-width:960px">You do not hand this to the teacher for a grade, but a few of you will be asked to share in a moment. The point is to practice saying a “statistical judgment” in one sentence before you leave this course.</p></div></section><section class="slide" data-slide="19" data-section="Act"><div class="slide-inner"><div class="kicker">Homework</div><h2 class="slide-title">Final report and W18 exam scope</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📄</div><div class="ct">Final report</div><div class="cb">Revise your report card and slides based on today’s peer feedback and fill in the gaps pointed out; <strong>deadline: per course announcement</strong></div></div><div class="card a"><div class="ic">📝</div><div class="ct">W18 written exam scope</div><div class="cb">Calibration principles, QC statistics (Grubbs/ANOVA/z-score/control charts), spectroscopy principles, chemometric concepts (PLS/VIP/RPD/LOD)</div></div><div class="card g"><div class="ic">💻</div><div class="ct">W18 practical scope</div><div class="cb">Hands-on in Orange: PCA exploration + PLS modeling, compute VIP in R or Colab, and write conclusions (not just output numbers)</div></div><div class="card b"><div class="ic">🔁</div><div class="ct">Responding to peer feedback</div><div class="cb">For each peer comment you received, write 1–2 sentences in response: agree/disagree, and whether you will revise</div></div></div></div></section><section class="slide" data-slide="20" data-section="Act"><div class="slide-inner"><div class="kicker">Self-check</div><h2 class="slide-title">By the end of today you should be able to…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>State the fields a model report card needs at minimum, and judge whether a report card has enough information for a release decision</li><li data-k><span class="bx">✓</span>Tell what question each of RMSEC/RMSECV/RMSEP answers, without treating training error as prediction error</li><li data-k><span class="bx">✓</span>Use VIP against specified bands for a chemical plausibility check, and admit high-VIP bands that cannot be assigned</li><li data-k><span class="bx">✓</span>State the differences between PLS and NNLS, and when the non-negativity constraint helps</li><li data-k><span class="bx">✓</span>Distinguish “below LOD” from “outside the applicability domain (T²/Q)”, and know how to report commercial-sample results honestly</li><li data-k><span class="bx">✓</span>Recognize at least 4 common reporting errors (tuning on the test set, RMSEC as prediction error, too many LV, VIP read as direction)</li><li data-k><span class="bx">✓</span>Write specific, actionable peer feedback on another group’s presentation instead of vague praise</li><li data-k><span class="bx">✓</span>Describe this semester’s full path from reference methods to spectroscopy to the project, and name the hardest QC decision you made</li></ul><p class="subtitle" style="margin-top:12px">Tap to tick — make sure you really can do it.</p></div></section><script>window.CFG={"cmp": {"cols": [{"k": "inst", "label": "Instrument", "t": "s"}, {"k": "asp", "label": "RMSEP-aspartame (%)", "t": "n"}, {"k": "suc", "label": "RMSEP-sucralose (%)", "t": "n"}], "rows": [{"inst": "Raman 785 nm", "asp": 0.32, "suc": 0.29}, {"inst": "Raman 532 nm", "asp": 0.38, "suc": 0.41}, {"inst": "Avantes NIR", "asp": 0.47, "suc": 0.45}, {"inst": "InnoSpectra NIR", "asp": 0.55, "suc": 0.58}, {"inst": "NeoSpectra NIR", "asp": 0.51, "suc": 0.49}, {"inst": "NIRONE", "asp": 0.6, "suc": 0.63}]}, "bucket": {"g1": {"cats": ["Good practice", "Common pitfall"], "items": [{"t": "Tune the preprocessing or number of LV on the test set first, then report the best result", "c": "Common pitfall"}, {"t": "Decide the preprocessing and number of LV using only the training/cross-validation sets; run the test set only once, at the end", "c": "Good practice"}, {"t": "The report says “our model error is only 0.1%,” but that is actually RMSEC", "c": "Common pitfall"}, {"t": "The report says “independent test-set prediction error RMSEP = 0.45%” and states the number of test samples", "c": "Good practice"}, {"t": "Keep adding LV up to 12 to make R² look nicer", "c": "Common pitfall"}, {"t": "Look at the RMSECV curve versus number of LV and choose the lowest point or where it clearly levels off", "c": "Good practice"}, {"t": "See a very high VIP at one band and conclude directly “the higher the concentration, the stronger the signal at that band”", "c": "Common pitfall"}, {"t": "Use VIP only for the magnitude of variable importance; check the direction separately in the regression coefficients or raw spectra", "c": "Good practice"}], "ok": "🎉 All correct! Anything where you “look at the test-set result and then go back to adjust” is a common pitfall; touching the test set only once, after the validation workflow is finished, is good practice.", "tip": "Hint: the key is whether the test set was used for any choice at all. Once you have used it to pick a preprocessing or number of LV even once, that already counts as data leakage."}, "g3": {"cats": ["Design", "Validation", "Interpretation"], "items": [{"t": "5×5 concentration design grid covering single-component and mixed blends", "c": "Design"}, {"t": "Treat aspartame and sucralose as two separate, independent Y", "c": "Design"}, {"t": "Choose representative commercial products as external samples", "c": "Design"}, {"t": "Use RMSECV to decide how many LV to keep", "c": "Validation"}, {"t": "RMSEP comes from an independent test set never used for training or cross-validation", "c": "Validation"}, {"t": "Use T²/Q to judge whether commercial samples fall within the model’s applicability domain", "c": "Validation"}, {"t": "Match high-VIP bands to the known functional groups of aspartame/sucralose", "c": "Interpretation"}, {"t": "Discuss which tasks the Raman fingerprint signal vs the NIR bulk signal each suit", "c": "Interpretation"}, {"t": "Explain the model’s current limitations and what you would change next time", "c": "Interpretation"}], "ok": "🎉 All correct! Design = how the data are collected; validation = how error and applicability domain are computed; interpretation = what those numbers mean for the chemistry and the application.", "tip": "Hint: decisions made before any data are collected = design; checking the model with independent data = validation; explaining “why” = interpretation."}}, "mcq": {"g2": [{"q": "As a reviewer you want to ask: “Roughly how large is this model’s prediction error on brand-new samples?” Which metric should you look at?", "o": ["RMSEC", "RMSECV", "RMSEP", "R² (training set)"], "a": 2, "e": "RMSEP, computed on a fully independent test set, is closest to the error on brand-new samples; RMSEC reflects only training-set performance."}, {"q": "As a reviewer you want to ask: “Does this model really use chemical signal, or is it pure coincidence?” What should you look at?", "o": ["The magnitude of RPD", "VIP matched to known functional-group bands", "Whether R² (test) is above 0.9", "Whether the LOD is low enough"], "a": 1, "e": "Compare the high-VIP bands with the known absorption positions of the functional groups in aspartame, sucralose, and erythritol; only then can you tell whether the model learned chemical signal or a coincidental correlation."}, {"q": "As a reviewer you want to ask: “Can this commercial-sample result be believed?” What should you look at?", "o": ["Only the size of the point estimate", "LOD and applicability-domain (T²/Q) checks", "R² of the training set", "The spectrometer’s manufacturer spec sheet"], "a": 1, "e": "First confirm that the result is above the LOD and that the sample falls within the model’s applicability domain (T²/Q); only then can you tell whether the number means anything."}, {"q": "As a reviewer you want to ask: “Is this model too complex and overfitted?” What clue should you look at?", "o": ["How close R² (training set) is to 1", "The gap between RMSEC and RMSECV", "Whether the figure colors look nice", "The number of slides in the report"], "a": 1, "e": "A large gap between RMSEC and RMSECV means the model does very well on the training set but gets worse on a new batch of data, which is the classic warning sign of overfitting."}, {"q": "As a reviewer you want to ask: “Are this model’s predictions systematically too high or too low?” What should you look at?", "o": ["RPD", "Bias (mean difference between predicted and true values, compared pairwise)", "LOD", "VIP"], "a": 1, "e": "Bias directly measures the systematic shift of predictions from the true values; RPD is a ratio of variability to precision, not the direction of the shift."}], "g5": [{"q": "A group reports RMSEC = 0.1%, but RMSECV = 0.15% and RMSEP = 1.2%. As a reviewer, what should you press them on most?", "o": ["Praise the very low RMSEC as proof the model is accurate", "Why the independent test-set error is so much larger than the training error, and whether there is overfitting or leakage", "How much the spectrometer costs", "Whether the report’s font looks good"], "a": 1, "e": "A huge gap between RMSEC and RMSEP is a strong sign of overfitting or data leakage, and this is exactly where the report card most needs to be questioned."}, {"q": "A group says NNLS has a lower RMSEP than PLS, especially for low-concentration blends. What is the most reasonable interpretation?", "o": ["NNLS is always more accurate than PLS, so use NNLS from now on", "The non-negativity constraint prevents PLS from predicting negative values at low concentrations, which helps in this range", "It must be a calculation error", "The two actually use the same algorithm"], "a": 1, "e": "PLS has no non-negativity constraint, so at low concentrations (near 0) it easily predicts negative values; NNLS’s non-negativity constraint is actually more sensible there, but that does not mean it beats PLS over the whole range."}, {"q": "A group’s VIP plot is especially high at a band with no known functional-group assignment, and it cannot be explained. How should a reviewer ask about it?", "o": ["Accept it directly, because high VIP means important", "Ask whether it is just noise or coincidental correlation, and whether it can be verified with other data", "Suggest just deleting that band and rerunning, with no explanation needed", "High-VIP bands do not need explaining"], "a": 1, "e": "A high-VIP band that cannot be matched to a chemical structure may be just chance correlation; the honest approach is to admit it and try to verify it another way, rather than accepting it wholesale."}, {"q": "A group’s commercial-sample prediction is below the model’s LOD, yet the report gives a precise number (e.g. 0.08%). What is the problem?", "o": ["No problem; the more precise the number, the better", "Below the LOD you should report “&lt; LOD”; giving a precise number creates a false impression of accuracy", "Any number with a decimal point is precise enough", "This is a detail reviewers should not ask about"], "a": 1, "e": "Below the LOD the signal is buried in noise, so reporting a precise number is misleading; the correct approach is to report “&lt; LOD” and state the estimated detection limit."}, {"q": "Two groups used SNV + second derivative and raw spectra + mean-centering respectively, and compared which RMSEP is lower to conclude “instrument A is more accurate than instrument B.” What is wrong with this comparison?", "o": ["Nothing is wrong; the lower RMSEP is simply the more accurate", "The preprocessing variable was not controlled, so the difference cannot be attributed to the instruments alone", "RMSEP cannot be used to compare different groups", "Only RMSEC should be compared"], "a": 1, "e": "Different preprocessing strongly affects RMSEP; unless it is stated clearly or controlled, the error difference cannot simply be attributed to which instrument is better."}]}, "sort": {"g4": {"steps": ["Problem and design (5×5 grid, why Y is handled independently)", "Instrument and calibration records (W10 standards, white reference, cuvette orientation)", "Preprocessing choice and evidence (RMSECV comparison)", "Model report card", "VIP vs specified bands (chemical plausibility check)", "PLS vs NNLS", "Commercial-sample results: honest reporting (&lt; LOD / outside applicability domain)", "Limitations and what you would change next time"], "shuffle": [4, 1, 6, 0, 7, 2, 5, 3], "ok": "🎉 Correct order! Design first → instrument calibration → preprocessing → report card → VIP chemical check → PLS/NNLS → honest reporting of commercial samples → limitations and improvements.", "tip": "Hint: you must first make the experimental design and calibration clear before you have the right to discuss model results; limitations and improvements always go last."}}, "calc": {"g6": {"answer": 4.0, "tol": 0.05, "ok": "🎉 Correct! RPD = 1.80 / 0.45 = <b>4.00<\/b>. By the course grading it falls in the 3–5 range; but RPD varies with the spread of the test-set concentrations, so whether it can be used for QC also depends on RMSEP, bias, acceptable error, and more independent samples.", "bad": "Try again: RPD = SD (of the true values) ÷ RMSEP.", "hint": "Hint: RPD = 1.80 ÷ 0.45."}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
+}
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 All correct!','good');
+    else fb(g+'fb','Correct '+ok+'/'+N+'. '+(cfg.tip||'Adjust and try again.'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ Correct!':'❌ Answer: '+d.o[d.a]+'. ')+'<br>'+d.e+(done?'<br><b>Done! Total score: '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 Perfect order!','good');
+    else fb(g+'fb','Got '+ok+'/'+N+' positions right.'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','Enter a number first.','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ Correct'); fb(g+'fb',cfg.ok||('🎉 Correct! The answer is '+cfg.answer),'good');
+    } else { setScore(g+'score','Try again'); fb(g+'fb',cfg.bad||'Recalculate and try again.','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'Hint: substitute step by step using the formula.','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en] body,html[lang=en] .lbl,html[lang=en] .lblb{font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif}html[lang=en] body{font-size:16.5px}html[lang=en] .slide-title{font-size:clamp(1.3rem,2.7vw,2.05rem)}html[lang=en] .cover h1{font-size:clamp(2rem,5vw,3.8rem)}html[lang=en] .hook{font-size:clamp(1.5rem,3.6vw,2.6rem)}html[lang=en] p,html[lang=en] li{line-height:1.55}html[lang=en] .kicker{letter-spacing:.1em}html[lang=en] p,html[lang=en] li{font-size:clamp(.86rem,1.3vw,1.04rem)}html[lang=en] .card .cb{font-size:clamp(.8rem,1.15vw,.94rem)}html[lang=en] .card .ct{font-size:clamp(.95rem,1.4vw,1.1rem)}html[lang=en] .chip{font-size:.84rem;padding:7px 12px}html[lang=en] .opt{font-size:clamp(.82rem,1.2vw,.98rem);padding:11px 15px}html[lang=en] .game-q{font-size:clamp(.9rem,1.35vw,1.08rem)}html[lang=en] .bucket .bh{font-size:.88rem}html[lang=en] table.cmp{font-size:clamp(.78rem,1.1vw,.95rem)}html[lang=en] table.cmp th,html[lang=en] table.cmp td{padding:9px 11px}html[lang=en] .note{font-size:clamp(.85rem,1.2vw,.98rem)}html[lang=en] .subtitle{font-size:clamp(.9rem,1.4vw,1.1rem)}html[lang=en] .checklist li{font-size:.86rem}html[lang=en] .cap{font-size:.82rem}html[lang=en] .pill{font-size:.78rem;padding:4px 10px}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><script>(function(){
+function fit(){var sl=document.querySelector('.slide.active');if(!sl)return;
+ sl.querySelectorAll('svg').forEach(function(svg){var sb=svg.getBoundingClientRect();if(!sb.width)return;
+  var rects=[].slice.call(svg.querySelectorAll('rect')).map(function(r){return r.getBoundingClientRect()});
+  [].slice.call(svg.querySelectorAll('text')).forEach(function(t){
+   if(t.dataset.fit)return; var s=(t.textContent||'').trim(); if(!s)return;
+   var b=t.getBoundingClientRect(); if(!b.width)return;
+   var cx=(b.left+b.right)/2, cy=(b.top+b.bottom)/2;
+   var host=rects.filter(function(r){return r.width>20&&r.width<480&&cx>r.left&&cx<r.right&&cy>r.top&&cy<r.bottom})
+             .sort(function(p,q){return p.width-q.width})[0];
+   var maxW=host?host.width-10:Math.min(b.right,sb.right-2)-Math.max(b.left,sb.left+2);
+   if(host&&(b.right>sb.right||b.left<sb.left))maxW=Math.min(maxW,sb.width-4);
+   if(b.width<=maxW+1)return;
+   t.dataset.fit='1';
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13;
+   var k=b.width/((t.getBBox().width)||b.width); /* client px per user unit */
+   var hasTspan=t.querySelector('tspan'); var canWrap=!hasTspan&&s.indexOf(' ')>0&&host&&host.height>=fs*2.3;
+   if(canWrap){var others=[].slice.call(svg.querySelectorAll('text')).filter(function(o){if(o===t)return false;var ob=o.getBoundingClientRect();var ox=(ob.left+ob.right)/2,oy=(ob.top+ob.bottom)/2;return ox>host.left&&ox<host.right&&oy>host.top&&oy<host.bottom;});
+     if(others.length){var free=host.bottom-b.bottom;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.top>=b.top)free=Math.min(free,ob.top-b.bottom)});var freeTop=b.top-host.top;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.bottom<=b.bottom)freeTop=Math.min(freeTop,b.top-ob.bottom)});if(free+freeTop<fs*1.15)canWrap=false;}}
+   if(canWrap){var w=s.split(' '),best=null;
+     for(var i=1;i<w.length;i++){var a=w.slice(0,i).join(' '),c=w.slice(i).join(' ');var d=Math.abs(a.length-c.length);if(!best||d<best.d)best={d:d,a:a,c:c};}
+     var x=t.getAttribute('x')||'0',y=parseFloat(t.getAttribute('y')||'0');
+     t.textContent='';var t1=document.createElementNS('http://www.w3.org/2000/svg','tspan'),t2=t1.cloneNode();
+     t1.setAttribute('x',x);t1.setAttribute('y',(y-fs*0.55/k).toFixed(2));t1.textContent=best.a;
+     t2.setAttribute('x',x);t2.setAttribute('y',(y+fs*0.6/k).toFixed(2));t2.textContent=best.c;
+     t.appendChild(t1);t.appendChild(t2);b=t.getBoundingClientRect();if(b.width<=maxW+1)return;}
+   var sc=Math.max(0.7,maxW/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   b=t.getBoundingClientRect(); if(b.width>maxW+1&&!t.querySelector('tspan')){t.setAttribute('textLength',(maxW/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+  /* second pass: free labels that collide with a neighbour on the same row */
+  var ts=[].slice.call(svg.querySelectorAll('text')).filter(function(x){return (x.textContent||'').trim()});
+  for(var i=0;i<ts.length;i++)for(var j=i+1;j<ts.length;j++){var A=ts[i].getBoundingClientRect(),B=ts[j].getBoundingClientRect();
+   var ox=Math.min(A.right,B.right)-Math.max(A.left,B.left),oy=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
+   if(ox<=2||oy<=Math.min(A.height,B.height)*0.5)continue;
+   var t=A.width>=B.width?ts[i]:ts[j],b=A.width>=B.width?A:B; if(t.querySelector('tspan')||t.dataset.fit2)continue; t.dataset.fit2='1';
+   var want=b.width-ox-6; if(want<b.width*0.55)continue;
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13,k=b.width/((t.getBBox().width)||b.width);
+   var sc=Math.max(0.75,want/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   var nb=t.getBoundingClientRect(); if(nb.width>want+1){t.setAttribute('textLength',(want/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  }});}
+ if(typeof show==='function'){var _s=show;show=function(i){_s(i);fit();};}
+ fit();setTimeout(fit,400);window.addEventListener('load',function(){setTimeout(fit,200)});
+})();</script><!--/i18n-toggle--></body></html>

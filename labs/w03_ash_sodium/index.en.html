@@ -1,0 +1,532 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W3 Ash & Sodium Ions · Food Analysis Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto}table.cmp th,table.cmp td{white-space:normal;padding:9px 10px;min-width:56px}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">Food Analysis Lab · W3</div><div id="pageInfo"></div><div id="hint">← → / Space to change slide · F fullscreen · Tap either side to turn pages</div><section class="slide" data-slide="1" data-section="Hook" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Food Analysis Lab · W3</div><h1>Ash and <span style='color:var(--accent-2)'>Sodium Ion</span> Determination</h1><div class="en">Ash Content &amp; Sodium Ion (Na&#8314;) Determination</div><div class="meta">Food Analysis Lab · W3 · 4-hour session · 6 interactive mini-games<br>Dry ashing at 550°C · HORIBA LAQUAtwin pen-type Na⁺ ion meter</div><div style="margin-top:24px"><span class="pill">Dry ashing</span><span class="pill">Na⁺ ISE</span><span class="pill">Nernst 59.2 mV</span><span class="pill">Standard addition recovery</span><span class="pill">Na→NaCl conversion</span></div></div></div></section><section class="slide" data-slide="2" data-section="Hook"><div class="slide-inner"><div class="kicker">Pre-lab video (2 min) (Chinese narration)</div><h2 class="slide-title">Watch before class: are the “84 minerals” in pink salt real?</h2><div style="max-width:min(900px,100%,calc(52vh*16/9));margin:14px auto 0">
+  <div style="position:relative;width:100%;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000">
+  <iframe src="https://www.youtube-nocookie.com/embed/aWerpvpFJ4E" title="W3 Ash & Sodium Ions: Pre-lab Video" style="position:absolute;inset:0;width:100%;height:100%;border:0" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+  <p class="subtitle" style="margin-top:10px;text-align:center">Contents: dry ashing at 550°C → constant weight and ash % → pen-type sodium ion meter calibration → Na × 2.542 = NaCl equivalent. <a href="https://youtu.be/aWerpvpFJ4E" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Open on YouTube →</a></p></div></div></section><section class="slide" data-slide="3" data-section="Hook"><div class="slide-inner"><div class="kicker">interactive lab</div><h2 class="slide-title">Pink salt’s 84 minerals: <span class='hi'>Predict → Observe → Explain</span></h2><div class="no-nav" id="w03lab-wrap" style="max-width:min(1100px,100%);margin:10px auto 0">
+  <style>#w03lab-wrap{max-width:min(1400px,100%)!important}#w03lab-box{position:relative;width:100%;aspect-ratio:1100/506;max-height:min(66vh,760px);border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}@media(max-width:700px){#w03lab-box{aspect-ratio:auto;height:min(78vh,620px);max-height:none}}</style>
+  <div id="w03lab-box">
+    <iframe id="w03lab" src="ash_sodium_lab.html?embed=1" title="W3 Ash & Sodium Ions interactive lab: six acts, Predict → Observe → Explain (Chinese)" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+  </div>
+  <p class="subtitle" style="margin-top:8px;text-align:center">Six acts: Predict → ① Ashing → ② Constant weight → ③ Sodium ion meter → Sodium ≠ salt → Back to pink salt; you must answer correctly to unlock the next act. <a class="no-nav" href="ash_sodium_lab.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open lab in new tab ↗</a></p>
+  <script>(function(){var sec=document.currentScript.closest('.slide');var f=document.getElementById('w03lab');
+    new MutationObserver(function(){if(!sec.classList.contains('active')&&f.contentWindow)f.contentWindow.postMessage({type:'w03-lab-pause'},location.origin==='null'?'*':location.origin);}).observe(sec,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('message',function(e){if(e.source===f.contentWindow&&e.data&&e.data.type==='w03-lab-goto'&&typeof show==='function'){show(cur+1);}});})();</script>
+</div></div></section><section class="slide" data-slide="4" data-section="Hook"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">Think first</div>
+  <div class="hook">Himalayan <span class="hi">pink salt</span> ads claim “84 minerals”<br>and sell it for about <span class="hi">20×</span> the price of regular table salt — is that true?</div>
+  <p class="subtitle" style="max-width:840px;margin:20px auto 0">Pink salt is actually <strong>96–99% NaCl</strong>; at a typical intake of about 5 g of salt per day, the trace minerals contribute almost nothing; and pink salt is usually <strong>not iodized</strong>.<br> Today’s <strong>ash</strong> and <strong>sodium ion</strong> measurements are a good way to test this kind of marketing claim.</p>
+  <div class="note" style="text-align:left;max-width:760px;margin:18px auto 0">🎥 Reference videos (click to open, new tab):<br> <a href="https://www.youtube.com/watch?v=4TqLgLQz37o" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Himalayan pink salt ad (“84 minerals” claim) →</a><br> <a href="https://www.youtube.com/watch?v=zL21V3NrFC4" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Table salt factory refining process (Ca/Mg removal, vacuum crystallization, iodization) →</a></div>
+  <p class="subtitle" style="margin-top:14px"><strong>Think about it:</strong> If you measured the ash and sodium ion content of pink salt, what numbers would you expect? Could that prove or refute the “84 minerals” claim?</p>
+  </div></div></section><section class="slide" data-slide="5" data-section="Hook"><div class="slide-inner"><div class="kicker">W3 Learning goals</div><h2 class="slide-title">By the end of class, you should be able to…</h2><div class="grid2" style="margin-top:16px"><ul class="clean"><li>Explain the principle of dry ashing and understand that ash is the <strong>total inorganic residue</strong>, not a single mineral</li><li>Operate the muffle furnace for ashing, prepare crucibles, and weigh to <strong>constant weight</strong></li><li>Explain the Nernst principle of the Na⁺ ISE, <strong>activity vs concentration</strong>, ion selectivity and limitations</li></ul><ul class="clean"><li>Perform two-point calibration, sample dilution, measurement and <strong>standard addition recovery</strong></li><li>Calculate ash % and the Na → NaCl <strong>equivalent conversion</strong></li><li>Compare measured values with the nutrition label and think critically about the “pink salt” case</li></ul></div></div></section><section class="slide" data-slide="6" data-section="Hook"><div class="slide-inner"><div class="kicker">Principle (1): Dry Ashing</div><h2 class="slide-title">Ash = <span class='hi'>total mineral residue</span></h2><div class="grid2" style="margin-top:14px"><div><ul class="clean"><li>Pre-char the sample on a <strong>hot plate</strong> to drive off most of the organic matter, so it doesn’t <strong>spatter or catch fire</strong> in the furnace</li><li>Move into the <strong>muffle furnace</strong> and ash at <strong>550°C</strong> (typical range 525–600°C) until <strong>white or light gray</strong></li><li>Ash is the total weight of <strong>all inorganic residue</strong> in the sample (a mixture of oxides, carbonates, etc.), <em>not</em> the amount of any single mineral</li><li>Cool in a <strong>desiccator</strong> to avoid moisture uptake and weight gain; repeat ashing + weighing until <strong>constant weight</strong></li></ul></div><div class="note"><strong>Further reading (full theory, click to open):</strong><br><a href="https://tai-shengyeh.github.io/food-analysis-decks/ch16_ash_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Ch16 Ash Analysis: full lesson →</a><br><a href="https://tai-shengyeh.github.io/food-analysis-decks/ch21_mineral_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Ch21 Mineral Analysis: full lesson →</a></div></div></div></section><section class="slide" data-slide="7" data-section="Hook"><div class="slide-inner"><div class="kicker">Principle (2): Na⁺ Ion-Selective Electrode (ISE)</div><h2 class="slide-title">Potential ↔ log(activity): the Nernst relationship</h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 560 260">
+ <text x="280" y="20" text-anchor="middle" class="lblb" style="font-size:15px">Pen-type Na⁺ ISE: the ion-selective membrane senses a potential, converted to activity (approximately concentration)</text>
+ <!-- LAQUAtwin-type pen meter, top view: body + LCD + buttons + flat sensor well at the tip -->
+ <rect x="18" y="92" width="290" height="64" rx="30" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+ <rect x="42" y="104" width="112" height="40" rx="6" fill="#15233f"/>
+ <text x="98" y="130" text-anchor="middle" fill="#7ed957" font-family="JetBrains Mono, monospace" font-size="14">Na 1100 ppm</text>
+ <circle cx="172" cy="112" r="7" fill="#cfd8e6" stroke="#8493ad"/>
+ <circle cx="172" cy="136" r="7" fill="#cfd8e6" stroke="#8493ad"/>
+ <rect x="198" y="100" width="100" height="48" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="1.6"/>
+ <ellipse cx="248" cy="124" rx="44" ry="19" fill="#9cc2f7" fill-opacity=".45" stroke="#1f6feb" stroke-width="1.2" stroke-dasharray="3 2"/>
+ <circle cx="226" cy="124" r="9" fill="#1f6feb" fill-opacity=".8"/>
+ <rect x="257" y="118" width="24" height="12" rx="3" fill="#8493ad"/>
+ <text x="98" y="86" text-anchor="middle" class="lbl">LCD readout</text>
+ <line x1="226" y1="114" x2="226" y2="78" stroke="#48597a" stroke-width="1.2"/>
+ <text x="226" y="72" text-anchor="middle" class="lbl">Na⁺-selective sensing membrane</text>
+ <line x1="269" y1="131" x2="269" y2="170" stroke="#48597a" stroke-width="1.2"/>
+ <text x="269" y="184" text-anchor="middle" class="lbl">Reference junction</text>
+ <line x1="236" y1="141" x2="190" y2="170" stroke="#48597a" stroke-width="1.2"/>
+ <text x="160" y="184" text-anchor="middle" class="lbl">Sample drop (cover both contacts)</text>
+ <text x="163" y="212" text-anchor="middle" class="lblb">Pen-type Na⁺ meter (top view, flat sensor)</text>
+ <rect x="330" y="86" width="210" height="104" rx="10" fill="#f6f9fd" stroke="#1f9d6b" stroke-width="2"/>
+ <text x="435" y="112" text-anchor="middle" class="lblb">Nernst response</text>
+ <text x="435" y="136" text-anchor="middle" class="lbl">ΔE ≈ 59.2 mV</text>
+ <text x="435" y="154" text-anchor="middle" class="lbl">Per 10-fold change in concentration (25°C)</text>
+ <text x="435" y="176" text-anchor="middle" class="lbl">Measures ion “activity,” not concentration</text>
+ <text x="280" y="246" text-anchor="middle" class="lbl">Before use: do a “two-point calibration” with the two standards supplied by the manufacturer; close the light-shield cover when measuring</text>
+</svg></div><div class="note" style="margin-top:8px">Nernst relationship: electrode potential is proportional to the <b>logarithm</b> of Na⁺ activity — each 10-fold change in activity shifts the potential by 59.2 mV (25°C, monovalent ion). The reference junction provides a fixed comparison potential. So before use, do a <b>two-point calibration</b> with two standards of known concentration to establish the “potential vs log concentration” line, and the meter then converts the sample potential to concentration (the W4 pH meter works on the same principle).<br><a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-decks/ch21_mineral_soil/index.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Ch21 Mineral Analysis: full lesson ↗</a></div></div></section><section class="slide" data-slide="8" data-section="Hook"><div class="slide-inner"><div class="kicker">Principle (3)</div><h2 class="slide-title">Activity vs concentration: why dilute?</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">🧲</div><div class="ct">Activity</div><div class="cb">The “effective” concentration of an ion: a = γ·C (γ = activity coefficient ≤ 1). With many ions present they hinder each other and γ falls; in dilute solutions γ ≈ 1, so activity ≈ concentration</div></div><div class="card a"><div class="ic">🌊</div><div class="ct">Ionic strength</div><div class="cb">An index of the total ions in solution (weighted by charge); soy sauce and soup powders are very high → γ small → readings low</div></div><div class="card g"><div class="ic">⚖️</div><div class="ct">Ionic strength adjuster (ISA)</div><div class="cb">Formal ISE methods add equal amounts of ISA to standards and samples so γ is the same; pen meters usually skip it and instead use <b>dilution</b> to bring the sample’s ionic strength close to the standards’ and back into the measuring range</div></div><div class="card b"><div class="ic">⚠️</div><div class="ct">Selectivity and interference</div><div class="cb">Cations such as K⁺ also respond slightly → readings run high; check the manual for the range</div></div></div></div></section><section class="slide" data-slide="9" data-section="Hook"><div class="slide-inner"><div class="kicker">Why no Mohr titration this year?</div><h2 class="slide-title">Safety, and Na⁺ ≠ NaCl</h2><div class="grid2" style="margin-top:14px"><div class="card a"><div class="ic">☠️</div><div class="ct">Safety</div><div class="cb">AgNO₃ is corrosive/oxidizing and stains skin; the K₂CrO₄ indicator contains <strong>hexavalent chromium (a carcinogen)</strong> and also generates chromium/silver waste; the pen-type Na⁺ ISE is safer and faster</div></div><div class="card b"><div class="ic">🔀</div><div class="ct">Na⁺ ≠ NaCl</div><div class="cb">Mohr titration measures <strong>Cl⁻</strong>, while the ISE measures <strong>Na⁺</strong> — additives such as MSG, baking soda (NaHCO₃) and sodium benzoate also contain sodium, so converting all Na directly to “salt” will <strong>overestimate</strong> the NaCl content</div></div></div></div></section><section class="slide" data-slide="10" data-section="Hook" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">Mini-game ①</span><span class="gt">What can ash answer?</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">Sort 8 statements into questions that ash “can answer” or “cannot answer.”</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">Check answer</button><button class="btn ghost" id="g1reset">Reset</button></div></div></div></section><section class="slide" data-slide="11" data-section="Focus"><div class="slide-inner"><div class="kicker">Calibration: two points + drift monitoring</div><h2 class="slide-title">Follow the rules before and after measuring</h2><div class="grid2" style="margin-top:16px"><div><ul class="clean"><li>Do a <strong>two-point calibration</strong> with the <strong>two standards supplied by the manufacturer</strong></li><li>After about every <strong>10 samples</strong>, re-measure a standard to confirm there is no <strong>drift</strong></li><li>Before each new sample, <strong>rinse</strong> the electrode and <strong>gently blot</strong> it dry with lens tissue to avoid carry-over contamination</li><li>Measure at the <strong>same temperature</strong> whenever possible (temperature affects ion activity and potential)</li></ul></div><div class="note"><strong>Why monitor drift?</strong><br>With long use or a fouled membrane surface, readings slowly shift; if the re-measured standard is off by too much, recalibrate and check whether samples measured “after the drift” need to be re-measured.<br><br>Full steps (calibration, measurement, error codes): <a href="na11_manual.html" target="_blank" rel="noopener">LAQUAtwin-Na-11 manual (Chinese) ↗</a></div></div></div></section><section class="slide" data-slide="12" data-section="Focus"><div class="slide-inner"><div class="kicker">Setup diagram: dry ashing</div><h2 class="slide-title">Hot plate → muffle furnace → desiccator → balance</h2><div class="svgwrap" style="margin-top:2px">
+<svg viewBox="0 0 900 330" style="max-height:52vh;width:100%">
+ <defs>
+  <marker id="aar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker>
+ </defs>
+ <!-- ① hot plate in fume hood -->
+ <rect x="22" y="70" width="178" height="178" rx="6" fill="#f6f9fd" stroke="#9aa8bf" stroke-width="1.4" stroke-dasharray="5 3"/>
+ <text x="111" y="86" text-anchor="middle" class="lbl" style="font-size:13px">Inside fume hood</text>
+ <rect x="46" y="200" width="130" height="26" rx="5" fill="#e7ecf4" stroke="#48597a" stroke-width="1.6"/>
+ <polyline points="58,200 68,194 78,200 88,194 98,200 108,194 118,200 128,194 138,200 148,194 158,200 164,197" fill="none" stroke="#d9822b" stroke-width="2"/>
+ <path d="M92 158 H132 L127 190 Q112 197 97 190 Z" fill="#ffffff" stroke="#48597a" stroke-width="1.8"/>
+ <path d="M96 176 H128 L127 190 Q112 197 97 190 Z" fill="#6b5a4a"/>
+ <path d="M104 150 q-8 -12 0 -24 q8 -12 0 -24" fill="none" stroke="#9aa8bf" stroke-width="2"/>
+ <path d="M120 150 q-8 -12 0 -24 q8 -12 0 -24" fill="none" stroke="#9aa8bf" stroke-width="2"/>
+ <text x="111" y="272" text-anchor="middle" class="lblb" style="font-size:17px">① Hot-plate pre-char</text>
+ <text x="111" y="294" text-anchor="middle" class="lbl" style="font-size:14px">Porcelain crucible, until smoke stops</text>
+ <path d="M204 160 H236" stroke="#48597a" stroke-width="2" marker-end="url(#aar)"/>
+ <!-- ② electric muffle furnace -->
+ <rect x="244" y="96" width="176" height="150" rx="10" fill="#e7ecf4" stroke="#48597a" stroke-width="2"/>
+ <rect x="258" y="112" width="112" height="100" rx="4" fill="#fbe3d6" stroke="#d9822b" stroke-width="1.8"/>
+ <line x1="258" y1="186" x2="370" y2="186" stroke="#d9822b" stroke-width="1.4"/>
+ <path d="M280 162 H306 L303 184 Q293 189 283 184 Z" fill="#ffffff" stroke="#48597a" stroke-width="1.4"/>
+ <path d="M322 162 H348 L345 184 Q335 189 325 184 Z" fill="#ffffff" stroke="#48597a" stroke-width="1.4"/>
+ <path d="M284 176 H302 L301 184 Q293 188 285 184 Z" fill="#e8e4dc"/>
+ <path d="M326 176 H344 L343 184 Q335 188 327 184 Z" fill="#e8e4dc"/>
+ <rect x="378" y="116" width="34" height="18" rx="3" fill="#15233f"/>
+ <text x="395" y="129" text-anchor="middle" style="font-family:JetBrains Mono,monospace;font-size:13px;fill:#ffb35c">550</text>
+ <circle cx="395" cy="156" r="7" fill="#ffffff" stroke="#48597a" stroke-width="1.4"/>
+ <rect x="258" y="222" width="112" height="10" rx="3" fill="#9aa8bf"/>
+ <text x="332" y="272" text-anchor="middle" class="lblb" style="font-size:17px">② Muffle furnace 550 °C</text>
+ <text x="332" y="294" text-anchor="middle" class="lbl" style="font-size:14px">Electric, no open flame; ash to white/gray</text>
+ <text x="332" y="314" text-anchor="middle" class="lbl" style="font-size:14px">Handle with long crucible tongs + heat-resistant gloves</text>
+ <path d="M424 160 H456" stroke="#48597a" stroke-width="2" marker-end="url(#aar)"/>
+ <!-- ③ desiccator -->
+ <path d="M488 118 Q556 70 624 118 Z" fill="#eef6ff" stroke="#48597a" stroke-width="1.8"/>
+ <rect x="549" y="82" width="14" height="10" rx="3" fill="#cfd8e6" stroke="#48597a" stroke-width="1.2"/>
+ <rect x="482" y="118" width="148" height="8" rx="2" fill="#eef6ff" stroke="#48597a" stroke-width="1.6"/>
+ <path d="M490 126 V178 Q490 186 500 188 L514 194 V222 Q514 240 532 240 H580 Q598 240 598 222 V194 L612 188 Q622 186 622 178 V126" fill="#eef6ff" stroke="#48597a" stroke-width="1.8"/>
+ <line x1="506" y1="191" x2="606" y2="191" stroke="#48597a" stroke-width="2.4" stroke-dasharray="7 4"/>
+ <g fill="#5b8def"><circle cx="528" cy="214" r="4"/><circle cx="544" cy="224" r="4"/><circle cx="558" cy="212" r="4"/><circle cx="570" cy="226" r="4"/><circle cx="584" cy="216" r="4"/><circle cx="534" cy="230" r="3"/><circle cx="578" cy="232" r="3"/></g>
+ <path d="M540 156 H572 L569 184 Q556 190 543 184 Z" fill="#ffffff" stroke="#48597a" stroke-width="1.6"/>
+ <path d="M545 174 H567 L566 184 Q556 188 546 184 Z" fill="#e8e4dc"/>
+ <text x="626" y="196" class="lbl" style="font-size:13px">Porcelain plate</text>
+ <text x="606" y="226" class="lbl" style="font-size:13px">Desiccant</text>
+ <text x="556" y="272" text-anchor="middle" class="lblb" style="font-size:17px">③ Cool in desiccator</text>
+ <text x="556" y="294" text-anchor="middle" class="lbl" style="font-size:14px">Slide lid off; avoid moisture gain</text>
+ <path d="M660 160 H692" stroke="#48597a" stroke-width="2" marker-end="url(#aar)"/>
+ <!-- ④ analytical balance -->
+ <rect x="702" y="96" width="168" height="112" rx="6" fill="#f6f9fd" stroke="#9aa8bf" stroke-width="1.6"/>
+ <ellipse cx="786" cy="192" rx="42" ry="6" fill="#cfd8e6" stroke="#48597a" stroke-width="1.4"/>
+ <path d="M770 158 H802 L799 186 Q786 192 773 186 Z" fill="#ffffff" stroke="#48597a" stroke-width="1.6"/>
+ <path d="M775 176 H797 L796 186 Q786 190 776 186 Z" fill="#e8e4dc"/>
+ <rect x="694" y="208" width="184" height="30" rx="5" fill="#e7ecf4" stroke="#48597a" stroke-width="1.8"/>
+ <rect x="738" y="213" width="96" height="20" rx="3" fill="#15233f"/>
+ <text x="786" y="227" text-anchor="middle" style="font-family:JetBrains Mono,monospace;font-size:13px;fill:#7ed957">26.2213 g</text>
+ <text x="786" y="272" text-anchor="middle" class="lblb" style="font-size:17px">④ Weigh on analytical balance</text>
+ <text x="786" y="294" text-anchor="middle" class="lbl" style="font-size:14px">0.1 mg; draft shield closed</text>
+ <!-- loop back until constant weight -->
+ <path d="M786 92 Q786 44 560 44 Q336 44 332 90" fill="none" stroke="#1f9d6b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#aar)"/>
+ <text x="560" y="36" text-anchor="middle" class="lbl" style="font-size:14px;fill:#1f9d6b">Re-ash → cool → weigh; repeat to constant weight</text>
+</svg></div><div class="note" style="margin-top:6px">A crucible just out of the muffle furnace is still very hot; let it cool briefly on a heat-resistant plate before putting it in the desiccator; <strong>weigh only after it has cooled to room temperature</strong>, since convection from a hot crucible makes the reading low. Schematic; actual appearance varies by brand.</div></div></section><section class="slide" data-slide="13" data-section="Focus"><div class="slide-inner"><div class="kicker">Today’s workflow</div><h2 class="slide-title">Two routes: Ash and Na⁺</h2><div class="svgwrap" style="margin-top:2px"><svg viewBox="0 0 1020 270" style="width:100%;max-height:34vh"><text x="20" y="34" class="lblb" fill="#1f6feb" style="font-size:20px">Ash (dry ashing)</text><rect x="20" y="46" width="172" height="64" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/><text x="106" y="85" text-anchor="middle" class="lblb" style="font-size:19px">Preheat/cool crucibles</text><rect x="222" y="46" width="172" height="64" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/><text x="308" y="85" text-anchor="middle" class="lblb" style="font-size:19px">Weigh crucible + weigh sample</text><rect x="424" y="46" width="172" height="64" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/><text x="510" y="85" text-anchor="middle" class="lblb" style="font-size:19px">Hot-plate pre-char</text><rect x="626" y="46" width="172" height="64" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/><text x="712" y="85" text-anchor="middle" class="lblb" style="font-size:19px">Muffle furnace 550°C</text><rect x="828" y="46" width="172" height="64" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/><text x="914" y="85" text-anchor="middle" class="lblb" style="font-size:19px">Cool, weigh to constant weight</text><text x="207" y="86" text-anchor="middle" fill="#8493ad" font-size="22">▶</text><text x="409" y="86" text-anchor="middle" fill="#8493ad" font-size="22">▶</text><text x="611" y="86" text-anchor="middle" fill="#8493ad" font-size="22">▶</text><text x="813" y="86" text-anchor="middle" fill="#8493ad" font-size="22">▶</text><text x="20" y="156" class="lblb" fill="#d9822b" style="font-size:20px">Na⁺(ISE)</text><rect x="20" y="168" width="172" height="64" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/><text x="106" y="207" text-anchor="middle" class="lblb" style="font-size:19px">Two-point calibration</text><rect x="222" y="168" width="172" height="64" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/><text x="308" y="207" text-anchor="middle" class="lblb" style="font-size:19px">Dilute sample into range</text><rect x="424" y="168" width="172" height="64" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/><text x="510" y="207" text-anchor="middle" class="lblb" style="font-size:19px">Rinse/blot electrode</text><rect x="626" y="168" width="172" height="64" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/><text x="712" y="207" text-anchor="middle" class="lblb" style="font-size:19px">Measure reading</text><rect x="828" y="168" width="172" height="64" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/><text x="914" y="207" text-anchor="middle" class="lblb" style="font-size:19px">Re-test standard every 10 samples</text><text x="207" y="208" text-anchor="middle" fill="#8493ad" font-size="22">▶</text><text x="409" y="208" text-anchor="middle" fill="#8493ad" font-size="22">▶</text><text x="611" y="208" text-anchor="middle" fill="#8493ad" font-size="22">▶</text><text x="813" y="208" text-anchor="middle" fill="#8493ad" font-size="22">▶</text><text x="510" y="262" text-anchor="middle" class="lbl" style="font-size:16px">For the detailed step order, see Mini-game ② (ordering)</text></svg></div><table class="cmp" style="margin-top:10px"><thead><tr><th>Time</th><th>Activity</th></tr></thead><tbody><tr><td class='c'>0:00–0:30</td><td>Lecture (principles, safety, workflow)</td></tr><tr><td class='c'>0:30–1:30</td><td>Weigh samples + pre-char and load furnace</td></tr><tr><td class='c'>1:30–3:15</td><td>Sodium ion meter: calibration → sample dilution → measurement → standard addition recovery</td></tr><tr><td class='c'>3:15–4:00</td><td>Weigh crucibles pre-ashed by the TA, enter data</td></tr></tbody></table><p class="subtitle" style="margin-top:8px">Ashing itself takes <strong>≥ 4 hours</strong> (often overnight), so the TA will <strong>start the furnace ahead of time</strong>; what you weigh in class is the result of the “previous round” of ashing. If there is only one sodium ion meter, groups <strong>take turns measuring</strong> (about 20 min/group).</p></div></section><section class="slide" data-slide="14" data-section="Focus"><div class="slide-inner"><div class="kicker">Safety rules</div><h2 class="slide-title">High temperature, crucibles, no silver/chromium waste</h2><div class="grid2" style="margin-top:16px"><div class="card a"><div class="ic">🔥</div><div class="ct">Muffle furnace</div><div class="cb">At 550°C, handle only with long-handled crucible tongs, wear heat-resistant gloves, and wear a face shield/goggles when opening the furnace</div></div><div class="card b"><div class="ic">🧊</div><div class="ct">Crucible cooling</div><div class="cb">Place the ashed crucible in the desiccator to cool before taking it out to weigh; never touch a hot crucible with bare hands</div></div><div class="card b"><div class="ic">🧪</div><div class="ct">Hot-plate pre-char</div><div class="cb">Work in a fume hood to prevent charring smoke from accumulating</div></div><div class="card g"><div class="ic">✅</div><div class="ct">No silver/chromium waste this year</div><div class="cb">Using the Na⁺ ISE instead of AgNO₃ and K₂CrO₄ lowers the risk from corrosive chemicals and carcinogenic heavy-metal waste</div></div></div></div></section><section class="slide" data-slide="15" data-section="Focus" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">Mini-game ②</span><span class="gt">Order the Na⁺ ISE measurement steps</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">Use ▲▼ to arrange the 6 steps of Na⁺ ion-selective electrode measurement in the correct order.</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">Check order</button><button class="btn ghost" id="g4reset">Shuffle</button></div></div></div></section><section class="slide" data-slide="16" data-section="Focus"><div class="slide-inner"><div class="kicker">Ash calculation: worked example</div><h2 class="slide-title">Ash % = ash weight ÷ sample weight × 100</h2><div class="grid2" style="margin-top:12px"><div class="eq">Ash % = <span class="frac"><b>ash weight</b><span>sample weight</span></span> × 100</div><div><ul class="clean"><li>Empty crucible W₀ = <strong>26.184 g</strong></li><li>Crucible + sample = 28.696 g → sample weight = <strong>2.512 g</strong></li><li>Crucible + ash after ashing (constant weight) = 26.221 g → ash weight = <strong>0.037 g</strong></li><li>Ash % = 0.037 ÷ 2.512 × 100 ≈ <strong>1.47%</strong></li></ul></div></div><p class="subtitle" style="margin-top:8px">Calculate using the three weights your own group measured, and compare with the results for dark brown sugar vs white sugar, brown rice vs white rice, and the common blind sample (whole milk powder).</p></div></section><section class="slide" data-slide="17" data-section="Focus"><div class="slide-inner"><div class="kicker">Na calculation: from reading to conversion</div><h2 class="slide-title">C = reading × dilution factor; NaCl equivalent = Na × 2.542</h2><div class="grid2" style="margin-top:12px"><div><div class="eq" style="margin-bottom:14px">C<sub>sample</sub> = reading × dilution factor</div><div class="eq">NaCl equivalent = Na × 2.542<br><span style="font-size:.68em;color:var(--ink-3)">(58.44 ÷ 22.99 ≈ 2.542)</span></div></div><div><ul class="clean"><li><strong>Potato chip prep:</strong> grind 5.00 g + 100 mL hot deionized water, stir 10 min, filter, and make up to volume</li><li>The filtrate (not diluted further) measured directly with the ISE gives <strong>380 ppm (mg/L) Na</strong></li><li>Total Na in 100 mL filtrate = 380 × 0.1 = <strong>38 mg</strong></li><li>Convert back to the 5.00 g sample → Na per 100 g sample = 38 ÷ 5.00 × 100 = <strong>760 mg/100 g</strong></li><li>Compare with the “sodium mg per serving” on the package nutrition label and discuss possible reasons for the difference</li><li><strong>NaCl equivalent</strong> = the amount of salt equivalent if all the Na were present as NaCl (not the same as the “equivalence point” in W4 titration)</li></ul></div></div></div></section><section class="slide" data-slide="18" data-section="Focus"><div class="slide-inner"><div class="kicker">Extension: sodium in black soybean powder ash</div><h2 class="slide-title">Sodium must be <span class='hi'>concentrated enough</span>, but the matrix must not be <span class='hi'>too concentrated</span></h2><div class="no-nav" id="w03bb-wrap" style="max-width:min(1400px,100%);margin:10px auto 0">
+  <style>#w03bb-box{position:relative;width:100%;aspect-ratio:1100/560;max-height:min(64vh,740px);border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}@media(max-width:700px){#w03bb-box{aspect-ratio:auto;height:min(78vh,620px);max-height:none}}</style>
+  <div id="w03bb-box">
+    <iframe src="blackbean_na_dilution.html?embed=1" title="Sodium in black soybean powder ash: interactive animation of Na-11 sampling and dilution design" loading="lazy" allow="fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>
+  </div>
+  <p class="subtitle" style="margin-top:8px;text-align:center">Designed from TFND database values (ash 4.4%, Na 65 mg/100 g): ash 5 g → dissolve in dilute acid → 10 mL (about 325 ppm), then look at two biases, K⁺ and ionic strength. <a class="no-nav" href="blackbean_na_dilution.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open full screen ↗ (Chinese)</a> · 🕵️ Only 30% found in practice? <a class="no-nav" href="detective.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Sodium ion spot-the-error ↗</a> (6 cases)</p>
+</div></div></section><section class="slide" data-slide="19" data-section="Focus" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">Mini-game ③</span><span class="gt">Calculation challenge: NaCl equivalent</span><span class="score" id="g6score">Unanswered</span></div><div class="game-q">Soy sauce is <b>diluted 50-fold with deionized water (1 mL made up to 50 mL)</b>, and the Na⁺ ISE reads <b>1100 ppm (mg/L)</b>. Find the <b>NaCl equivalent concentration (g/100 mL)</b> of the original soy sauce. (Na → NaCl equivalent factor = 58.44/22.99 ≈ 2.542)</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">g/100mL</span><button class="btn" id="g6check">Check answer</button><button class="btn ghost" id="g6hint">Hint</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="20" data-section="Focus" data-chart="qc"><div class="slide-inner"><div class="kicker">Quality control (QC): standard addition recovery, drift, dilution error, blank</div><h2 class="slide-title">How do we know today’s data are reliable?</h2><div class="grid2" style="margin-top:12px"><div><div class="eq">Recovery % = <span class="frac"><b>C<sub>spiked</sub> − C<sub>unspiked</sub></b><span>C<sub>added</sub></span></span> × 100</div><p class="subtitle" style="margin-top:10px"><strong>Standard addition recovery (spike recovery)</strong>: add a known amount of Na⁺ standard to the sample and measure again; compare the readings before and after spiking to see how much is recovered, which checks method accuracy (≠ the “standard addition method” used for calibration); in teaching, <strong>90–110%</strong> is often taken as the acceptable range.</p></div><div class="note"><strong>Other QC points:</strong><br>• <strong>Drift:</strong> re-measure a standard every 10 samples<br>• <strong>Dilution factor error:</strong> pipettes/volumetric flasks must be accurate, and don’t use the wrong factor in the conversion<br>• <strong>Blank:</strong> check with deionized water that the baseline is near 0</div></div><div class="chartbox" style="margin-top:12px;height:30vh"><canvas id="chart_qc"></canvas></div><div class="cap">Illustrative data (not actual batch results): labeled vs measured sodium (mg/serving) for 4 products, for class discussion of possible reasons for gaps between label and measurement.</div></div></section><section class="slide" data-slide="21" data-section="Focus" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">Mini-game ④</span><span class="gt">Ash and Na⁺ concept quiz</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="22" data-section="Focus" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">Mini-game ⑤</span><span class="gt">Sodium-containing additives vs NaCl sources</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">Sort 6 items into “NaCl source” or “sodium-containing additive that is not NaCl.”</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">Check answer</button><button class="btn ghost" id="g3reset">Reset</button></div></div></div></section><section class="slide" data-slide="23" data-section="Act" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">Mini-game ⑥</span><span class="gt">Decision challenge: lab judgment</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="24" data-section="Act"><div class="slide-inner"><div class="kicker">After class and report</div><h2 class="slide-title">Turn today’s data into conclusions</h2><div class="grid2" style="margin-top:16px"><div class="card b"><div class="ic">💻</div><div class="ct">Homework</div><div class="cb">Colab NB03 interactive notebook: <a class="no-nav" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB03_ash_sodium.ipynb" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open NB03 in Colab ↗</a><span style='white-space:nowrap'> · Beginner (no coding): <a class='no-nav' href='../../excel/EX03_ash_sodium.xlsx' download style='color:var(--accent);font-weight:800'>Excel practice workbook EX03 ⬇</a></span>: ash and Na⁺ conversion exercises, standard addition recovery calculation</div></div><div class="card a"><div class="ic">📝</div><div class="ct">Lab report</div><div class="cb">① Ash % of each sample (including the common blind sample) ② Measured vs labeled values and recovery for each Na sample ③ Discussion of the “Himalayan pink salt 84 minerals” marketing claim — support or refute it with your own ash/Na data</div></div></div><p class="subtitle" style="margin-top:12px">🕵️ Cases not yet solved: <a class="no-nav" href="detective.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Sodium ion spot-the-error ↗ (Chinese)</a> (measured data for black soybean powder and black vinegar, 6 cases)</p></div></section><section class="slide" data-slide="25" data-section="Act"><div class="slide-inner"><div class="kicker">Self-check</div><h2 class="slide-title">By the end of today you should be able to…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>Explain the principle of dry ashing and know that ash is the “total inorganic residue,” not a single mineral</li><li data-k><span class="bx">✓</span>Run the muffle furnace ashing workflow: pre-char → ash at 550°C → cool in desiccator → weigh to constant weight</li><li data-k><span class="bx">✓</span>Explain the Nernst principle of the Na⁺ ISE, activity vs concentration, ion selectivity and measuring-range limits</li><li data-k><span class="bx">✓</span>Perform Na⁺ ISE two-point calibration, sample dilution, drift monitoring, and electrode rinsing/blotting</li><li data-k><span class="bx">✓</span>Calculate ash % = ash weight ÷ sample weight × 100</li><li data-k><span class="bx">✓</span>Convert a Na reading to NaCl equivalent (× 2.542) and know that Na is not the same as NaCl</li><li data-k><span class="bx">✓</span>Calculate standard addition recovery and judge whether it falls in the acceptable 90–110% range</li><li data-k><span class="bx">✓</span>Use today’s data to judge whether the “Himalayan pink salt 84 minerals” marketing claim is reasonable</li></ul><p class="subtitle" style="margin-top:12px">Tap to tick — make sure you really can do it.</p></div></section><script>window.CFG={"charts": {"qc": {"type": "bar", "yTitle": "Sodium (mg/serving)", "labels": ["Soy sauce", "Potato chips", "Instant soup powder", "Sports drink"], "datasets": [{"label": "Labeled sodium", "data": [850, 180, 750, 110], "color": "#1f6feb"}, {"label": "Measured sodium", "data": [905, 165, 780, 102], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["Ash can answer", "Ash cannot answer"], "items": [{"t": "What % of the sample is ash (total inorganic residue)", "c": "Ash can answer"}, {"t": "What proportion of the sample remains after ashing", "c": "Ash can answer"}, {"t": "Whether total minerals are roughly high or low (rough screening)", "c": "Ash can answer"}, {"t": "Whether the sample contains a high amount of inorganic residue", "c": "Ash can answer"}, {"t": "Exactly how many mg of sodium are in the sample", "c": "Ash cannot answer"}, {"t": "Which mineral it is (calcium? potassium? sodium?)", "c": "Ash cannot answer"}, {"t": "Whether the sodium in a food is natural or added (e.g., MSG, baking soda)", "c": "Ash cannot answer"}, {"t": "The “salt content” or NaCl content of the food", "c": "Ash cannot answer"}], "ok": "🎉 All correct! Ash only tells you “how much total inorganic residue there is”; it cannot tell you which mineral it is, let alone how much sodium or salt.", "tip": "Hint: questions about “total, percentage, whether there is any” → ash can answer; questions about “which one, exactly how much sodium/salt, source” → ash cannot answer."}, "g3": {"cats": ["NaCl source", "Sodium-containing additive that is not NaCl"], "items": [{"t": "Table salt (refined salt)", "c": "NaCl source"}, {"t": "Soy sauce (main salty source)", "c": "NaCl source"}, {"t": "Seasoning salt on potato chips", "c": "NaCl source"}, {"t": "MSG (monosodium glutamate)", "c": "Sodium-containing additive that is not NaCl"}, {"t": "Baking soda (NaHCO₃, leavening agent)", "c": "Sodium-containing additive that is not NaCl"}, {"t": "Sodium benzoate (preservative)", "c": "Sodium-containing additive that is not NaCl"}], "ok": "🎉 Correct! The sodium in table salt, soy sauce and seasoning salt comes mainly from NaCl; MSG, baking soda and sodium benzoate have sodium but are “not salt.”", "tip": "Hint: if you can taste “saltiness” directly and it is used to season → NaCl source; a sodium salt added as a leavening agent/preservative/umami agent → not NaCl."}}, "mcq": {"g2": [{"q": "Why pre-char on a hot plate before ashing?", "o": ["To make the ash heavier", "To prevent the sample from spattering or suddenly catching fire in the furnace", "To shorten ashing time", "To make the color white"], "a": 1, "e": "Organic matter burning rapidly spatters and catches fire; slow charring on a hot plate avoids this hazard and also protects the muffle furnace."}, {"q": "What does “ash” represent?", "o": ["The total amount of sodium in the sample", "The total weight of all inorganic residue (oxides, carbonates, …) in the sample", "The total amount of calcium in the sample", "The salt content of the sample"], "a": 1, "e": "Ash is the “total inorganic residue” left after burning, the combined weight of a mixture of minerals; it does not equal any single mineral or salt."}, {"q": "Why might Na⁺ ISE results not fully agree with the “sodium” on the nutrition label?", "o": ["The instrument must be broken", "There may be other sodium sources (MSG, baking soda, …), and the ISE measures activity, which is affected by the matrix", "Nutrition labels are all wrong", "Because the sample is too sweet"], "a": 1, "e": "Sodium in food does not come only from NaCl; and the ISE measures ion activity rather than concentration, so high-ionic-strength matrices can affect readings."}, {"q": "Why rinse the electrode and gently blot it dry after every sample?", "o": ["To make the electrode look nicer", "To avoid carry-over contamination from residual sample affecting the next reading", "The electrode needs to stay moist", "It’s just a habit with no real need"], "a": 1, "e": "Residue from the previous sample on the electrode surface contaminates the next measurement and biases the reading (carry-over)."}, {"q": "What is the correct multiplier for converting a Na reading to “salt (NaCl)”?", "o": ["1.00", "2.54(=58.44/22.99)", "22.99", "58.44"], "a": 1, "e": "NaCl molecular weight 58.44 ÷ Na atomic weight 22.99 ≈ 2.54; this is the multiplier for converting Na to NaCl equivalent."}], "g5": [{"q": "Why does this year’s lab use the Na⁺ ISE instead of Mohr titration (AgNO₃)?", "o": ["AgNO₃ is more expensive", "AgNO₃ is corrosive/oxidizing, the K₂CrO₄ indicator contains hexavalent chromium (a carcinogen), and chromium/silver waste is generated", "AgNO₃ titration is slower", "No particular reason"], "a": 1, "e": "Safety: AgNO₃ is highly corrosive and stains skin, K₂CrO₄ contains carcinogenic hexavalent chromium, and chromium/silver waste needs special handling; the pen-type ISE is safer and faster."}, {"q": "Why must soy sauce be diluted first (e.g., 1:50) before measuring with the Na⁺ ISE?", "o": ["To save sample", "The undiluted sodium concentration/ionic strength is too high, beyond the electrode’s linear measuring range", "Soy sauce is too dark", "To save time"], "a": 1, "e": "The ISE has a limited measuring range; high-concentration samples must be diluted into range to get accurate, linear readings."}, {"q": "Why must potato chips be ground, extracted with hot water and filtered before measuring Na?", "o": ["To dilute the flavor", "To extract soluble Na into solution and remove solid particles that would foul the electrode", "To increase sweetness", "Purely for appearance"], "a": 1, "e": "Solid foods must first have their soluble sodium extracted into solution and the solid particles filtered out, so the electrode can measure accurately and the sensing membrane stays clean."}, {"q": "What happens if you assume all the sodium in a food comes from NaCl when converting to salt content?", "o": ["It is exactly accurate", "It usually overestimates NaCl content (because some sodium comes from MSG, baking soda, etc.)", "It underestimates NaCl content", "It has nothing to do with reality"], "a": 1, "e": "MSG, baking soda, sodium benzoate, etc. also contribute sodium but are not NaCl; treating all sodium as salt overestimates the true NaCl (salt) content."}, {"q": "When re-measuring the standard shows the reading has clearly drifted beyond the acceptable range, what should you do?", "o": ["Ignore it and keep measuring", "Recalibrate and check whether samples measured after the drift need to be re-measured", "Just divide the earlier data by 2", "Just switch to another instrument and ignore the data"], "a": 1, "e": "Drift means the electrode’s state has changed and data may be unreliable; recalibrate and go back and review the affected sample data."}]}, "sort": {"g4": {"steps": ["Do a two-point calibration with the manufacturer’s two standards", "Dilute the sample into the measuring range as needed (e.g., soy sauce 1:50)", "Rinse the electrode and gently blot it dry with lens tissue", "Place the electrode in the sample solution and read the stable reading", "Record the reading and calculate C(sample) = reading × dilution factor", "Re-measure a standard after every 10 samples to confirm there is no drift"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 Correct order! Calibrate → dilute → rinse and blot → measure → record and convert → periodically re-test the standard.", "tip": "Hint: calibrate before measuring samples; rinse and blot between every sample; check for drift partway through."}}, "calc": {"g6": {"answer": 13.98, "tol": 0.1, "ok": "🎉 Correct! 1100×50=55000 mg/L=55 g/L=5.5 g/100mL (Na); 5.5×2.542≈<b>13.98 g/100mL<\/b> (NaCl equivalent).", "bad": "Try again: first multiply the reading by the dilution factor to get the Na concentration in the undiluted sample, then multiply by 2.542 to get the NaCl equivalent.", "hint": "Hint: 1100 ppm × 50 = 55000 mg/L = 5.5 g/100mL (Na); 5.5 × 2.542 ≈ 13.98."}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
+}
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 All correct!','good');
+    else fb(g+'fb','Correct '+ok+'/'+N+'. '+(cfg.tip||'Adjust and try again.'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ Correct!':'❌ Answer: '+d.o[d.a]+'. ')+'<br>'+d.e+(done?'<br><b>Done! Total score: '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 Perfect order!','good');
+    else fb(g+'fb','Got '+ok+'/'+N+' positions right.'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','Enter a number first.','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ Correct'); fb(g+'fb',cfg.ok||('🎉 Correct! The answer is '+cfg.answer),'good');
+    } else { setScore(g+'score','Try again'); fb(g+'fb',cfg.bad||'Recalculate and try again.','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'Hint: substitute step by step using the formula.','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en] body,html[lang=en] .lbl,html[lang=en] .lblb{font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif}html[lang=en] body{font-size:16.5px}html[lang=en] .slide-title{font-size:clamp(1.3rem,2.7vw,2.05rem)}html[lang=en] .cover h1{font-size:clamp(2rem,5vw,3.8rem)}html[lang=en] .hook{font-size:clamp(1.5rem,3.6vw,2.6rem)}html[lang=en] p,html[lang=en] li{line-height:1.55}html[lang=en] .kicker{letter-spacing:.1em}html[lang=en] p,html[lang=en] li{font-size:clamp(.86rem,1.3vw,1.04rem)}html[lang=en] .card .cb{font-size:clamp(.8rem,1.15vw,.94rem)}html[lang=en] .card .ct{font-size:clamp(.95rem,1.4vw,1.1rem)}html[lang=en] .chip{font-size:.84rem;padding:7px 12px}html[lang=en] .opt{font-size:clamp(.82rem,1.2vw,.98rem);padding:11px 15px}html[lang=en] .game-q{font-size:clamp(.9rem,1.35vw,1.08rem)}html[lang=en] .bucket .bh{font-size:.88rem}html[lang=en] table.cmp{font-size:clamp(.78rem,1.1vw,.95rem)}html[lang=en] table.cmp th,html[lang=en] table.cmp td{padding:9px 11px}html[lang=en] .note{font-size:clamp(.85rem,1.2vw,.98rem)}html[lang=en] .subtitle{font-size:clamp(.9rem,1.4vw,1.1rem)}html[lang=en] .checklist li{font-size:.86rem}html[lang=en] .cap{font-size:.82rem}html[lang=en] .pill{font-size:.78rem;padding:4px 10px}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><script>(function(){
+function fit(){var sl=document.querySelector('.slide.active');if(!sl)return;
+ sl.querySelectorAll('svg').forEach(function(svg){var sb=svg.getBoundingClientRect();if(!sb.width)return;
+  var rects=[].slice.call(svg.querySelectorAll('rect')).map(function(r){return r.getBoundingClientRect()});
+  [].slice.call(svg.querySelectorAll('text')).forEach(function(t){
+   if(t.dataset.fit)return; var s=(t.textContent||'').trim(); if(!s)return;
+   var b=t.getBoundingClientRect(); if(!b.width)return;
+   var cx=(b.left+b.right)/2, cy=(b.top+b.bottom)/2;
+   var host=rects.filter(function(r){return r.width>20&&r.width<480&&cx>r.left&&cx<r.right&&cy>r.top&&cy<r.bottom})
+             .sort(function(p,q){return p.width-q.width})[0];
+   var maxW=host?host.width-10:Math.min(b.right,sb.right-2)-Math.max(b.left,sb.left+2);
+   if(host&&(b.right>sb.right||b.left<sb.left))maxW=Math.min(maxW,sb.width-4);
+   if(b.width<=maxW+1)return;
+   t.dataset.fit='1';
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13;
+   var k=b.width/((t.getBBox().width)||b.width); /* client px per user unit */
+   var hasTspan=t.querySelector('tspan'); var canWrap=!hasTspan&&s.indexOf(' ')>0&&host&&host.height>=fs*2.3;
+   if(canWrap){var others=[].slice.call(svg.querySelectorAll('text')).filter(function(o){if(o===t)return false;var ob=o.getBoundingClientRect();var ox=(ob.left+ob.right)/2,oy=(ob.top+ob.bottom)/2;return ox>host.left&&ox<host.right&&oy>host.top&&oy<host.bottom;});
+     if(others.length){var free=host.bottom-b.bottom;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.top>=b.top)free=Math.min(free,ob.top-b.bottom)});var freeTop=b.top-host.top;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.bottom<=b.bottom)freeTop=Math.min(freeTop,b.top-ob.bottom)});if(free+freeTop<fs*1.15)canWrap=false;}}
+   if(canWrap){var w=s.split(' '),best=null;
+     for(var i=1;i<w.length;i++){var a=w.slice(0,i).join(' '),c=w.slice(i).join(' ');var d=Math.abs(a.length-c.length);if(!best||d<best.d)best={d:d,a:a,c:c};}
+     var x=t.getAttribute('x')||'0',y=parseFloat(t.getAttribute('y')||'0');
+     t.textContent='';var t1=document.createElementNS('http://www.w3.org/2000/svg','tspan'),t2=t1.cloneNode();
+     t1.setAttribute('x',x);t1.setAttribute('y',(y-fs*0.55/k).toFixed(2));t1.textContent=best.a;
+     t2.setAttribute('x',x);t2.setAttribute('y',(y+fs*0.6/k).toFixed(2));t2.textContent=best.c;
+     t.appendChild(t1);t.appendChild(t2);b=t.getBoundingClientRect();if(b.width<=maxW+1)return;}
+   var sc=Math.max(0.7,maxW/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   b=t.getBoundingClientRect(); if(b.width>maxW+1&&!t.querySelector('tspan')){t.setAttribute('textLength',(maxW/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+  /* second pass: free labels that collide with a neighbour on the same row */
+  var ts=[].slice.call(svg.querySelectorAll('text')).filter(function(x){return (x.textContent||'').trim()});
+  for(var i=0;i<ts.length;i++)for(var j=i+1;j<ts.length;j++){var A=ts[i].getBoundingClientRect(),B=ts[j].getBoundingClientRect();
+   var ox=Math.min(A.right,B.right)-Math.max(A.left,B.left),oy=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
+   if(ox<=2||oy<=Math.min(A.height,B.height)*0.5)continue;
+   var t=A.width>=B.width?ts[i]:ts[j],b=A.width>=B.width?A:B; if(t.querySelector('tspan')||t.dataset.fit2)continue; t.dataset.fit2='1';
+   var want=b.width-ox-6; if(want<b.width*0.55)continue;
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13,k=b.width/((t.getBBox().width)||b.width);
+   var sc=Math.max(0.75,want/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   var nb=t.getBoundingClientRect(); if(nb.width>want+1){t.setAttribute('textLength',(want/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  }});}
+ if(typeof show==='function'){var _s=show;show=function(i){_s(i);fit();};}
+ fit();setTimeout(fit,400);window.addEventListener('load',function(){setTimeout(fit,200)});
+})();</script><!--/i18n-toggle--></body></html>

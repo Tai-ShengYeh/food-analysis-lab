@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Learning Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#F2F5F3; --surface:#FFFFFF; --ink:#18221F; --muted:#5B6964; --line:#D5DDD9;
+  --accent:#B3306A; --accent-soft:#F7E3EC; --teal:#1E6B66; --teal-soft:#DDEFEC;
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --sans:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+    --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111615; --surface:#1A201F; --ink:#E3EAE7; --muted:#9AA8A3; --line:#2E3836;
+  --accent:#E77FA8; --accent-soft:#3A2230; --teal:#6CC3BB; --teal-soft:#1D3331;
+}
+*{box-sizing:border-box}
+img{max-width:100%;height:auto}
+.ladder>*,.grid2>*,.principles>*{min-width:0}
+html,body{overflow-x:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.7;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:1040px;margin:0 auto}
+a{color:var(--teal)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+header{padding-block:36px 12px;display:grid;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--teal)}
+.eyebrow a{color:inherit}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,4.4vw,40px);line-height:1.2;margin:0}
+.lede{max-width:70ch;color:var(--muted);margin:0}
+h2{font-family:var(--serif);font-size:21px;margin:40px 0 12px}
+h3{font-size:16px;margin:18px 0 6px}
+p{margin:8px 0}
+.dl{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.dl a{font-size:14px;text-decoration:none;border:1px solid var(--teal);background:var(--teal);color:var(--surface);padding:6px 14px;border-radius:999px;font-weight:500}
+.dl a.alt{background:var(--surface);color:var(--teal)}
+.principles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pr{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.pr b{display:block;font-family:var(--serif);font-size:16px;margin-bottom:4px}
+.pr span{font-size:13.5px;color:var(--muted)}
+.tbl{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:700;background:var(--bg);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.n{font-family:var(--mono);white-space:nowrap;color:var(--teal)}
+.tag{display:inline-block;font-size:12px;border-radius:4px;padding:0 7px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.f{border-color:var(--teal);color:var(--teal)}
+.tag.s{border-color:var(--accent);color:var(--accent)}
+.note{background:var(--teal-soft);border-radius:8px;padding:12px 16px;font-size:14px;margin:14px 0}
+.formula{font-family:var(--mono);font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0;overflow-x:auto}
+.weights{display:flex;height:34px;border-radius:6px;overflow:hidden;margin:10px 0 4px;font-size:12.5px;color:#fff}
+.weights div{display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+.card h3{margin-top:0}
+ol,ul{padding-left:22px}
+li{margin:3px 0}
+details{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0}
+summary{cursor:pointer;font-weight:500}
+.q{margin:10px 0;font-size:14px}
+.q .opt{color:var(--muted)}
+.q .ans{color:var(--teal);font-weight:500}
+footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
+@media (max-width:760px){.principles,.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow"><a href="index.en.html">Food Analysis Lab</a> · For teachers</div>
+  <h1>Learning Assessment</h1>
+  <p class="lede">Students use different tools (Excel, Orange, Colab), so assessment should look at judgment and conclusions, not software skills. This page is a ready-to-use assessment design: pre/post tests show how much was learned over the semester, weekly exit tickets and homework feedback show where students get stuck, and practical exams and the project show whether they can independently analyze data they have not seen.</p>
+  <div class="dl">
+    <a href="assessment/assessment_toolkit.xlsx" download>Download the assessment toolkit (Excel)</a> <a class="alt" href="tools.en.html">Data analysis tools guide</a> <a class="alt" href="plan.html">Semester plan</a>
+  </div>
+</header>
+
+<h2>Four principles</h2>
+<div class="principles">
+  <div class="pr"><b>Align with goals</b><span>Each learning goal needs at least two different kinds of evidence, and assessment items map directly to goals.</span></div>
+  <div class="pr"><b>Tool-neutral</b><span>One rubric scores work in all three tools; students who get it right in Excel earn full marks, and Colab is only a bonus.</span></div>
+  <div class="pr"><b>Formative first, summative later</b><span>Weekly feedback is ungraded or low-stakes so students dare to make mistakes; grading is concentrated on reports, practical exams, and the project.</span></div>
+  <div class="pr"><b>Data-informed teaching</b><span>Pre/post tests and item analysis reveal concepts the whole class has not mastered, to adjust next semester.</span></div>
+</div>
+
+<h2>Learning goals and evidence</h2>
+<div class="tbl"><table>
+<thead><tr><th>Goal</th><th>Students can…</th><th>Main evidence</th></tr></thead>
+<tbody>
+<tr><td class="n">CLO1</td><td>Correctly carry out proximate analysis and complete the calculations (wet/dry basis, %N × factor, recovery, dilution factor)</td><td>Lab reports, weekly data homework, midterm practical, pre/post tests</td></tr>
+<tr><td class="n">CLO2</td><td>Use statistics to judge data quality and draw conclusions (SD, CI, tests, calibration curve, z-score, control chart, uncertainty)</td><td>Weekly data homework, midterm practical, pre/post tests</td></tr>
+<tr><td class="n">CLO3</td><td>Build and evaluate spectroscopic chemometric models (preprocessing, PCA, PLS, RMSECV/RMSEP, applicability domain)</td><td>Final practical, sweetener project report card, pre/post tests</td></tr>
+<tr><td class="n">CLO4</td><td>Choose a suitable tool for the problem and verify the result with a second tool</td><td>“Cross-check” item in the practical exams, self-efficacy survey item 9</td></tr>
+<tr><td class="n">CLO5</td><td>Communicate data clearly in writing and orally</td><td>Lab reports, W17 presentation and peer review</td></tr>
+</tbody></table></div>
+
+<h2>Assessment plan for the semester</h2>
+<div class="tbl"><table>
+<thead><tr><th>Assessment</th><th>Time</th><th>How</th><th>Type</th></tr></thead>
+<tbody>
+<tr><td>Concept pre/post test</td><td>W1, W18</td><td>15 multiple-choice questions (toolkit sheet “2_Pre/post item bank”); the same test before and after, 15 minutes, using Google Forms quiz mode.</td><td><span class="tag">Ungraded</span></td></tr>
+<tr><td>Self-efficacy survey</td><td>W1, W9, W18</td><td>10 items rated 1–5 (e.g., “I can tell whether a result is accurate and whether it is precise”). Compare with the pre/post test: high confidence with a wrong answer signals a misconception.</td><td><span class="tag">Ungraded</span></td></tr>
+<tr><td>Exit ticket</td><td>Last 3 minutes of each week</td><td>1 concept question + “the one thing I understood least today.” The following week, spend 5 minutes at the start responding to the point most students did not understand.</td><td><span class="tag f">Formative</span></td></tr>
+<tr><td>Weekly data homework</td><td>W1–W8, W11–W16</td><td>Complete the practice questions in Excel, Orange, or Colab (any one); score with the rubric and add one specific suggestion to each.</td><td><span class="tag f">Formative</span> 15%</td></tr>
+<tr><td>Lab report</td><td>Every lab</td><td>Scored on five rubric dimensions: calculations, quality-control judgment, figures, conclusions and error, records.</td><td><span class="tag s">Summative</span> 35%</td></tr>
+<tr><td>Midterm practical</td><td>W9</td><td>Given unseen method-comparison or proficiency-test data, complete a quality-control report in Excel or Colab (your choice).</td><td><span class="tag s">Summative</span> 15% (includes written exam)</td></tr>
+<tr><td>Final practical</td><td>W18</td><td>Given a set of spectra and reference values, complete PCA and PLS in Orange or Colab (your choice) and write the model conclusions.</td><td><span class="tag s">Summative</span> 15% (includes written exam)</td></tr>
+<tr><td>Sweetener project</td><td>W15–W17</td><td>Model report card (LV, RMSECV, RMSEP, RPD, applicability domain) + oral presentation + peer review.</td><td><span class="tag s">Summative</span> 20%</td></tr>
+<tr><td>Advanced bonus</td><td>Whole semester</td><td>Complete advanced questions in Colab/Jupyter (e.g., VIP, T² and Q, NNLS), or cross-check the same result with two tools and explain the difference.</td><td><span class="tag">Up to +5</span></td></tr>
+</tbody></table></div>
+<div class="weights" role="img" aria-label="Grade weights: lab reports 35%, weekly data homework 15%, midterm 15%, final 15%, sweetener project 20%">
+  <div style="width:35%;background:#1E6B66">Lab reports 35%</div>
+  <div style="width:15%;background:#2F7D46">Weekly homework 15%</div>
+  <div style="width:15%;background:#C4661F">Midterm 15%</div>
+  <div style="width:15%;background:#3A5F9E">Final 15%</div>
+  <div style="width:20%;background:#B3306A">Sweetener project 20%</div>
+</div>
+<p style="font-size:13px;color:var(--muted)">Uses the weights from the semester plan, only changing “weekly Colab homework” to any tool. Pre/post tests and surveys are ungraded so students answer honestly.</p>
+
+<h2>Rubric: score judgment, not software</h2>
+<div class="tbl"><table>
+<thead><tr><th>Dimension (weight)</th><th>4 Excellent</th><th>3 Good</th><th>2 Needs work</th><th>1 Insufficient</th></tr></thead>
+<tbody>
+<tr><td>Correct calculations (25%)</td><td>Values, units, and significant figures all correct; matches the answer-check table</td><td>1 minor error that does not affect conclusions</td><td>Errors affect some conclusions</td><td>Main values wrong or missing</td></tr>
+<tr><td>Quality-control judgment (25%)</td><td>Every judgment cites data and a threshold</td><td>Mostly correct; a few lack support</td><td>Conclusions without support, or wrong method</td><td>No judgment</td></tr>
+<tr><td>Figures (15%)</td><td>Suitable plot type; axes, units, error bars complete</td><td>Some labels missing</td><td>Unsuitable plot or unclear error bars</td><td>No figure</td></tr>
+<tr><td>Conclusions and error discussion (25%)</td><td>Separates systematic and random error, identifies the largest source, and proposes improvements</td><td>Discusses but does not distinguish, or proposes no improvement</td><td>Only “human error”</td><td>No discussion</td></tr>
+<tr><td>Records and reproducibility (10%)</td><td>Raw data, calibration records, and files attached; others can recalculate</td><td>Complete but unclear naming</td><td>Missing raw data or calibration records</td><td>Cannot be traced</td></tr>
+</tbody></table></div>
+<p>Total score = Σ(level × weight) ÷ 4. Toolkit sheet “8_Rubrics” has a calculator and also the practical-exam rubric (with one extra item, “cross-check”: verify 1 value a second way). Give the rubric to students in the first week.</p>
+
+<h2>How to set the practical exams</h2>
+<div class="grid2">
+  <div class="card"><h3>W9 midterm: method comparison or proficiency test</h3>
+    <ol>
+      <li>Give an unseen long-format dataset (e.g., manual vs. automatic acetic acid titration for 6 groups, or blind-sample ash for 5 groups).</li>
+      <li>Task: descriptive statistics → find outliers → choose the right test (paired t / Bland–Altman or ANOVA) → write a 3-sentence conclusion.</li>
+      <li>Grading focus: <strong>choose the right method and give the reason</strong>, correct values, and a conclusion that answers the question.</li>
+      <li>Tools: Excel (open book; students may use their own EX04, EX08) or Colab.</li>
+    </ol></div>
+  <div class="card"><h3>W18 final: spectral modeling</h3>
+    <ol>
+      <li>Give a set of spectra and reference values, with the calibration and test sets already labeled.</li>
+      <li>Task: preprocessing → PCA score plot and interpret one cluster → choose LV for PLS → report RMSECV, RMSEP, RPD → state the applicability domain.</li>
+      <li>Grading focus: <strong>grouped cross-validation</strong>, drawing conclusions from RMSEP rather than R², and naming the model’s limitations.</li>
+      <li>Tools: Orange (students may adapt OR13, OR16) or Colab.</li>
+    </ol></div>
+</div>
+<div class="note">You can prepare two versions of the data (Version A and B) so neighbors get different ones; work out the answers beforehand in the Colab notebooks and grade against the toolkit rubric.</div>
+
+<h2>How to tell whether students improved</h2>
+<h3>1. Normalized gain g</h3>
+<div class="formula">g = (post − pre) ÷ (max − pre). For the class: &lt;g&gt; = (post mean − pre mean) ÷ (max − pre mean)</div>
+<p>It means “how much of what was not yet known got learned.” Hake (1998) levels: g &lt; 0.3 low, 0.3–0.7 medium, &gt; 0.7 high. Compare the class &lt;g&gt; with previous years to see whether teaching changes worked; also check the paired t-test p-value and effect size (Cohen's d) to confirm the improvement is not by chance.</p>
+<h3>2. Item analysis</h3>
+<ul>
+<li><strong>Proportion correct P</strong>: items still below 0.5 on the post-test are concepts the class has not mastered; strengthen that week next semester.</li>
+<li><strong>Discrimination r</strong> (correlation of the item score with the total score): items below 0.2 may be unclear and need rewriting.</li>
+<li>Summarize by learning goal (CLO1–CLO3) to see which strand is weakest.</li>
+</ul>
+<h3>3. Confidence vs. ability</h3>
+<p>High self-efficacy but a wrong answer on the matching test item means students “think they know it”; these misconceptions most need direct attention in class.</p>
+<h3>4. End-of-semester review</h3>
+<p>After the semester, spend 30 minutes with toolkit sheets “5_Learning gains” and “6_Item analysis” and write down 3 things to adjust next semester (e.g., “add one more residual-plot exercise in W7”), then add them to the semester plan.</p>
+
+<h2>Sample pre/post test questions</h2>
+<p>The full 15 questions (covering W1–W16 topics) are in toolkit sheet “2_Pre/post item bank”, with answers and linked goals, ready to paste into Google Forms. Questions test concepts only, so students can answer them whichever tool they use.</p>
+<details><summary>See 5 sample questions</summary>
+<div class="q"><b>1. (W1)</b> Repeating the same pipette 10 times gives a very small SD, but the mean is 0.03 mL below the nominal value (Class A tolerance ±0.02 mL). This means?<br><span class="ans">Precise but not accurate</span> <span class="opt">/ Accurate and precise / Accurate but not precise / Neither accurate nor precise</span></div>
+<div class="q"><b>2. (W2/W4)</b> Two methods measure the same set of samples. To compare the methods, you should use?<br><span class="ans">Paired t-test or Bland–Altman plot</span> <span class="opt">/ Independent two-sample t-test / Look only at the correlation coefficient r / Compare only the two SDs</span></div>
+<div class="q"><b>3. (W7)</b> A calibration curve has R² = 0.999. What does this mean?<br><span class="ans">The residual plot may still be curved; check the residuals too</span> <span class="opt">/ It is definitely linear / LOD is definitely low / Sample concentrations are definitely accurate</span></div>
+<div class="q"><b>4. (W8)</b> The specification is protein ≥ 25.0%, and the measured value is 25.2 ± 0.4% (U, k = 2). What should be concluded?<br><span class="ans">Cannot decide: the interval crosses the specification limit</span> <span class="opt">/ Release / Do not release / Measure once more and average, then release</span></div>
+<div class="q"><b>5. (W13)</b> In cross-validation, the 3 replicates of the same sample are split between the training and validation sets. RMSECV will be?<br><span class="ans">Too low (over-optimistic)</span> <span class="opt">/ Too high / Unchanged / Impossible to calculate</span></div>
+</details>
+
+<h2>What is in the assessment toolkit</h2>
+<div class="tbl"><table>
+<thead><tr><th>Sheet</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>1_Goals and evidence</td><td>Learning goals × assessment map (editable)</td></tr>
+<tr><td>2_Pre/post item bank</td><td>15 concept questions, answers, linked weeks and goals</td></tr>
+<tr><td>3_Pre-test answers, 4_Post-test answers</td><td>Paste students’ A/B/C/D answers for automatic scoring (up to 60 students)</td></tr>
+<tr><td>5_Learning gains</td><td>Individual and class normalized gain, paired t-test, effect size, pre/post bar chart</td></tr>
+<tr><td>6_Item analysis</td><td>Per-item proportion correct, improvement, and discrimination, summarized by goal, with weak items flagged automatically</td></tr>
+<tr><td>7_Self-efficacy survey</td><td>10-item survey and W1/W9/W18 mean comparison chart</td></tr>
+<tr><td>8_Rubrics</td><td>Homework/report rubric and practical-exam rubric, with a scoring calculator</td></tr>
+<tr><td>9_Grade summary</td><td>Calculates semester grades by weight, including bonus points and letter grades</td></tr>
+</tbody></table></div>
+<p style="font-size:13px;color:var(--muted)">The student data in the toolkit are simulated demo data; clear the yellow student-data area before real use.</p>
+
+<footer>Reference: Hake, R. R. (1998). Interactive-engagement versus traditional methods. <i>American Journal of Physics</i>, 66, 64–74. <a href="index.en.html">Back to course home</a></footer>
+</div>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en]{--sans:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif;--serif:Georgia,"Times New Roman","Noto Serif TC",serif}html[lang=en] body{font-family:var(--sans,"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif)}</style><a id="langToggle" href="assessment.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='assessment.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><!--/i18n-toggle--></body>
+</html>

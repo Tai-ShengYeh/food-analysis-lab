@@ -1,0 +1,505 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W16 Sweetener Project II: Modeling and Prediction · Food Analysis Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto}table.cmp th,table.cmp td{white-space:normal;padding:9px 10px;min-width:56px}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">Food Analysis Lab · W16</div><div id="pageInfo"></div><div id="hint">← → / Space to change slide · F fullscreen · Tap either side to turn pages</div><section class="slide" data-slide="1" data-section="Hook" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Food Analysis Lab · W16</div><h1>Sweetener Project II: <span style='color:var(--accent-2)'>Modeling and Prediction</span></h1><div class="en">Sweetener Blends II — PLS Calibration vs Classical Least Squares</div><div class="meta">Food Analysis Lab · 4-hour session<br>Continues W15: Latin-square preparation + rotating measurement · PLS1 (VIP) vs NNLS (CLS) · LOD / applicability-domain assessment</div><div style="margin-top:24px"><span class="pill">PLS1/PLS2</span><span class="pill">VIP</span><span class="pill">NNLS/CLS</span><span class="pill">RMSEP/RPD</span><span class="pill">LOD/LOQ</span><span class="pill">T²/Q applicability domain</span></div></div></div></section><section class="slide" data-slide="2" data-section="Hook"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">Opening question</div>
+  <div class="hook">How <span class="hi">many %</span> aspartame is in this powder?<br>Two completely different calculations: will they give the same answer?</div>
+  <div class="grid2" style="max-width:1000px;margin:22px auto 0;text-align:left">
+    <div class="card b"><div class="ic">📈</div><div class="ct">Method A: PLS</div><div class="cb">Train a statistical model on the 25 “known-ratio” blends the whole class prepared in W15 (each scanned 2 times), then use it to predict unknown samples.</div></div><div class="card a"><div class="ic">🧮</div><div class="ct">Method B: NNLS / classical least squares (CLS)</div><div class="cb">No calibration set at all: just fit the pure-component reference spectra by non-negative least squares and solve for the proportions directly.</div></div></div>
+  <p class="subtitle" style="max-width:960px;margin:16px auto 0"><strong>Today’s task:</strong> Run both routes on the same demo spectra from Colab NB13 (simulated Raman 785), compare which has the smaller prediction error (RMSEP), weigh their pros and cons, and learn <strong>when even PLS cannot be trusted</strong>.</p>
+</div></div></section><section class="slide" data-slide="3" data-section="Hook"><div class="slide-inner"><div class="kicker">Today’s learning goals</div><h2 class="slide-title">After W16 you should be able to…</h2><table class="cmp" style="margin-top:10px;font-size:.8rem"><thead><tr><th></th><th>Goal</th><th>Beginner: Orange OR16</th><th>Advanced: Colab NB13</th></tr></thead><tbody><tr><td class="c">C1</td><td>Combine the calibration set: Latin square + rotating measurement, 25 blends × 2 scans; check corr≈0; grouped cross-validation by sample_id</td><td>Do it yourself (OR16)</td><td>Do it yourself</td></tr><tr><td class="c">C2</td><td>Choose LV by RMSECV, build two PLS1 models (aspartame, sucralose), and interpret RMSEC/CV/EP, bias, and RPD grade</td><td>Do it yourself (OR16)</td><td>Do it yourself</td></tr><tr><td class="c">C3</td><td>Read the VIP plot and explain why closure gives filler bands a high VIP too</td><td>Read and explain</td><td>Compute it yourself</td></tr><tr><td class="c">C4</td><td>Explain how NNLS/CLS is calculated and its pros and cons compared with PLS</td><td>Read and explain</td><td>Compute it yourself</td></tr><tr><td class="c">C5</td><td>Explain how multivariate LOD/LOQ is estimated and what the numbers mean</td><td>Read and explain</td><td>Compute it yourself</td></tr><tr><td class="c">C6</td><td>Use T²/Q to decide whether a new sample lies within the model’s applicability domain</td><td>Read and explain</td><td>Compute it yourself</td></tr><tr><td class="c">C7</td><td>Report honestly when a result is “below LOD” or “outside the applicability domain”</td><td>✓</td><td>✓</td></tr><tr><td class="c">C8</td><td>Prepare your group’s W17 model report card</td><td>✓</td><td>✓</td></tr></tbody></table><p class="cap" style="text-align:left">“Read and explain” = no coding needed: understand the figures in this deck and explain them in your own words; run NB13 if you want to compute it yourself.</p></div></section><section class="slide" data-slide="4" data-section="Focus"><div class="slide-inner"><div class="kicker">Concept overview</div><h2 class="slide-title">Two routes: <span class='hi'>data-driven</span> vs <span class='hi'>chemistry-driven</span></h2><div class="svgwrap" style="margin-top:4px">
+<svg viewBox="0 0 700 300">
+ <text x="350" y="20" text-anchor="middle" class="lblb" font-size="14">One problem, two completely different routes</text>
+ <rect x="270" y="34" width="160" height="46" rx="10" fill="#f6f9fd" stroke="#48597a" stroke-width="2"/>
+ <text x="350" y="62" text-anchor="middle" class="lblb" font-size="12">Spectrum of the unknown powder</text>
+ <path d="M310 80 L170 110" stroke="#1f6feb" stroke-width="2" marker-end="url(#arw)"/>
+ <path d="M390 80 L530 110" stroke="#d9822b" stroke-width="2" marker-end="url(#arw)"/>
+ <rect x="30" y="110" width="230" height="60" rx="10" fill="#e7f0fe" stroke="#1f6feb" stroke-width="2"/>
+ <text x="145" y="134" text-anchor="middle" class="lblb" fill="#1f6feb" font-size="13">A · PLS (data-driven)</text>
+ <text x="145" y="154" text-anchor="middle" class="lbl" font-size="11">Learns from 25 “known-ratio” blends × 2 scans</text>
+ <rect x="440" y="110" width="230" height="60" rx="10" fill="#fbeede" stroke="#d9822b" stroke-width="2"/>
+ <text x="555" y="134" text-anchor="middle" class="lblb" fill="#d9822b" font-size="13">B · NNLS / CLS (chemistry-driven)</text>
+ <text x="555" y="154" text-anchor="middle" class="lbl" style="font-size:12px">Non-negative fit using only pure-component reference spectra</text>
+ <path d="M145 170 L145 200" stroke="#1f6feb" stroke-width="2" marker-end="url(#arw)"/>
+ <path d="M555 170 L555 200" stroke="#d9822b" stroke-width="2" marker-end="url(#arw)"/>
+ <rect x="30" y="200" width="230" height="56" rx="10" fill="#ffffff" stroke="#1f6feb" stroke-width="1.6"/>
+ <text x="145" y="222" text-anchor="middle" class="lbl" font-size="11">Needs a representative calibration set</text>
+ <text x="145" y="240" text-anchor="middle" class="lbl" font-size="11">The calibration set can absorb matrix effects</text>
+ <rect x="440" y="200" width="230" height="56" rx="10" fill="#ffffff" stroke="#d9822b" stroke-width="1.6"/>
+ <text x="555" y="222" text-anchor="middle" class="lbl" font-size="11">No separate calibration set needed</text>
+ <text x="555" y="240" text-anchor="middle" class="lbl" font-size="11">Coefficients = relative contribution of each pure component</text>
+ <text x="350" y="285" text-anchor="middle" class="lblb" font-size="12">Today’s task: run both routes and let the data answer “which is better, and why”</text>
+ <defs><marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+   <path d="M0 0 L8 4 L0 8 Z" fill="#48597a"/></marker></defs>
+</svg></div></div></section><section class="slide" data-slide="5" data-section="Focus"><div class="slide-inner"><div class="kicker">Data compilation (C1)</div><h2 class="slide-title">Latin-square preparation × rotating measurement → <span class='hi'>25 blends × 2 scans</span></h2><div class="grid2" style="margin-top:6px"><div><table class="cmp" style="font-size:.8rem;text-align:center"><thead><tr><th>Aspartame \ Sucralose</th><th>0%</th><th>2.5%</th><th>5%</th><th>7.5%</th><th>10%</th></tr></thead><tbody><tr><td class="c">0%</td><td style="color:#1f6feb;font-weight:800">G1</td><td style="color:#d9822b;font-weight:800">G2</td><td style="color:#2e9d5b;font-weight:800">G3</td><td style="color:#8a5cd6;font-weight:800">G4</td><td style="color:#d94f4f;font-weight:800">G5</td></tr><tr><td class="c">2.5%</td><td style="color:#d94f4f;font-weight:800">G5</td><td style="color:#1f6feb;font-weight:800">G1</td><td style="color:#d9822b;font-weight:800">G2</td><td style="color:#2e9d5b;font-weight:800">G3</td><td style="color:#8a5cd6;font-weight:800">G4</td></tr><tr><td class="c">5%</td><td style="color:#8a5cd6;font-weight:800">G4</td><td style="color:#d94f4f;font-weight:800">G5</td><td style="color:#1f6feb;font-weight:800">G1</td><td style="color:#d9822b;font-weight:800">G2</td><td style="color:#2e9d5b;font-weight:800">G3</td></tr><tr><td class="c">7.5%</td><td style="color:#2e9d5b;font-weight:800">G3</td><td style="color:#8a5cd6;font-weight:800">G4</td><td style="color:#d94f4f;font-weight:800">G5</td><td style="color:#1f6feb;font-weight:800">G1</td><td style="color:#d9822b;font-weight:800">G2</td></tr><tr><td class="c">10%</td><td style="color:#d9822b;font-weight:800">G2</td><td style="color:#2e9d5b;font-weight:800">G3</td><td style="color:#8a5cd6;font-weight:800">G4</td><td style="color:#d94f4f;font-weight:800">G5</td><td style="color:#1f6feb;font-weight:800">G1</td></tr></tbody></table><p class="cap" style="text-align:left">Each cell shows the group that prepared that blend: within each group’s 5 blends, each of the 5 aspartame levels appears once and each of the 5 sucralose levels also appears once (<a class="no-nav" href="../w15_sweetener_prep/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W15 ↗</a>).</p></div><ul class="clean" style="font-size:.86rem"><li><strong>Rotating measurement:</strong> 25 calibration bottles (CAL-00…24) + the TA’s 7 blind-sample bottles (BLIND, concentrations between grid points) = 32 bottles, shuffled with Excel =RAND() onto 6 sample racks that rotate through 6 stations (NIR-G1…G5 + Raman 785) → every instrument measures all 32 bottles</li><li><strong>Replicates:</strong> each bottle is re-loaded and scanned 2 times on every instrument, saved separately and not averaged → 50 calibration + 14 blind-sample spectra per instrument</li><li><strong>Orthogonality check:</strong> corr(Y<sub>aspartame</sub>, Y<sub>sucralose</sub>) = <b>0.0000</b>: the two targets are uncorrelated, so the model can tell which is which (Excel: on the 25 blends, use <code>=CORREL(aspartame column, sucralose column)</code>)</li><li><strong>Grouped cross-validation:</strong> the 2 spectra of the same bottle are always held out together (grouped by sample_id, 25 folds); otherwise you are peeking at the answer first (<a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 ↗</a>). The group column in the uploaded file is the preparation group; do not use it for grouping</li></ul></div><p class="cap">The NB13/OR16 demo data = the 50 + 14 spectra from one instrument (simulated Raman 785), in the same format as your uploads; the pure-component reference spectra are reused from W10, the commercial samples from W11, and W15 has no re-measurement.</p></div></section><section class="slide" data-slide="6" data-section="Focus"><div class="slide-inner"><div class="kicker">One model per y? (C2)</div><h2 class="slide-title"><span class='hi'>PLS1</span> vs PLS2</h2><div class="grid2" style="margin-top:10px"><div class="card b"><div class="ic">1️⃣</div><div class="ct">PLS1: one model per y</div><div class="cb">One model for aspartame and another for sucralose, each choosing its own number of latent variables (LV) by RMSECV. Today both picked <b>4</b> LV (a coincidence; not always the same).</div></div><div class="card a"><div class="ic">2️⃣</div><div class="ct">PLS2: several y share one set of LV</div><div class="cb">Both y are modeled together and share the same LV. Which is better, PLS1 or PLS2, must be compared with the same grouped cross-validation; you cannot decide from the correlation between the y alone.</div></div></div><div class="note" style="margin-top:14px">In this design corr(Y<sub>aspartame</sub>, Y<sub>sucralose</sub>) = 0, but that alone cannot show that PLS2 has no advantage; today we only demonstrate and compare <strong>two PLS1 models</strong>, with no PLS2 comparison experiment. Latent variables (LV) = the few directions PLS condenses from the whole spectrum that are most related to y (<a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 ↗</a>).</div><p class="subtitle" style="margin-top:10px"><strong>Building the second PLS1 in Orange:</strong> after finishing aspartame in OR16, double-click File and choose <code>or16_sucralose.csv</code>; leave every other widget unchanged.</p></div></section><section class="slide" data-slide="7" data-section="Focus" data-chart="rmsecv"><div class="slide-inner"><div class="kicker">Data · Model selection</div><h2 class="slide-title">Preprocessing and number of LV: choose the model by <span class='hi'>RMSECV</span> (aspartame)</h2><div class="grid2-1" style="margin-top:6px"><div class="chartbox" style="height:44vh"><canvas id="chart_rmsecv"></canvas></div><ul class="clean" style="font-size:.88rem"><li><strong>Autoscale:</strong> PLS by default subtracts the mean and divides by the standard deviation at every wavenumber, so each wavenumber starts on equal footing. Both curves include this step.</li><li><strong>Blue = mean-centering + PLS default autoscale;</strong> orange = baseline subtraction + area normalization first. Compare the <strong>lowest points</strong>: blue 0.711%, orange 1.306% → choose blue.</li><li><strong>Lowest at LV = 4</strong> (RMSECV 0.711%); adding more LV makes RMSECV rise again = starting to fit noise (overfitting, <a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 ↗</a>).</li></ul></div><p class="cap">RMSECV is computed with grouped cross-validation (25 folds; the 2 spectra of one blend are held out together). The sucralose model also picks LV = 4.</p></div></section><section class="slide" data-slide="8" data-section="Focus"><div class="slide-inner"><div class="kicker">Data · Model report card (C2)</div>
+<h2 class="slide-title">PLS1 models: <span class="hi">predicted vs actual</span></h2>
+<div class="grid2-1" style="margin-top:6px">
+<div class="chartbox" style="height:44vh"><canvas id="scatterChart"></canvas></div>
+<div><table class="cmp" style="font-size:.8rem"><thead><tr><th></th><th>Aspartame</th><th>Sucralose</th></tr></thead><tbody><tr><td class="c">Preprocessing</td><td colspan="2">Mean-centering + PLS default autoscale</td></tr><tr><td class="c">Number of LV</td><td>4</td><td>4</td></tr><tr><td class="c">RMSEC (calibration set predicting itself)</td><td>0.401%</td><td>0.311%</td></tr><tr><td class="c">RMSECV (grouped cross-validation)</td><td>0.711%</td><td>0.630%</td></tr><tr><td class="c">RMSEP (7 blind samples × 2 = 14 spectra)</td><td>0.557%</td><td>0.503%</td></tr><tr><td class="c">bias (mean error on blind samples)</td><td>-0.166%</td><td>+0.405%</td></tr><tr><td class="c">RPD (grade)</td><td>2.78 (screening)</td><td>3.80 (QC quantification)</td></tr></tbody></table>
+<p class="cap" style="text-align:left;margin-top:6px">RPD = SD of the blind samples’ actual values ÷ RMSEP. One scale for the whole course: &lt;2 insufficient, 2–2.5 rough screening, 2.5–3 screening, 3–5 QC quantification, &gt;5 excellent (<a class="no-nav" href="../w13_pls_acetic/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W13 ↗</a>). Most of the sucralose RMSEP comes from bias (overall about 0.4% too high).</p></div></div>
+<script>(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('scatterChart'); if(!el||el._done) return; el._done=1;
+    var cal=[{"x": 0.0, "y": -0.013}, {"x": 0.0, "y": -0.415}, {"x": 0.0, "y": 0.934}, {"x": 0.0, "y": 0.212}, {"x": 0.0, "y": -0.9}, {"x": 0.0, "y": -0.563}, {"x": 0.0, "y": 1.5}, {"x": 0.0, "y": 0.789}, {"x": 0.0, "y": 0.673}, {"x": 0.0, "y": -0.206}, {"x": 2.5, "y": 2.36}, {"x": 2.5, "y": 3.007}, {"x": 2.5, "y": 1.864}, {"x": 2.5, "y": 2.022}, {"x": 2.5, "y": 3.13}, {"x": 2.5, "y": 1.545}, {"x": 2.5, "y": 1.793}, {"x": 2.5, "y": 2.286}, {"x": 2.5, "y": 3.04}, {"x": 2.5, "y": 2.579}, {"x": 5.0, "y": 5.416}, {"x": 5.0, "y": 5.124}, {"x": 5.0, "y": 5.238}, {"x": 5.0, "y": 5.237}, {"x": 5.0, "y": 4.856}, {"x": 5.0, "y": 4.664}, {"x": 5.0, "y": 6.112}, {"x": 5.0, "y": 5.44}, {"x": 5.0, "y": 6.051}, {"x": 5.0, "y": 5.729}, {"x": 7.5, "y": 6.03}, {"x": 7.5, "y": 7.434}, {"x": 7.5, "y": 7.899}, {"x": 7.5, "y": 7.799}, {"x": 7.5, "y": 8.249}, {"x": 7.5, "y": 8.289}, {"x": 7.5, "y": 7.799}, {"x": 7.5, "y": 6.148}, {"x": 7.5, "y": 7.651}, {"x": 7.5, "y": 7.358}, {"x": 10.0, "y": 9.806}, {"x": 10.0, "y": 9.387}, {"x": 10.0, "y": 9.339}, {"x": 10.0, "y": 9.689}, {"x": 10.0, "y": 9.374}, {"x": 10.0, "y": 9.265}, {"x": 10.0, "y": 9.19}, {"x": 10.0, "y": 10.254}, {"x": 10.0, "y": 8.133}, {"x": 10.0, "y": 8.78}],
+        blind=[{"x": 3.55, "y": 3.259}, {"x": 3.55, "y": 4.14}, {"x": 4.84, "y": 4.525}, {"x": 4.84, "y": 4.258}, {"x": 6.71, "y": 7.022}, {"x": 6.71, "y": 7.322}, {"x": 6.22, "y": 5.303}, {"x": 6.22, "y": 6.613}, {"x": 7.73, "y": 6.685}, {"x": 7.73, "y": 7.465}, {"x": 7.28, "y": 6.596}, {"x": 7.28, "y": 7.153}, {"x": 4.16, "y": 3.735}, {"x": 4.16, "y": 4.585}];
+    new Chart(el,{type:'scatter',
+      data:{datasets:[
+        {label:'Calibration (grouped-CV predictions)',data:cal,backgroundColor:'#1f6feb',pointRadius:4},
+        {label:'TA blind samples (independent validation)',data:blind,backgroundColor:'#d9822b',pointRadius:6,pointStyle:'triangle'},
+        {type:'line',label:'1:1 line',data:[{x:0,y:0},{x:10,y:10}],borderColor:'#8493ad',borderDash:[6,4],borderWidth:1.6,pointRadius:0,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:10}}}},
+        scales:{x:{type:'linear',title:{display:true,text:'Actual aspartame (%)'},min:-1,max:11},
+                y:{type:'linear',title:{display:true,text:'PLS-predicted aspartame (%)'},min:-1,max:11}}}
+    });
+  }
+  draw();
+})();</script></div></section><section class="slide" data-slide="9" data-section="Focus"><div class="slide-inner"><div class="kicker">Closure (C3)</div><h2 class="slide-title">The three components always add up to <span class='hi'>100%</span></h2><div class="grid2" style="margin-top:8px"><div><div class="eq" style="font-size:.95rem">Erythritol % = 100 − aspartame % − sucralose %<br>Example: aspartame 7.5 + sucralose 5 → erythritol <b>87.5%</b></div><table class="cmp" style="font-size:.82rem;margin-top:10px;text-align:center"><thead><tr><th>Aspartame %</th><th>0</th><th>2.5</th><th>5</th><th>7.5</th><th>10</th></tr></thead><tbody><tr><td class="c">Sucralose %</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td></tr><tr><td class="c">Erythritol %</td><td><b>95</b></td><td><b>92.5</b></td><td><b>90</b></td><td><b>87.5</b></td><td><b>85</b></td></tr></tbody></table></div><ul class="clean" style="font-size:.92rem"><li>A little more aspartame means a little less erythritol, <strong>always</strong> → the erythritol peaks “shrink”, which itself signals “there is more sweetener”</li><li>So PLS also borrows erythritol bands to predict → those bands get a high VIP (next slide)</li><li>This is an <strong>indirect clue</strong>, not aspartame’s own signal; switch the filler to maltodextrin and the clue fails immediately</li></ul></div></div></section><section class="slide" data-slide="10" data-section="Focus"><div class="slide-inner"><div class="kicker">Chemical cross-check (C3)</div>
+<h2 class="slide-title"><span class="hi">VIP</span> vs Raman shift: is the model picking up the “right” signal?</h2>
+<div class="chartbox" style="height:40vh"><canvas id="vipChart"></canvas></div>
+<div class="note" style="margin-top:10px">VIP = each wavenumber’s importance for the prediction; VIP&gt;1 = above average (<a class="no-nav" href="../w14_vip_plsda/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W14 ↗</a>). <strong>Good news:</strong> the highest point is at the <b>1000 cm⁻¹ grid point</b> (closest to the ring-breathing mode of the benzene ring at 1003 cm⁻¹, <a class="no-nav" href="../w11_preprocess_similarity/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W11 ↗</a>, VIP=2.69): the model relies mainly on the right chemical signal.<br> <strong>Watch out:</strong> the erythritol bands (880/1050/1290 cm⁻¹) also have VIP <b>1.67/1.79/1.45</b>, all above 1. This is the <strong>closure</strong> from the previous slide: an indirect but real association that becomes unreliable once the filler changes.</div>
+<script>(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('vipChart'); if(!el||el._done) return; el._done=1;
+    var labels=["400", "420", "440", "460", "480", "500", "520", "540", "560", "580", "600", "620", "640", "660", "680", "700", "720", "740", "760", "780", "800", "820", "840", "860", "880", "900", "920", "940", "960", "980", "1000", "1020", "1040", "1060", "1080", "1100", "1120", "1140", "1160", "1180", "1200", "1220", "1240", "1260", "1280", "1300", "1320", "1340", "1360", "1380", "1400", "1420", "1440", "1460", "1480", "1500", "1520", "1540", "1560", "1580", "1600", "1620", "1640", "1660", "1680", "1700", "1720", "1740", "1760", "1780", "1800"], vip=[0.62, 0.602, 0.571, 0.612, 0.61, 0.625, 0.597, 0.681, 0.579, 0.613, 0.593, 0.904, 1.36, 1.382, 0.92, 0.565, 0.622, 0.696, 1.0, 1.277, 1.034, 0.725, 1.161, 1.54, 1.674, 1.685, 1.107, 0.718, 0.596, 0.68, 2.694, 1.294, 1.788, 1.881, 1.7, 1.146, 0.626, 0.637, 0.593, 0.642, 0.66, 0.661, 0.759, 1.149, 1.449, 1.443, 0.972, 0.787, 0.757, 0.674, 0.611, 0.638, 0.634, 0.639, 0.627, 0.662, 0.62, 0.599, 0.688, 0.703, 1.719, 1.448, 0.781, 0.607, 0.604, 0.642, 0.731, 0.684, 0.663, 0.646, 0.605], peakIdx=30;
+    var colors=vip.map(function(v,i){return i===peakIdx?'#d94f4f':'#1f6feb'});
+    var radii=vip.map(function(v,i){return i===peakIdx?7:2});
+    new Chart(el,{
+      data:{labels:labels,datasets:[
+        {type:'line',label:'VIP (aspartame model)','data':vip,borderColor:'#1f6feb',backgroundColor:'#1f6feb',
+          pointBackgroundColor:colors,pointBorderColor:colors,pointRadius:radii,borderWidth:2,fill:false,tension:.15},
+        {type:'line',label:'VIP=1 threshold','data':labels.map(function(){return 1}),borderColor:'#d9a32b',borderDash:[6,4],pointRadius:0,borderWidth:1.6,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:10}}}},
+        scales:{x:{title:{display:true,text:'Raman shift (cm⁻¹, 20 cm⁻¹ per bin)'},ticks:{maxTicksLimit:14}},y:{title:{display:true,text:'VIP'}}}}
+    });
+  }
+  draw();
+})();</script></div></section><section class="slide" data-slide="11" data-section="Focus"><div class="slide-inner"><div class="kicker">How does Method B calculate? (C4)</div><h2 class="slide-title">Least squares: make the sum of <span class='hi'>(measured − fitted)²</span> as small as possible</h2><div class="grid2" style="margin-top:8px"><div><table class="cmp" style="font-size:.85rem;text-align:center"><thead><tr><th>Wavenumber</th><th>1</th><th>2</th><th>3</th></tr></thead><tbody><tr><td class="c">Pure component A</td><td>1</td><td>0</td><td>0.2</td></tr><tr><td class="c">Pure component B</td><td>0</td><td>1</td><td>0.5</td></tr><tr><td class="c">Unknown sample y</td><td>0.3</td><td>0.6</td><td>0.36</td></tr></tbody></table><div class="eq" style="font-size:.9rem;margin-top:10px">Try c<sub>A</sub>=0.3, c<sub>B</sub>=0.6:<br>fitted value at wavenumber 3 = 0.3×0.2 + 0.6×0.5 = <b>0.36</b> ✓<br>(measured − fitted)² is 0 at all three wavenumbers → sum = 0, the minimum</div></div><ul class="clean" style="font-size:.9rem"><li><strong>Least squares:</strong> find the coefficients c that make the sum (Σ) of (measured − fitted)² over all wavenumbers smallest; the computer returns exactly c = (0.3, 0.6)</li><li><strong>Non-negative (NNLS):</strong> require c ≥ 0, because a concentration cannot be negative</li><li><strong>Real spectra:</strong> 71 wavenumbers, 3 pure-component references + 1 offset (a baseline raised uniformly across the whole spectrum); the computer does the same thing</li><li><strong>Do not vector-normalize the reference spectra first:</strong> c is converted into proportions using the references’ original heights, and normalizing each one would change the proportions</li></ul></div></div></section><section class="slide" data-slide="12" data-section="Focus"><div class="slide-inner"><div class="kicker">Method B: NNLS/CLS results (C4)</div><h2 class="slide-title">No calibration set: <span class='hi'>fit the pure-component spectra</span> directly</h2><div class="grid2" style="margin-top:8px"><div><div class="eq" style="text-align:left;font-size:.9rem">Unknown spectrum ≈ c₁·aspartame reference + c₂·sucralose reference + c₃·erythritol reference + offset, c ≥ 0</div><ul class="clean" style="margin-top:10px;font-size:.9rem"><li><strong>Pro:</strong> no calibration set needed; c is each pure component’s relative contribution, with a clear physical meaning</li><li><strong>Con:</strong> assumes spectra are a <strong>linear superposition</strong>; slight detector saturation, particle size, or baseline differences break the assumption</li><li><strong>Cannot handle:</strong> components missing from the reference library (such as the dextrin in commercial sweeteners); NNLS is forced to fit with only the three references it has</li></ul></div><div><table class="cmp" style="font-size:.88rem"><thead><tr><th>Method (NB13)</th><th>RMSEP aspartame</th><th>RMSEP sucralose</th></tr></thead><tbody><tr><td class="c">PLS1 (LV 4/4)</td><td style="color:var(--ok);font-weight:800">0.557%</td><td style="color:var(--ok);font-weight:800">0.503%</td></tr><tr><td class="c">NNLS/CLS (3 components + offset)</td><td style="color:var(--bad);font-weight:800">0.978%</td><td style="color:var(--bad);font-weight:800">0.768%</td></tr></tbody></table><p class="cap" style="text-align:left;margin-top:8px">Same 14 blind-sample spectra. PLS has already “seen” real variation such as slight detector saturation during calibration, so its error is smaller; NNLS does not depend on the calibration range, but it also fails when a new component is not in the reference library.</p></div></div></div></section><section class="slide" data-slide="13" data-section="Focus" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">Mini-game ①</span><span class="gt">Does this sound more like a PLS strength or an NNLS strength?</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">Sort the 8 statements below into “PLS strengths” or “NNLS strengths.”</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">Check answer</button><button class="btn ghost" id="g1reset">Reset</button></div></div></div></section><section class="slide" data-slide="14" data-section="Focus" data-chart="instr"><div class="slide-inner"><div class="kicker">Simulation · Instrument comparison</div><h2 class="slide-title">The worse the signal-to-noise ratio, the larger the RMSEP (<span class='hi'>simulated</span>)</h2><div class="grid2-1" style="margin-top:6px"><div class="chartbox" style="height:42vh"><canvas id="chart_instr"></canvas></div><ul class="clean" style="font-size:.88rem"><li><strong>This plot is a simulation:</strong> it uses the same spectrum-generation method as NB13 with only the noise σ increased; each σ is redrawn 30 times and the median taken. It is not a measurement from the classroom instruments and cannot be compared directly with the report card.</li><li>σ=0.006 is the noise level of the NB13 data: median 0.54%; NB13’s single run of 0.557% falls within the middle 80% of the 30 runs (0.39–0.75%).</li><li>With only 7 blind samples, RMSEP itself fluctuates → when comparing groups’ instruments in W17, only a large difference counts as a real difference.</li></ul></div></div></section><section class="slide" data-slide="15" data-section="Focus"><div class="slide-inner"><div class="kicker">Approximate LOD/LOQ (C5)</div><h2 class="slide-title">Carry <a class="no-nav" href="../w07_sugar/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W07 ↗</a>’s <span class='hi'>3.3σ/slope</span> rule over to PLS</h2><div class="grid2" style="margin-top:8px"><div><div class="eq" style="font-size:.95rem">LOD ≈ 3.3 × σ₀ ÷ slope   LOQ ≈ 10 × σ₀ ÷ slope</div><ul class="clean" style="font-size:.88rem;margin-top:10px"><li><strong>σ₀:</strong> SD of the cross-validated predictions for the 10 spectra with 0% aspartame (5 sucralose levels × 2 scans) = <b>0.7586%</b>, which already includes interference from sucralose</li><li><strong>Slope:</strong> slope of the “predicted vs actual” regression line = <b>0.9338</b> (ideal is 1)</li></ul><div class="eq" style="font-size:.9rem;margin-top:8px">LOD = 3.3 × 0.7586 ÷ 0.9338 = <b>2.68%</b><br>LOQ = 10 × 0.7586 ÷ 0.9338 = <b>8.12%</b></div></div><div class="note">LOD = the lowest concentration reliably distinguishable from the blank; LOQ = the lowest concentration that can be reliably <strong>quantified</strong>.<br><br>The aspartame LOQ of 8.12% is already close to the 10% upper limit of calibration → only about 8–10% can be formally reported as a number, and <strong>most of the range is only “semi-quantitative”</strong>. The same applies to sucralose: LOD 2.86%, LOQ 8.67%.<br><br>This is a simplified estimate for teaching, not a formal method validation.</div></div></div></section><section class="slide" data-slide="16" data-section="Focus"><div class="slide-inner"><div class="kicker">Applicability domain (C6)</div><h2 class="slide-title">Does the new sample <span class='hi'>look like</span> the calibration set? T²/Q from <a class="no-nav" href="../w14_vip_plsda/index.en.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">W14 ↗</a></h2><div class="grid2" style="margin-top:8px"><div style="display:grid;gap:12px"><div class="card b"><div class="ic">📏</div><div class="ct">Hotelling T²: how far from the center within the model</div><div class="cb">Run PCA on the 50 calibration spectra (mean-centering only) and keep 3 principal components (90.7% of variance explained). Large T² = extreme component ratios, outside the combinations common in the calibration set.</div></div><div class="card a"><div class="ic">🧩</div><div class="ct">Q residual: what the model cannot reconstruct</div><div class="cb">The spectral residual that 3 principal components cannot rebuild. Large Q = something the calibration set never saw (for example a new filler).</div></div></div><div><div class="eq" style="font-size:.88rem;text-align:left">T² limit = 3×(50−1)÷(50−3) × F<sub>0.95</sub>(3, 47)<br> = 3.128 × 2.802 = <b>8.765</b><br><br>Q limit (Jackson–Mudholkar) = formula using the variance of the 4th and later principal components = <b>0.00439</b></div><p class="subtitle" style="margin-top:10px;font-size:.9rem">Both limits are 95% upper bounds computed from statistical distributions (same as W14 and NB13), not percentiles of the sorted calibration set. A new sample is outside the applicability domain if T² <strong>or</strong> Q exceeds its limit.</p></div></div></div></section><section class="slide" data-slide="17" data-section="Focus"><div class="slide-inner"><div class="kicker">Commercial tabletop sweetener case (C6·C7)</div><h2 class="slide-title">Label says 1.8%, model says <span class='hi'>48.2%</span>: can we report it?</h2><div class="grid2-1" style="margin-top:6px"><div><table class="cmp" style="font-size:.85rem"><tbody><tr><td class="c">Labeled aspartame</td><td>1.8% (filler is dextrin, not erythritol)</td></tr><tr><td class="c">PLS direct prediction</td><td style="color:var(--bad);font-weight:800">48.2%</td></tr><tr><td class="c">Hotelling T²</td><td style="color:var(--bad);font-weight:800">223.6 (limit 8.765, about 26× over)</td></tr><tr><td class="c">Q residual</td><td style="color:var(--bad);font-weight:800">3.13 (limit 0.00439, about 713× over)</td></tr><tr><td class="c">LOD/LOQ</td><td>2.68%/8.12%</td></tr></tbody></table><p class="cap" style="text-align:left">Dextrin’s spectrum is completely different from the erythritol in the calibration set, so the model is pulled into extrapolating to an absurd 48.2%.</p></div><div class="note"><strong>Three gates for honest reporting:</strong><br>① <strong>Check T²/Q first:</strong> if both exceed their limits → write “outside the model’s applicability domain; no value reported”<br>② <strong>If it is within the applicability domain:</strong> check whether the model’s <strong>predicted value</strong> is below the LOD of 2.68%; only if the prediction is below the LOD, write “&lt; LOD (2.68%)” per the rule; you cannot conclude “not detected” just because the package label says 1.8%<br>③ <strong>Between LOD and LOQ:</strong> you may report a number, but label it “semi-quantitative” and attach the RMSEP</div></div></div></section><section class="slide" data-slide="18" data-section="Focus" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">Mini-game ②</span><span class="gt">Can this prediction be trusted?</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">Sort the 6 scenarios into “Can trust” or “Cannot trust directly.”</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">Check answer</button><button class="btn ghost" id="g3reset">Reset</button></div></div></div></section><section class="slide" data-slide="19" data-section="Focus" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">Mini-game ③</span><span class="gt">Order the modeling workflow</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">Use ▲▼ to put the 6 steps, from compiling data to judging a commercial sample, in the correct order.</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">Check order</button><button class="btn ghost" id="g4reset">Shuffle</button></div></div></div></section><section class="slide" data-slide="20" data-section="Focus"><div class="slide-inner"><div class="kicker">Division of labor between Orange and Colab (C1·C2)</div><h2 class="slide-title">OR16 does PLS; for VIP/NNLS/LOD/T²Q use NB13 or read this deck</h2><table class="cmp" style="margin-top:8px;font-size:.82rem"><thead><tr><th>Step</th><th>Beginner: Orange OR16</th><th>Advanced: Colab NB13</th></tr></thead><tbody><tr><td class="c">Load data</td><td>File: <code>or16_aspartame.csv</code> (for sucralose choose <code>or16_sucralose.csv</code>)</td><td>§1 Read CSV</td></tr><tr><td class="c">Split calibration/blind</td><td>Select Rows: split = calibration (the rest = blind samples)</td><td>§2</td></tr><tr><td class="c">Model + RMSECV</td><td>PLS (4 LV) → Test and Score: cross-validation grouped by sample_id → RMSECV 0.711%</td><td>§4–5 LeaveOneGroupOut</td></tr><tr><td class="c">Blind-sample RMSEP</td><td>Test and Score: train on the calibration set, test on the blind samples → RMSEP 0.557%; use Scatter Plot to see predicted vs actual</td><td>§5</td></tr><tr><td class="c">VIP, NNLS, LOD, T²/Q</td><td>Not in the Orange workflow → just read the results in this deck</td><td>§6–9 Compute it yourself</td></tr></tbody></table><p class="cap">OR16 uses the same data as NB13, so the RMSECV/RMSEP computed in Orange match the report card in this deck.</p></div></section><section class="slide" data-slide="21" data-section="Focus"><div class="slide-inner"><div class="kicker">4-hour lab schedule</div><h2 class="slide-title">Lecture → Combine and model → Read results → Decide</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Time</th><th>Contents</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:50</td><td>Lecture: data compilation and grouped cross-validation, PLS1 vs PLS2, closure and VIP, NNLS, LOD/LOQ, T²/Q applicability domain</td></tr>
+    <tr><td class="c">0:50–1:50</td><td>Combine the whole class’s data and check corr(Y₁,Y₂); build two PLS1 models (aspartame, sucralose) in Orange OR16 and choose LV by RMSECV</td></tr>
+    <tr><td class="c">1:50–2:30</td><td>VIP/NNLS: read the results in this deck (advanced: run NB13 §6–7), match to functional groups, compare PLS vs NNLS</td></tr>
+    <tr><td class="c">2:30–3:30</td><td>Blind-sample RMSEP/bias/RPD; T²/Q and LOD judgments for commercial sweeteners</td></tr>
+    <tr><td class="c">3:30–4:00</td><td>Prepare your group’s W17 model report card</td></tr>
+    </tbody></table></div></section><section class="slide" data-slide="22" data-section="Focus" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">Mini-game ④</span><span class="gt">Modeling concepts: instant quiz</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="23" data-section="Focus" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">Mini-game ⑤</span><span class="gt">Decision challenge: reading a model</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="24" data-section="Focus" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">Mini-game ⑥</span><span class="gt">Calculation challenge: RMSEP</span><span class="score" id="g6score">Unanswered</span></div><div class="game-q">Below are the actual and predicted values (unit: %) from the aspartame PLS1 model for 5 of the NB13 blind samples (first scan):<br>Actual 3.55/Predicted 3.26; Actual 4.84/Predicted 4.53; Actual 6.71/Predicted 7.02; Actual 6.22/Predicted 5.30; Actual 7.73/Predicted 6.68 <br>Calculate the RMSEP of these 5. Formula: RMSEP = √(Σ(predicted−actual)²÷n). (Using only 5 points, the answer will not exactly equal the 0.557% on the report card, which uses 14 spectra.)</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span><button class="btn" id="g6check">Check answer</button><button class="btn ghost" id="g6hint">Hint</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="25" data-section="Act"><div class="slide-inner"><div class="kicker">Homework</div><h2 class="slide-title">Orange OR16 (beginner) / Colab NB13 (advanced)</h2><div class="grid2-1" style="margin-top:10px;align-items:start"><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><div class="card b"><div class="ic">📥</div><div class="ct">Compile data</div><div class="cb">Your instrument’s 25 blends × 2 spectra + the actual proportions from W15</div></div><div class="card a"><div class="ic">📊</div><div class="ct">Two PLS1 models</div><div class="cb">Build in OR16; record LV, RMSECV, RMSEP</div></div><div class="card g"><div class="ic">🔬</div><div class="ct">VIP/NNLS</div><div class="cb">Beginner: cite this deck’s results and explain them; advanced: NB13</div></div><div class="card b"><div class="ic">🧾</div><div class="ct">LOD/applicability domain</div><div class="cb">Write down the LOD/LOQ and how you would report the commercial sample</div></div></div><style>.hwtbl td,.hwtbl th{padding:5px 8px!important;line-height:1.3}.hwtbl td:last-child{white-space:nowrap}</style><table class="cmp hwtbl" style="font-size:.76rem"><thead><tr><th>W17 report card fields</th><th>Example (NB13 demo data)</th><th>Our group</th></tr></thead><tbody><tr><td class="c">Instrument</td><td>Simulated Raman 785</td><td>__</td></tr><tr><td class="c">Preprocessing</td><td>Mean-centering + PLS default autoscale</td><td>__</td></tr><tr><td class="c">LV (Asp/Suc)</td><td>4/4</td><td>__</td></tr><tr><td class="c">RMSEC/CV/EP (Asp)</td><td>0.40/0.71/0.56%</td><td>__</td></tr><tr><td class="c">bias/RPD (Asp)</td><td>-0.17%/2.78 (screening)</td><td>__</td></tr><tr><td class="c">LOD/LOQ (Asp)</td><td>2.68/8.12%</td><td>__</td></tr><tr><td class="c">VIP–band agreement</td><td>Highest at 1000 cm⁻¹ ✓; erythritol bands &gt;1 (closure)</td><td>__</td></tr><tr><td class="c">NNLS comparison</td><td>PLS better (0.56 vs 0.98%)</td><td>__</td></tr><tr><td class="c">Commercial sample</td><td>T² and Q both exceed limits; no value reported</td><td>__</td></tr></tbody></table></div><p class="subtitle" style="margin-top:10px"><a class="no-nav" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB13_sweetener_model.ipynb" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open NB13 in Colab ↗</a><span style="white-space:nowrap"> · Beginner (no coding): <a class="no-nav" href="../../tools.en.html#orange" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Orange workflow OR16 ↗</a></span>; fill your group’s instrument numbers into the “Our group” column.</p></div></section><section class="slide" data-slide="26" data-section="Act"><div class="slide-inner"><div class="kicker">Self-check</div><h2 class="slide-title">By the end of today you should be able to…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>C1 Combine the calibration set (Latin square + rotation, 25 blends × 2 scans), check corr≈0, grouped cross-validation by sample_id</li><li data-k><span class="bx">✓</span>C2 Choose LV by RMSECV, build two PLS1 models, interpret RMSEC/CV/EP and bias, and judge the grade with RPD</li><li data-k><span class="bx">✓</span>C3 Read and explain the VIP plot and closure (compute it yourself = advanced NB13)</li><li data-k><span class="bx">✓</span>C4 Read and explain how NNLS/CLS is calculated and its pros and cons (compute it yourself = advanced NB13)</li><li data-k><span class="bx">✓</span>C5 Explain how multivariate LOD/LOQ (3.3σ₀/slope) is estimated and what it means</li><li data-k><span class="bx">✓</span>C6 Read and explain the T²/Q applicability-domain judgment (compute it yourself = advanced NB13)</li><li data-k><span class="bx">✓</span>C7 Report honestly when the result is “&lt; LOD” or “outside the applicability domain”; do not force a number</li><li data-k><span class="bx">✓</span>C8 Prepare your group’s W17 model report card</li></ul><p class="subtitle" style="margin-top:12px">Tap to tick — make sure you really can do it.</p></div></section><script>window.CFG={"charts": {"rmsecv": {"type": "line", "yTitle": "RMSECV (%) (x-axis: number of LV)", "zero": true, "labels": ["1", "2", "3", "4", "5", "6", "7", "8"], "datasets": [{"label": "Mean-centering + PLS default autoscale", "data": [2.993, 1.977, 0.766, 0.711, 0.761, 0.785, 0.788, 0.796], "color": "#1f6feb"}, {"label": "Baseline subtraction + area normalization (then autoscale)", "data": [2.353, 1.696, 1.525, 1.419, 1.375, 1.333, 1.338, 1.306], "color": "#d9822b"}]}, "instr": {"type": "bar", "yTitle": "Simulated median RMSEP (%) (x-axis: noise σ)", "zero": true, "labels": ["σ=0.006", "σ=0.010", "σ=0.014", "σ=0.020", "σ=0.026"], "datasets": [{"label": "Aspartame (simulated)", "data": [0.543, 0.874, 1.191, 1.635, 1.979], "color": "#1f6feb"}, {"label": "Sucralose (simulated)", "data": [0.473, 0.691, 0.952, 1.287, 1.59], "color": "#d9822b"}]}}, "bucket": {"g1": {"cats": ["PLS strengths", "NNLS strengths"], "items": [{"t": "Needs 25 calibration blends of known proportions, but can use the information across the whole spectrum", "c": "PLS strengths"}, {"t": "With a sufficiently representative calibration set, it can learn real variation such as slight detector saturation", "c": "PLS strengths"}, {"t": "Can compute VIP to check whether the model is using chemically reasonable bands", "c": "PLS strengths"}, {"t": "Can compute RMSECV by cross-validation and choose the number of LV objectively", "c": "PLS strengths"}, {"t": "Needs no separate calibration set; pure-component reference spectra are enough", "c": "NNLS strengths"}, {"t": "Fitted coefficients are each pure component’s relative contribution, with a clear physical meaning that is easy to explain", "c": "NNLS strengths"}, {"t": "Proportions beyond the 0–10% calibration range (same three components) can still be fitted directly, without recalibration", "c": "NNLS strengths"}, {"t": "Fast and transparent; no statistical procedures such as cross-validation or LV selection", "c": "NNLS strengths"}], "ok": "🎉 All correct! PLS trades “data training” for tolerance of real variation; NNLS trades “chemical knowledge” for needing no calibration set and high interpretability.", "tip": "Hint: “calibration set / VIP / cross-validation” points to PLS; “pure-component reference spectra / coefficients are proportions / no training” points to NNLS."}, "g3": {"cats": ["Can trust", "Cannot trust directly"], "items": [{"t": "Aspartame predicted 9.0% (above the LOQ of 8.1%), within the 0–10% range, T² and Q both within limits", "c": "Can trust"}, {"t": "TA blind sample: same three components, predicted concentration within the calibration range and above that component’s LOQ, T² and Q both within limits", "c": "Can trust"}, {"t": "Sucralose predicted 9.3% (above its LOQ of 8.7%), T² and Q both within limits", "c": "Can trust"}, {"t": "A commercial sweetener uses dextrin as filler, Q = 3.13, far above the limit of 0.00439", "c": "Cannot trust directly"}, {"t": "T² and Q both normal, but predicted 1.5%, below the LOD of 2.68%", "c": "Cannot trust directly"}, {"t": "Aspartame about 15%, outside the 0–10% range of the calibration set (extrapolation)", "c": "Cannot trust directly"}], "ok": "🎉 All correct! Check T²/Q first (is it a kind of sample the calibration set has seen?), then the concentration range and LOD/LOQ; only a sample that passes both gates deserves trust.", "tip": "Hint: if T² or Q exceeds its limit, the value is outside 0–10%, or it is below the LOD, any one of these means you cannot report the number directly."}}, "mcq": {"g2": [{"q": "After combining the whole class’s data, why check corr(Y_aspartame, Y_sucralose) first?", "o": ["It is purely a statistics procedure requirement", "To confirm the design is not confounded: in a 5×5 full factorial Latin-square design the two should be uncorrelated; if it is clearly not 0, the data may have been entered wrongly", "The higher the correlation, the better the model will be", "Only PLS2 needs this check; PLS1 does not"], "a": 1, "e": "The 5×5 full factorial design makes the two targets independent (corr = 0); if the combined data deviate clearly from 0, the blend records or their mapping may be wrong, so go back and check before modeling."}, {"q": "The aspartame model’s VIP also exceeds 1 at the erythritol bands. What is the most likely reason?", "o": ["The model is wrong; the VIP formula is incorrect", "Closure: the three components sum to 100%, so less filler itself carries indirect information that there is more sweetener", "Erythritol itself is also detected by the phenol–sulfuric acid method", "It means the instrument is faulty"], "a": 1, "e": "Aspartame + sucralose + erythritol = 100%; when sweeteners increase, erythritol must decrease, so its bands carry an “indirect but real” association."}, {"q": "Why is this “less filler” clue “not specific”?", "o": ["Because the filler signal is actually unrelated to the sweeteners; it is a coincidence", "Because it is only an indirect association caused by the proportions summing to 100%; with another filler (such as maltodextrin) the clue fails", "Because the filler signal is stronger than the sweetener signal and overwhelms it", "Because erythritol and aspartame have similar chemical structures"], "a": 1, "e": "Closure makes the indirect association look very effective under one particular filler, but it is not detection of the sweetener itself; it fails once the filler changes (commercial sweeteners use dextrin)."}, {"q": "What property of the spectra does NNLS (classical least squares) mainly assume? What happens if it does not hold?", "o": ["Assumes spectra are a linear superposition (each component’s contribution simply adds); if it does not hold, the proportion estimates are systematically biased", "Assumes the spectrum must be baseline-subtracted first, otherwise it cannot be calculated at all", "Assumes the sample contains exactly two components", "NNLS makes no assumptions about the spectra and is always accurate"], "a": 0, "e": "NNLS assumes the observed spectrum = the pure-component spectra added in proportion (+ offset); nonlinearities such as detector saturation and matrix effects break this assumption and shift the proportion estimates."}, {"q": "When modeling aspartame and sucralose together, what is the difference between PLS1 and PLS2?", "o": ["PLS1 builds a separate model for each y and chooses LV for each; PLS2 models several y at once and shares one set of latent directions. Which is better must be compared with the same grouped cross-validation, not judged from the correlation between the y; this course only demonstrates and compares two PLS1 models", "PLS1 can only be used for Raman, PLS2 only for NIR", "PLS2 is always more accurate than PLS1, no exceptions", "They are actually the same algorithm with different names"], "a": 0, "e": "Which of PLS1 and PLS2 is better must be compared with the same grouped cross-validation; you cannot conclude that PLS2 has no advantage just because corr(Y_aspartame,Y_sucralose) = 0; this course demonstrates two PLS1 models and did not run a PLS2 comparison experiment."}], "g5": [{"q": "A sample has T² and Q both within limits, but the aspartame prediction is 1.5%, below the LOD of 2.68%. What is the most honest way to report it?", "o": ["Report “< LOD (2.68%)” instead of forcing a number that looks precise", "Report 1.5% directly, because it was calculated “objectively”", "Round the prediction to 0 and treat the component as absent", "Refuse to analyze and report nothing"], "a": 0, "e": "Below the LOD, the number the model outputs no longer has reliable quantitative meaning; the honest approach is to write “< LOD” and give the LOD value."}, {"q": "A commercial sweetener sample’s Q residual is far above the limit. What does that mean?", "o": ["The sample’s spectrum contains something the calibration set never saw (such as a new filler), so the prediction is not reliable", "The instrument needs calibration immediately", "The sweetener concentration must be over the limit", "Q residual is related only to T² and has nothing to do with the sample itself"], "a": 0, "e": "Q is the spectral residual that 3 principal components cannot rebuild; far above the limit means this sample “does not look like” the calibration set, so the prediction cannot be trusted directly."}, {"q": "If you have no calibration set at all and just want a quick first estimate of a new blend’s proportions, which method is better to use first?", "o": ["NNLS/CLS: no calibration set needed; pure-component reference spectra are enough to give an estimate", "PLS2: choosing more LV always gives a better result", "You must finish the 25-point calibration set before you can start analyzing", "Neither method can be used in this situation"], "a": 0, "e": "NNLS does not depend on a calibration set, so it suits a first estimate when there are no calibration data; once you have a calibration set, refine with PLS."}, {"q": "A blind sample has normal T² and Q and a predicted aspartame of 4.5% (between the LOD of 2.68% and the LOQ of 8.12%). What is the most appropriate handling?", "o": ["Report a definite number with no remarks", "Report the number, but label it “semi-quantitative” and attach the RMSEP", "Because T² and Q are normal, the result must be accurate and can be used with confidence", "Recalculate with NNLS and just average the two numbers"], "a": 1, "e": "Above the LOD means it is truly detected, but below the LOQ the precision is not enough for formal quantification, so label it semi-quantitative and attach the size of the error."}, {"q": "When comparing RMSEP across instruments, what does a smaller RMSEP mean? What should you watch out for?", "o": ["That instrument has a smaller prediction error on the blind samples, but you must also look at bias and RPD; and with only 7 blind samples, only a large difference counts as a real difference", "A smaller RMSEP means the instrument is certainly more expensive and better", "RMSEP reflects only precision and has nothing to do with accuracy", "RMSEP is unaffected by the range of the blind samples and can be compared directly across datasets"], "a": 0, "e": "RMSEP combines random error and systematic bias; also check bias (is it overall too high or too low?) and RPD. With few blind samples, RMSEP itself also fluctuates."}]}, "sort": {"g4": {"steps": ["Combine the whole class’s data: 25 blends × 2 spectra, matched to the actual weighed proportions from W15", "Check corr(Y_aspartame, Y_sucralose)≈0 to confirm the design is not confounded", "Grouped cross-validation by sample_id, compare preprocessing, choose LV by RMSECV", "Build the final PLS1 model, use VIP to match functional groups, and check whether it picks up reasonable bands", "Use the TA blind samples to calculate RMSEP/bias/RPD and compare with NNLS", "Before predicting commercial sweeteners, check whether T²/Q are within limits, then whether the value is above the LOD/LOQ, and only then decide whether a number can be reported"], "shuffle": [3, 0, 5, 1, 4, 2], "ok": "🎉 Correct order! Combine data → design check → grouped CV to choose the model → build model and VIP → blind-sample validation and method comparison → applicability-domain judgment.", "tip": "Hint: you need a calibration set before cross-validation; VIP can only be computed once the model is built; the applicability-domain check is always the last gate before predicting a new sample."}}, "calc": {"g6": {"answer": 0.667, "tol": 0.03, "ok": "🎉 Correct! RMSEP = √(Σ(predicted−actual)²÷5) ≈ <b>0.667%<\/b>.", "bad": "Try again: square each (predicted−actual), add the 5 values, divide by 5, and finally take the square root.", "hint": "Hint: the differences are -0.29, -0.31, +0.31, -0.92, -1.05; square them, average, then take the square root."}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
+}
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 All correct!','good');
+    else fb(g+'fb','Correct '+ok+'/'+N+'. '+(cfg.tip||'Adjust and try again.'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ Correct!':'❌ Answer: '+d.o[d.a]+'. ')+'<br>'+d.e+(done?'<br><b>Done! Total score: '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 Perfect order!','good');
+    else fb(g+'fb','Got '+ok+'/'+N+' positions right.'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','Enter a number first.','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ Correct'); fb(g+'fb',cfg.ok||('🎉 Correct! The answer is '+cfg.answer),'good');
+    } else { setScore(g+'score','Try again'); fb(g+'fb',cfg.bad||'Recalculate and try again.','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'Hint: substitute step by step using the formula.','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en] body,html[lang=en] .lbl,html[lang=en] .lblb{font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif}html[lang=en] body{font-size:16.5px}html[lang=en] .slide-title{font-size:clamp(1.3rem,2.7vw,2.05rem)}html[lang=en] .cover h1{font-size:clamp(2rem,5vw,3.8rem)}html[lang=en] .hook{font-size:clamp(1.5rem,3.6vw,2.6rem)}html[lang=en] p,html[lang=en] li{line-height:1.55}html[lang=en] .kicker{letter-spacing:.1em}html[lang=en] p,html[lang=en] li{font-size:clamp(.86rem,1.3vw,1.04rem)}html[lang=en] .card .cb{font-size:clamp(.8rem,1.15vw,.94rem)}html[lang=en] .card .ct{font-size:clamp(.95rem,1.4vw,1.1rem)}html[lang=en] .chip{font-size:.84rem;padding:7px 12px}html[lang=en] .opt{font-size:clamp(.82rem,1.2vw,.98rem);padding:11px 15px}html[lang=en] .game-q{font-size:clamp(.9rem,1.35vw,1.08rem)}html[lang=en] .bucket .bh{font-size:.88rem}html[lang=en] table.cmp{font-size:clamp(.78rem,1.1vw,.95rem)}html[lang=en] table.cmp th,html[lang=en] table.cmp td{padding:9px 11px}html[lang=en] .note{font-size:clamp(.85rem,1.2vw,.98rem)}html[lang=en] .subtitle{font-size:clamp(.9rem,1.4vw,1.1rem)}html[lang=en] .checklist li{font-size:.86rem}html[lang=en] .cap{font-size:.82rem}html[lang=en] .pill{font-size:.78rem;padding:4px 10px}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><script>(function(){
+function fit(){var sl=document.querySelector('.slide.active');if(!sl)return;
+ sl.querySelectorAll('svg').forEach(function(svg){var sb=svg.getBoundingClientRect();if(!sb.width)return;
+  var rects=[].slice.call(svg.querySelectorAll('rect')).map(function(r){return r.getBoundingClientRect()});
+  [].slice.call(svg.querySelectorAll('text')).forEach(function(t){
+   if(t.dataset.fit)return; var s=(t.textContent||'').trim(); if(!s)return;
+   var b=t.getBoundingClientRect(); if(!b.width)return;
+   var cx=(b.left+b.right)/2, cy=(b.top+b.bottom)/2;
+   var host=rects.filter(function(r){return r.width>20&&r.width<480&&cx>r.left&&cx<r.right&&cy>r.top&&cy<r.bottom})
+             .sort(function(p,q){return p.width-q.width})[0];
+   var maxW=host?host.width-10:Math.min(b.right,sb.right-2)-Math.max(b.left,sb.left+2);
+   if(host&&(b.right>sb.right||b.left<sb.left))maxW=Math.min(maxW,sb.width-4);
+   if(b.width<=maxW+1)return;
+   t.dataset.fit='1';
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13;
+   var k=b.width/((t.getBBox().width)||b.width); /* client px per user unit */
+   var hasTspan=t.querySelector('tspan'); var canWrap=!hasTspan&&s.indexOf(' ')>0&&host&&host.height>=fs*2.3;
+   if(canWrap){var others=[].slice.call(svg.querySelectorAll('text')).filter(function(o){if(o===t)return false;var ob=o.getBoundingClientRect();var ox=(ob.left+ob.right)/2,oy=(ob.top+ob.bottom)/2;return ox>host.left&&ox<host.right&&oy>host.top&&oy<host.bottom;});
+     if(others.length){var free=host.bottom-b.bottom;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.top>=b.top)free=Math.min(free,ob.top-b.bottom)});var freeTop=b.top-host.top;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.bottom<=b.bottom)freeTop=Math.min(freeTop,b.top-ob.bottom)});if(free+freeTop<fs*1.15)canWrap=false;}}
+   if(canWrap){var w=s.split(' '),best=null;
+     for(var i=1;i<w.length;i++){var a=w.slice(0,i).join(' '),c=w.slice(i).join(' ');var d=Math.abs(a.length-c.length);if(!best||d<best.d)best={d:d,a:a,c:c};}
+     var x=t.getAttribute('x')||'0',y=parseFloat(t.getAttribute('y')||'0');
+     t.textContent='';var t1=document.createElementNS('http://www.w3.org/2000/svg','tspan'),t2=t1.cloneNode();
+     t1.setAttribute('x',x);t1.setAttribute('y',(y-fs*0.55/k).toFixed(2));t1.textContent=best.a;
+     t2.setAttribute('x',x);t2.setAttribute('y',(y+fs*0.6/k).toFixed(2));t2.textContent=best.c;
+     t.appendChild(t1);t.appendChild(t2);b=t.getBoundingClientRect();if(b.width<=maxW+1)return;}
+   var sc=Math.max(0.7,maxW/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   b=t.getBoundingClientRect(); if(b.width>maxW+1&&!t.querySelector('tspan')){t.setAttribute('textLength',(maxW/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+  /* second pass: free labels that collide with a neighbour on the same row */
+  var ts=[].slice.call(svg.querySelectorAll('text')).filter(function(x){return (x.textContent||'').trim()});
+  for(var i=0;i<ts.length;i++)for(var j=i+1;j<ts.length;j++){var A=ts[i].getBoundingClientRect(),B=ts[j].getBoundingClientRect();
+   var ox=Math.min(A.right,B.right)-Math.max(A.left,B.left),oy=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
+   if(ox<=2||oy<=Math.min(A.height,B.height)*0.5)continue;
+   var t=A.width>=B.width?ts[i]:ts[j],b=A.width>=B.width?A:B; if(t.querySelector('tspan')||t.dataset.fit2)continue; t.dataset.fit2='1';
+   var want=b.width-ox-6; if(want<b.width*0.55)continue;
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13,k=b.width/((t.getBBox().width)||b.width);
+   var sc=Math.max(0.75,want/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   var nb=t.getBoundingClientRect(); if(nb.width>want+1){t.setAttribute('textLength',(want/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  }});}
+ if(typeof show==='function'){var _s=show;show=function(i){_s(i);fit();};}
+ fit();setTimeout(fit,400);window.addEventListener('load',function(){setTimeout(fit,200)});
+})();</script><!--/i18n-toggle--></body></html>

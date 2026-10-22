@@ -1,0 +1,517 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>W8 Class Proficiency Test and Data QC · Food Analysis Lab</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{font-size:18px}
+body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);
+  color:var(--ink);overflow:hidden;height:100vh;width:100vw}
+:root{
+  --bg:#eef2f8;--surface:#ffffff;--surface-2:#f6f9fd;
+  --ink:#15233f;--ink-2:#48597a;--ink-3:#8493ad;--line:#dde5f0;
+  --accent:#1f6feb;--accent-soft:#e7f0fe;
+  --accent-2:#d9822b;--accent-2-soft:#fbeede;
+  --ok:#1f9d6b;--ok-soft:#e3f6ee;--bad:#d94f4f;--bad-soft:#fbe7e7;--warn:#d9a32b;
+  --t2:clamp(1.4rem,3vw,2.3rem);
+  --shadow:0 10px 30px rgba(20,40,80,.10);--shadow-sm:0 3px 12px rgba(20,40,80,.08)}
+#progress{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .5s ease}
+#section-tag{position:fixed;top:16px;left:24px;z-index:40;font-size:.78rem;letter-spacing:.18em;
+  color:var(--accent);font-weight:700;font-family:"JetBrains Mono",monospace}
+#pageInfo{position:fixed;right:22px;bottom:16px;z-index:40;font-size:.82rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+#hint{position:fixed;left:24px;bottom:16px;z-index:40;font-size:.72rem;color:var(--ink-3)}
+#brand{position:fixed;right:22px;top:14px;z-index:40;font-size:.72rem;color:var(--ink-3);
+  font-family:"JetBrains Mono",monospace}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:64px 84px;opacity:0;pointer-events:none;
+  transition:opacity .55s ease,transform .55s ease;transform:translateY(14px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide-inner{width:100%;max-width:1280px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--accent);
+  font-weight:700;text-transform:uppercase;margin-bottom:10px}
+.slide-title{font-size:var(--t2);font-weight:900;line-height:1.18;color:var(--ink);letter-spacing:-.01em}
+.slide-title .hi{color:var(--accent-2)}
+.subtitle{font-size:clamp(.95rem,1.5vw,1.2rem);color:var(--ink-2);margin-top:12px;line-height:1.6}
+p,li{font-size:clamp(.92rem,1.4vw,1.12rem);line-height:1.68;color:var(--ink-2)}
+.lead{font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--ink);line-height:1.6}
+strong,b{color:var(--ink);font-weight:800}.em{color:var(--accent-2);font-weight:800}
+.divider{height:3px;width:64px;background:var(--accent-2);border-radius:2px;margin:18px 0}
+ul.clean{list-style:none}ul.clean li{position:relative;padding-left:26px;margin:10px 0}
+ul.clean li:before{content:"";position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:2px;
+  background:var(--accent);transform:rotate(45deg)}
+.mono{font-family:"JetBrains Mono",monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid2-1{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.flow6{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow-sm)}
+.card .ic{font-size:1.6rem;margin-bottom:8px}
+.card .ct{font-weight:800;color:var(--ink);font-size:clamp(1rem,1.5vw,1.2rem);margin-bottom:6px}
+.card .cb{font-size:clamp(.85rem,1.25vw,1rem);color:var(--ink-2);line-height:1.55}
+.card.b{border-top:4px solid var(--accent)}.card.a{border-top:4px solid var(--accent-2)}
+.card.g{border-top:4px solid var(--ok)}
+.tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;padding:3px 9px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-weight:700}
+.tag.a{background:var(--accent-2-soft);color:var(--accent-2)}
+.pill{display:inline-block;padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--line);
+  font-size:.82rem;color:var(--ink-2);margin:3px 4px}
+.note{background:var(--accent-2-soft);border-left:4px solid var(--accent-2);border-radius:8px;padding:14px 18px;
+  color:var(--ink);font-size:clamp(.9rem,1.3vw,1.05rem);line-height:1.6}
+.eq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,1.7vw,1.4rem);color:var(--ink);text-align:center;box-shadow:var(--shadow-sm)}
+.eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 6px}
+.eq .frac b{border-bottom:2px solid var(--ink);padding-bottom:3px}
+table.cmp{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.2vw,1.02rem)}
+table.cmp th,table.cmp td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+table.cmp thead th{color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);cursor:pointer;
+  user-select:none;white-space:nowrap}
+table.cmp thead th .ar{opacity:.4;font-size:.8em}
+table.cmp tbody tr:hover{background:var(--surface-2)}table.cmp td.c{color:var(--ink);font-weight:700}
+.cover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 100px;
+  background:radial-gradient(1200px 600px at 80% 20%,var(--accent-2-soft),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,var(--accent-soft),transparent 55%),linear-gradient(135deg,#ffffff,#eef2f8)}
+.cover h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.cover .en{font-family:"JetBrains Mono",monospace;font-size:clamp(1rem,2vw,1.5rem);color:var(--accent);letter-spacing:.1em;margin-top:6px}
+.cover .meta{margin-top:26px;color:var(--ink-2);font-size:clamp(.9rem,1.4vw,1.1rem)}
+.hook{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.hook .hi{color:var(--accent)}
+.svgwrap{display:flex;align-items:center;justify-content:center}
+.svgwrap svg{max-width:100%;max-height:62vh;height:auto}
+.lbl,.lblb{font-family:"Noto Sans TC",sans-serif}
+.lblb{font-weight:700}
+/* Defaults only: an SVG's own font-size / fill attributes win. */
+.lbl:not([font-size]),.lblb:not([font-size]){font-size:13px}
+.lbl:not([fill]){fill:var(--ink-2)}
+.lblb:not([fill]){fill:var(--ink)}
+.game{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow)}
+.game-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.game-head .gt{font-weight:900;font-size:clamp(1.05rem,1.7vw,1.35rem);color:var(--ink)}
+.game-head .score{margin-left:auto;font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:5px 13px;border-radius:999px;font-size:.9rem}
+.game-q{font-size:clamp(.95rem,1.5vw,1.18rem);color:var(--ink);font-weight:700;margin:6px 0 14px;line-height:1.5}
+.buckets{display:grid;gap:16px;margin-top:14px}
+.bucket{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:12px;background:var(--surface-2);transition:.2s}
+.bucket .bh{font-weight:800;color:var(--ink);text-align:center;margin-bottom:8px;font-size:.95rem}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;min-height:54px}
+.chip{padding:9px 15px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-weight:700;
+  color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);font-size:.92rem;transition:.15s}
+.chip:hover{border-color:var(--accent);transform:translateY(-1px)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chip.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.opt{padding:14px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;
+  font-weight:700;color:var(--ink);font-size:clamp(.88rem,1.3vw,1.05rem);transition:.15s}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}.opt.dim{opacity:.5}
+.fb{margin-top:14px;padding:12px 16px;border-radius:10px;font-weight:700;display:none;
+  font-size:clamp(.85rem,1.3vw,1.02rem);line-height:1.5}
+.fb.show{display:block}.fb.good{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}.fb.info{background:var(--accent-soft);color:var(--accent)}
+.btn{padding:10px 20px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;
+  font-size:.92rem;font-family:inherit;box-shadow:var(--shadow-sm)}
+.btn:hover{filter:brightness(1.06)}.btn.ghost{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.btnrow{display:flex;gap:12px;margin-top:16px;align-items:center}
+.sortlist{display:flex;flex-direction:column;gap:6px;margin-top:6px;max-height:44vh;overflow-y:auto;padding-right:4px}
+.sortrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:7px 14px;box-shadow:var(--shadow-sm)}
+.sortrow .idx{font-family:"JetBrains Mono",monospace;font-weight:800;color:var(--accent);width:24px}
+.sortrow .txt{flex:1;font-weight:700;color:var(--ink);font-size:clamp(.85rem,1.25vw,1.02rem)}
+.sortrow .ud{display:flex;flex-direction:column;gap:3px}
+.sortrow .ud button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:6px;width:30px;height:20px;
+  cursor:pointer;font-weight:900;line-height:1}
+.sortrow.ok{border-color:var(--ok);background:var(--ok-soft)}.sortrow.no{border-color:var(--bad)}
+.numin{font-family:"JetBrains Mono",monospace;font-size:1.2rem;font-weight:800;padding:10px 14px;border:1.5px solid var(--line);
+  border-radius:10px;width:140px;color:var(--ink);text-align:center}
+.numin:focus{outline:none;border-color:var(--accent)}
+.checklist{list-style:none}
+.checklist li{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  margin:8px 0;background:var(--surface);cursor:pointer;font-weight:700;color:var(--ink-2);font-size:clamp(.9rem,1.35vw,1.08rem);transition:.15s}
+.checklist li .bx{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:900;flex:0 0 auto}
+.checklist li.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)}
+.checklist li.done .bx{background:var(--ok);border-color:var(--ok)}
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);
+  height:60vh;max-height:520px;position:relative}
+.cap{font-size:.82rem;color:var(--ink-3);text-align:center;margin-top:8px}
+/* ===== MOBILE (phones / narrow screens) — added 2026-06-13 ===== */
+@media (max-width:640px){
+  html,body{font-size:16px}
+  .slide{padding:46px 14px 30px;align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide-inner{max-width:100%;min-width:0}
+  .grid2,.grid2-1,.grid3,.flow6{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .grid2>*,.grid2-1>*,.grid3>*,.flow6>*{min-width:0}
+  .opts{grid-template-columns:1fr!important}
+  .buckets{grid-template-columns:1fr!important}
+  table.cmp{display:block;overflow-x:auto}table.cmp th,table.cmp td{white-space:normal;padding:9px 10px;min-width:56px}
+  .eq{overflow-x:auto}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{max-height:none}
+  .chartbox{height:48vh!important;max-height:none}
+  .cover{padding:0 22px!important}
+  #hint,#brand{display:none}
+  #section-tag{font-size:.62rem;left:12px;top:8px;letter-spacing:.08em}
+  #pageInfo{right:10px;bottom:8px;font-size:.7rem}
+}
+</style></head><body><div id="progress"></div><div id="section-tag"></div><div id="brand">Food Analysis Lab · W8</div><div id="pageInfo"></div><div id="hint">← → / Space to change slide · F fullscreen · Tap either side to turn pages</div><section class="slide" data-slide="1" data-section="Hook" data-cover="1"><div class="slide-inner"><div class="cover"><div class="kicker">Food Analysis Lab · W8</div><h1>Class proficiency test <span style='color:var(--accent-2)'>and data QC</span></h1><div class="en">Interlaboratory Proficiency Testing & Statistical Quality Control</div><div class="meta">Food Analysis Lab · 4-hour session<br>Pooled blind-sample results (moisture/ash/protein/fat) · Carbohydrate by difference · Grubbs · ANOVA · z-score · Control chart · Measurement uncertainty · Release decision</div><div style="margin-top:24px"><span class="pill">Pooled blind samples</span><span class="pill">Grubbs outlier test</span><span class="pill">One-way ANOVA</span><span class="pill">z-score</span><span class="pill">Shewhart control chart</span><span class="pill">Guard-band release decision</span></div></div></div></section><section class="slide" data-slide="2" data-section="Hook"><div class="slide-inner"><div style="text-align:center">
+  <div class="kicker" style="justify-content:center">Before we start, watch a factory video</div>
+  <div class="hook">Butter measured at <span class="hi">80.3% ± 0.4%</span>,<br>can this batch be <span class="hi">released</span>?</div>
+  <p class="subtitle" style="max-width:900px;margin:18px auto 0">
+    <a class="no-nav" href="https://www.youtube.com/watch?v=WXIhEyi5eSs&t=424s" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800"> Butter factory line (07:04–08:17, note the milk-fat spec ≥ 80%) ↗</a>
+  </p>
+  <div class="note" style="max-width:900px;margin:18px auto 0;text-align:left">
+    <strong>Think first:</strong> The measured 80.3% is already above the 80% spec, but this number carries an <strong>uncertainty of ±0.4%</strong> — the true milk-fat content lies between 79.9% and 80.7% with about 95% confidence (U with k=2). <strong>Is “the measured number is above spec” the same as “this batch truly conforms”?</strong> At the end of class we will answer this with a rule called the <strong>guard band</strong>.
+  </div>
+  <p class="subtitle" style="max-width:900px;margin:14px auto 0"><strong>Today’s task:</strong> Pool the shared blind-sample data that the 5 groups produced in W2–W6 and cross-check one another, just like a <strong>proficiency test</strong> between testing laboratories.<br> Optional extra practice: <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800"> Food Analysis Statistics site ↗</a> — mini-games on control charts, outliers, the uncertainty puzzle, the release officer, and ANOVA; do them and class will make more sense.</p>
+</div></div></section><section class="slide" data-slide="3" data-section="Hook"><div class="slide-inner"><div class="kicker">Today’s learning goals</div><h2 class="slide-title">After W8 you should be able to…</h2><div class="grid2" style="margin-top:14px"><ul class="clean"><li>Pool the 5 groups’ data from W2 (moisture)/W3 (ash)/W5 (protein)/W6 (fat), and calculate carbohydrate <strong>by difference</strong></li><li>Understand why the <strong>uncertainty of the difference method</strong> is the <strong>root sum of squares</strong> of the other four — it inherits everyone’s errors</li><li>Use the <strong>Grubbs test</strong> to check for outliers within groups and at class level, and know <strong>how weak this test is at n=3</strong></li></ul><ul class='clean'><li>Use <strong>one-way ANOVA</strong> to separate <strong>repeatability (s<sub>r</sub>)</strong> from <strong>reproducibility (s<sub>R</sub>)</strong></li><li>Calculate the <strong>z-score</strong> and classify it into three levels: |z| ≤ 2 / 2 &lt; |z| &lt; 3 / ≥ 3</li><li>Read the ±2s / ±3s limits of a <strong>Shewhart control chart</strong> and spot rule violations</li><li>Build a simple <strong>uncertainty budget</strong> and make a release decision with the <strong>guard band</strong> rule</li></ul></div></div></section><section class="slide" data-slide="4" data-section="Hook" data-game="g1"><div class="slide-inner"><div class="game no-nav" data-game="g1"><div class="game-head"><span class="tag a">Mini-game ①</span><span class="gt">Random error or systematic error?</span><span class="score" id="g1score">0 / 8</span></div><div class="game-q">Sort these 8 phenomena from today’s data into “random error” or “systematic error”.</div><div class="pool" id="g1pool"></div><div class="buckets" id="g1buckets"></div><div class="fb" id="g1fb"></div><div class="btnrow"><button class="btn" id="g1check">Check answer</button><button class="btn ghost" id="g1reset">Reset</button></div></div></div></section><section class="slide" data-slide="5" data-section="Focus"><div class="slide-inner"><div class="kicker">Introduction to measurement uncertainty</div><h2 class="slide-title">Where does the number after ± come from?</h2><ul class="clean" style="margin-top:12px"><li>Uncertainty: a parameter describing the range in which the true value may lie</li><li>Steps: list the sources → convert each to a <b>standard uncertainty u</b> (standard-deviation form) → combine by root sum of squares into u<sub>c</sub> → multiply by the coverage factor k to get the expanded uncertainty U</li><li>If you only know “within ±a” (tolerance, scale graduation): rectangular distribution, u=a/√3</li><li>k=2 corresponds to about a 95% confidence level</li><li>Combine by root sum of squares: errors partly cancel, so they cannot simply be added</li></ul><p class="subtitle" style="margin-top:10px"><a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/ch06.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Statistics Ch06–08 ↗</a></p></div></section><section class="slide" data-slide="6" data-section="Focus"><div class="slide-inner"><div class="kicker">Carbohydrate: by difference</div><h2 class="slide-title">Why does its uncertainty <span class='hi'>add up everyone’s errors</span>?</h2><div class="grid2" style="margin-top:10px"><div class="eq">Carbohydrate % = 100 − (moisture % + ash % + protein % + fat %)</div><div class="eq" style="margin-top:14px">u<sub>carb</sub> = <span style="white-space:nowrap">√( u<sub>moisture</sub>² + u<sub>ash</sub>² + u<sub>protein</sub>² + u<sub>fat</sub>² )</span></div></div><div class="note" style="margin-top:14px"><strong>The difference method has no experimental step of its own</strong> — it just adds and subtracts other people’s results. For that reason, the errors of moisture, ash, protein, and fat <strong>are all carried into it</strong>, combined by root sum of squares (uncertainties cannot be added directly). So carbohydrate is always <strong>the item with the largest uncertainty in proximate analysis (moisture, ash, protein, fat, carbohydrate)</strong> — today you will see it calculated.</div><div class="note" style="margin-top:10px"><strong>Errors get passed down too:</strong> This class’s fat uses the <strong>direct Soxhlet (unhydrolyzed)</strong> result from W6. The 5-group mean is only <b>21.28%</b>, versus the dairy reference method <strong>Röse–Gottlieb</strong> value of <b>25.7%</b> — about <b>4.4</b> percentage points lower. The difference method <strong>adds this underestimate straight onto carbohydrate</strong>, inflating it to about <b>44%</b> (database: about 37–38%). This is a method bias, not random error — however small U<sub>carb</sub> is, it cannot cover it.</div></div></section><section class="slide" data-slide="7" data-section="Focus" data-chart="carb" data-game="cmp"><div class="slide-inner"><div class="kicker">Class data summary</div>
+<h2 class="slide-title">Blind-sample results of the 5 groups (<span class="hi">illustrative data</span>)</h2>
+<div class="grid2-1" style="margin-top:8px">
+<div><table class="cmp" id="cmpTable"><thead><tr>
+<th data-k="g" data-t="s">Group <span class="ar">⇅</span></th>
+<th data-k="m" data-t="n">Moisture % <span class="ar">⇅</span></th>
+<th data-k="a" data-t="n">Ash % <span class="ar">⇅</span></th>
+<th data-k="p" data-t="n">Protein % <span class="ar">⇅</span></th>
+<th data-k="f" data-t="n">Fat % <span class="ar">⇅</span></th>
+<th data-k="c" data-t="n">Carb (by diff.) % <span class="ar">⇅</span></th>
+</tr></thead><tbody></tbody></table>
+<p class="cap" style="text-align:left;margin-top:8px">Click a column header to sort. Moisture/ash/fat are each group’s triplicate mean (fat = direct Soxhlet from W6); protein is a single determination per group (n=1) because the W5 digestion block holds only 8 tubes. The high carbohydrate comes from the underestimated fat (error propagation). Illustrative data — not real measurements.</p></div>
+<div class="chartbox" style="height:44vh"><canvas id="chart_carb"></canvas></div>
+</div></div></section><section class="slide" data-slide="8" data-section="Focus"><div class="slide-inner"><div class="kicker">4-hour lab schedule</div><h2 class="slide-title">Pool → Check → Retest → Statistics → Decide</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Time</th><th>Contents</th></tr></thead><tbody>
+    <tr><td class="c">0:00–0:30</td><td>Explain the pooling rules: long-format input, significant figures, source of the illustrative data (W2/W3/W5/W6)</td></tr>
+    <tr><td class="c">0:30–1:30</td><td>Each group uploads its data; Colab compiles the class blind-sample table and runs the Grubbs outlier check</td></tr>
+    <tr><td class="c">1:30–3:00</td><td>Groups flagged as outliers or with |z| &gt; 2 redo that item (moisture or ash); the other groups do the ANOVA and uncertainty calculation</td></tr>
+    <tr><td class="c">3:00–3:40</td><td>Class discussion: which error sources are largest? Cross-check against the W1–W7 calibration and standardization records</td></tr>
+    <tr><td class="c">3:40–4:00</td><td>Release-decision practice: applying the guard band rule</td></tr>
+    </tbody></table>
+    <div class="note" style="margin-top:12px"><strong>Only moisture or ash is retested:</strong> redoing protein (Kjeldahl) and fat (Soxhlet) takes too long to fit in 4 hours —if either of these has a problem, just record it today and leave it for the root-cause discussion; do not redo it on the spot.</div></div></section><section class="slide" data-slide="9" data-section="Focus"><div class="slide-inner"><div class="kicker">Grubbs outlier test</div><h2 class="slide-title">Within group (n=3) <span class='hi'>too weak</span> vs class level (n=5) <span class='hi'>can detect it</span></h2><div class="grid2" style="margin-top:8px"><div><div class="ct" style="font-weight:800;margin-bottom:6px">Within group: G3 moisture triplicate</div><p class="cap" style="text-align:left">Values: 2.70, 2.74, <b style="color:var(--bad)">3.30</b>% (★ = suspected outlier)</p><div class="eq" style="font-size:.95rem;margin-top:4px">G = |x−x̄| / s = 1.1526</div><p class="cap" style="text-align:left;margin-top:8px">G_crit(n=3, α=0.05) = <b>1.1543</b> (computed from the formula, not looked up in a table)</p><div class="note" style="margin-top:8px"><strong>At n=3, Grubbs almost cannot detect anything:</strong> the theoretical upper bound of G is (n−1)/√n = <b>1.1547</b> — no matter how extreme the outlier, G can never exceed this number. And G_crit (1.1543) is only 0.0004 below the bound, which means <strong>with only 3 replicates, nothing can be judged significant unless the other two values are nearly identical</strong> — within a group you must rely on checking the records.</div></div><div><div class="ct" style="font-weight:800;margin-bottom:6px">Class level: single protein results of the 5 groups</div><table class="cmp" style="font-size:.85rem"><thead><tr><th>Group</th><th>Result %</th><th>G value</th></tr></thead><tbody><tr><td class="c">G1</td><td>25.930</td><td>0.2982</td></tr><tr><td class="c">G2</td><td>26.170</td><td>0.6390</td></tr><tr><td class="c">G3</td><td>26.030</td><td>0.4402</td></tr><tr><td class="c">G4</td><td>24.470</td><td style="color:var(--bad);font-weight:800">1.7751</td></tr><tr><td class="c">G5</td><td>26.000</td><td>0.3976</td></tr></tbody></table><p class="cap" style="text-align:left;margin-top:8px">G_crit(n=5, α=0.05) = <b>1.715</b>; G4’s G=1.7751 <b style="color:var(--bad)">exceeds the critical value</b>, so it is judged an outlier.</p></div></div><p class="subtitle" style="margin-top:10px">G &gt; G_crit → outlier; α=0.05 = upper limit of 5% probability of wrongly flagging a normal value. <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/ch05.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Statistics Ch05 ↗</a></p></div></section><section class="slide" data-slide="10" data-section="Focus"><div class="slide-inner"><div class="kicker">What ANOVA asks</div><h2 class="slide-title">Is the between-group difference real, or just shaky hands?</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">🔁</div><div class="ct">Repeatability s_r</div><div class="cb">Spread of repeats by the same person, same instrument, in a short time (within group)</div></div><div class="card a"><div class="ic">🏫</div><div class="ct">Reproducibility s_R</div><div class="cb">Spread that also includes differences between groups/laboratories; s_R≥s_r</div></div><div class="card g"><div class="ic">➗</div><div class="ct">F = between-group ÷ within-group</div><div class="cb">MSB = variance between group means, MSW = variance among replicates within groups; large F → the between-group difference is too large to be explained by repeatability error alone</div></div><div class="card b"><div class="ic">🎯</div><div class="ct">p and F_crit</div><div class="cb">F&gt;F_crit (p&lt;0.05) → significant difference between groups</div></div></div><p class="subtitle" style="margin-top:10px"><a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/ch16.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Statistics Ch16 ↗</a> <a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/ch17.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Ch17 ↗</a></p></div></section><section class="slide" data-slide="11" data-section="Focus"><div class="slide-inner"><div class="kicker">One-way ANOVA</div><h2 class="slide-title">Repeatability (s<sub>r</sub>) vs reproducibility (s<sub>R</sub>): using <span class='hi'>ash</span> as an example</h2><div class="grid2" style="margin-top:8px"><div class="eq" style="font-size:1rem">s<sub>R</sub> = √(s<sub>r</sub>² + s<sub>L</sub>²)</div><table class="cmp" style="font-size:.88rem"><tbody><tr><td class="c">Within-group variance (F-test denominator, MSW)</td><td>s<sub>r</sub> = 0.0259% (repeatability)</td></tr><tr><td class="c">Between-group variance (related to the F-test numerator, MSB)</td><td>s<sub>L</sub> = 0.0545% (between groups/laboratories)</td></tr><tr><td class="c">Combined</td><td>s<sub>R</sub> = 0.0604% (reproducibility)</td></tr><tr><td class="c">F = MSB / MSW</td><td>F = 14.24 (F_crit(0.05,4,10)=3.478, p=0.0004)</td></tr></tbody></table></div><div class="note" style="margin-top:10px"><strong>F is far above the critical value, p&lt;0.05:</strong> the differences among the 5 groups’ ash means <strong>cannot be explained by within-group repeatability (s<sub>r</sub>) alone</strong> — there is a real systematic gap between groups (different weighing habits, judgment of crucible constant weight…). This is exactly why <strong>reproducibility s<sub>R</sub> must include the between-group variance</strong>, rather than looking only at your own group’s replicates.</div></div></section><section class="slide" data-slide="12" data-section="Focus"><div class="slide-inner"><div class="kicker">z-score</div>
+<h2 class="slide-title">Score each group’s protein result with the <span class="hi">z-score</span></h2>
+<div class="grid2-1" style="margin-top:6px">
+<div class="chartbox" style="height:42vh"><canvas id="zscoreChart"></canvas></div>
+<div><div class="eq" style="font-size:1rem">z = (x<sub>group</sub> − x<sub>assigned</sub>) / σ<sub>pt</sub></div>
+<ul class="clean" style="margin-top:10px">
+<li>x<sub>assigned</sub> = <strong>median (robust assigned value)</strong> of the 5 groups’ single results = <b>26.000%</b></li>
+<li>σ<sub>pt</sub> = predefined target standard deviation (fitness-for-purpose: the tolerable spread set in advance for the intended use) = <b>0.40%</b> (not the contaminated class SD)</li>
+<li>|z| ≤ 2: <span style="color:var(--ok);font-weight:800">satisfactory</span> 2 &lt; |z| &lt; 3: <span style="color:var(--warn);font-weight:800">questionable</span> |z| ≥ 3: <span style="color:var(--bad);font-weight:800">unsatisfactory</span></li>
+<li><b style="color:var(--bad)">G4</b> has z = -3.83, in the <strong>unsatisfactory</strong> zone — the <strong>same group</strong> that the class-level Grubbs test flagged on the previous slide, so the two corroborate each other</li>
+</ul></div></div>
+<p class="cap" style="margin-top:6px">Illustrative data. If σ_pt is too large, truly problematic groups get “hidden”; if too small, there are too many false flags — set it with the method’s practical precision in mind.</p>
+<script>
+(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('zscoreChart'); if(!el||el._done) return; el._done=1;
+    var labels=["G1", "G2", "G3", "G4", "G5"], z=[-0.175, 0.425, 0.075, -3.825, 0.0];
+    var colors=z.map(function(v){return Math.abs(v)>=3?'#d94f4f':(Math.abs(v)>2?'#d9a32b':'#1f9d6b')});
+    new Chart(el,{
+      data:{labels:labels,datasets:[
+        {type:'bar',label:'z-score','data':z,backgroundColor:colors,borderRadius:5},
+        {type:'line',label:'+2 (questionable)','data':labels.map(function(){return 2}),borderColor:'#d9a32b',borderDash:[6,4],pointRadius:0,borderWidth:2,fill:false},
+        {type:'line',label:'−2 (questionable)','data':labels.map(function(){return -2}),borderColor:'#d9a32b',borderDash:[6,4],pointRadius:0,borderWidth:2,fill:false},
+        {type:'line',label:'+3 (unsatisfactory)','data':labels.map(function(){return 3}),borderColor:'#d94f4f',borderDash:[3,3],pointRadius:0,borderWidth:2,fill:false},
+        {type:'line',label:'−3 (unsatisfactory)','data':labels.map(function(){return -3}),borderColor:'#d94f4f',borderDash:[3,3],pointRadius:0,borderWidth:2,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:9}}}},
+        scales:{y:{suggestedMin:-4.2,suggestedMax:4.2,title:{display:true,text:'z-score (protein)'}}}}
+    });
+  }
+  draw();
+})();
+</script></div></section><section class="slide" data-slide="13" data-section="Focus" data-game="g4"><div class="slide-inner"><div class="game no-nav" data-game="g4"><div class="game-head"><span class="tag a">Mini-game ②</span><span class="gt">Order the steps of evaluating a proficiency test</span><span class="score" id="g4score">— / 6</span></div><div class="game-q">Use ▲▼ to arrange the 6 steps of “evaluating a proficiency test (PT)” into the correct order.</div><div class="sortlist" id="g4list"></div><div class="fb" id="g4fb"></div><div class="btnrow"><button class="btn" id="g4check">Check order</button><button class="btn ghost" id="g4reset">Shuffle</button></div></div></div></section><section class="slide" data-slide="14" data-section="Focus"><div class="slide-inner"><div class="kicker">How to read a control chart</div><h2 class="slide-title">Measure the same QC sample once in every run</h2><ul class="clean" style="margin-top:12px"><li>QC check sample: a stable sample with a known value, measured together in every analytical run</li><li>Center line = historical mean; ±2s warning lines (about 95% of points inside); ±3s action lines (about 99.7%)</li><li>Westgard 1<sub>3s</sub>: one point beyond ±3s → stop reporting, investigate</li><li>2<sub>2s</sub>: two consecutive points beyond 2s on the same side → systematic shift</li><li>Use the historical baseline for the limits, not the current batch’s own data</li></ul><p class="subtitle" style="margin-top:10px"><a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/ch03.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Statistics Ch03 ↗</a></p></div></section><section class="slide" data-slide="15" data-section="Focus"><div class="slide-inner"><div class="kicker">Shewhart control chart</div>
+<h2 class="slide-title">QC check sample: 12 analytical runs, spot the <span class="hi">violations</span></h2>
+<div class="chartbox" style="height:46vh"><canvas id="shewhartChart"></canvas></div>
+<p class="cap" style="margin-top:8px">Control limits use the <strong>established baseline</strong> (mean=26.0%, s=0.30%, not calculated from these 12 points); run 8 exceeds +3s (<b style="color:var(--bad)">1<sub>3s</sub> violation</b> (Westgard rule): a single point beyond the action limit); runs 10 and 11 are two consecutive points beyond −2s on the same side (<b style="color:var(--warn)">2<sub>2s</sub> violation</b>) — illustrative data.</p>
+<script>
+(function(){
+  function draw(){
+    if(typeof Chart==='undefined'){setTimeout(draw,60);return;}
+    var el=document.getElementById('shewhartChart'); if(!el||el._done) return; el._done=1;
+    var runs=[25.95, 26.15, 25.85, 26.2, 25.9, 26.05, 26.1, 26.95, 25.8, 25.3, 25.25, 26.0], mean=26.0000, s=0.3000;
+    var labels=runs.map(function(_,i){return 'Run '+(i+1)});
+    var viol=[7, 9, 10];
+    var pointColors=runs.map(function(_,i){return viol.indexOf(i)>=0?'#d94f4f':'#1f6feb'});
+    var pointRadius=runs.map(function(_,i){return viol.indexOf(i)>=0?7:4});
+    function flat(v){return labels.map(function(){return v})}
+    new Chart(el,{
+      data:{labels:labels,datasets:[
+        {type:'line',label:'QC value','data':runs,borderColor:'#1f6feb',backgroundColor:'#1f6feb',
+          pointBackgroundColor:pointColors,pointBorderColor:pointColors,pointRadius:pointRadius,borderWidth:2,fill:false,tension:0},
+        {type:'line',label:'Center line (mean)','data':flat(mean),borderColor:'#48597a',borderWidth:1.6,pointRadius:0,fill:false},
+        {type:'line',label:'+3s action','data':flat(mean+3*s),borderColor:'#d94f4f',borderDash:[3,3],borderWidth:1.6,pointRadius:0,fill:false},
+        {type:'line',label:'-3s action','data':flat(mean-3*s),borderColor:'#d94f4f',borderDash:[3,3],borderWidth:1.6,pointRadius:0,fill:false},
+        {type:'line',label:'+2s warning','data':flat(mean+2*s),borderColor:'#d9a32b',borderDash:[6,4],borderWidth:1.6,pointRadius:0,fill:false},
+        {type:'line',label:'-2s warning','data':flat(mean-2*s),borderColor:'#d9a32b',borderDash:[6,4],borderWidth:1.6,pointRadius:0,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:9}}}},
+        scales:{y:{title:{display:true,text:'QC value (%)'}}}}
+    });
+  }
+  draw();
+})();
+</script></div></section><section class="slide" data-slide="16" data-section="Focus"><div class="slide-inner"><div class="kicker">Measurement uncertainty budget</div><h2 class="slide-title">Example: <span class='hi'>protein (Kjeldahl)</span></h2><div class="grid2-1" style="margin-top:6px"><table class="cmp" style="font-size:.85rem"><thead><tr><th>Uncertainty source</th><th>Relative standard uncertainty</th></tr></thead><tbody><tr><td class="c">Weighing</td><td>0.0115%</td></tr><tr><td class="c">Titrant conc.</td><td>0.3000%</td></tr><tr><td class="c">Titration volume</td><td>0.1155%</td></tr><tr><td class="c">Conversion factor 6.38</td><td>0.2715%</td></tr><tr><td class="c">Repeatability</td><td>0.5875%</td></tr><tr><td class="c" style="color:var(--accent)">Combined u_c (RSS)</td><td style="color:var(--accent);font-weight:800">0.7227%</td></tr></tbody></table><div><div class="eq" style="font-size:.95rem">u_c = √(Σ components²) U = k·u_c (k=2)</div><div class="note" style="margin-top:12px">Combined standard uncertainty u_c = <b>0.7227%</b> (relative)<br>Corresponding absolute value u_c(abs) ≈ <b>0.1879%</b> (at the assigned value 26.000%)<br><strong>Expanded uncertainty U(k=2) ≈ 0.3758%</strong> — this is where the number after ± comes from in a report like <em>26.0% ± 0.4%</em>.</div></div></div><p class="cap" style="margin-top:10px">The standard uncertainty of a rectangular distribution (instrument scale/tolerance) = half-width ÷ √3; components already in standard-deviation form (such as titrant standardization) are used directly.<br><strong>The repeatability term:</strong> each group digested only 1 tube of protein this time (single determination, n=1; see the 8-tube limit in W5), so s_r cannot be estimated from within-group replicates; instead we use 3 replicate determinations (25.95, 26.15, 25.85; illustrative data) that the TA ran on the same milk powder, giving s_r=0.1528%. Because each group reports exactly this one single value, s_r is used directly as the repeatability contribution, with no division by √n (division is only needed when averaging n results; it has nothing to do with the √3 of the rectangular distribution).</p></div></section><section class="slide" data-slide="17" data-section="Focus"><div class="slide-inner"><div class="kicker">Release decision: result ± U vs specification</div><h2 class="slide-title">Back to the opening question: butter <span class='hi'>80.3% ± 0.4%</span>, release it?</h2><div class="svgwrap" style="margin-top:2px"><svg viewBox="0 0 640 236"><text x="320" y="20" text-anchor="middle" class="lblb" style="font-size:15px">Butter milk fat: measured result 80.3% ± 0.4% (U, k=2)</text><line x1="60.0" y1="130" x2="580.0" y2="130" stroke="#8493ad" stroke-width="1.6"/><line x1="60.0" y1="125" x2="60.0" y2="135" stroke="#8493ad" stroke-width="1.4"/><text x="60.0" y="154" text-anchor="middle" class="lbl" style="font-size:12px">79.0</text><line x1="190.0" y1="125" x2="190.0" y2="135" stroke="#8493ad" stroke-width="1.4"/><text x="190.0" y="154" text-anchor="middle" class="lbl" style="font-size:12px">79.5</text><line x1="320.0" y1="125" x2="320.0" y2="135" stroke="#8493ad" stroke-width="1.4"/><text x="320.0" y="154" text-anchor="middle" class="lbl" style="font-size:12px">80.0</text><line x1="450.0" y1="125" x2="450.0" y2="135" stroke="#8493ad" stroke-width="1.4"/><text x="450.0" y="154" text-anchor="middle" class="lbl" style="font-size:12px">80.5</text><line x1="580.0" y1="125" x2="580.0" y2="135" stroke="#8493ad" stroke-width="1.4"/><text x="580.0" y="154" text-anchor="middle" class="lbl" style="font-size:12px">81.0</text><line x1="320.0" y1="40" x2="320.0" y2="137" stroke="#d94f4f" stroke-width="2.2" stroke-dasharray="7,5"/><text x="327.0" y="50" class="lblb" style="font-size:12px;fill:#d94f4f">Lower spec limit 80.0%</text><line x1="294.0" y1="90" x2="502.0" y2="90" stroke="#1f6feb" stroke-width="4"/><line x1="294.0" y1="82" x2="294.0" y2="98" stroke="#1f6feb" stroke-width="3"/><line x1="502.0" y1="82" x2="502.0" y2="98" stroke="#1f6feb" stroke-width="3"/><circle cx="398.0" cy="90" r="6.5" fill="#1f6feb"/><text x="398.0" y="74" text-anchor="middle" class="lblb" style="font-size:12px;fill:#1f6feb">Result 80.3%</text><rect x="294.0" y="82" width="26.0" height="16" fill="#d9822b" fill-opacity=".28"/><line x1="294.0" y1="75" x2="294.0" y2="175" stroke="#d9822b" stroke-width="2" stroke-dasharray="3,3"/><text x="294.0" y="190" text-anchor="middle" class="lblb" style="font-size:12px;fill:#b5651d">Worst case 79.9%</text><text x="320" y="212" text-anchor="middle" class="lbl" font-size="12">Worst case (result − U) &lt; lower spec limit → cannot rule out that it is actually below spec</text></svg></div><div class="note" style="margin-top:8px"><strong>Guard band rule (used in this course):</strong> for an item that must be “≥ spec”, <strong>release</strong> only when the <strong>worst case (result − U) ≥ spec</strong>; when the <strong>best case (result + U) &lt; spec</strong>, <strong>do not release</strong>; in all other cases (the spec falls inside the result ± U interval) the verdict is <strong>cannot decide — retest or negotiate</strong>. In this example the worst case 79.90% &lt; spec 80.0%, so even though the point estimate 80.3% is already &gt; spec, the verdict must still be <strong>cannot decide</strong> — this is exactly why measurement uncertainty matters: it means “conforming” no longer rests on a single number.</div></div></section><section class="slide" data-slide="18" data-section="Focus"><div class="slide-inner"><div class="kicker">How to judge an upper spec limit (≤)</div><h2 class="slide-title">The direction flips</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Spec type</th><th>Release</th><th>Do not release</th><th>Cannot decide</th></tr></thead><tbody><tr><td class="c">Lower limit ≥L</td><td>Result−U ≥ L</td><td>Result+U &lt; L</td><td>Otherwise</td></tr><tr><td class="c">Upper limit ≤H</td><td>Result+U ≤ H</td><td>Result−U &gt; H</td><td>Otherwise</td></tr></tbody></table><div class="note" style="margin-top:12px">Example: potato chips sodium ≤700 mg/100g, measured 690±20 → worst case 710 &gt; 700, best case 670 ≤ 700 → cannot decide</div><p class="subtitle" style="margin-top:10px"><a class="no-nav" href="https://tai-shengyeh.github.io/food-analysis-statistics/ch08.html" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">Statistics Ch08 conformity assessment ↗</a></p></div></section><section class="slide" data-slide="19" data-section="Focus" data-game="g3"><div class="slide-inner"><div class="game no-nav" data-game="g3"><div class="game-head"><span class="tag a">Mini-game ③</span><span class="gt">This batch: release / do not release / cannot decide?</span><span class="score" id="g3score">0 / 6</span></div><div class="game-q">Using the “spec vs result ± U (guard band)” rule, sort the 6 cases into the correct verdict.</div><div class="pool" id="g3pool"></div><div class="buckets" id="g3buckets"></div><div class="fb" id="g3fb"></div><div class="btnrow"><button class="btn" id="g3check">Check answer</button><button class="btn ghost" id="g3reset">Reset</button></div></div></div></section><section class="slide" data-slide="20" data-section="Focus" data-game="g2"><div class="slide-inner"><div class="game no-nav" data-game="g2"><div class="game-head"><span class="tag a">Mini-game ④</span><span class="gt">Statistics quick quiz</span><span class="score" id="g2score">0 / 5</span></div><div class="game-q" id="g2q"></div><div class="opts" id="g2opts"></div><div class="fb" id="g2fb"></div><div class="btnrow"><button class="btn ghost" id="g2next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="21" data-section="Focus" data-game="g5"><div class="slide-inner"><div class="game no-nav" data-game="g5"><div class="game-head"><span class="tag a">Mini-game ⑤</span><span class="gt">Decision challenge: reading QC results</span><span class="score" id="g5score">0 / 5</span></div><div class="game-q" id="g5q"></div><div class="opts" id="g5opts"></div><div class="fb" id="g5fb"></div><div class="btnrow"><button class="btn ghost" id="g5next" style="display:none">Next →</button></div></div></div></section><section class="slide" data-slide="22" data-section="Focus" data-game="g6"><div class="slide-inner"><div class="game no-nav" data-game="g6"><div class="game-head"><span class="tag a">Mini-game ⑥</span><span class="gt">Calculation challenge: if fat uses the reference method, what does carbohydrate become?</span><span class="score" id="g6score">Unanswered</span></div><div class="game-q">Group G1: moisture <b>2.78%</b>, ash <b>5.98%</b>, protein <b>25.93%</b>. For fat, <strong>do not use</strong> direct Soxhlet; use the dairy reference method <strong>Röse–Gottlieb</strong> value of <b>25.7%</b>. Calculate carbohydrate % (by difference) and compare it with G1’s carbohydrate in the summary table.</div><div class="btnrow"><input class="numin" id="g6in" type="number" step="any" placeholder="?"> <span style="font-weight:800;color:var(--ink)">%</span><button class="btn" id="g6check">Check answer</button><button class="btn ghost" id="g6hint">Hint</button></div><div class="fb" id="g6fb"></div></div></div></section><section class="slide" data-slide="23" data-section="Act"><div class="slide-inner"><div class="kicker">Error traceback map</div><h2 class="slide-title">Which week does today’s anomaly trace back to?</h2><table class="cmp" style="margin-top:8px"><thead><tr><th>Anomaly</th><th>Go back and check</th></tr></thead><tbody><tr><td class="c">G3 moisture outlier</td><td>W2 constant weight / desiccator cooling, W1 balance</td></tr><tr><td class="c">G4 protein too low</td><td>W4/W5 HCl standardization (the label concentration was used)</td></tr><tr><td class="c">Class-wide fat too low</td><td>W6 no hydrolysis (method bias)</td></tr><tr><td class="c">Between-group ash differences</td><td>W3 crucible constant weight, W1 balance</td></tr><tr><td class="c">Carbohydrate too high</td><td>Fat underestimate propagated through the difference method</td></tr></tbody></table></div></section><section class="slide" data-slide="24" data-section="Act"><div class="slide-inner"><div class="kicker">Homework</div><h2 class="slide-title">Colab NB08</h2><div class="grid2" style="margin-top:14px"><div class="card b"><div class="ic">📊</div><div class="ct">Complete proximate report table</div><div class="cb">Compile your group’s moisture/ash/protein/fat/carbohydrate, each with its standard uncertainty and expanded uncertainty U</div></div><div class="card a"><div class="ic">🎯</div><div class="ct">Your group’s z-score</div><div class="cb">Calculate your group’s z-score for protein (or an assigned item) and decide which level it falls in</div></div><div class="card g"><div class="ic">🔍</div><div class="ct">Root-cause analysis</div><div class="cb">If your group is flagged by Grubbs or |z|&gt;2, cross-check the W1–W7 calibration/standardization records to find the most likely error source</div></div><div class="card b"><div class="ic">🚦</div><div class="ct">Release-decision practice</div><div class="cb">Pick any one result, apply the guard band rule to decide release / do not release / cannot decide, and explain your reasoning</div></div></div><p class="subtitle" style="margin-top:12px">Colab NB08: <a class="no-nav" href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB08_proficiency_qc.ipynb" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Open NB08 in Colab ↗</a><span style="white-space:nowrap"> · Beginner (no coding): <a class="no-nav" href="../../excel/EX08_proficiency_qc.xlsx" download style="color:var(--accent);font-weight:800">Excel practice workbook EX08 ⬇</a>, <a class="no-nav" href="../../tools.en.html#orange" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800">Orange workflow OR08 ↗</a></span>. This report is also a warm-up for the <strong>W9 midterm practical</strong> — the midterm will directly test your ability to compile data, catch outliers, and calculate uncertainty.</p></div></section><section class="slide" data-slide="25" data-section="Act"><div class="slide-inner"><div class="kicker">Self-check</div><h2 class="slide-title">By the end of today you should be able to…</h2><ul class="checklist no-nav" id="selfcheck" style="margin-top:18px;max-width:980px"><li data-k><span class="bx">✓</span>Calculate carbohydrate by difference and explain why its uncertainty is the root sum of squares of everyone’s</li><li data-k><span class="bx">✓</span>Run both the within-group (n=3) and class-level (n=5) Grubbs outlier tests, and explain why n=3 almost cannot detect outliers</li><li data-k><span class="bx">✓</span>Distinguish repeatability (s_r) from reproducibility (s_R), and say what the F test in one-way ANOVA compares</li><li data-k><span class="bx">✓</span>Calculate the z-score and explain what the three levels |z| ≤ 2 / 2~3 / ≥ 3 each mean</li><li data-k><span class="bx">✓</span>Read the ±2s / ±3s limits of a Shewhart control chart and point out the 1_3s and 2_2s violations</li><li data-k><span class="bx">✓</span>Build a simple uncertainty budget and calculate the expanded uncertainty U=k·u_c</li><li data-k><span class="bx">✓</span>Use the guard band rule (result ± U vs spec) to reach a release / do not release / cannot decide verdict</li><li data-k><span class="bx">✓</span>Say which parts of your group’s data today trace back to the calibration and standardization from W1–W7</li></ul><p class="subtitle" style="margin-top:12px">Tap to tick — make sure you really can do it.</p></div></section><script>window.CFG={"charts": {"carb": {"type": "bar", "yTitle": "Carbohydrate by difference (%)", "zero": true, "labels": ["G1", "G2", "G3", "G4", "G5"], "datasets": [{"label": "This class, by difference (illustrative data)", "data": [44.49, 42.97, 43.76, 45.31, 44.22], "color": "#1f6feb"}, {"label": "USDA SR 170876 reference 38.42%", "data": [38.42, 38.42, 38.42, 38.42, 38.42], "color": "#9aa8bf"}]}}, "cmp": {"cols": [{"k": "g", "label": "Group", "t": "s"}, {"k": "m", "label": "Moisture %", "t": "n"}, {"k": "a", "label": "Ash %", "t": "n"}, {"k": "p", "label": "Protein %", "t": "n"}, {"k": "f", "label": "Fat %", "t": "n"}, {"k": "c", "label": "Carb (by diff.) %", "t": "n"}], "rows": [{"g": "G1", "m": "2.78", "a": "5.98", "p": "25.93", "f": "20.82", "c": "44.49"}, {"g": "G2", "m": "2.85", "a": "6.08", "p": "26.17", "f": "21.93", "c": "42.97"}, {"g": "G3", "m": "2.91", "a": "5.92", "p": "26.03", "f": "21.37", "c": "43.76"}, {"g": "G4", "m": "2.90", "a": "6.03", "p": "24.47", "f": "21.29", "c": "45.31"}, {"g": "G5", "m": "2.80", "a": "5.99", "p": "26.00", "f": "20.99", "c": "44.22"}]}, "bucket": {"g1": {"cats": ["Random error", "Systematic error"], "items": [{"t": "G4 protein is about 1.5 percentage points low; investigation found the calculation used the label concentration instead of the standardized HCl concentration", "c": "Systematic error"}, {"t": "All 5 groups’ blind-sample fat is only 20.8–21.9%, consistently below the Röse–Gottlieb reference of 25.7% (direct Soxhlet, unhydrolyzed)", "c": "Systematic error"}, {"t": "Milk powder should use the nitrogen factor 6.38, but the general factor 6.25 was used in the calculation by mistake", "c": "Systematic error"}, {"t": "The balance’s calibration weights were never sent for periodic verification, so readings are consistently low", "c": "Systematic error"}, {"t": "G2 moisture triplicate 2.85, 2.88, 2.83%: small ups and downs with no fixed direction", "c": "Random error"}, {"t": "The same student reads the last digit of the balance, and it jumps by ±0.0002 g each time", "c": "Random error"}, {"t": "Temperature varies slightly between positions in the muffle furnace, making ash replicates come out high and low", "c": "Random error"}, {"t": "The moment of judging the titration end point varies slightly with how fast the student works", "c": "Random error"}], "ok": "🎉 All correct! “Consistently biased to the same side, with a cause” → systematic error; “up and down, no identifiable fixed cause” → random error.", "tip": "Hint: if a whole group/batch is biased to the same side (wrong conversion factor, incomplete extraction) → systematic error; if every replicate fluctuates slightly with no fixed direction → random error."}, "g3": {"cats": ["Release", "Do not release", "Cannot decide"], "items": [{"t": "Butter: spec ≥80% milk fat; measured 80.3% ± 0.4% (U)", "c": "Cannot decide"}, {"t": "Whole milk powder: spec protein ≥25%; measured 26.5% ± 0.3% (U)", "c": "Release"}, {"t": "Whole milk powder: spec moisture ≤3.5%; measured 3.6% ± 0.15% (U)", "c": "Cannot decide"}, {"t": "Canned soup: spec sodium ≤500 mg/100g; measured 620 ± 15 mg/100g (U)", "c": "Do not release"}, {"t": "Fruit drink: spec vitamin C ≥30 mg/100mL (label value); measured 33.0 ± 1.0 mg/100mL (U)", "c": "Release"}, {"t": "Chocolate: spec moisture ≤2%; measured 2.30% ± 0.10% (U)", "c": "Do not release"}], "ok": "🎉 All correct! Worst case still meets spec → release; best case still fails spec → do not release; spec falls inside result ± U → cannot decide.", "tip": "Hint: for “≥ spec” look at result − U; for “≤ spec” look at result + U; only if that worst-case number has not yet crossed the spec line can you talk about releasing."}}, "mcq": {"g2": [{"q": "What does a z-score of −2.6 mean?", "o": ["The result is 2.6 σ_pt above the assigned value", "The result is 2.6 σ_pt below the assigned value, in the “questionable” zone", "The result is completely correct; ignore it", "This group must be an outlier and should be discarded"], "a": 1, "e": "A negative z means the result is below the assigned value; |z|=2.6 lies between 2<|z|<3, so it is “questionable” rather than the most severe “unsatisfactory”."}, {"q": "What is the main difference between repeatability and reproducibility?", "o": ["Repeatability covers only variation within the same group; reproducibility adds the variation between groups (laboratories)", "They are exactly the same, only the names differ", "Repeatability is always larger than reproducibility", "Reproducibility only makes sense for measurements made on the same day"], "a": 0, "e": "s_r (repeatability) = within-group variation; s_R (reproducibility) = √(s_r²+s_L²) also includes the between-group variation (s_L), so usually s_R ≥ s_r."}, {"q": "Why is the uncertainty of carbohydrate (by difference) usually the largest of the four analyses?", "o": ["Because it has its own independent, cruder analytical step", "Because it is 100 minus the other four, so it inherits all four uncertainties combined by root sum of squares", "Because carbohydrate itself is chemically unstable", "Because its test method is older and less accurate"], "a": 1, "e": "The difference method has no measurement step of its own, u_carb=√(Σu²); whenever any one term’s error grows, the carbohydrate uncertainty grows with it."}, {"q": "Why can the Grubbs test hardly detect outliers at n=3?", "o": ["Because at n=3 the theoretical upper bound of the G statistic sits right next to the critical value, so it is hard to exceed no matter how extreme the outlier is", "Because the computer makes errors when n=3", "Because there are never outliers when n=3", "Because the Grubbs test can only be used when n≥10"], "a": 0, "e": "At n=3 the theoretical upper bound of G is (n−1)/√n≈1.155, almost equal to the critical value, so G can hardly be significant however extreme the outlier."}, {"q": "What is the guard band release rule used in this course?", "o": ["Only check whether the point estimate exceeds the spec, ignoring uncertainty", "Release only if the worst case still meets spec; do not release only if the best case still fails spec; otherwise cannot decide", "Always send for re-testing and never decide on your own", "Round the result to an integer before comparing"], "a": 1, "e": "The guard band compares the “result ± U” interval with the spec: release only if the worst case still meets spec, do not release only if the best case still fails spec, and call everything else cannot decide."}], "g5": [{"q": "A control chart result exceeds the +3s action limit. What is the most appropriate response?", "o": ["Ignore it and see what happens next time", "Treat it as a 1_3s violation: stop releasing related results and investigate the cause immediately", "Simply widen the control limits so it looks normal", "Just rename the data point as a “special value”"], "a": 1, "e": "A single point beyond ±3s is a typical 1_3s violation at the “action” level; you must stop and investigate, not just keep watching."}, {"q": "Two consecutive points both beyond +2s on the same side (but neither beyond 3s): which Westgard rule is violated?", "o": ["1_3s", "2_2s", "R_4s", "No violation, just normal fluctuation"], "a": 1, "e": "2_2s: two consecutive points beyond the 2s warning line on the same side count as a violation even if neither reaches 3s, and need investigation."}, {"q": "When calculating the assigned value of a proficiency test, what is the advantage of using the median over the class mean?", "o": ["The median is easier to calculate by hand", "The median is less sensitive to outliers/biased groups (more robust)", "The median is always the true concentration", "There is actually no difference between them"], "a": 1, "e": "The mean is pulled away by extreme values or systematically biased groups; the median is a robust statistic and is less affected by a few abnormal groups."}, {"q": "In one group’s triplicate, one value clearly deviates; investigation finds an operator slip (a droplet on the crucible’s outer wall was not wiped off). What is the best action?", "o": ["Delete that value directly, leaving no record", "Record the cause of the slip and redo the determination; do not just quietly delete it", "Void the whole group’s grade", "Ignore the slip and average the three numbers anyway"], "a": 1, "e": "Once the root cause is found, keep a record and redo the determination — that is a complete corrective action; quietly deleting the value or averaging it anyway both go against the spirit of quality control."}, {"q": "An analytical result is reported as “26.0% ± 0.3%”. What does the ±0.3% represent?", "o": ["The smallest scale division on the instrument panel", "The expanded uncertainty U=k·u_c (usually k=2, about a 95% confidence level)", "The range of the triplicate (max − min)", "The tolerance range specified by the method"], "a": 1, "e": "The number after ± is the expanded uncertainty U=k·u_c, where k=2 corresponds to about a 95% confidence level; it is neither the instrument scale nor a tolerance."}]}, "sort": {"g4": {"steps": ["Collect the raw data of the whole class (all groups) and arrange it in long format", "Check for outliers (within-group and class-level Grubbs)", "Calculate a robust assigned value (e.g., the median)", "Calculate each group’s z-score and classify it (satisfactory/questionable/unsatisfactory)", "Investigate the root cause for groups flagged as outliers or with |z|&gt;2", "Record the corrective action and decide whether a retest is needed"], "shuffle": [4, 1, 5, 0, 3, 2], "ok": "🎉 Correct order! Collect data → catch outliers → set the assigned value → calculate z-scores → root-cause investigation → record corrective action.", "tip": "Hint: you need data before you can catch outliers; you need a robust assigned value before you can calculate z-scores; only after finding a problem do root-cause investigation and corrective action come in."}}, "calc": {"g6": {"answer": 39.61, "tol": 0.05, "ok": "🎉 Correct! 100 − (2.78+5.98+25.93+25.7) ≈ <b>39.61%<\/b>, about 4.9 percentage points lower than the 44.49% in the summary table (calculated with Soxhlet) — whatever the fat is underestimated by, the carbohydrate is inflated by the same amount.", "bad": "Try again: carbohydrate % = 100 − (moisture % + ash % + protein % + fat %); use the Röse–Gottlieb value for fat.", "hint": "Hint: first add the four percentages ≈ 60.39, then subtract from 100."}}};</script><script>
+var CFG=window.CFG||{};
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var total=slides.length,cur=0;
+var prog=document.getElementById('progress'),pageInfo=document.getElementById('pageInfo'),secTag=document.getElementById('section-tag');
+function show(i){
+  cur=Math.max(0,Math.min(total-1,i));
+  slides.forEach(function(s,k){s.classList.toggle('active',k===cur)});
+  prog.style.width=((cur+1)/total*100)+'%';
+  pageInfo.textContent=(cur+1)+' / '+total;
+  secTag.textContent='— '+(slides[cur].dataset.section||'')+' —';
+  var ch=slides[cur].dataset.chart; if(ch) initChart(ch);
+  var g=slides[cur].dataset.game; if(g) initGame(g);
+  fitSlide(); setTimeout(fitSlide,80);
+}
+/* Scale the active slide down (never up) so it always fits the window,
+   whatever the browser zoom, window size or projector resolution. */
+function fitSlide(){
+  slides.forEach(function(s){var e=s.querySelector('.slide-inner'); if(e){e.style.transform='';}});
+  if(window.innerWidth<=640) return;           /* phones keep the scrolling layout */
+  var s=slides[cur], el=s&&s.querySelector('.slide-inner'); if(!el) return;
+  var cs=getComputedStyle(s);
+  var availH=s.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var availW=s.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  var h=el.scrollHeight, w=el.scrollWidth;
+  if(!h||!w) return;
+  var k=Math.min(1,availH/h,availW/w);
+  if(k<1){el.style.transformOrigin='center center';el.style.transform='scale('+Math.max(k,0.4).toFixed(3)+')';}
+}
+window.addEventListener('resize',fitSlide);
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fitSlide);}
+document.addEventListener('click',function(){setTimeout(fitSlide,60)});
+function next(){show(cur+1)} function prev(){show(cur-1)}
+function toggleFs(){if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen()}else{document.exitFullscreen&&document.exitFullscreen()}}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next()}
+  else if(e.key==='ArrowLeft'){prev()}
+  else if(e.key==='f'||e.key==='F'){toggleFs()}
+});
+document.addEventListener('click',function(e){
+  if(e.target.closest('.no-nav')) return;
+  if(e.target.closest('button,input,select,textarea,a,.chip,.opt,.bucket')) return;
+  var x=e.clientX/window.innerWidth;
+  if(x>0.72) next(); else if(x<0.28) prev();
+});
+
+/* ---------- charts ---------- */
+var chartDone={};
+function initChart(id){
+  if(chartDone[id]||typeof Chart==='undefined'||!CFG.charts||!CFG.charts[id]) return; chartDone[id]=1;
+  Chart.defaults.font.family="'Noto Sans TC',sans-serif"; Chart.defaults.color='#48597a';
+  var c=CFG.charts[id];
+  var el=document.getElementById('chart_'+id); if(!el) return;
+  var ds=c.datasets.map(function(d){return {label:d.label,data:d.data,
+    backgroundColor:d.color||'#1f6feb',borderColor:d.color||'#1f6feb',borderRadius:5,
+    fill:(c.type==='line'?false:true),tension:.3}});
+  new Chart(el,{type:c.type||'bar',data:{labels:c.labels,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:(c.datasets.length>1),position:'top'}},
+      scales:{y:{beginAtZero:(c.zero!==false),title:{display:!!c.yTitle,text:c.yTitle||''}}}}});
+}
+
+/* ---------- games ---------- */
+var gameDone={};
+function setScore(el,v){var e=document.getElementById(el);if(e)e.textContent=v}
+function fb(el,msg,type){var f=document.getElementById(el);if(!f)return;f.className='fb show '+type;f.innerHTML=msg}
+function initGame(g){
+  if(gameDone[g])return; gameDone[g]=1;
+  if(CFG.bucket&&CFG.bucket[g]) return initBucket(g);
+  if(CFG.mcq&&CFG.mcq[g]) return initMCQ(g);
+  if(CFG.sort&&CFG.sort[g]) return initSort(g);
+  if(CFG.calc&&CFG.calc[g]) return initCalc(g);
+  if(g==='cmp') return initCmp();
+}
+
+function initBucket(g){
+  var cfg=CFG.bucket[g];
+  var data=cfg.items.map(function(x){return {t:x.t,c:x.c,at:null}});
+  var cats=cfg.cats, N=data.length;
+  var pool=document.getElementById(g+'pool'), bk=document.getElementById(g+'buckets');
+  var sel=null;
+  bk.style.gridTemplateColumns='repeat('+cats.length+',1fr)';
+  function paint(){[].slice.call(pool.children).forEach(function(c){c.classList.toggle('sel',+c.dataset.i===sel)})}
+  function render(){
+    pool.innerHTML=''; bk.innerHTML='';
+    var placed={}; cats.forEach(function(c){placed[c]=[]});
+    data.forEach(function(d,i){if(d.at)placed[d.at].push(i)});
+    data.forEach(function(d,i){ if(d.at) return;
+      var c=document.createElement('div');c.className='chip';c.textContent=d.t;c.dataset.i=i;
+      c.onclick=function(){sel=(sel===i?null:i);paint()}; pool.appendChild(c);
+    });
+    cats.forEach(function(cat){
+      var b=document.createElement('div');b.className='bucket';b.innerHTML='<div class="bh">'+cat+'</div>';
+      placed[cat].forEach(function(i){
+        var c=document.createElement('div');c.className='chip';c.textContent=data[i].t;
+        c.onclick=function(){data[i].at=null;sel=null;render()}; b.appendChild(c);
+      });
+      b.onclick=function(e){ if(e.target!==b&&!e.target.classList.contains('bh'))return;
+        if(sel!=null){data[sel].at=cat;sel=null;render()} };
+      bk.appendChild(b);
+    });
+    paint();
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; data.forEach(function(d){if(d.at===d.c)ok++});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 All correct!','good');
+    else fb(g+'fb','Correct '+ok+'/'+N+'. '+(cfg.tip||'Adjust and try again.'),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    data.forEach(function(d){d.at=null}); sel=null; render(); setScore(g+'score','0 / '+N);
+    var f=document.getElementById(g+'fb'); if(f) f.className='fb';
+  };
+}
+
+function initMCQ(g){
+  var DATA=CFG.mcq[g], nq=DATA.length, idx=0, score=0, locked=false;
+  var qEl=document.getElementById(g+'q'), opEl=document.getElementById(g+'opts'), nextBtn=document.getElementById(g+'next');
+  function render(){
+    locked=false; var d=DATA[idx];
+    qEl.innerHTML='<span style="color:var(--accent)">Q'+(idx+1)+'.</span> '+d.q;
+    opEl.innerHTML=''; var f=document.getElementById(g+'fb'); if(f)f.className='fb'; if(nextBtn)nextBtn.style.display='none';
+    d.o.forEach(function(t,i){
+      var o=document.createElement('div');o.className='opt';o.textContent=t;
+      o.onclick=function(){
+        if(locked)return; locked=true; var ok=(i===d.a);
+        if(ok){o.classList.add('ok');score++}else{o.classList.add('no');opEl.children[d.a].classList.add('ok')}
+        [].slice.call(opEl.children).forEach(function(c,k){if(k!==i&&k!==d.a)c.classList.add('dim')});
+        setScore(g+'score',score+' / '+nq);
+        var done=(idx>=DATA.length-1);
+        var msg=(ok?'✅ Correct!':'❌ Answer: '+d.o[d.a]+'. ')+'<br>'+d.e+(done?'<br><b>Done! Total score: '+score+'/'+nq+'</b>':'');
+        fb(g+'fb',msg,ok?'good':'bad');
+        if(nextBtn) nextBtn.style.display=done?'none':'inline-block';
+      };
+      opEl.appendChild(o);
+    });
+  }
+  if(nextBtn) nextBtn.onclick=function(){if(idx<DATA.length-1){idx++;render()}};
+  render();
+}
+
+function initSort(g){
+  var cfg=CFG.sort[g], steps=cfg.steps, N=steps.length;
+  var order=(cfg.shuffle||steps.map(function(_,i){return i})).slice();
+  var list=document.getElementById(g+'list');
+  function render(){
+    list.innerHTML='';
+    order.forEach(function(stepIdx,pos){
+      var row=document.createElement('div');row.className='sortrow';
+      row.innerHTML='<div class="idx">'+(pos+1)+'</div><div class="txt">'+steps[stepIdx]+'</div>';
+      var ud=document.createElement('div');ud.className='ud';
+      var up=document.createElement('button');up.textContent='▲';
+      up.onclick=function(){if(pos>0){var t=order[pos-1];order[pos-1]=order[pos];order[pos]=t;render()}};
+      var dn=document.createElement('button');dn.textContent='▼';
+      dn.onclick=function(){if(pos<order.length-1){var t=order[pos+1];order[pos+1]=order[pos];order[pos]=t;render()}};
+      ud.appendChild(up);ud.appendChild(dn);row.appendChild(ud);list.appendChild(row);
+    });
+  }
+  render();
+  document.getElementById(g+'check').onclick=function(){
+    var ok=0; order.forEach(function(v,i){if(v===i)ok++});
+    [].slice.call(list.children).forEach(function(r,i){r.classList.toggle('ok',order[i]===i);r.classList.toggle('no',order[i]!==i)});
+    setScore(g+'score',ok+' / '+N);
+    if(ok===N) fb(g+'fb',cfg.ok||'🎉 Perfect order!','good');
+    else fb(g+'fb','Got '+ok+'/'+N+' positions right.'+(cfg.tip||''),'bad');
+  };
+  document.getElementById(g+'reset').onclick=function(){
+    order=(cfg.shuffle||steps.map(function(_,i){return i})).slice().reverse(); render();
+    var f=document.getElementById(g+'fb'); if(f)f.className='fb'; setScore(g+'score','— / '+N);
+  };
+}
+
+function initCalc(g){
+  var cfg=CFG.calc[g];
+  document.getElementById(g+'check').onclick=function(){
+    var v=parseFloat(document.getElementById(g+'in').value);
+    if(isNaN(v)){fb(g+'fb','Enter a number first.','info');return}
+    if(Math.abs(v-cfg.answer)<=(cfg.tol||0.05)){
+      setScore(g+'score','✓ Correct'); fb(g+'fb',cfg.ok||('🎉 Correct! The answer is '+cfg.answer),'good');
+    } else { setScore(g+'score','Try again'); fb(g+'fb',cfg.bad||'Recalculate and try again.','bad'); }
+  };
+  var hb=document.getElementById(g+'hint');
+  if(hb) hb.onclick=function(){fb(g+'fb',cfg.hint||'Hint: substitute step by step using the formula.','info')};
+}
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+function initCmp(){
+  if(!CFG.cmp) return;
+  var cols=CFG.cmp.cols, rows=CFG.cmp.rows.slice(), dir={};
+  var tb=document.querySelector('#cmpTable tbody');
+  function draw(){ tb.innerHTML=''; rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    tr.innerHTML=cols.map(function(c,ci){
+      var v=r[c.k];
+      if(c.star) return '<td style="color:var(--accent-2)">'+stars(v)+'</td>';
+      return '<td'+(ci===0?' class="c"':'')+'>'+v+'</td>';
+    }).join(''); tb.appendChild(tr); }); }
+  draw();
+  document.querySelectorAll('#cmpTable thead th').forEach(function(th){
+    th.onclick=function(){var k=th.dataset.k,t=th.dataset.t;dir[k]=!dir[k];
+      rows.sort(function(a,b){var x=a[k],y=b[k];
+        if(t==='n')return dir[k]?x-y:y-x;
+        return dir[k]?String(x).localeCompare(String(y),'zh-Hant'):String(y).localeCompare(String(x),'zh-Hant')});
+      draw();};
+  });
+}
+show(0);
+/* ---- touch-swipe navigation (phones); next()/prev() are defined above ---- */
+(function(){
+  var x0=0,y0=0,t0=0,trk=false;
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length>1){trk=false;return;}
+    var t=e.changedTouches[0]; x0=t.clientX; y0=t.clientY; t0=Date.now(); trk=true;
+  },{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(!trk) return; trk=false;
+    if(e.target.closest('.no-nav,button,input,select,textarea,a,.chip,.opt,.bucket,table,.svgwrap,.checklist,.eq,.sortlist')) return;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0, dt=Date.now()-t0;
+    if(dt<700 && Math.abs(dx)>48 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) next(); else prev(); }
+  },{passive:true});
+})();
+</script>
+<script>document.addEventListener('click',function(e){var li=e.target.closest('#selfcheck li');if(li)li.classList.toggle('done')});</script>
+<!--i18n-toggle--><style>#langToggle{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:70;font:700 12px/1 'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#cfd6e0);background:var(--surface,#fff);color:var(--accent,#1f6feb);text-decoration:none;opacity:.85}#langToggle:hover{opacity:1}@media(max-width:640px){#langToggle{top:auto;bottom:10px;left:auto;right:10px;transform:none}}html[lang=en] body,html[lang=en] .lbl,html[lang=en] .lblb{font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,"Noto Sans TC",sans-serif}html[lang=en] body{font-size:16.5px}html[lang=en] .slide-title{font-size:clamp(1.3rem,2.7vw,2.05rem)}html[lang=en] .cover h1{font-size:clamp(2rem,5vw,3.8rem)}html[lang=en] .hook{font-size:clamp(1.5rem,3.6vw,2.6rem)}html[lang=en] p,html[lang=en] li{line-height:1.55}html[lang=en] .kicker{letter-spacing:.1em}html[lang=en] p,html[lang=en] li{font-size:clamp(.86rem,1.3vw,1.04rem)}html[lang=en] .card .cb{font-size:clamp(.8rem,1.15vw,.94rem)}html[lang=en] .card .ct{font-size:clamp(.95rem,1.4vw,1.1rem)}html[lang=en] .chip{font-size:.84rem;padding:7px 12px}html[lang=en] .opt{font-size:clamp(.82rem,1.2vw,.98rem);padding:11px 15px}html[lang=en] .game-q{font-size:clamp(.9rem,1.35vw,1.08rem)}html[lang=en] .bucket .bh{font-size:.88rem}html[lang=en] table.cmp{font-size:clamp(.78rem,1.1vw,.95rem)}html[lang=en] table.cmp th,html[lang=en] table.cmp td{padding:9px 11px}html[lang=en] .note{font-size:clamp(.85rem,1.2vw,.98rem)}html[lang=en] .subtitle{font-size:clamp(.9rem,1.4vw,1.1rem)}html[lang=en] .checklist li{font-size:.86rem}html[lang=en] .cap{font-size:.82rem}html[lang=en] .pill{font-size:.78rem;padding:4px 10px}</style><a id="langToggle" href="index.html" hreflang="zh-Hant" aria-label="切換到中文">中文</a><script>(function(){var a=document.getElementById('langToggle'),L='en',S='index.html';function tgt(){var h=(typeof cur==='number')?'#s'+cur:location.hash;return S+h}a.addEventListener('click',function(e){e.preventDefault();try{localStorage.setItem('fal_lang',L==='zh'?'en':'zh')}catch(x){}location.href=tgt()});var p=null;try{p=localStorage.getItem('fal_lang')}catch(x){}if(p&&p!==L){location.replace(tgt());return}var m=/^#s(\d+)$/.exec(location.hash);if(m&&typeof show==='function'){show(+m[1]);}})();</script><script>(function(){
+function fit(){var sl=document.querySelector('.slide.active');if(!sl)return;
+ sl.querySelectorAll('svg').forEach(function(svg){var sb=svg.getBoundingClientRect();if(!sb.width)return;
+  var rects=[].slice.call(svg.querySelectorAll('rect')).map(function(r){return r.getBoundingClientRect()});
+  [].slice.call(svg.querySelectorAll('text')).forEach(function(t){
+   if(t.dataset.fit)return; var s=(t.textContent||'').trim(); if(!s)return;
+   var b=t.getBoundingClientRect(); if(!b.width)return;
+   var cx=(b.left+b.right)/2, cy=(b.top+b.bottom)/2;
+   var host=rects.filter(function(r){return r.width>20&&r.width<480&&cx>r.left&&cx<r.right&&cy>r.top&&cy<r.bottom})
+             .sort(function(p,q){return p.width-q.width})[0];
+   var maxW=host?host.width-10:Math.min(b.right,sb.right-2)-Math.max(b.left,sb.left+2);
+   if(host&&(b.right>sb.right||b.left<sb.left))maxW=Math.min(maxW,sb.width-4);
+   if(b.width<=maxW+1)return;
+   t.dataset.fit='1';
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13;
+   var k=b.width/((t.getBBox().width)||b.width); /* client px per user unit */
+   var hasTspan=t.querySelector('tspan'); var canWrap=!hasTspan&&s.indexOf(' ')>0&&host&&host.height>=fs*2.3;
+   if(canWrap){var others=[].slice.call(svg.querySelectorAll('text')).filter(function(o){if(o===t)return false;var ob=o.getBoundingClientRect();var ox=(ob.left+ob.right)/2,oy=(ob.top+ob.bottom)/2;return ox>host.left&&ox<host.right&&oy>host.top&&oy<host.bottom;});
+     if(others.length){var free=host.bottom-b.bottom;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.top>=b.top)free=Math.min(free,ob.top-b.bottom)});var freeTop=b.top-host.top;others.forEach(function(o){var ob=o.getBoundingClientRect();if(ob.bottom<=b.bottom)freeTop=Math.min(freeTop,b.top-ob.bottom)});if(free+freeTop<fs*1.15)canWrap=false;}}
+   if(canWrap){var w=s.split(' '),best=null;
+     for(var i=1;i<w.length;i++){var a=w.slice(0,i).join(' '),c=w.slice(i).join(' ');var d=Math.abs(a.length-c.length);if(!best||d<best.d)best={d:d,a:a,c:c};}
+     var x=t.getAttribute('x')||'0',y=parseFloat(t.getAttribute('y')||'0');
+     t.textContent='';var t1=document.createElementNS('http://www.w3.org/2000/svg','tspan'),t2=t1.cloneNode();
+     t1.setAttribute('x',x);t1.setAttribute('y',(y-fs*0.55/k).toFixed(2));t1.textContent=best.a;
+     t2.setAttribute('x',x);t2.setAttribute('y',(y+fs*0.6/k).toFixed(2));t2.textContent=best.c;
+     t.appendChild(t1);t.appendChild(t2);b=t.getBoundingClientRect();if(b.width<=maxW+1)return;}
+   var sc=Math.max(0.7,maxW/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   b=t.getBoundingClientRect(); if(b.width>maxW+1&&!t.querySelector('tspan')){t.setAttribute('textLength',(maxW/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  });
+  /* second pass: free labels that collide with a neighbour on the same row */
+  var ts=[].slice.call(svg.querySelectorAll('text')).filter(function(x){return (x.textContent||'').trim()});
+  for(var i=0;i<ts.length;i++)for(var j=i+1;j<ts.length;j++){var A=ts[i].getBoundingClientRect(),B=ts[j].getBoundingClientRect();
+   var ox=Math.min(A.right,B.right)-Math.max(A.left,B.left),oy=Math.min(A.bottom,B.bottom)-Math.max(A.top,B.top);
+   if(ox<=2||oy<=Math.min(A.height,B.height)*0.5)continue;
+   var t=A.width>=B.width?ts[i]:ts[j],b=A.width>=B.width?A:B; if(t.querySelector('tspan')||t.dataset.fit2)continue; t.dataset.fit2='1';
+   var want=b.width-ox-6; if(want<b.width*0.55)continue;
+   var fs=parseFloat(getComputedStyle(t).fontSize)||13,k=b.width/((t.getBBox().width)||b.width);
+   var sc=Math.max(0.75,want/b.width); t.style.fontSize=(fs*sc).toFixed(2)+'px';
+   var nb=t.getBoundingClientRect(); if(nb.width>want+1){t.setAttribute('textLength',(want/k).toFixed(1));t.setAttribute('lengthAdjust','spacingAndGlyphs');}
+  }});}
+ if(typeof show==='function'){var _s=show;show=function(i){_s(i);fit();};}
+ fit();setTimeout(fit,400);window.addEventListener('load',function(){setTimeout(fit,200)});
+})();</script><!--/i18n-toggle--></body></html>
