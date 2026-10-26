@@ -3,3 +3,10 @@ teacher/
 build_*.py
 __pycache__/
 .ipynb_checkpoints/
+
+# 學生作答資料與金鑰（含學號，勿公開）
+student_events*.csv
+student_events*.json
+student_events*.ndjson
+*service-account*.json
+*firebase-adminsdk*.json
