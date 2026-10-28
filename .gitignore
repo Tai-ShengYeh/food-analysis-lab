@@ -3,3 +3,7 @@ teacher/
 build_*.py
 __pycache__/
 .ipynb_checkpoints/
+
+# MT01 期中考數據產生器的輸出
+assessment/midterm_data/
+assessment/midterm_student_data.zip

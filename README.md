@@ -49,6 +49,10 @@
 
 [assessment/assessment_toolkit.xlsx](assessment/assessment_toolkit.xlsx)：概念前後測題庫與自動改分、標準化增益、試題分析、自我效能問卷、評分規準、成績總表。說明見 assessment.html。
 
+[assessment/MT01_exam_data_generator.ipynb](assessment/MT01_exam_data_generator.ipynb)（[Colab](https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/assessment/MT01_exam_data_generator.ipynb)）：W9 期中實作考每人數據產生器。以學號為種子，為每位學生產生 A 卷（手動 vs 自動滴定方法比較，NB04）與 B 卷（能力試驗、管制圖、放行判定，NB08）的長格式 CSV，埋的狀況因人而異但結論一致，附答案鍵與可貼上考卷的題目說明；適合開書、同組可討論的考試。
+
+[assessment/midterm_exam.html](https://tai-shengyeh.github.io/food-analysis-lab/assessment/midterm_exam.html)：W9 兩階段期中考學生卷草稿（個人卷 50 分：觀念 10 題、計算 4 題依學號末碼 d 出數、看圖判斷 3 題；小組實作 40 分，用 MT01 的每人數據；口頭抽問 10 分），附公式與臨界值表，可直接列印。教師答案鍵（d = 0–9 的計算答案、看圖判斷的配分與口頭抽問題庫）由授課教師另行保管，放在被 .gitignore 排除的 assessment/teacher/，不進公開倉庫。
+
 ## Colab 筆記本
 
 | 週 | 筆記本 | 開啟 |
