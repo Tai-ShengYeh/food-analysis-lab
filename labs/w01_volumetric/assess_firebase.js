@@ -52,7 +52,9 @@ const ready = new Promise(r => { readyResolve = r; });
 // ── Session ─────────────────────────────────────────────────────
 const COURSE_MAP = { 'fa':'4y_food_analysis','4y_fa':'4y_food_analysis',
   '5z_fa':'5z_food_analysis','fc':'4y_food_chem','vn':'vn_chinese','glp1':'glp1_chinese' };
-const SESSION = { course_id:'4y_food_analysis', class_id:'A', chapter:null, game:'assess', ready:false };
+// 沒帶 ?class= 時的預設班別。115-1 學期只有五專五年級（B → 5z_food_analysis）；四技開課的學期改回 'A'。
+const DEFAULT_CLASS = 'B';
+const SESSION = { course_id:'5z_food_analysis', class_id:'B', chapter:null, game:'assess', ready:false };
 const SID_KEY = 'food_analysis_student_id'; // 與 game_firebase.js 共用學號
 
 export function getStudentId(){ return localStorage.getItem(SID_KEY) || null; }
@@ -172,7 +174,7 @@ function ensureStudentId(){
 // ── 對外主 API ───────────────────────────────────────────────────
 export async function init(opts={}){
   const params=new URLSearchParams(location.search);
-  const classId=opts.class_id || params.get('class') || 'A';
+  const classId=opts.class_id || params.get('class') || DEFAULT_CLASS;
   let course=opts.course || params.get('course');
   if(!course) course = classId==='B' ? '5z_food_analysis' : '4y_food_analysis';
   if(COURSE_MAP[course]) course=COURSE_MAP[course];
