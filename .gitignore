@@ -3,3 +3,6 @@ teacher/
 build_*.py
 __pycache__/
 .ipynb_checkpoints/
+
+# 雲端同步衝突時被換下來的舊版(本機)
+_舊版_同步衝突/
