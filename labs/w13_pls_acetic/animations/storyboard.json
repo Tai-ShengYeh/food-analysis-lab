@@ -1,0 +1,110 @@
+[
+  {
+    "title_zh": "光譜儀怎麼知道醋酸濃度？",
+    "title_en": "How does a spectrometer know acidity?",
+    "narration_zh": "光譜儀本身不知道濃度。它要靠一批有參考值的樣品，建立光譜與醋酸濃度的關係。本週用第四週滴定的觀念，練習 PLS 定量；本導覽使用 NB11 模擬資料，不是實測檢驗成績。",
+    "narration_en": "A spectrometer does not know concentration by itself. It learns a relationship from spectra paired with reference values. This week, connect titration to PLS regression. The tour uses NB11 simulated teaching data, not actual laboratory performance.",
+    "visual": "spectra",
+    "takeaway_zh": "X 是光譜；y 是參考濃度；資料為教學模擬",
+    "takeaway_en": "X: spectra; y: reference concentration; simulated data"
+  },
+  {
+    "title_zh": "先分組，再談模型好不好",
+    "title_en": "Split by sample before evaluating a model",
+    "narration_zh": "示範有十六個樣品，每個三次重裝。十二個樣品作校正，四個樣品作測試；白醋參考樣固定留在測試側。同一樣品的三條光譜，不能一部分進校正、一部分進測試。",
+    "narration_en": "The demo has sixteen samples with three reloads each. Twelve samples form calibration and four form the test set. The white-vinegar reference stays in the test set. All three replicates of one sample must remain on the same side.",
+    "visual": "split",
+    "takeaway_zh": "12 校正樣品 / 4 測試樣品；重複不拆開",
+    "takeaway_en": "12 calibration / 4 test samples; keep replicates together"
+  },
+  {
+    "title_zh": "PLS 與 PCA：有沒有使用答案？",
+    "title_en": "PLS versus PCA: does the fit use y?",
+    "narration_zh": "PCA 找光譜自己變異最大的方向。PLS 同時使用光譜與濃度，找跟答案一起變化的潛在變數。它能處理波長多又共線的情況，但不保證加入更多潛在變數，預測就會更好。",
+    "narration_en": "PCA seeks directions of variation in spectra alone. PLS uses spectra and reference concentrations to find latent variables related to the response. It handles many correlated wavelengths, but adding more latent variables does not guarantee better prediction.",
+    "visual": "supervised",
+    "takeaway_zh": "PCA：只看 X；PLS：同時看 X 與 y",
+    "takeaway_en": "PCA uses X; PLS uses both X and y"
+  },
+  {
+    "title_zh": "前處理與 Scale，分開確認",
+    "title_en": "Separate spectral preprocessing from scaling",
+    "narration_zh": "比較 raw、SNV 與 SG 一階導數時，要用相同的分組驗證。SNV 是逐條光譜標準化；PLS 的 Scale 則按波長欄位縮放。本課保留 Scale 預設開啟，而且每輪的平均與標準差只能用該輪訓練資料估計。",
+    "narration_en": "Compare raw spectra, SNV, and SG derivatives using the same grouped validation. SNV standardizes each spectrum; PLS scaling standardizes variables. Here Scale is on by default. Every fold must estimate its means and standard deviations from that fold's training data only.",
+    "visual": "preprocessing",
+    "takeaway_zh": "SNV 按列；PLS Scale 按欄；每折重新估計",
+    "takeaway_en": "SNV by spectrum; Scale by variable; refit within each fold"
+  },
+  {
+    "title_zh": "分組交叉驗證：每輪留下一整支樣品",
+    "title_en": "Grouped CV: leave out one whole sample",
+    "narration_zh": "每輪拿走一個樣品及其三次重裝，用其他十一個樣品建模，再預測被拿走的三條光譜。共輪流十二次，收集三十六個折外預測，計算 RMSECV。測試集完全不參與這個過程。",
+    "narration_en": "Leave one calibration sample and all three reloads out. Fit on the other eleven samples, then predict the held-out three spectra. Repeat twelve times to obtain thirty-six out-of-fold predictions and RMSECV. The test set does not participate.",
+    "visual": "cv",
+    "takeaway_zh": "訓練 11 組 > 預測 1 組 > 輪流 12 次",
+    "takeaway_en": "Train 11 groups > predict 1 group > repeat 12 times"
+  },
+  {
+    "title_zh": "用 RMSECV 選 LV，不看測試誤差",
+    "title_en": "Choose LVs by RMSECV, not test error",
+    "narration_zh": "增加 LV 往往讓校正誤差下降，卻可能開始配合雜訊。本資料用 SNV 時，兩個 LV 的 RMSECV 約零點四零零。這是目前資料算出的選擇，不是所有醋酸模型都應該用兩個 LV。",
+    "narration_en": "Adding latent variables can reduce calibration error while fitting noise. For these data, SNV with two latent variables gives RMSECV around zero point four zero zero. This is a result for this dataset, not a universal prescription for acidity models.",
+    "visual": "curve",
+    "takeaway_zh": "SNV + 2 LV：RMSECV 0.400 % w/v",
+    "takeaway_en": "SNV + 2 LVs: RMSECV 0.400 % w/v"
+  },
+  {
+    "title_zh": "資料外洩：模型可能認得重複樣品",
+    "title_en": "Leakage: the model may recognize replicates",
+    "narration_zh": "如果把同一樣品的重複分到訓練與驗證兩側，就不再是評估全新樣品。逐列切分可能給出偏樂觀的結果，但單一資料集不一定每次都更低。正確規則是依預期使用情境，保持樣品層級的獨立。",
+    "narration_en": "Splitting replicates between training and validation no longer tests a genuinely new sample. Row-wise splitting can look optimistic, although it need not give a lower error on every dataset. Keep sample-level independence aligned with the intended use.",
+    "visual": "leakage",
+    "takeaway_zh": "分組避免同樣品重複洩漏；不要追求最低數字",
+    "takeaway_en": "Group replicates; do not chase the lowest reported number"
+  },
+  {
+    "title_zh": "先鎖定流程，最後才打開測試集",
+    "title_en": "Lock the pipeline before opening the test set",
+    "narration_zh": "選好前處理、Scale 與 LV 後，先鎖定設定，再用全部校正資料建立最終模型。本示範測試 RMSEP 約零點四二七。若看過測試結果再回頭調參，這批測試集就不能再稱為未碰過的獨立驗證。",
+    "narration_en": "Lock preprocessing, scaling, and latent-variable count before fitting the final calibration model. The demonstration test RMSEP is about zero point four two seven. If you tune after seeing test results, that test set is no longer untouched independent validation.",
+    "visual": "prediction",
+    "takeaway_zh": "4 個獨立測試樣品，不是 12 個獨立樣品",
+    "takeaway_en": "4 independent test samples, not 12 independent samples"
+  },
+  {
+    "title_zh": "誤差成績單：RMSE、bias 與 RPD",
+    "title_en": "Report RMSE, bias, and RPD together",
+    "narration_zh": "RMSE 看整體誤差量級，bias 看平均偏高或偏低，兩者不能互相取代。RPD 是測試參考值的標準差除以 RMSEP，會受測試集濃度範圍影響。四個獨立樣品太少，不能只憑 RPD 三點九一就宣稱能上產線。",
+    "narration_en": "RMSE measures overall error; bias measures average signed error. Neither replaces the other. RPD divides the test reference standard deviation by RMSEP and depends on the test concentration spread. Four independent samples are too few to justify production use from RPD alone.",
+    "visual": "metrics",
+    "takeaway_zh": "RMSEP 0.427；bias -0.054；RPD 3.91（本模擬）",
+    "takeaway_en": "RMSEP 0.427; bias -0.054; RPD 3.91 (this demo)"
+  },
+  {
+    "title_zh": "參考值若有誤差，模型也會受影響",
+    "title_en": "Reference errors affect calibration and validation",
+    "narration_zh": "參考方法的系統性偏差，會帶進校正的濃度尺度。獨立隨機誤差會增加驗證殘差的變異，但不是每次都形成不可突破的硬下限。先確認滴定品質、單次或平均參考值，以及不確定度，才解讀模型誤差。",
+    "narration_en": "Systematic reference bias shifts the calibration scale. Independent random reference error contributes to validation residual variance, but is not an inviolable lower bound for every observed RMSE. Check titration quality, averaging, and uncertainty before interpreting model error.",
+    "visual": "reference",
+    "takeaway_zh": "參考值也是量測，不是零誤差的答案",
+    "takeaway_en": "A reference value is a measurement, not an error-free truth"
+  },
+  {
+    "title_zh": "適用範圍與實驗安全",
+    "title_en": "Applicability and laboratory safety",
+    "narration_zh": "本教學校正範圍是零到十百分比重量體積濃度的醋酸水溶液。範圍內也要留意基質與儀器差異，不能直接套到另一台儀器。配製時依實驗規範，在抽風櫃戴護目鏡與手套，緩慢把酸加入水，並遠離火源。",
+    "narration_en": "The teaching calibration covers zero to ten percent weight per volume aqueous acetic acid. Even inside that range, matrix and instrument changes matter. Do not transfer the model blindly. Follow the lab procedure: hood, goggles, gloves, slowly add acid to water, and keep away from ignition sources.",
+    "visual": "scope",
+    "takeaway_zh": "0–10 % w/v；相同基質與量測條件仍需驗證",
+    "takeaway_en": "0–10 % w/v; matrix and instrument conditions still matter"
+  },
+  {
+    "title_zh": "六幕實驗：交出可追溯的模型報告",
+    "title_en": "Six-act lab: produce a traceable model report",
+    "narration_zh": "進入互動實驗，從分組、前處理、交叉驗證到鎖定測試，逐幕預測並解釋。下載曲線、預測與模型紀錄。正式作業換成全班實測資料，報告適用範圍、六項指標與資料切分，並與其他組的儀器比較。",
+    "narration_en": "Explore the six-act lab from grouping and preprocessing to cross-validation and locked testing. Predict, operate, explain, and download curves, predictions, and the model record. For the assignment, use class measurements and report the split, applicability range, six metrics, and instrument comparison.",
+    "visual": "workflow",
+    "takeaway_zh": "交付：分組、CV 曲線、六指標、適用範圍",
+    "takeaway_en": "Submit: split, CV curves, six metrics, applicability range"
+  }
+]
