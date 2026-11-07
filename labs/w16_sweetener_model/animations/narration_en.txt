@@ -1,0 +1,23 @@
+PLS learns from known blends; NNLS fits pure-reference spectra. The same powder can receive different answers. This week compares their errors and assumptions, then asks when a numerical prediction should not be reported as a concentration.
+
+Combine twenty-five formulations with two spectra per bottle. Leave one whole bottle out in each of twenty-five validation folds. Group by sample_id, not the preparation-group column. Reserve fourteen spectra from seven blind bottles for the final test.
+
+Fit one PLS1 model for each sweetener and choose latent variables using calibration grouped RMSECV. Both select four in this demo, not by a universal rule. PLS2 is a separate joint-model option; these results do not establish that either approach always performs better.
+
+Compare raw spectra with baseline subtraction plus absolute-area normalization. Both retain default PLS scaling. Aspartame's best grouped RMSECV is about zero point seven one one for raw input versus one point three zero six after preprocessing. This dataset chooses raw; other data may differ.
+
+Reveal blind-test errors only after locking the pipeline. PLS test RMSE is about zero point five five seven for aspartame and zero point five zero three percentage points for sucralose; the latter has bias around plus zero point four zero five. Seven independent blind bottles and RPD bands do not establish production fitness.
+
+Erythritol is one hundred percent minus both sweeteners. When aspartame increases, filler decreases. The model can use filler bands as indirect clues through compositional closure. Those are not aspartame-specific peaks or causal proof; changing filler can break the relationship.
+
+NNLS combines three pure spectra and a constant offset using nonnegative coefficients to minimize squared residuals. This demo does not constrain their sum to one. Coefficients describe spectral contributions; mass interpretation requires compatible reference scales, responses, and linear mixing assumptions.
+
+Individually normalizing reference spectra can leave an equally good least-squares reconstruction while changing coefficient scales. A small residual does not justify multiplying the new coefficients by one hundred as mass percentages. Missing components can also force an inappropriate reference combination.
+
+On the same fourteen blind spectra, NNLS test RMSE is about zero point nine seven eight for aspartame and zero point seven six eight for sucralose, higher than PLS here. Instruments, nonlinear mixing, matrices, and reference quality can change that result. Compare methods on the same independent samples.
+
+Use out-of-fold predictions for the ten zero-analyte calibration spectra, their standard deviation, and the prediction-versus-reference slope. Aspartame LOD is about two point six eight percent and LOQ eight point one two percent. Those samples still contain the other sweetener; this is a teaching approximation, not formal method validation.
+
+The simulated commercial challenge changes filler, and PLS predicts about forty-eight point two percent. T squared around two hundred twenty-four and Q around three point one three exceed the model limits. Report outside the model domain and withhold concentration; the label value alone is not grounds for reporting below LOD.
+
+For in-domain samples, check predictions against LOD, LOQ, and calibration range. Retain methods, preprocessing, latent variables, errors, VIP, NNLS comparison, and reporting rationale. Explore the six-act lab and download evidence; use class measurements and validated procedures for formal reporting.
