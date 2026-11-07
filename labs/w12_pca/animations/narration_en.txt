@@ -1,0 +1,21 @@
+Is a bottle labeled olive oil really olive oil? This week, explore spectra with principal component analysis. Clear clusters are clues, not proof of authenticity. Check preprocessing, spectral features, and measurement quality.
+
+The course dataset has six oils with three replicates each: eighteen spectra and sixty spectral variables. Rows are samples and columns are wavenumbers. Both this tour and the interactive lab use the original simulated course data, not laboratory test results.
+
+Start with two spectral variables and rotate the projection. A more spread-out projection preserves more variance. PCA finds the first direction of maximum variance, then an orthogonal second direction. Oil labels are not used to fit the model.
+
+Centering subtracts each variable's mean across samples. Autoscaling also divides by that variable's sample standard deviation. This lesson starts with centering only, so low-variance noise is not automatically given equal weight. Scaling remains a choice tied to the analytical objective.
+
+Each point in the score plot is a spectrum. Three points of the same color are replicate measurements of one oil; check their consistency first. Changing the displayed components changes the view. Overlapping groups do not necessarily have identical spectra.
+
+Loadings are the weights on spectral variables. Multiply the centered spectrum by those weights and sum to obtain a score. Interpret loadings together with raw spectra and measurement records. Flipping a component's scores and loadings together does not change the result.
+
+For this simulated dataset, the first three components explain about forty-six point three, twenty-eight point three, and twenty-three point zero percent. Together they retain about ninety-seven point seven percent of variance. That is not classification accuracy.
+
+With all samples included, the third peanut-oil replicate contributes about seventy-four percent of the PC2 score sum of squares. Its largest loading is near eleven fifty-nine inverse centimeters. Inspect the raw spectrum before treating an artifact as an oil characteristic.
+
+In this teaching case, exclude the third peanut replicate only after documenting its injected measurement artifact, then fit PCA again. The new PC1 and PC2 explain about sixty-three point five and thirty-three point two percent. The dominant PC2 loading shifts near fifteen twenty-five inverse centimeters.
+
+In Orange, use oil type as the target and wavenumber columns as features. Turn off Normalize variables in PCA. Connect its Data output to the score plot and Components to Spectra for loadings. Advanced users can reproduce preprocessing and outlier comparisons in notebook NB10.
+
+Enter the six-act interactive lab: predict, operate, and explain. Submit a score plot, loadings with tentative band assignments, explained variance, and an outlier comparison before and after refitting. For the assignment, use class measurements and retain the reason for every exclusion.

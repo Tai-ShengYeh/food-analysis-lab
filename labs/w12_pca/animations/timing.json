@@ -1,0 +1,156 @@
+[
+  {
+    "lang": "zh",
+    "scene": 0,
+    "start": 0,
+    "speech_duration": 16.504989,
+    "scene_duration": 17.25
+  },
+  {
+    "lang": "zh",
+    "scene": 1,
+    "start": 17.25,
+    "speech_duration": 17.171247,
+    "scene_duration": 17.916666666666668
+  },
+  {
+    "lang": "zh",
+    "scene": 2,
+    "start": 35.16666666666667,
+    "speech_duration": 18.157551,
+    "scene_duration": 18.916666666666668
+  },
+  {
+    "lang": "zh",
+    "scene": 3,
+    "start": 54.08333333333334,
+    "speech_duration": 19.197596,
+    "scene_duration": 19.916666666666668
+  },
+  {
+    "lang": "zh",
+    "scene": 4,
+    "start": 74.00000000000001,
+    "speech_duration": 18.232744,
+    "scene_duration": 19.0
+  },
+  {
+    "lang": "zh",
+    "scene": 5,
+    "start": 93.00000000000001,
+    "speech_duration": 18.896871,
+    "scene_duration": 19.666666666666668
+  },
+  {
+    "lang": "zh",
+    "scene": 6,
+    "start": 112.66666666666669,
+    "speech_duration": 18.77415,
+    "scene_duration": 19.5
+  },
+  {
+    "lang": "zh",
+    "scene": 7,
+    "start": 132.16666666666669,
+    "speech_duration": 20.661723,
+    "scene_duration": 21.416666666666668
+  },
+  {
+    "lang": "zh",
+    "scene": 8,
+    "start": 153.58333333333334,
+    "speech_duration": 22.30068,
+    "scene_duration": 23.083333333333332
+  },
+  {
+    "lang": "zh",
+    "scene": 9,
+    "start": 176.66666666666669,
+    "speech_duration": 21.250249,
+    "scene_duration": 22.0
+  },
+  {
+    "lang": "zh",
+    "scene": 10,
+    "start": 198.66666666666669,
+    "speech_duration": 19.731519,
+    "scene_duration": 20.5
+  },
+  {
+    "lang": "en",
+    "scene": 0,
+    "start": 0,
+    "speech_duration": 16.821542,
+    "scene_duration": 17.583333333333332
+  },
+  {
+    "lang": "en",
+    "scene": 1,
+    "start": 17.583333333333332,
+    "speech_duration": 17.74127,
+    "scene_duration": 18.5
+  },
+  {
+    "lang": "en",
+    "scene": 2,
+    "start": 36.08333333333333,
+    "speech_duration": 17.111202,
+    "scene_duration": 17.833333333333332
+  },
+  {
+    "lang": "en",
+    "scene": 3,
+    "start": 53.91666666666666,
+    "speech_duration": 19.585941,
+    "scene_duration": 20.333333333333332
+  },
+  {
+    "lang": "en",
+    "scene": 4,
+    "start": 74.24999999999999,
+    "speech_duration": 17.316372,
+    "scene_duration": 18.083333333333332
+  },
+  {
+    "lang": "en",
+    "scene": 5,
+    "start": 92.33333333333331,
+    "speech_duration": 17.051066,
+    "scene_duration": 17.833333333333332
+  },
+  {
+    "lang": "en",
+    "scene": 6,
+    "start": 110.16666666666664,
+    "speech_duration": 18.256508,
+    "scene_duration": 19.0
+  },
+  {
+    "lang": "en",
+    "scene": 7,
+    "start": 129.16666666666663,
+    "speech_duration": 17.955828,
+    "scene_duration": 18.666666666666668
+  },
+  {
+    "lang": "en",
+    "scene": 8,
+    "start": 147.8333333333333,
+    "speech_duration": 21.015601,
+    "scene_duration": 21.75
+  },
+  {
+    "lang": "en",
+    "scene": 9,
+    "start": 169.5833333333333,
+    "speech_duration": 20.12068,
+    "scene_duration": 20.833333333333332
+  },
+  {
+    "lang": "en",
+    "scene": 10,
+    "start": 190.41666666666663,
+    "speech_duration": 19.485805,
+    "scene_duration": 20.25
+  }
+]
