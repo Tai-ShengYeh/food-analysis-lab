@@ -1,0 +1,19 @@
+This week, identify an unknown sweetener using spectra. Do not trust the top match immediately. Background, scattering, and intensity changes can make the same material look different.
+
+First check the axis, units, and measurement mode. Use the same spectral region and preprocessing for references and unknowns. These curves are simulated teaching data, not measured chemical fingerprints.
+
+An isolated Raman spike may be a cosmic ray. A median filter can help detect it, but a real narrow peak can also be erased. Inspect replicate scans before correcting suspicious points.
+
+Asymmetric least squares estimates a smooth background. Lambda controls smoothness and p controls asymmetric weights. Start with one million and zero point zero one, but these are starting values, not universal settings.
+
+SNV subtracts each spectrum's own mean and divides by its population standard deviation. Positive scaling and constant offsets then disappear. An arbitrary curved background does not.
+
+Savitzky Golay fits a polynomial inside a moving window. Derivatives reveal overlapping features but can amplify noise. Compare window sizes, preserve meaningful peaks, and use the actual axis spacing when computing derivatives.
+
+Pearson compares centered shapes. Cosine compares vector directions, and smaller spectral angles mean closer directions. Raw Euclidean distance is scale sensitive. Cosine ignores positive scaling, but remains sensitive to offsets.
+
+Report the top three candidates and overlay their spectra. Check diagnostic features and the gap between the leading matches. A high score is not proof of identity. No universal threshold applies, and mixtures may match only their dominant component.
+
+Open the interactive lab. Explore spikes, baseline, scattering, and SG settings, then change the metric and unknown sample. Predict before observing, explain the result, and download spectra and your experiment record with parameter choices.
+
+Build a reference library from your week ten measurements. Submit preprocessing settings, top three scores, overlays, and a discussion of an ambiguous case. For NNLS, coefficients after normalization are not automatically mass fractions.
