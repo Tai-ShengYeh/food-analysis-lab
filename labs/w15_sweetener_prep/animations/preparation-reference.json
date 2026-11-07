@@ -1,0 +1,248 @@
+{
+  "source": "data/nb13_demo_spectra.csv",
+  "source_sha256": "23a4a7806d2ab553a8ee8a4dde8eaaa42c15a44e8817f621dc7012256c8cadba",
+  "calibration_design": [
+    {
+      "sample_id": "CAL-00",
+      "aspartame_pct": 0.0,
+      "sucralose_pct": 0.0,
+      "erythritol_pct": 100.0,
+      "preparation_group": "G1"
+    },
+    {
+      "sample_id": "CAL-01",
+      "aspartame_pct": 0.0,
+      "sucralose_pct": 2.5,
+      "erythritol_pct": 97.5,
+      "preparation_group": "G2"
+    },
+    {
+      "sample_id": "CAL-02",
+      "aspartame_pct": 0.0,
+      "sucralose_pct": 5.0,
+      "erythritol_pct": 95.0,
+      "preparation_group": "G3"
+    },
+    {
+      "sample_id": "CAL-03",
+      "aspartame_pct": 0.0,
+      "sucralose_pct": 7.5,
+      "erythritol_pct": 92.5,
+      "preparation_group": "G4"
+    },
+    {
+      "sample_id": "CAL-04",
+      "aspartame_pct": 0.0,
+      "sucralose_pct": 10.0,
+      "erythritol_pct": 90.0,
+      "preparation_group": "G5"
+    },
+    {
+      "sample_id": "CAL-05",
+      "aspartame_pct": 2.5,
+      "sucralose_pct": 0.0,
+      "erythritol_pct": 97.5,
+      "preparation_group": "G5"
+    },
+    {
+      "sample_id": "CAL-06",
+      "aspartame_pct": 2.5,
+      "sucralose_pct": 2.5,
+      "erythritol_pct": 95.0,
+      "preparation_group": "G1"
+    },
+    {
+      "sample_id": "CAL-07",
+      "aspartame_pct": 2.5,
+      "sucralose_pct": 5.0,
+      "erythritol_pct": 92.5,
+      "preparation_group": "G2"
+    },
+    {
+      "sample_id": "CAL-08",
+      "aspartame_pct": 2.5,
+      "sucralose_pct": 7.5,
+      "erythritol_pct": 90.0,
+      "preparation_group": "G3"
+    },
+    {
+      "sample_id": "CAL-09",
+      "aspartame_pct": 2.5,
+      "sucralose_pct": 10.0,
+      "erythritol_pct": 87.5,
+      "preparation_group": "G4"
+    },
+    {
+      "sample_id": "CAL-10",
+      "aspartame_pct": 5.0,
+      "sucralose_pct": 0.0,
+      "erythritol_pct": 95.0,
+      "preparation_group": "G4"
+    },
+    {
+      "sample_id": "CAL-11",
+      "aspartame_pct": 5.0,
+      "sucralose_pct": 2.5,
+      "erythritol_pct": 92.5,
+      "preparation_group": "G5"
+    },
+    {
+      "sample_id": "CAL-12",
+      "aspartame_pct": 5.0,
+      "sucralose_pct": 5.0,
+      "erythritol_pct": 90.0,
+      "preparation_group": "G1"
+    },
+    {
+      "sample_id": "CAL-13",
+      "aspartame_pct": 5.0,
+      "sucralose_pct": 7.5,
+      "erythritol_pct": 87.5,
+      "preparation_group": "G2"
+    },
+    {
+      "sample_id": "CAL-14",
+      "aspartame_pct": 5.0,
+      "sucralose_pct": 10.0,
+      "erythritol_pct": 85.0,
+      "preparation_group": "G3"
+    },
+    {
+      "sample_id": "CAL-15",
+      "aspartame_pct": 7.5,
+      "sucralose_pct": 0.0,
+      "erythritol_pct": 92.5,
+      "preparation_group": "G3"
+    },
+    {
+      "sample_id": "CAL-16",
+      "aspartame_pct": 7.5,
+      "sucralose_pct": 2.5,
+      "erythritol_pct": 90.0,
+      "preparation_group": "G4"
+    },
+    {
+      "sample_id": "CAL-17",
+      "aspartame_pct": 7.5,
+      "sucralose_pct": 5.0,
+      "erythritol_pct": 87.5,
+      "preparation_group": "G5"
+    },
+    {
+      "sample_id": "CAL-18",
+      "aspartame_pct": 7.5,
+      "sucralose_pct": 7.5,
+      "erythritol_pct": 85.0,
+      "preparation_group": "G1"
+    },
+    {
+      "sample_id": "CAL-19",
+      "aspartame_pct": 7.5,
+      "sucralose_pct": 10.0,
+      "erythritol_pct": 82.5,
+      "preparation_group": "G2"
+    },
+    {
+      "sample_id": "CAL-20",
+      "aspartame_pct": 10.0,
+      "sucralose_pct": 0.0,
+      "erythritol_pct": 90.0,
+      "preparation_group": "G2"
+    },
+    {
+      "sample_id": "CAL-21",
+      "aspartame_pct": 10.0,
+      "sucralose_pct": 2.5,
+      "erythritol_pct": 87.5,
+      "preparation_group": "G3"
+    },
+    {
+      "sample_id": "CAL-22",
+      "aspartame_pct": 10.0,
+      "sucralose_pct": 5.0,
+      "erythritol_pct": 85.0,
+      "preparation_group": "G4"
+    },
+    {
+      "sample_id": "CAL-23",
+      "aspartame_pct": 10.0,
+      "sucralose_pct": 7.5,
+      "erythritol_pct": 82.5,
+      "preparation_group": "G5"
+    },
+    {
+      "sample_id": "CAL-24",
+      "aspartame_pct": 10.0,
+      "sucralose_pct": 10.0,
+      "erythritol_pct": 80.0,
+      "preparation_group": "G1"
+    }
+  ],
+  "corr_AS": 0.0,
+  "design_rank_with_intercept": 3,
+  "actual_masses_g": [
+    0.1523,
+    0.0997,
+    1.7489
+  ],
+  "actual_total_g": 2.0008999999999997,
+  "actual_fractions_pct": [
+    7.611574791343895,
+    4.982757759008447,
+    87.40566744964767
+  ],
+  "balance_half_width_mg": 0.1,
+  "assumed_rectangular_u_mg": 0.05773502691896259,
+  "mass_relative_u_pct": [
+    0.037908750439240045,
+    0.05790875317849808,
+    0.0033012194475934924
+  ],
+  "fraction_u_pct_points": [
+    0.0026838579450183305,
+    0.0027492070744010765,
+    0.0035851817345037723
+  ],
+  "QC_example5": {
+    "values": [
+      102,
+      98,
+      105,
+      95,
+      100
+    ],
+    "sample_SD": 3.8078865529319543,
+    "RSD_pct": 3.8078865529319543
+  },
+  "QC_example2": {
+    "values": [
+      102,
+      98
+    ],
+    "sample_SD": 2.8284271247461903,
+    "RSD_pct": 2.8284271247461903
+  },
+  "schedule": {
+    "bottles": 32,
+    "stations": 6,
+    "reloads": 2,
+    "files": 384,
+    "files_per_station": 64,
+    "rack_sizes": [
+      6,
+      6,
+      5,
+      5,
+      5,
+      5
+    ],
+    "scan_minutes": 1.5,
+    "reference_minutes_per_round": 1,
+    "rounds": 6,
+    "round_minutes": 19,
+    "lockstep_minutes": 114,
+    "per_station_work_minutes": 102,
+    "available_minutes": 115
+  },
+  "blind_labels": "withheld; IDs only BLIND-00..BLIND-06"
+}

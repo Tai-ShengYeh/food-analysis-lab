@@ -1,0 +1,23 @@
+A sweetener label may not disclose each ingredient's amount. This week is not about fitting PLS first. Design and prepare reliable calibration samples, collect spectra, and retain records. Modeling follows in week sixteen.
+
+This course uses solid blends to address solubility and weak low-concentration signals. Feasibility still depends on the instrument, geometry, and method detection capability. Before starting, have the TA verify blanks and low-level samples. A teaching assumption is not evidence that a real pilot was performed.
+
+Each sweetener has five levels: zero, two point five, five, seven point five, and ten percent. All twenty-five combinations have zero target correlation. A one-to-one diagonal confounds the two concentrations. Zero correlation helps the design but does not guarantee spectral separability.
+
+Each group prepares five bottles spanning all five levels of both sweeteners. G1 happens to receive the diagonal, but must not fit a model using only its own five bottles. Combine all twenty-five class preparations. Filler is the remainder, not a third independently controlled factor.
+
+CAL-17 targets seven point five percent aspartame and five percent sucralose. The example weighs zero point one five two three, zero point zero nine nine seven, and one point seven four eight nine grams. Divide by the actual total, two point zero zero zero nine grams: aspartame is about seven point six one percent.
+
+Assuming a rectangular balance error bounded by plus or minus zero point one milligram, standard uncertainty is the half-width divided by square root three, about zero point zero five eight milligram. Readability alone does not establish that bound. Fraction uncertainty also includes the shared denominator and all three masses.
+
+After recording all masses, mix the smaller powder portions with comparable filler amounts, then add the remaining powder progressively. Include both sweeteners and check mass conservation. Grind, sieve, and seal promptly. Following the steps supports mixing but does not prove uniformity; assess reload variability.
+
+Randomize twenty-five calibration and seven blind bottles into racks of six, six, five, five, five, and five. Concentration-ordered runs can confound drift with concentration. Randomization reduces systematic alignment, but does not remove drift or replace white-reference checks.
+
+Every bottle visits five NIR stations and one Raman station. Save two separate reload spectra per bottle at each station, without averaging first. That is sixty-four spectra per station and three hundred eighty-four overall. Keep seven blind bottles out of calibration and their real concentrations with the TA until week sixteen.
+
+At one point five minutes per spectrum plus one minute for the reference each round, the largest six-bottle rack needs nineteen minutes. Six synchronized rounds take one hundred fourteen minutes, just under the one hundred fifteen minute budget. Two minutes per spectrum requires one hundred fifty minutes. Ask the TA if behind; do not skip reloads or blinds.
+
+For two reloads, sample standard deviation is their absolute difference divided by square root two. Values one hundred two and ninety-eight have mean one hundred and RSD about two point eight three percent. Pool within-bottle variation across bottles, then compare it with adjacent-level feature differences; do not mix between-concentration variation into repeatability.
+
+Upload actual fractions, bottle IDs, preparation groups, instruments, and reload numbers. Retain the random seed, run order, reference checks, and QC notes. Avoid inhaling powders or consuming lab samples; the TA follows Raman laser procedures. Next week, validate models with whole-bottle groups kept together.
