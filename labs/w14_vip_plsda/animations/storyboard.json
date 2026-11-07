@@ -1,0 +1,119 @@
+[
+  {
+    "title_zh": "VIP 全部一樣，你還會相信排名嗎？",
+    "title_en": "All VIP values match. Would you trust the ranking?",
+    "narration_zh": "模型說某個波長很重要，先別照抄排名。本週從一個多寫總和的 VIP 錯誤開始，學會驗證重要性、判讀分類，並用兩種離群診斷檢查模型是否認得新樣品。三組資料都來自 NB12 教學模擬。",
+    "narration_en": "Before trusting a wavelength ranking, verify the calculation. This week starts with an extra-sum VIP bug, then explores classification and two complementary outlier diagnostics. All three datasets are the original NB12 teaching simulations, not real inspection results.",
+    "visual": "bug",
+    "takeaway_zh": "先驗算，再解釋；模擬資料不是檢驗證明",
+    "takeaway_en": "Check calculations before interpretation; simulated data only"
+  },
+  {
+    "title_zh": "VIP：用 y 的解釋量加權波長貢獻",
+    "title_en": "VIP weights wavelength contributions by explained y",
+    "narration_zh": "每個潛在變數有一組波長權重，VIP 把權重平方，按照該方向解釋的 y 變異加權。正確公式會讓全部波長的 VIP 平方平均等於一；但只抽幾個波長來平均，就不一定是一。",
+    "narration_en": "Each latent variable has a vector of wavelength weights. VIP combines their squared contributions, weighted by explained response variation. Correct VIP has mean squared value one across all variables, but that identity need not hold for a small selected subset.",
+    "visual": "vip",
+    "takeaway_zh": "mean(VIP²)=1 只適用全部變數，不適用任意子集",
+    "takeaway_en": "mean(VIP squared)=1 applies to all variables, not subsets"
+  },
+  {
+    "title_zh": "不變量能抓錯，但不是正確保證",
+    "title_en": "An invariant detects errors, not all possible bugs",
+    "narration_zh": "本例有八十一個波長。若錯把每個波長的貢獻提早加成總和，所有 VIP 都變成九，平方平均變成八十一。反過來說，全部填成一也會通過平均檢查，所以還要比對波形、程式與合理性。",
+    "narration_en": "This example has eighty-one variables. Prematurely summing the wavelength contributions makes every buggy VIP equal nine, with mean square eighty-one. But filling every VIP with one would pass the mean-square check. Also inspect the curve, implementation, and scientific context.",
+    "visual": "bug",
+    "takeaway_zh": "公式不變量是必要檢查，不是充分證明",
+    "takeaway_en": "An invariant is a necessary check, not sufficient proof"
+  },
+  {
+    "title_zh": "VIP 說重要性，係數才有方向",
+    "title_en": "VIP indicates importance; coefficients carry direction",
+    "narration_zh": "VIP 是非負的重要性指標，不表示因果，也不告訴你濃度往哪裡變。迴歸係數才有正負方向，而且必須連同前處理與共線性解讀。VIP 大於一只是高於平均的常用經驗規則，不是顯著性檢定。",
+    "narration_en": "VIP is nonnegative importance, not causality or a direction of concentration change. Regression coefficients carry signs, interpreted in the context of preprocessing and collinearity. VIP above one is a common above-average heuristic, not a significance test.",
+    "visual": "direction",
+    "takeaway_zh": "VIP >= 0；係數可正可負；高 VIP 不等於因果",
+    "takeaway_en": "VIP is nonnegative; coefficients are signed; neither proves causality"
+  },
+  {
+    "title_zh": "先選波長再評分，小心選擇偏誤",
+    "title_en": "Beware selecting variables before scoring the same folds",
+    "narration_zh": "示範用六十個訓練樣品選出十八個 VIP 波長，另有二十個測試樣品。若先用全部訓練資料選波長，再在同批資料交叉驗證，驗證折已參與選擇。公平比較要在每折內重新選波長，或保留未碰過的外部測試。",
+    "narration_en": "The demo selects eighteen VIP variables from sixty training samples, with twenty samples held out. Selecting on all training data before cross-validation lets validation folds influence selection. Reselect within each fold, or evaluate once on untouched external samples.",
+    "visual": "selection",
+    "takeaway_zh": "篩選也屬於建模；每折內重選才避免選擇洩漏",
+    "takeaway_en": "Variable selection is part of fitting; repeat it inside each fold"
+  },
+  {
+    "title_zh": "測試變好，不代表篩選必然更好",
+    "title_en": "A better test result is not a universal win",
+    "narration_zh": "這批資料全波段測試誤差約零點一六六，篩選後約零點一三三，但固定遮罩的交叉驗證誤差反而增加。兩種指標不一致，加上測試只有二十個樣品，不能只挑好看的數字；更不能看過測試結果再調門檻。",
+    "narration_en": "For these data, test RMSE falls from about zero point one six six to zero point one three three after selection, while fixed-mask CV error rises. With only twenty test samples, do not cherry-pick the favorable metric or retune the threshold after seeing test results.",
+    "visual": "compare",
+    "takeaway_zh": "RMSEP：0.166 > 0.133；仍需獨立確認與不確定度",
+    "takeaway_en": "RMSEP: 0.166 > 0.133; further independent validation is needed"
+  },
+  {
+    "title_zh": "PLS-DA：one-hot 迴歸，再取最大值",
+    "title_en": "PLS-DA: regress one-hot targets, then take argmax",
+    "narration_zh": "六種油編碼成六欄零與一，PLS 同時對這六欄建模。新樣品得到六個預測分數，選最大的那類。這些分數不是機率，可能小於零或大於一，也不保證總和是一。",
+    "narration_en": "Encode six oil classes as six columns of zeros and ones. PLS jointly regresses those targets. For a new sample, choose the class with the largest predicted score. These scores are not calibrated probabilities: they can be negative or exceed one.",
+    "visual": "onehot",
+    "takeaway_zh": "one-hot > PLS2 > 六個分數 > argmax；分數不是機率",
+    "takeaway_en": "One-hot > PLS2 > six scores > argmax; scores are not probabilities"
+  },
+  {
+    "title_zh": "混淆矩陣：整體準，不代表每類都準",
+    "title_en": "Overall accuracy can hide weak class sensitivity",
+    "narration_zh": "NB12 由訓練資料選出六個 LV，獨立測試二十七個樣品，判對二十四個，約百分之八十八點九。精製橄欖油四個只抓到兩個，敏感度零點五；特異度雖是一，也不能說這一類都辨認得很好。",
+    "narration_en": "Training CV chooses six latent variables. The independent test classifies twenty-four of twenty-seven samples correctly, about eighty-eight point nine percent. Refined olive oil has only two true positives out of four: sensitivity one half. Perfect specificity does not repair those missed positives.",
+    "visual": "confusion",
+    "takeaway_zh": "列是實際，欄是預測；敏感度與特異度一起看",
+    "takeaway_en": "Rows: actual; columns: predicted; inspect sensitivity and specificity"
+  },
+  {
+    "title_zh": "T² 與 Q：平面內遠，還是平面外遠？",
+    "title_en": "T squared and Q: far within or far outside the model?",
+    "narration_zh": "T 平方用各主成分的變異當尺，描述樣品在模型平面內離中心多遠。Q 是光譜與重建光譜的殘差平方和，描述模型沒解釋的部分。兩個值來自同一個校正 PCA，但回答不同問題，不能只看其中一個。",
+    "narration_en": "T squared scales score distance by each retained component's variance. Q is the squared reconstruction residual, measuring variation outside the retained model. Both use the same calibration PCA, but answer different questions. Inspect them together.",
+    "visual": "influence",
+    "takeaway_zh": "T²：模型內的距離；Q：重建不了的變異",
+    "takeaway_en": "T squared: score-space distance; Q: unexplained variation"
+  },
+  {
+    "title_zh": "換儀器可能 T² 正常，Q 卻很高",
+    "title_en": "A new instrument may have ordinary T squared but high Q",
+    "narration_zh": "本例只用四十個校正樣品建立兩成分 PCA。槓桿樣品 T 平方約二十八點四，但 Q 未超標；換儀器的模擬樣品，T 平方看似普通，Q 卻約為界限三十三倍。分數圖看不出異常，不等於模型真的適用。",
+    "narration_en": "Fit a two-component PCA using only forty calibration samples. The leverage example has T squared about twenty-eight point four but Q below its limit. Simulated instrument-shift samples have ordinary T squared yet Q about thirty-three times its limit. An ordinary score plot does not establish applicability.",
+    "visual": "influence",
+    "takeaway_zh": "不能把「分數圖正常」當成「模型適用」",
+    "takeaway_en": "Ordinary scores do not establish model applicability"
+  },
+  {
+    "title_zh": "95% 界限是近似，不是合格保證",
+    "title_en": "Approximate limits are not acceptance guarantees",
+    "narration_zh": "T 平方與 Q 的界限依同一校正模型估計，不可拿別個模型的數字套用。兩成分例的校正內 T 平方界限約六點六六，新樣品近似約六點八三。分布假設、樣本數與多重比較都會影響誤報，超線應先調查，不要自動刪除。",
+    "narration_en": "Limits belong to the fitted calibration model, not every instrument or dataset. For this two-component example, the approximate training T-squared limit is six point six six, and the new-sample limit six point eight three. Assumptions and sample size matter. Investigate flagged points; do not delete automatically.",
+    "visual": "limits",
+    "takeaway_zh": "T² 界限：校正內 6.66；新樣品 6.83（近似）",
+    "takeaway_en": "Approximate T-squared limits: training 6.66; new sample 6.83"
+  },
+  {
+    "title_zh": "Orange 與 NB12：不同路徑要說清楚",
+    "title_en": "Distinguish the Orange and NB12 modeling routes",
+    "narration_zh": "Orange 入門用 PCA 加邏輯斯迴歸，不是本頁的 PLS-DA。若 PCA 先用全部資料 fit 再做分類交叉驗證，也會有洩漏；正式流程要把 PCA 放進每一折。Apply Domain 可看投影，但完整 Q 診斷要用 NB12 或本互動實驗。",
+    "narration_en": "The Orange route uses PCA plus logistic regression, not the PLS-DA model shown here. Fitting PCA on all data before classifier CV leaks information; fit PCA inside each fold instead. Apply Domain shows projections, while full Q diagnostics require NB12 or this interactive lab.",
+    "visual": "workflow",
+    "takeaway_zh": "PCA + logistic 不等於 PLS-DA；降維也須折內 fit",
+    "takeaway_en": "PCA plus logistic is not PLS-DA; fit preprocessing inside folds"
+  },
+  {
+    "title_zh": "六幕操作：把模型結論變成可查證證據",
+    "title_en": "Six acts: make model conclusions auditable",
+    "narration_zh": "進入六幕實驗，切換正確與錯誤 VIP、比較篩選流程，判讀分類分數與混淆矩陣，再操作 T 平方與 Q。下載證據與調查紀錄。正式作業換成本班實測資料，說明限制、保留離群原因，不把模擬成績當食品真偽認證。",
+    "narration_en": "Explore correct and buggy VIP, compare selection workflows, inspect classification scores and confusion matrices, then vary T squared and Q. Download evidence and investigation notes. Use class measurements for the assignment, retain reasons for flagged samples, and do not treat simulation results as food-authenticity certification.",
+    "visual": "workflow",
+    "takeaway_zh": "交付：VIP 驗算、混淆矩陣、T²/Q、調查紀錄",
+    "takeaway_en": "Submit: VIP checks, confusion matrix, T-squared/Q, investigation notes"
+  }
+]
