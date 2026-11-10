@@ -1,0 +1,166 @@
+[
+ {
+  "key": "zh-00",
+  "lang": "zh",
+  "scene": 0,
+  "text": "模型說某個波長很重要，先別照抄排名。本週從一個多寫總和的 VIP 錯誤開始，學會驗證重要性、判讀分類，並用兩種離群診斷檢查模型是否認得新樣品。三組資料都來自 NB12 教學模擬。",
+  "tts": "模型說某個玻長很重要，先別照抄排名。本周從一個多寫總和的 VIP 錯誤開始，學會驗證重要性、判讀分類，並用兩種離群診斷檢查模型是否認得新樣品。三組資料都來自 NB12 教學模你。"
+ },
+ {
+  "key": "zh-01",
+  "lang": "zh",
+  "scene": 1,
+  "text": "每個潛在變數有一組波長權重，VIP 把權重平方，按照該方向解釋的 y 變異加權。正確公式會讓全部波長的 VIP 平方平均等於一；但只抽幾個波長來平均，就不一定是一。",
+  "tts": "每個潛在變數有一組玻長權重，VIP 把權重平方，按照該方向解釋的 y 變異加權。正確公式會讓全部玻長的 VIP 平方平均等於一；但只抽幾個玻長來平均，就不一定是一。"
+ },
+ {
+  "key": "zh-02",
+  "lang": "zh",
+  "scene": 2,
+  "text": "本例有八十一個波長。若錯把每個波長的貢獻提早加成總和，所有 VIP 都變成九，平方平均變成八十一。反過來說，全部填成一也會通過平均檢查，所以還要比對波形、程式與合理性。",
+  "tts": "本例有八十一個玻長。若錯把每個玻長的貢獻提早加成總和，所有 VIP 都變成九，平方平均變成八十一。反過來說，全部填成一也會通過平均檢查，所以還要比對玻形、程式與合理性。"
+ },
+ {
+  "key": "zh-03",
+  "lang": "zh",
+  "scene": 3,
+  "text": "VIP 是非負的重要性指標，不表示因果，也不告訴你濃度往哪裡變。迴歸係數才有正負方向，而且必須連同前處理與共線性解讀。VIP 大於一只是高於平均的常用經驗規則，不是顯著性檢定。"
+ },
+ {
+  "key": "zh-04",
+  "lang": "zh",
+  "scene": 4,
+  "text": "示範用六十個訓練樣品選出十八個 VIP 波長，另有二十個測試樣品。若先用全部訓練資料選波長，再在同批資料交叉驗證，驗證折已參與選擇。公平比較要在每折內重新選波長，或保留未碰過的外部測試。",
+  "tts": "示範用六十個訓練樣品選出十八個 VIP 玻長，另有二十個測試樣品。若先用全部訓練資料選玻長，再在同批資料交叉驗證，驗證折已參與選擇。公平比較要在每折內重新選玻長，或保留未碰過的外部測試。"
+ },
+ {
+  "key": "zh-05",
+  "lang": "zh",
+  "scene": 5,
+  "text": "這批資料全波段測試誤差約零點一六六，篩選後約零點一三三，但固定遮罩的交叉驗證誤差反而增加。兩種指標不一致，加上測試只有二十個樣品，不能只挑好看的數字；更不能看過測試結果再調門檻。",
+  "tts": "這批資料全玻段測試誤差約零點一六六，篩選後約零點一三三，但固定遮罩的交叉驗證誤差反而增加。兩種指標不一致，加上測試只有二十個樣品，不能只挑好看的數字；更不能看過測試結果再調門砍。"
+ },
+ {
+  "key": "zh-06",
+  "lang": "zh",
+  "scene": 6,
+  "text": "六種油編碼成六欄零與一，PLS 同時對這六欄建模。新樣品得到六個預測分數，選最大的那類。這些分數不是機率，可能小於零或大於一，也不保證總和是一。"
+ },
+ {
+  "key": "zh-07",
+  "lang": "zh",
+  "scene": 7,
+  "text": "NB12 由訓練資料選出六個 LV，獨立測試二十七個樣品，判對二十四個，約百分之八十八點九。精製橄欖油四個只抓到兩個，敏感度零點五；特異度雖是一，也不能說這一類都辨認得很好。"
+ },
+ {
+  "key": "zh-08",
+  "lang": "zh",
+  "scene": 8,
+  "text": "T 平方用各主成分的變異當尺，描述樣品在模型平面內離中心多遠。Q 是光譜與重建光譜的殘差平方和，描述模型沒解釋的部分。兩個值來自同一個校正 PCA，但回答不同問題，不能只看其中一個。",
+  "tts": "T 平方用各主成分的變異當尺，描述樣品在模型平面內離中心多遠。Q 是光普與重建光普的殘差平方和，描述模型沒解釋的部分。兩個值來自同一個校正 PCA，但回答不同問題，不能只看其中一個。"
+ },
+ {
+  "key": "zh-09",
+  "lang": "zh",
+  "scene": 9,
+  "text": "本例只用四十個校正樣品建立兩成分 PCA。槓桿樣品 T 平方約二十八點四，但 Q 未超標；換儀器的模擬樣品，T 平方看似普通，Q 卻約為界限三十三倍。分數圖看不出異常，不等於模型真的適用。",
+  "tts": "本例只用四十個校正樣品建立兩成分 PCA。槓桿樣品 T 平方約二十八點四，但 Q 未超標；換儀器的模你樣品，T 平方看似普通，Q 卻約為界限三十三倍。分數圖看不出異常，不等於模型真的適用。"
+ },
+ {
+  "key": "zh-10",
+  "lang": "zh",
+  "scene": 10,
+  "text": "T 平方與 Q 的界限依同一校正模型估計，不可拿別個模型的數字套用。兩成分例的校正內 T 平方界限約六點六六，新樣品近似約六點八三。分布假設、樣本數與多重比較都會影響誤報，超線應先調查，不要自動刪除。"
+ },
+ {
+  "key": "zh-11",
+  "lang": "zh",
+  "scene": 11,
+  "text": "Orange 入門用 PCA 加邏輯斯迴歸，不是本頁的 PLS-DA。若 PCA 先用全部資料 fit 再做分類交叉驗證，也會有洩漏；正式流程要把 PCA 放進每一折。Apply Domain 可看投影，但完整 Q 診斷要用 NB12 或本互動實驗。"
+ },
+ {
+  "key": "zh-12",
+  "lang": "zh",
+  "scene": 12,
+  "text": "進入六幕實驗，切換正確與錯誤 VIP、比較篩選流程，判讀分類分數與混淆矩陣，再操作 T 平方與 Q。下載證據與調查紀錄。正式作業換成本班實測資料，說明限制、保留離群原因，不把模擬成績當食品真偽認證。",
+  "tts": "進入六幕實驗，切換正確與錯誤 VIP、比較篩選流程，判讀分類分數與混淆矩陣，再操作 T 平方與 Q。下載證據與調查紀錄。正式作業換成本班實測資料，說明限制、保留離群原因，不把模你成績當食品真偽認證。"
+ },
+ {
+  "key": "en-00",
+  "lang": "en",
+  "scene": 0,
+  "text": "Before trusting a wavelength ranking, verify the calculation. This week starts with an extra-sum VIP bug, then explores classification and two complementary outlier diagnostics. All three datasets are the original NB12 teaching simulations, not real inspection results."
+ },
+ {
+  "key": "en-01",
+  "lang": "en",
+  "scene": 1,
+  "text": "Each latent variable has a vector of wavelength weights. VIP combines their squared contributions, weighted by explained response variation. Correct VIP has mean squared value one across all variables, but that identity need not hold for a small selected subset."
+ },
+ {
+  "key": "en-02",
+  "lang": "en",
+  "scene": 2,
+  "text": "This example has eighty-one variables. Prematurely summing the wavelength contributions makes every buggy VIP equal nine, with mean square eighty-one. But filling every VIP with one would pass the mean-square check. Also inspect the curve, implementation, and scientific context."
+ },
+ {
+  "key": "en-03",
+  "lang": "en",
+  "scene": 3,
+  "text": "VIP is nonnegative importance, not causality or a direction of concentration change. Regression coefficients carry signs, interpreted in the context of preprocessing and collinearity. VIP above one is a common above-average heuristic, not a significance test."
+ },
+ {
+  "key": "en-04",
+  "lang": "en",
+  "scene": 4,
+  "text": "The demo selects eighteen VIP variables from sixty training samples, with twenty samples held out. Selecting on all training data before cross-validation lets validation folds influence selection. Reselect within each fold, or evaluate once on untouched external samples."
+ },
+ {
+  "key": "en-05",
+  "lang": "en",
+  "scene": 5,
+  "text": "For these data, test RMSE falls from about zero point one six six to zero point one three three after selection, while fixed-mask CV error rises. With only twenty test samples, do not cherry-pick the favorable metric or retune the threshold after seeing test results."
+ },
+ {
+  "key": "en-06",
+  "lang": "en",
+  "scene": 6,
+  "text": "Encode six oil classes as six columns of zeros and ones. PLS jointly regresses those targets. For a new sample, choose the class with the largest predicted score. These scores are not calibrated probabilities: they can be negative or exceed one."
+ },
+ {
+  "key": "en-07",
+  "lang": "en",
+  "scene": 7,
+  "text": "Training CV chooses six latent variables. The independent test classifies twenty-four of twenty-seven samples correctly, about eighty-eight point nine percent. Refined olive oil has only two true positives out of four: sensitivity one half. Perfect specificity does not repair those missed positives."
+ },
+ {
+  "key": "en-08",
+  "lang": "en",
+  "scene": 8,
+  "text": "T squared scales score distance by each retained component's variance. Q is the squared reconstruction residual, measuring variation outside the retained model. Both use the same calibration PCA, but answer different questions. Inspect them together."
+ },
+ {
+  "key": "en-09",
+  "lang": "en",
+  "scene": 9,
+  "text": "Fit a two-component PCA using only forty calibration samples. The leverage example has T squared about twenty-eight point four but Q below its limit. Simulated instrument-shift samples have ordinary T squared yet Q about thirty-three times its limit. An ordinary score plot does not establish applicability."
+ },
+ {
+  "key": "en-10",
+  "lang": "en",
+  "scene": 10,
+  "text": "Limits belong to the fitted calibration model, not every instrument or dataset. For this two-component example, the approximate training T-squared limit is six point six six, and the new-sample limit six point eight three. Assumptions and sample size matter. Investigate flagged points; do not delete automatically."
+ },
+ {
+  "key": "en-11",
+  "lang": "en",
+  "scene": 11,
+  "text": "The Orange route uses PCA plus logistic regression, not the PLS-DA model shown here. Fitting PCA on all data before classifier CV leaks information; fit PCA inside each fold instead. Apply Domain shows projections, while full Q diagnostics require NB12 or this interactive lab."
+ },
+ {
+  "key": "en-12",
+  "lang": "en",
+  "scene": 12,
+  "text": "Explore correct and buggy VIP, compare selection workflows, inspect classification scores and confusion matrices, then vary T squared and Q. Download evidence and investigation notes. Use class measurements for the assignment, retain reasons for flagged samples, and do not treat simulation results as food-authenticity certification."
+ }
+]

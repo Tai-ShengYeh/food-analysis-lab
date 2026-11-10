@@ -1,7 +1,7 @@
 # W16 代糖建模與預測 / Sweetener modeling and prediction
 
 ## Student entry points
-- `tour.html`：中文導覽，約 4:43；`tour.en.html`：English narrated tour, about 4:14.
+- `tour.html`：中文導覽，約 5:09；`tour.en.html`：English narrated tour, about 4:31.
 - `sweetener_model_lab.html`：中文六幕互動；`sweetener_model_lab.en.html`：English six-act numerical modeling lab.
 - Standalone lab pages work offline without CDN. Full lesson slides retain existing external Chart.js/font dependencies.
 
@@ -57,7 +57,7 @@ uv pip install --python .venv-w16/bin/python pillow numpy scipy scikit-learn pla
 .venv-w16/bin/python tests/test_w16_sweetener_model.py
 .venv-w16/bin/python scripts/verify_w16_media.py
 ```
-Run from the repository root; supply Chromium native dependencies or a local `LD_LIBRARY_PATH`. Media tests require ffmpeg/ffprobe. Renderer `scripts/render_w16.py` uses `course_video_common.py`, Windows System.Speech Hanhan/Zira voices under WSL and Microsoft JhengHei. Intermediates remain in scratch and narration cache uses text+voice hashes.
+Run from the repository root; supply Chromium native dependencies or a local `LD_LIBRARY_PATH`. Media tests require ffmpeg/ffprobe. Narration is ElevenLabs voice **IAN** (`eleven_v3`, slowed 5 % with ffmpeg `atempo=0.95`), the same voice as the earlier weekly tours, for both Chinese and English. The chosen takes are kept in `scripts/vo/w16/` (`texts.json` holds the subtitle text and, for Chinese, a `tts` spelling with homophones that IAN reads correctly, e.g. 譜→普, 確認→卻任; subtitles always use the original text). `scripts/render_w16.py` reads those MP3s, needs ffmpeg and Microsoft JhengHei, and runs on Windows or WSL with `PYTHONUTF8=1`; changing a narration line makes the renderer stop until that take is regenerated and checked with `scripts/vo_tools.py`. Voice generated with ElevenLabs.
 
 ## Publication
 W16 video/lab follow the opening hook at `index.html#s2` and `index.html#s3`, with English counterparts and homepage entries. Work starts from the deployed W11–W15 main revision and does not regenerate earlier weeks. An open feature PR is not live until an authorized merge and successful Pages deployment are verified.

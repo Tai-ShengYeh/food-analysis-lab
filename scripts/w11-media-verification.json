@@ -2,9 +2,9 @@
   "media": [
     {
       "lang": "zh",
-      "duration": 169.463216,
-      "bytes": 2350660,
-      "sha256": "bfac98ec31309d8942e418f1d263fdd814e0e0df175bd0b298a1adb2983f507b",
+      "duration": 179.27322,
+      "bytes": 3646266,
+      "sha256": "e5484f289709b7c32a41500bd0b2a2ab4ef79e27ad0b6253e3de1f105545387d",
       "streams": [
         "h264",
         "aac"
@@ -14,9 +14,9 @@
     },
     {
       "lang": "en",
-      "duration": 161.963135,
-      "bytes": 2333522,
-      "sha256": "877395365df8056525546d30252161c4eebd6872344015e6b43fda697dc6eda3",
+      "duration": 158.606553,
+      "bytes": 3349723,
+      "sha256": "5a6d143131ec86f944413cd492c5c3e77c5506ec226e72b99f4d23a66d987af7",
       "streams": [
         "h264",
         "aac"

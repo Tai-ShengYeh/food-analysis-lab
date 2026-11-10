@@ -2,9 +2,9 @@
   "media": [
     {
       "lang": "zh",
-      "duration": 289.046549,
-      "bytes": 4556268,
-      "sha256": "0b50d8652b231a8213a98c78ef8f9bfb27bbee06f6bf934031bf61362ffeb4de",
+      "duration": 297.356553,
+      "bytes": 6549917,
+      "sha256": "050f775b0dac3bed758936bd11834827eefec88dd1971106826f4c0b01de4a8c",
       "full_decode": "passed",
       "complete_speech": true,
       "resolution": [
@@ -15,9 +15,9 @@
     },
     {
       "lang": "en",
-      "duration": 266.879883,
-      "bytes": 4141127,
-      "sha256": "2921c57b00cc31690b2ad9caef37aa86505a42596f364b736a80f2de5862e92d",
+      "duration": 288.189887,
+      "bytes": 6456013,
+      "sha256": "5cbd21c4c37c6de538451f08793b235ccef093431fcb684388c9d19d3585f95a",
       "full_decode": "passed",
       "complete_speech": true,
       "resolution": [

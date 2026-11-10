@@ -9,7 +9,7 @@ from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split,KFold
 from sklearn.metrics import confusion_matrix
 from PIL import Image,ImageDraw,ImageFont
-from course_video_common import render
+from course_video_common import render,cache_dir
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'labs/w14_vip_plsda/animations';OUT.mkdir(exist_ok=True,parents=True)
 def load(name):
  path=ROOT/f'data/nb12_demo_spectra_{name}.csv';meta=list(csv.DictReader(path.open()));keys=list(meta[0])[5:];return meta,np.array([[float(r[k]) for k in keys] for r in meta]),np.array(list(map(float,keys))),hashlib.sha256(path.read_bytes()).hexdigest()
@@ -44,6 +44,7 @@ scenes=[
 ['六幕操作：把模型結論變成可查證證據','Six acts: make model conclusions auditable','進入六幕實驗，切換正確與錯誤 VIP、比較篩選流程，判讀分類分數與混淆矩陣，再操作 T 平方與 Q。下載證據與調查紀錄。正式作業換成本班實測資料，說明限制、保留離群原因，不把模擬成績當食品真偽認證。','Explore correct and buggy VIP, compare selection workflows, inspect classification scores and confusion matrices, then vary T squared and Q. Download evidence and investigation notes. Use class measurements for the assignment, retain reasons for flagged samples, and do not treat simulation results as food-authenticity certification.','workflow','交付：VIP 驗算、混淆矩陣、T²/Q、調查紀錄','Submit: VIP checks, confusion matrix, T-squared/Q, investigation notes']]
 FONT=Path('/home/administrator/.local/share/fonts/hermes-food-tests/msjh.ttc')
 if not FONT.exists():FONT=Path('/mnt/c/Windows/Fonts/msjh.ttc')
+if not FONT.exists():FONT=Path('C:/Windows/Fonts/msjh.ttc')
 F={n:ImageFont.truetype(str(FONT),n) for n in [18,20,22,24,26,28,30,34,40]};colors=['#246bc4','#df7d23','#129785']
 def wrap(text,width,font):
  words=text.split(' ') if all(ord(c)<128 for c in text) else list(text);sep=' ' if all(ord(c)<128 for c in text) else '';lines=[];line=''
@@ -101,4 +102,4 @@ def frame(s,lang,progress):
  assert len(lines)<=4,(len(lines),text)
  for j,line in enumerate(lines):d.text((65,577+j*28),line,font=font,fill='#243c59')
  d.rectangle((52,694,52+1176*progress,699),fill='#246bdd');return im
-if __name__=='__main__':render(scenes,OUT,Path.home()/'.hermes/cache/scratch/w14-render','w14',frame)
+if __name__=='__main__':render(scenes,OUT,cache_dir('w14'),'w14',frame)

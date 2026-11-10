@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Render W11 bilingual narrated course tours. Requires Pillow/numpy/scipy, ffmpeg,
-and Windows System.Speech voices Hanhan/Zira (WSL). Run with Python 3.12+.
-Audio intermediates live in HERMES scratch, not in the repository.
+"""Render W11 bilingual narrated course tours. Requires Pillow/numpy/scipy and ffmpeg.
+Narration: ElevenLabs takes in scripts/vo/w11/ (voice IAN, eleven_v3, as in W1). Run with PYTHONUTF8=1.
+Video/wav intermediates live in COURSE_RENDER_CACHE (default ~/.cache/course-video), not in the repository.
 """
 from pathlib import Path
 import json, subprocess, math, textwrap, os, hashlib
@@ -9,13 +9,16 @@ import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
 from scipy.signal import savgol_filter, medfilt
+import sys;sys.path.insert(0,str(Path(__file__).resolve().parent))
+from course_video_common import vo_wav,cache_dir
 from PIL import Image, ImageDraw, ImageFont
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'labs/w11_preprocess_similarity/animations'
-CACHE=Path.home()/'.hermes/cache/scratch/w11-render'
+CACHE=cache_dir('w11')
 OUT.mkdir(parents=True,exist_ok=True); CACHE.mkdir(parents=True,exist_ok=True)
 FONT='/home/administrator/.local/share/fonts/hermes-food-tests/msjh.ttc'
 if not Path(FONT).exists(): FONT='/mnt/c/Windows/Fonts/msjh.ttc'
+if not Path(FONT).exists(): FONT='C:/Windows/Fonts/msjh.ttc'
 scenes=[
 ('白色粉末，光譜能認出來嗎？','Can spectra identify a white powder?', '本週要用光譜辨認代糖盲樣。先別急著看第一名：背景、散射和強度差異，都可能讓同一物質看起來不一樣。','This week, identify an unknown sweetener using spectra. Do not trust the top match immediately. Background, scattering, and intensity changes can make the same material look different.','raw','先排除量測差異，再比較化學訊號','Remove measurement effects before comparing chemistry'),
 ('先確認光譜能不能比較','Make spectra comparable first','先確認波數軸、單位與量測模式一致。光譜庫和未知樣品，要用相同的區間與前處理流程；示範曲線是模擬數據，不是實測化合物指紋。','First check the axis, units, and measurement mode. Use the same spectral region and preprocessing for references and unknowns. These curves are simulated teaching data, not measured chemical fingerprints.','raw','相同座標、相同區間、相同流程','Same axis, same region, same pipeline'),
@@ -102,26 +105,19 @@ def stamp(sec,sep=','):
 
 def main():
  manifest=[]
- for lang,voice in [('zh','Microsoft Hanhan Desktop'),('en','Microsoft Zira Desktop')]:
+ for lang in ['zh','en']:
   subs=[]; vtt=['WEBVTT\n']; offset=0; concat=[]
   for i,s in enumerate(scenes):
-   text=s[2 if lang=='zh' else 3]; wav=CACHE/f'{lang}-{i}.wav'; txt=CACHE/f'{lang}-{i}.txt'
-   signature=CACHE/f'{lang}-{i}.sha256'; digest=hashlib.sha256((voice+'\n'+text).encode()).hexdigest()
-   valid=signature.exists() and signature.read_text()==digest
-   txt.write_text(text,encoding='utf-8-sig')
-   def winpath(p):return subprocess.check_output(['wslpath','-w',str(p)],text=True).strip()
-   if not wav.exists() or not valid:
-    ps=f"Add-Type -AssemblyName System.Speech; $s=New-Object System.Speech.Synthesis.SpeechSynthesizer; $s.SelectVoice('{voice}'); $s.Rate=0; $s.SetOutputToWaveFile('{winpath(wav)}'); $s.Speak([System.IO.File]::ReadAllText('{winpath(txt)}')); $s.Dispose()"
-    run(['powershell.exe','-NoProfile','-Command',ps]); signature.write_text(digest)
+   text=s[2 if lang=='zh' else 3];wav=vo_wav('w11',lang,i,text,CACHE)
    audio=float(subprocess.check_output(['ffprobe','-v','quiet','-show_entries','format=duration','-of','csv=p=0',str(wav)]));dur=math.ceil((audio+.7)*12)/12
    clip=CACHE/f'{lang}-{i}.mp4'
-   cmd=['ffmpeg','-y','-v','error','-f','rawvideo','-vcodec','rawvideo','-pix_fmt','rgb24','-s','1280x720','-r','12','-i','-','-i',str(wav),'-af','apad','-t',str(dur),'-c:v','libx264','-preset','fast','-crf','24','-pix_fmt','yuv420p','-c:a','aac','-b:a','96k','-movflags','+faststart',str(clip)]
+   cmd=['ffmpeg','-y','-v','error','-f','rawvideo','-vcodec','rawvideo','-pix_fmt','rgb24','-s','1280x720','-r','12','-i','-','-i',str(wav),'-af','apad','-t',str(dur),'-c:v','libx264','-preset','fast','-crf','24','-pix_fmt','yuv420p','-c:a','aac','-b:a','128k','-movflags','+faststart',str(clip)]
    proc=subprocess.Popen(cmd,stdin=subprocess.PIPE)
    # Cache 24 draw states: motion is a graph reveal, not a static slide export.
    states=[frame(s,lang,(k+1)/24).tobytes() for k in range(24)]
    for k in range(round(dur*12)):proc.stdin.write(states[min(23,int(k/(dur*12)*24))])
    proc.stdin.close();assert proc.wait()==0
-   concat.append("file '"+str(clip)+"'")
+   concat.append("file '"+clip.as_posix()+"'")
    subs.append(f'{i+1}\n{stamp(offset)} --> {stamp(offset+audio)}\n{text}\n')
    vtt.append(f'{stamp(offset,".")} --> {stamp(offset+audio,".")}\n{text}\n')
    frame(s,lang,.75).save(CACHE/f'{lang}-scene-{i}.jpg')

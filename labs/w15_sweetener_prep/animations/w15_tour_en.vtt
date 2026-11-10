@@ -1,37 +1,37 @@
 WEBVTT
 
-00:00:00.000 --> 00:00:15.991
+00:00:00.000 --> 00:00:16.825
 A sweetener label may not disclose each ingredient's amount. This week is not about fitting PLS first. Design and prepare reliable calibration samples, collect spectra, and retain records. Modeling follows in week sixteen.
 
-00:00:16.750 --> 00:00:37.616
+00:00:17.583 --> 00:00:41.648
 This course uses solid blends to address solubility and weak low-concentration signals. Feasibility still depends on the instrument, geometry, and method detection capability. Before starting, have the TA verify blanks and low-level samples. A teaching assumption is not evidence that a real pilot was performed.
 
-00:00:38.333 --> 00:01:00.340
+00:00:42.417 --> 00:01:02.195
 Each sweetener has five levels: zero, two point five, five, seven point five, and ten percent. All twenty-five combinations have zero target correlation. A one-to-one diagonal confounds the two concentrations. Zero correlation helps the design but does not guarantee spectral separability.
 
-00:01:01.083 --> 00:01:20.644
+00:01:02.917 --> 00:01:22.947
 Each group prepares five bottles spanning all five levels of both sweeteners. G1 happens to receive the diagonal, but must not fit a model using only its own five bottles. Combine all twenty-five class preparations. Filler is the remainder, not a third independently controlled factor.
 
-00:01:21.417 --> 00:01:44.592
+00:01:23.667 --> 00:01:55.396
 CAL-17 targets seven point five percent aspartame and five percent sucralose. The example weighs zero point one five two three, zero point zero nine nine seven, and one point seven four eight nine grams. Divide by the actual total, two point zero zero zero nine grams: aspartame is about seven point six one percent.
 
-00:01:45.333 --> 00:02:07.004
+00:01:56.167 --> 00:02:18.045
 Assuming a rectangular balance error bounded by plus or minus zero point one milligram, standard uncertainty is the half-width divided by square root three, about zero point zero five eight milligram. Readability alone does not establish that bound. Fraction uncertainty also includes the shared denominator and all three masses.
 
-00:02:07.750 --> 00:02:30.090
+00:02:18.750 --> 00:02:40.458
 After recording all masses, mix the smaller powder portions with comparable filler amounts, then add the remaining powder progressively. Include both sweeteners and check mass conservation. Grind, sieve, and seal promptly. Following the steps supports mixing but does not prove uniformity; assess reload variability.
 
-00:02:30.833 --> 00:02:50.389
+00:02:41.167 --> 00:03:00.094
 Randomize twenty-five calibration and seven blind bottles into racks of six, six, five, five, five, and five. Concentration-ordered runs can confound drift with concentration. Randomization reduces systematic alignment, but does not remove drift or replace white-reference checks.
 
-00:02:51.167 --> 00:03:12.328
+00:03:00.833 --> 00:03:23.895
 Every bottle visits five NIR stations and one Raman station. Save two separate reload spectra per bottle at each station, without averaging first. That is sixty-four spectra per station and three hundred eighty-four overall. Keep seven blind bottles out of calibration and their real concentrations with the TA until week sixteen.
 
-00:03:13.083 --> 00:03:37.163
+00:03:24.667 --> 00:03:50.251
 At one point five minutes per spectrum plus one minute for the reference each round, the largest six-bottle rack needs nineteen minutes. Six synchronized rounds take one hundred fourteen minutes, just under the one hundred fifteen minute budget. Two minutes per spectrum requires one hundred fifty minutes. Ask the TA if behind; do not skip reloads or blinds.
 
-00:03:37.917 --> 00:04:01.396
+00:03:51.000 --> 00:04:17.090
 For two reloads, sample standard deviation is their absolute difference divided by square root two. Values one hundred two and ninety-eight have mean one hundred and RSD about two point eight three percent. Pool within-bottle variation across bottles, then compare it with adjacent-level feature differences; do not mix between-concentration variation into repeatability.
 
-00:04:02.167 --> 00:04:25.037
+00:04:17.833 --> 00:04:41.828
 Upload actual fractions, bottle IDs, preparation groups, instruments, and reload numbers. Retain the random seed, run order, reference checks, and QC notes. Avoid inhaling powders or consuming lab samples; the TA follows Raman laser procedures. Next week, validate models with whole-bottle groups kept together.

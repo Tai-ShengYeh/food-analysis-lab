@@ -3,182 +3,182 @@
     "lang": "zh",
     "scene": 0,
     "start": 0,
-    "speech_duration": 21.2522,
-    "scene_duration": 22.0
+    "speech_duration": 21.629955,
+    "scene_duration": 22.333333333333332
   },
   {
     "lang": "zh",
     "scene": 1,
-    "start": 22.0,
-    "speech_duration": 18.878367,
-    "scene_duration": 19.583333333333332
+    "start": 22.333333333333332,
+    "speech_duration": 17.421995,
+    "scene_duration": 18.166666666666668
   },
   {
     "lang": "zh",
     "scene": 2,
-    "start": 41.58333333333333,
-    "speech_duration": 20.67161,
+    "start": 40.5,
+    "speech_duration": 20.713107,
     "scene_duration": 21.416666666666668
   },
   {
     "lang": "zh",
     "scene": 3,
-    "start": 63.0,
-    "speech_duration": 21.172154,
-    "scene_duration": 21.916666666666668
+    "start": 61.91666666666667,
+    "speech_duration": 21.375692,
+    "scene_duration": 22.083333333333332
   },
   {
     "lang": "zh",
     "scene": 4,
-    "start": 84.91666666666667,
-    "speech_duration": 23.004671,
-    "scene_duration": 23.75
+    "start": 84.0,
+    "speech_duration": 24.491565,
+    "scene_duration": 25.25
   },
   {
     "lang": "zh",
     "scene": 5,
-    "start": 108.66666666666667,
-    "speech_duration": 21.608798,
-    "scene_duration": 22.333333333333332
+    "start": 109.25,
+    "speech_duration": 20.024286,
+    "scene_duration": 20.75
   },
   {
     "lang": "zh",
     "scene": 6,
-    "start": 131.0,
-    "speech_duration": 17.659728,
-    "scene_duration": 18.416666666666668
+    "start": 130.0,
+    "speech_duration": 18.689297,
+    "scene_duration": 19.416666666666668
   },
   {
     "lang": "zh",
     "scene": 7,
     "start": 149.41666666666666,
-    "speech_duration": 20.170703,
-    "scene_duration": 20.916666666666668
+    "speech_duration": 22.720499,
+    "scene_duration": 23.5
   },
   {
     "lang": "zh",
     "scene": 8,
-    "start": 170.33333333333331,
-    "speech_duration": 21.704535,
-    "scene_duration": 22.416666666666668
+    "start": 172.91666666666666,
+    "speech_duration": 23.144694,
+    "scene_duration": 23.916666666666668
   },
   {
     "lang": "zh",
     "scene": 9,
-    "start": 192.74999999999997,
-    "speech_duration": 21.996689,
-    "scene_duration": 22.75
+    "start": 196.83333333333331,
+    "speech_duration": 22.296122,
+    "scene_duration": 23.0
   },
   {
     "lang": "zh",
     "scene": 10,
-    "start": 215.49999999999997,
-    "speech_duration": 23.696054,
-    "scene_duration": 24.416666666666668
+    "start": 219.83333333333331,
+    "speech_duration": 23.056939,
+    "scene_duration": 23.833333333333332
   },
   {
     "lang": "zh",
     "scene": 11,
-    "start": 239.91666666666663,
-    "speech_duration": 23.671746,
-    "scene_duration": 24.416666666666668
+    "start": 243.66666666666666,
+    "speech_duration": 24.408005,
+    "scene_duration": 25.166666666666668
   },
   {
     "lang": "zh",
     "scene": 12,
-    "start": 264.3333333333333,
-    "speech_duration": 23.884626,
-    "scene_duration": 24.666666666666668
+    "start": 268.8333333333333,
+    "speech_duration": 27.780952,
+    "scene_duration": 28.5
   },
   {
     "lang": "en",
     "scene": 0,
     "start": 0,
-    "speech_duration": 19.52059,
-    "scene_duration": 20.25
+    "speech_duration": 20.109093,
+    "scene_duration": 20.833333333333332
   },
   {
     "lang": "en",
     "scene": 1,
-    "start": 20.25,
-    "speech_duration": 18.145896,
-    "scene_duration": 18.916666666666668
+    "start": 20.833333333333332,
+    "speech_duration": 20.038707,
+    "scene_duration": 20.75
   },
   {
     "lang": "en",
     "scene": 2,
-    "start": 39.16666666666667,
-    "speech_duration": 19.320771,
-    "scene_duration": 20.083333333333332
+    "start": 41.58333333333333,
+    "speech_duration": 20.359501,
+    "scene_duration": 21.083333333333332
   },
   {
     "lang": "en",
     "scene": 3,
-    "start": 59.25,
-    "speech_duration": 18.766122,
-    "scene_duration": 19.5
+    "start": 62.66666666666666,
+    "speech_duration": 21.538685,
+    "scene_duration": 22.25
   },
   {
     "lang": "en",
     "scene": 4,
-    "start": 78.75,
-    "speech_duration": 18.70585,
-    "scene_duration": 19.416666666666668
+    "start": 84.91666666666666,
+    "speech_duration": 19.854898,
+    "scene_duration": 20.583333333333332
   },
   {
     "lang": "en",
     "scene": 5,
-    "start": 98.16666666666667,
-    "speech_duration": 18.496009,
-    "scene_duration": 19.25
+    "start": 105.49999999999999,
+    "speech_duration": 21.117846,
+    "scene_duration": 21.833333333333332
   },
   {
     "lang": "en",
     "scene": 6,
-    "start": 117.41666666666667,
-    "speech_duration": 17.936236,
-    "scene_duration": 18.666666666666668
+    "start": 127.33333333333331,
+    "speech_duration": 19.696984,
+    "scene_duration": 20.416666666666668
   },
   {
     "lang": "en",
     "scene": 7,
-    "start": 136.08333333333334,
-    "speech_duration": 21.270612,
-    "scene_duration": 22.0
+    "start": 147.74999999999997,
+    "speech_duration": 22.889365,
+    "scene_duration": 23.666666666666668
   },
   {
     "lang": "en",
     "scene": 8,
-    "start": 158.08333333333334,
-    "speech_duration": 18.036689,
-    "scene_duration": 18.75
+    "start": 171.41666666666663,
+    "speech_duration": 18.936417,
+    "scene_duration": 19.666666666666668
   },
   {
     "lang": "en",
     "scene": 9,
-    "start": 176.83333333333334,
-    "speech_duration": 20.850522,
-    "scene_duration": 21.583333333333332
+    "start": 191.0833333333333,
+    "speech_duration": 22.814603,
+    "scene_duration": 23.583333333333332
   },
   {
     "lang": "en",
     "scene": 10,
-    "start": 198.41666666666669,
-    "speech_duration": 22.090431,
-    "scene_duration": 22.833333333333332
+    "start": 214.66666666666663,
+    "speech_duration": 24.069751,
+    "scene_duration": 24.833333333333332
   },
   {
     "lang": "en",
     "scene": 11,
-    "start": 221.25000000000003,
-    "speech_duration": 21.620317,
-    "scene_duration": 22.333333333333332
+    "start": 239.49999999999997,
+    "speech_duration": 23.147256,
+    "scene_duration": 23.916666666666668
   },
   {
     "lang": "en",
     "scene": 12,
-    "start": 243.58333333333337,
-    "speech_duration": 22.535193,
-    "scene_duration": 23.25
+    "start": 263.41666666666663,
+    "speech_duration": 23.982744,
+    "scene_duration": 24.75
   }
 ]

@@ -4,7 +4,7 @@ from pathlib import Path
 import csv,json,hashlib
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
-from course_video_common import render
+from course_video_common import render,cache_dir
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'labs/w15_sweetener_prep/animations';OUT.mkdir(exist_ok=True,parents=True)
 source=ROOT/'data/nb13_demo_spectra.csv';rows=list(csv.DictReader(source.open()));unique={r['sample_id']:r for r in rows if r['split']=='calibration'};design=[]
 for sid,r in sorted(unique.items()):
@@ -30,6 +30,7 @@ scenes=[
 ['交出完整資料，讓 W16 有可靠起點','Prepare a traceable handoff for W16','上傳實際質量分率、瓶號、配製組、儀器與重裝編號，並保留亂數種子、量測順序、白參考與 QC 紀錄。粉末避免吸入，不食用實驗樣品；Raman 由 TA 依安全規範操作。下一週再以整瓶分組驗證，建立並評估模型。','Upload actual fractions, bottle IDs, preparation groups, instruments, and reload numbers. Retain the random seed, run order, reference checks, and QC notes. Avoid inhaling powders or consuming lab samples; the TA follows Raman laser procedures. Next week, validate models with whole-bottle groups kept together.','workflow','交付：實際配方、384 檔案清單、順序與 QC 紀錄','Submit: actual recipes, 384-file manifest, run order and QC']]
 FONT=Path('/home/administrator/.local/share/fonts/hermes-food-tests/msjh.ttc')
 if not FONT.exists():FONT=Path('/mnt/c/Windows/Fonts/msjh.ttc')
+if not FONT.exists():FONT=Path('C:/Windows/Fonts/msjh.ttc')
 F={n:ImageFont.truetype(str(FONT),n) for n in [18,20,22,24,26,28,30,34,40]};colors=['#246bc4','#df7d23','#129785','#9b58b1','#ca5d70']
 def wrap(text,width,font):
  words=text.split(' ') if all(ord(c)<128 for c in text) else list(text);sep=' ' if all(ord(c)<128 for c in text) else '';lines=[];line=''
@@ -91,4 +92,4 @@ def frame(s,lang,progress):
  assert len(lines)<=4,(len(lines),text)
  for j,line in enumerate(lines):d.text((65,577+j*28),line,font=font,fill='#243c59')
  d.rectangle((52,694,52+1176*progress,699),fill='#246bdd');return im
-if __name__=='__main__':render(scenes,OUT,Path.home()/'.hermes/cache/scratch/w15-render','w15',frame)
+if __name__=='__main__':render(scenes,OUT,cache_dir('w15'),'w15',frame)

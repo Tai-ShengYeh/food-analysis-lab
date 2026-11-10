@@ -9,7 +9,7 @@ from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
 from sklearn.model_selection import LeaveOneGroupOut
 from PIL import Image,ImageDraw,ImageFont
-from course_video_common import render
+from course_video_common import render,cache_dir
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'labs/w16_sweetener_model/animations';OUT.mkdir(exist_ok=True,parents=True)
 source=ROOT/'data/nb13_demo_spectra.csv';meta=list(csv.DictReader(source.open()));fields=[f for f in meta[0] if f.replace('.','',1).isdigit()];axis=np.array(list(map(float,fields)));X=np.array([[float(r[f]) for f in fields] for r in meta]);cal=np.array([r['split']=='calibration' for r in meta]);blind=np.array([r['split']=='blind_test' for r in meta]);query=np.array([r['role']=='unknown' for r in meta]);g=np.array([r['sample_id'] for r in meta])[cal];Y=np.array([[float(r[k]) for k in ['aspartame_pct','sucralose_pct']] for r in meta if r['split']=='calibration']);Yb=np.array([[float(r[k]) for k in ['aspartame_pct','sucralose_pct']] for r in meta if r['split']=='blind_test'])
 def prep(Z):
@@ -47,6 +47,7 @@ scenes=[
 ['把判讀規則寫進 W17 模型報告卡','Make reporting rules explicit in the W17 model card','域內樣品也要檢查預測是否低於 LOD、介於 LOD 與 LOQ，或超過校正範圍。保留方法、前處理、LV、誤差、VIP、NNLS 比較與判讀理由。進入六幕實驗操作並下載證據；正式報告換成本班實測與已驗證的方法。','For in-domain samples, check predictions against LOD, LOQ, and calibration range. Retain methods, preprocessing, latent variables, errors, VIP, NNLS comparison, and reporting rationale. Explore the six-act lab and download evidence; use class measurements and validated procedures for formal reporting.','workflow','交付：兩個 PLS1、VIP、NNLS、LOD 與域外判讀','Submit: two PLS1s, VIP, NNLS, LOD and applicability decisions']]
 FONT=Path('/home/administrator/.local/share/fonts/hermes-food-tests/msjh.ttc')
 if not FONT.exists():FONT=Path('/mnt/c/Windows/Fonts/msjh.ttc')
+if not FONT.exists():FONT=Path('C:/Windows/Fonts/msjh.ttc')
 F={n:ImageFont.truetype(str(FONT),n) for n in [18,20,22,24,26,28,30,34,40]};colors=['#246bc4','#df7d23','#129785']
 def wrap(text,width,font):
  words=text.split(' ') if all(ord(c)<128 for c in text) else list(text);sep=' ' if all(ord(c)<128 for c in text) else '';lines=[];line=''
@@ -90,4 +91,4 @@ def frame(s,lang,progress):
  assert len(lines)<=4,(len(lines),text)
  for j,line in enumerate(lines):d.text((65,577+j*28),line,font=font,fill='#243c59')
  d.rectangle((52,694,52+1176*progress,699),fill='#246bdd');return im
-if __name__=='__main__':render(scenes,OUT,Path.home()/'.hermes/cache/scratch/w16-render','w16',frame)
+if __name__=='__main__':render(scenes,OUT,cache_dir('w16'),'w16',frame)

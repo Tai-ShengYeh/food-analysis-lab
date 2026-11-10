@@ -1,0 +1,152 @@
+[
+ {
+  "key": "zh-00",
+  "lang": "zh",
+  "scene": 0,
+  "text": "包裝寫有阿斯巴甜或三氯蔗糖，不一定公開各自含量。本週不是先跑 PLS，而是設計並配製可靠的校正樣品，量好光譜、保留紀錄；第十六週才用這些資料建模。",
+  "tts": "包裝寫有阿斯巴甜或三氯蔗糖，不一定公開各自含量。本周不是先跑 PLS，而是設計並配製可靠的校正樣品，量好光普、保留紀錄；第十六周才用這些資料建模。"
+ },
+ {
+  "key": "zh-01",
+  "lang": "zh",
+  "scene": 1,
+  "text": "本課採固體混合粉末，避免溶解度與低濃度訊號不足的限制。但可不可以測到，仍取決於儀器、量測配置與方法的偵測能力。正式開做前，要由 TA 用空白與低濃度樣品確認可行性，不能把教材假設當成已完成的實測。",
+  "tts": "本課採固體混合粉末，避免溶解度與低濃度訊號不足的限制。但可不可以測到，仍取決於儀器、量測配置與方法的偵測能力。正式開做前，要由 TA 用空白與低濃度樣品卻任可行性，不能把教材假設當成已完成的實測。"
+ },
+ {
+  "key": "zh-02",
+  "lang": "zh",
+  "scene": 2,
+  "text": "兩種甜味劑各有零、二點五、五、七點五、十百分比五個水準。全部配對成二十五點，目標濃度相關係數等於零。若只配一比一的對角線，兩個濃度完全綁在一起；但零相關也不保證光譜一定能分辨兩種成分。",
+  "tts": "兩種甜味劑各有零、二點五、五、七點五、十百分比五個水準。全部配對成二十五點，目標濃度相關係數等於零。若只配一比一的對角線，兩個濃度完全綁在一起；但零相關也不保證光普一定能分辨兩種成分。"
+ },
+ {
+  "key": "zh-03",
+  "lang": "zh",
+  "scene": 3,
+  "text": "每組配五瓶，讓每組都涵蓋所有阿斯巴甜與三氯蔗糖水準。G1 雖然剛好拿到對角線，也不能只用自己五瓶建模。把全班二十五瓶合併，才保留完整的因子設計；填充劑比例是剩餘量，不是第三個獨立因子。"
+ },
+ {
+  "key": "zh-04",
+  "lang": "zh",
+  "scene": 4,
+  "text": "CAL-17 目標是阿斯巴甜七點五、三氯蔗糖五百分比。示例實際秤到零點一五二三、零點零九九七與一點七四八九克，總量二點零零零九克。阿斯巴甜實際是七點六一百分比，分母必須是實際總質量，不是目標兩克。"
+ },
+ {
+  "key": "zh-05",
+  "lang": "zh",
+  "scene": 5,
+  "text": "若示意假設天平誤差在正負零點一毫克內呈矩形分布，標準不確定度是半寬除以根號三，約零點零五八毫克。這不是把天平顯示位數直接當規格。質量分率還共用分母，要一併傳播三個質量的不確定度。"
+ },
+ {
+  "key": "zh-06",
+  "lang": "zh",
+  "scene": 6,
+  "text": "記錄三種成分後，先將少量粉末與相近量的填充劑混勻，再逐步加入其餘粉末。兩種甜味劑都必須加入並核對總量，研磨、過篩後立即封裝。這個流程能改善混合方式，但不能單靠步驟就證明均勻，還要看重裝變異。"
+ },
+ {
+  "key": "zh-07",
+  "lang": "zh",
+  "scene": 7,
+  "text": "二十五瓶校正加七瓶盲樣，共三十二瓶，隨機分成六、六、五、五、五、五瓶的六架。照濃度排序可能把儀器漂移誤認為濃度效應；隨機化能打散這種綁定，但不能消除漂移，也不能取代白參考。"
+ },
+ {
+  "key": "zh-08",
+  "lang": "zh",
+  "scene": 8,
+  "text": "三十二瓶都要走過五台 NIR 與一個 Raman 站，每瓶每站重裝兩次，各自存檔，不先平均。每站六十四條，全班六站共三百八十四條。七瓶盲樣不進校正集，真實濃度由 TA 保管，第十六週才揭曉。",
+  "tts": "三十二瓶都要走過五台 NIR 與一個 Raman 站，每瓶每站重裝兩次，各自存檔，不先平均。每站六十四條，全班六站共三百八十四條。七瓶盲樣不進校正集，真實濃度由 TA 保管，第十六周才揭曉。"
+ },
+ {
+  "key": "zh-09",
+  "lang": "zh",
+  "scene": 9,
+  "text": "如果每條光譜一點五分鐘，每輪白參考一分鐘，最大六瓶一架要十九分鐘。六輪共一百一十四分鐘，只比一百一十五分鐘預算少一分鐘。若每條兩分鐘，就要一百五十分鐘。進度落後要找 TA，不可自行省略重裝或盲樣。",
+  "tts": "如果每條光普一點五分鐘，每輪白參考一分鐘，最大六瓶一架要十九分鐘。六輪共一百一十四分鐘，只比一百一十五分鐘預算少一分鐘。若每條兩分鐘，就要一百五十分鐘。進度落後要找 TA，不可自行省略重裝或盲樣。"
+ },
+ {
+  "key": "zh-10",
+  "lang": "zh",
+  "scene": 10,
+  "text": "兩次重裝的樣本標準差，是兩值差的絕對值除以根號二。例如一零二與九十八，平均一百，RSD 約二點八三百分比。只有兩次重複很不穩定，要合看多瓶的瓶內變異，再和相鄰濃度的特徵差距比較，不能用不同濃度的混合標準差代替。"
+ },
+ {
+  "key": "zh-11",
+  "lang": "zh",
+  "scene": 11,
+  "text": "上傳實際質量分率、瓶號、配製組、儀器與重裝編號，並保留亂數種子、量測順序、白參考與 QC 紀錄。粉末避免吸入，不食用實驗樣品；Raman 由 TA 依安全規範操作。下一週再以整瓶分組驗證，建立並評估模型。",
+  "tts": "上傳實際質量分率、瓶號、配製組、儀器與重裝編號，並保留亂數種子、量測順序、白參考與 QC 紀錄。粉末避免吸入，不食用實驗樣品；Raman 由 TA 依安全規範操作。下一周再以整瓶分組驗證，建立並評估模型。"
+ },
+ {
+  "key": "en-00",
+  "lang": "en",
+  "scene": 0,
+  "text": "A sweetener label may not disclose each ingredient's amount. This week is not about fitting PLS first. Design and prepare reliable calibration samples, collect spectra, and retain records. Modeling follows in week sixteen."
+ },
+ {
+  "key": "en-01",
+  "lang": "en",
+  "scene": 1,
+  "text": "This course uses solid blends to address solubility and weak low-concentration signals. Feasibility still depends on the instrument, geometry, and method detection capability. Before starting, have the TA verify blanks and low-level samples. A teaching assumption is not evidence that a real pilot was performed."
+ },
+ {
+  "key": "en-02",
+  "lang": "en",
+  "scene": 2,
+  "text": "Each sweetener has five levels: zero, two point five, five, seven point five, and ten percent. All twenty-five combinations have zero target correlation. A one-to-one diagonal confounds the two concentrations. Zero correlation helps the design but does not guarantee spectral separability."
+ },
+ {
+  "key": "en-03",
+  "lang": "en",
+  "scene": 3,
+  "text": "Each group prepares five bottles spanning all five levels of both sweeteners. G1 happens to receive the diagonal, but must not fit a model using only its own five bottles. Combine all twenty-five class preparations. Filler is the remainder, not a third independently controlled factor."
+ },
+ {
+  "key": "en-04",
+  "lang": "en",
+  "scene": 4,
+  "text": "CAL-17 targets seven point five percent aspartame and five percent sucralose. The example weighs zero point one five two three, zero point zero nine nine seven, and one point seven four eight nine grams. Divide by the actual total, two point zero zero zero nine grams: aspartame is about seven point six one percent."
+ },
+ {
+  "key": "en-05",
+  "lang": "en",
+  "scene": 5,
+  "text": "Assuming a rectangular balance error bounded by plus or minus zero point one milligram, standard uncertainty is the half-width divided by square root three, about zero point zero five eight milligram. Readability alone does not establish that bound. Fraction uncertainty also includes the shared denominator and all three masses."
+ },
+ {
+  "key": "en-06",
+  "lang": "en",
+  "scene": 6,
+  "text": "After recording all masses, mix the smaller powder portions with comparable filler amounts, then add the remaining powder progressively. Include both sweeteners and check mass conservation. Grind, sieve, and seal promptly. Following the steps supports mixing but does not prove uniformity; assess reload variability."
+ },
+ {
+  "key": "en-07",
+  "lang": "en",
+  "scene": 7,
+  "text": "Randomize twenty-five calibration and seven blind bottles into racks of six, six, five, five, five, and five. Concentration-ordered runs can confound drift with concentration. Randomization reduces systematic alignment, but does not remove drift or replace white-reference checks."
+ },
+ {
+  "key": "en-08",
+  "lang": "en",
+  "scene": 8,
+  "text": "Every bottle visits five NIR stations and one Raman station. Save two separate reload spectra per bottle at each station, without averaging first. That is sixty-four spectra per station and three hundred eighty-four overall. Keep seven blind bottles out of calibration and their real concentrations with the TA until week sixteen."
+ },
+ {
+  "key": "en-09",
+  "lang": "en",
+  "scene": 9,
+  "text": "At one point five minutes per spectrum plus one minute for the reference each round, the largest six-bottle rack needs nineteen minutes. Six synchronized rounds take one hundred fourteen minutes, just under the one hundred fifteen minute budget. Two minutes per spectrum requires one hundred fifty minutes. Ask the TA if behind; do not skip reloads or blinds."
+ },
+ {
+  "key": "en-10",
+  "lang": "en",
+  "scene": 10,
+  "text": "For two reloads, sample standard deviation is their absolute difference divided by square root two. Values one hundred two and ninety-eight have mean one hundred and RSD about two point eight three percent. Pool within-bottle variation across bottles, then compare it with adjacent-level feature differences; do not mix between-concentration variation into repeatability."
+ },
+ {
+  "key": "en-11",
+  "lang": "en",
+  "scene": 11,
+  "text": "Upload actual fractions, bottle IDs, preparation groups, instruments, and reload numbers. Retain the random seed, run order, reference checks, and QC notes. Avoid inhaling powders or consuming lab samples; the TA follows Raman laser procedures. Next week, validate models with whole-bottle groups kept together."
+ }
+]

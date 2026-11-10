@@ -1,47 +1,47 @@
 1
-00:00:00,000 --> 00:00:16,381
+00:00:00,000 --> 00:00:18,602
 PLS learns from known blends; NNLS fits pure-reference spectra. The same powder can receive different answers. This week compares their errors and assumptions, then asks when a numerical prediction should not be reported as a concentration.
 
 2
-00:00:17,083 --> 00:00:35,145
+00:00:19,333 --> 00:00:38,433
 Combine twenty-five formulations with two spectra per bottle. Leave one whole bottle out in each of twenty-five validation folds. Group by sample_id, not the preparation-group column. Reserve fourteen spectra from seven blind bottles for the final test.
 
 3
-00:00:35,917 --> 00:00:54,763
+00:00:39,167 --> 00:01:02,065
 Fit one PLS1 model for each sweetener and choose latent variables using calibration grouped RMSECV. Both select four in this demo, not by a universal rule. PLS2 is a separate joint-model option; these results do not establish that either approach always performs better.
 
 4
-00:00:55,500 --> 00:01:16,561
+00:01:02,833 --> 00:01:25,225
 Compare raw spectra with baseline subtraction plus absolute-area normalization. Both retain default PLS scaling. Aspartame's best grouped RMSECV is about zero point seven one one for raw input versus one point three zero six after preprocessing. This dataset chooses raw; other data may differ.
 
 5
-00:01:17,333 --> 00:01:40,158
+00:01:26,000 --> 00:01:51,584
 Reveal blind-test errors only after locking the pipeline. PLS test RMSE is about zero point five five seven for aspartame and zero point five zero three percentage points for sucralose; the latter has bias around plus zero point four zero five. Seven independent blind bottles and RPD bands do not establish production fitness.
 
 6
-00:01:40,917 --> 00:02:00,202
+00:01:52,333 --> 00:02:10,590
 Erythritol is one hundred percent minus both sweeteners. When aspartame increases, filler decreases. The model can use filler bands as indirect clues through compositional closure. Those are not aspartame-specific peaks or causal proof; changing filler can break the relationship.
 
 7
-00:02:00,917 --> 00:02:21,952
+00:02:11,333 --> 00:02:33,885
 NNLS combines three pure spectra and a constant offset using nonnegative coefficients to minimize squared residuals. This demo does not constrain their sum to one. Coefficients describe spectral contributions; mass interpretation requires compatible reference scales, responses, and linear mixing assumptions.
 
 8
-00:02:22,667 --> 00:02:41,997
+00:02:34,667 --> 00:02:53,682
 Individually normalizing reference spectra can leave an equally good least-squares reconstruction while changing coefficient scales. A small residual does not justify multiplying the new coefficients by one hundred as mass percentages. Missing components can also force an inappropriate reference combination.
 
 9
-00:02:42,750 --> 00:03:04,455
+00:02:54,417 --> 00:03:16,042
 On the same fourteen blind spectra, NNLS test RMSE is about zero point nine seven eight for aspartame and zero point seven six eight for sucralose, higher than PLS here. Instruments, nonlinear mixing, matrices, and reference quality can change that result. Compare methods on the same independent samples.
 
 10
-00:03:05,167 --> 00:03:27,552
+00:03:16,750 --> 00:03:38,383
 Use out-of-fold predictions for the ten zero-analyte calibration spectra, their standard deviation, and the prediction-versus-reference slope. Aspartame LOD is about two point six eight percent and LOQ eight point one two percent. Those samples still contain the other sweetener; this is a teaching approximation, not formal method validation.
 
 11
-00:03:28,333 --> 00:03:49,544
+00:03:39,083 --> 00:04:02,393
 The simulated commercial challenge changes filler, and PLS predicts about forty-eight point two percent. T squared around two hundred twenty-four and Q around three point one three exceed the model limits. Report outside the model domain and withhold concentration; the label value alone is not grounds for reporting below LOD.
 
 12
-00:03:50,250 --> 00:04:12,725
+00:04:03,167 --> 00:04:29,929
 For in-domain samples, check predictions against LOD, LOQ, and calibration range. Retain methods, preprocessing, latent variables, errors, VIP, NNLS comparison, and reporting rationale. Explore the six-act lab and download evidence; use class measurements and validated procedures for formal reporting.

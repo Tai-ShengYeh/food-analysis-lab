@@ -1,7 +1,7 @@
 # W12 主成分分析：食用油 / PCA: edible oils
 
 ## 開啟教材 / Student entry points
-- `tour.html`：中文導覽，約 3:39；`tour.en.html`：English narrated tour, about 3:31.
+- `tour.html`：中文導覽，約 3:39；`tour.en.html`：English narrated tour, about 3:43.
 - `pca_lab.html`：中文六幕互動實驗；`pca_lab.en.html`：English six-act lab.
 - 獨立互動實驗無 CDN，可離線開啟。Standalone lab pages work offline. The full lesson slides retain their existing external Chart.js/font dependencies.
 
@@ -41,7 +41,7 @@ uv pip install --python .venv-w12/bin/python pillow numpy scipy playwright
 ```
 Chromium native dependencies must be available on the host or supplied through `LD_LIBRARY_PATH`. Verification does not install system packages. Media checks require ffmpeg/ffprobe on PATH, and record exact final MP4 hashes in `scripts/w12-media-verification.json`.
 
-Rerender with `scripts/render_w12.py`. It currently requires WSL and Windows System.Speech voices Microsoft Hanhan Desktop / Microsoft Zira Desktop, plus Microsoft JhengHei. Audio/intermediate files remain in scratch, with text+voice hashes to invalidate stale speech cache. This is not a cross-platform TTS installer.
+Narration is ElevenLabs voice **IAN** (`eleven_v3`, slowed 5 % with ffmpeg `atempo=0.95`), the same voice as the earlier weekly tours, for both Chinese and English. The chosen takes are kept in `scripts/vo/w12/` (`texts.json` holds the subtitle text and, for Chinese, a `tts` spelling with homophones that IAN reads correctly, e.g. 譜→普, 確認→卻任; subtitles always use the original text). `scripts/render_w12.py` reads those MP3s, needs ffmpeg and Microsoft JhengHei, and runs on Windows or WSL with `PYTHONUTF8=1`; changing a narration line makes the renderer stop until that take is regenerated and checked with `scripts/vo_tools.py`. Voice generated with ElevenLabs.
 
 ## Verification scope
 - `tests/test_w12_pca.py`: 846 assertions passed, including exact CSV parity, independent NumPy SVD comparisons for centered/autoscaled full/refit data, reconstruction, every control, prediction feedback, persistence/reset, exclusion-reason guard and four actual downloads.

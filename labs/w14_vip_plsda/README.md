@@ -1,7 +1,7 @@
 # W14 VIP、PLS-DA 與離群值 / VIP, PLS-DA and outlier diagnostics
 
 ## Student entry points
-- `tour.html`：中文導覽，約 4:49；`tour.en.html`：English tour, about 4:27.
+- `tour.html`：中文導覽，約 4:57；`tour.en.html`：English tour, about 4:48.
 - `vip_plsda_lab.html`：中文六幕互動；`vip_plsda_lab.en.html`：English six-act lab.
 - Standalone lab pages are offline/no-CDN. Full lesson slides retain their pre-existing external font/Chart.js dependencies.
 
@@ -48,7 +48,7 @@ uv pip install --python .venv-w14/bin/python pillow numpy scipy scikit-learn pla
 .venv-w14/bin/python tests/test_w14_vip_plsda.py
 .venv-w14/bin/python scripts/verify_w14_media.py
 ```
-Chromium dependencies must exist on the host or be supplied by `LD_LIBRARY_PATH`. Media tests require ffmpeg/ffprobe. The renderer `scripts/render_w14.py` uses `scripts/course_video_common.py`, WSL Windows System.Speech voices Microsoft Hanhan Desktop / Microsoft Zira Desktop, and Microsoft JhengHei. Intermediates remain in scratch, and speech cache hashes include text+voice.
+Chromium dependencies must exist on the host or be supplied by `LD_LIBRARY_PATH`. Media tests require ffmpeg/ffprobe. Narration is ElevenLabs voice **IAN** (`eleven_v3`, slowed 5 % with ffmpeg `atempo=0.95`), the same voice as the earlier weekly tours, for both Chinese and English. The chosen takes are kept in `scripts/vo/w14/` (`texts.json` holds the subtitle text and, for Chinese, a `tts` spelling with homophones that IAN reads correctly, e.g. 譜→普, 確認→卻任; subtitles always use the original text). `scripts/render_w14.py` reads those MP3s, needs ffmpeg and Microsoft JhengHei, and runs on Windows or WSL with `PYTHONUTF8=1`; changing a narration line makes the renderer stop until that take is regenerated and checked with `scripts/vo_tools.py`. Voice generated with ElevenLabs.
 
 ## Verification scope
 - 21 tests passed (16 numerical, 5 browser), including PLS1 LV1–8, true joint PLS2 LV2–8, per-LV confusion matrices, fold-local selection, held-out independence, PCA projectors/reconstruction, and SciPy T²/Q limits for k1–4.

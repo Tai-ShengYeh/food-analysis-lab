@@ -1,7 +1,7 @@
 # W13 PLS 迴歸：醋酸定量 / PLS acidity calibration
 
 ## 學生入口 / Student entry points
-- `tour.html`：中文導覽，約 4:18；`tour.en.html`：English tour, about 3:53.
+- `tour.html`：中文導覽，約 4:28；`tour.en.html`：English tour, about 4:04.
 - `pls_lab.html`：中文六幕互動實驗；`pls_lab.en.html`：English six-act lab.
 - Standalone labs work offline without CDN dependencies. All student notes and exposure history remain in local browser storage; data are not uploaded. Full lesson slides retain existing external Chart.js/font dependencies.
 
@@ -43,7 +43,7 @@ uv pip install --python .venv-w13/bin/python pillow numpy scipy scikit-learn pla
 .venv-w13/bin/python tests/test_w13_pls.py
 .venv-w13/bin/python scripts/verify_w13_media.py
 ```
-Chromium host libraries must be available or supplied through `LD_LIBRARY_PATH`. Media tests require ffmpeg/ffprobe. `scripts/render_w13.py` requires WSL Windows System.Speech voices Microsoft Hanhan Desktop / Microsoft Zira Desktop and Microsoft JhengHei; narration cache hashes include text+voice, and intermediates remain in scratch.
+Chromium host libraries must be available or supplied through `LD_LIBRARY_PATH`. Media tests require ffmpeg/ffprobe. Narration is ElevenLabs voice **IAN** (`eleven_v3`, slowed 5 % with ffmpeg `atempo=0.95`), the same voice as the earlier weekly tours, for both Chinese and English. The chosen takes are kept in `scripts/vo/w13/` (`texts.json` holds the subtitle text and, for Chinese, a `tts` spelling with homophones that IAN reads correctly, e.g. 譜→普, 確認→卻任; subtitles always use the original text). `scripts/render_w13.py` reads those MP3s, needs ffmpeg and Microsoft JhengHei, and runs on Windows or WSL with `PYTHONUTF8=1`; changing a narration line makes the renderer stop until that take is regenerated and checked with `scripts/vo_tools.py`. Voice generated with ElevenLabs.
 
 ## Verification scope
 - Six unittest tests pass, including 36 preprocessing/Scale/LV combinations and 432 grouped-CV fold models compared independently with scikit-learn; data/notebook/Orange split parity, SciPy SG, coefficients, predictions and metrics are checked.

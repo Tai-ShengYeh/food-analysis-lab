@@ -1,37 +1,37 @@
 WEBVTT
 
-00:00:00.000 --> 00:00:18.891
+00:00:00.000 --> 00:00:17.330
 A spectrometer does not know concentration by itself. It learns a relationship from spectra paired with reference values. This week, connect titration to PLS regression. The tour uses NB11 simulated teaching data, not actual laboratory performance.
 
-00:00:19.667 --> 00:00:35.104
+00:00:18.083 --> 00:00:33.644
 The demo has sixteen samples with three reloads each. Twelve samples form calibration and four form the test set. The white-vinegar reference stays in the test set. All three replicates of one sample must remain on the same side.
 
-00:00:35.833 --> 00:00:53.619
+00:00:34.417 --> 00:00:53.353
 PCA seeks directions of variation in spectra alone. PLS uses spectra and reference concentrations to find latent variables related to the response. It handles many correlated wavelengths, but adding more latent variables does not guarantee better prediction.
 
-00:00:54.333 --> 00:01:14.894
+00:00:54.083 --> 00:01:15.297
 Compare raw spectra, SNV, and SG derivatives using the same grouped validation. SNV standardizes each spectrum; PLS scaling standardizes variables. Here Scale is on by default. Every fold must estimate its means and standard deviations from that fold's training data only.
 
-00:01:15.667 --> 00:01:32.623
+00:01:16.000 --> 00:01:33.498
 Leave one calibration sample and all three reloads out. Fit on the other eleven samples, then predict the held-out three spectra. Repeat twelve times to obtain thirty-six out-of-fold predictions and RMSECV. The test set does not participate.
 
-00:01:33.333 --> 00:01:50.794
+00:01:34.250 --> 00:01:55.369
 Adding latent variables can reduce calibration error while fitting noise. For these data, SNV with two latent variables gives RMSECV around zero point four zero zero. This is a result for this dataset, not a universal prescription for acidity models.
 
-00:01:51.500 --> 00:02:07.691
+00:01:56.083 --> 00:02:12.996
 Splitting replicates between training and validation no longer tests a genuinely new sample. Row-wise splitting can look optimistic, although it need not give a lower error on every dataset. Keep sample-level independence aligned with the intended use.
 
-00:02:08.417 --> 00:02:26.728
+00:02:13.750 --> 00:02:32.348
 Lock preprocessing, scaling, and latent-variable count before fitting the final calibration model. The demonstration test RMSEP is about zero point four two seven. If you tune after seeing test results, that test set is no longer untouched independent validation.
 
-00:02:27.500 --> 00:02:47.506
+00:02:33.083 --> 00:02:55.727
 RMSE measures overall error; bias measures average signed error. Neither replaces the other. RPD divides the test reference standard deviation by RMSEP and depends on the test concentration spread. Four independent samples are too few to justify production use from RPD alone.
 
-00:02:48.250 --> 00:03:07.426
+00:02:56.500 --> 00:03:18.134
 Systematic reference bias shifts the calibration scale. Independent random reference error contributes to validation residual variance, but is not an inviolable lower bound for every observed RMSE. Check titration quality, averaging, and uncertainty before interpreting model error.
 
-00:03:08.167 --> 00:03:30.747
+00:03:18.917 --> 00:03:39.111
 The teaching calibration covers zero to ten percent weight per volume aqueous acetic acid. Even inside that range, matrix and instrument changes matter. Do not transfer the model blindly. Follow the lab procedure: hood, goggles, gloves, slowly add acid to water, and keep away from ignition sources.
 
-00:03:31.500 --> 00:03:52.565
+00:03:39.833 --> 00:04:03.224
 Explore the six-act lab from grouping and preprocessing to cross-validation and locked testing. Predict, operate, explain, and download curves, predictions, and the model record. For the assignment, use class measurements and report the split, applicability range, six metrics, and instrument comparison.

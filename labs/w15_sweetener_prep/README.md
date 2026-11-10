@@ -1,7 +1,7 @@
 # W15 代糖專題 I：設計、配製與量測 / Sweetener preparation and measurement
 
 ## Student entry points
-- `tour.html`：中文導覽，約 4:40；`tour.en.html`：English tour, about 4:26.
+- `tour.html`：中文導覽，約 5:04；`tour.en.html`：English tour, about 4:43.
 - `sweetener_lab.html`：中文六幕互動；`sweetener_lab.en.html`：English six-act preparation/QC lab.
 - Standalone lab pages are offline/no-CDN. Full course slides retain their pre-existing external font/Chart.js dependencies. W15 concerns design, preparation and measurement; PLS/NNLS modeling belongs to W16.
 
@@ -43,7 +43,7 @@ uv pip install --python .venv-w15/bin/python pillow numpy scipy playwright
 .venv-w15/bin/python tests/test_w15_sweetener.py
 .venv-w15/bin/python scripts/verify_w15_media.py
 ```
-Chromium libraries must be available on the host or supplied through `LD_LIBRARY_PATH`; media verification requires ffmpeg/ffprobe. Renderer `scripts/render_w15.py` uses `course_video_common.py`, WSL Windows System.Speech Hanhan/Zira voices and Microsoft JhengHei. Voice/text hashes invalidate stale narration cache, and intermediates remain in scratch.
+Chromium libraries must be available on the host or supplied through `LD_LIBRARY_PATH`; media verification requires ffmpeg/ffprobe. Narration is ElevenLabs voice **IAN** (`eleven_v3`, slowed 5 % with ffmpeg `atempo=0.95`), the same voice as the earlier weekly tours, for both Chinese and English. The chosen takes are kept in `scripts/vo/w15/` (`texts.json` holds the subtitle text and, for Chinese, a `tts` spelling with homophones that IAN reads correctly, e.g. 譜→普, 確認→卻任; subtitles always use the original text). `scripts/render_w15.py` reads those MP3s, needs ffmpeg and Microsoft JhengHei, and runs on Windows or WSL with `PYTHONUTF8=1`; changing a narration line makes the renderer stop until that take is regenerated and checked with `scripts/vo_tools.py`. Voice generated with ElevenLabs.
 
 ## Verification scope
 - 14 tests pass: 10 independent numerical tests and 4 bilingual desktop/mobile browser tests. Coverage includes source design parity, correlations/rank, Latin allocation, finite-difference uncertainty/covariance, mixing mass conservation, seeded randomization, all 384 unique measurements, synchronized timing and sample-SD/pooled QC edge cases.

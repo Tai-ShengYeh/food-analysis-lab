@@ -1,0 +1,80 @@
+{
+  "media": [
+    {
+      "lang": "zh",
+      "duration": 309.27322,
+      "bytes": 6900543,
+      "sha256": "35b697634c28ea2588d0d03614c61a6e44711816128bb48c6c291d51b03eed75",
+      "full_decode": "passed",
+      "complete_speech": true,
+      "resolution": [
+        1280,
+        720
+      ],
+      "captions": 12
+    },
+    {
+      "lang": "en",
+      "duration": 270.689887,
+      "bytes": 6178396,
+      "sha256": "584a94c2ca9cafe192b6d86ae2c6a8e9d89dbb25e9b6f4dbf9030c3dfff9f38e",
+      "full_decode": "passed",
+      "complete_speech": true,
+      "resolution": [
+        1280,
+        720
+      ],
+      "captions": 12
+    }
+  ],
+  "browser": [
+    {
+      "lang": "zh",
+      "width": 1280,
+      "playback": "passed",
+      "vtt_cues": 12,
+      "hidden_pause": "passed",
+      "keyboard_isolation": "passed",
+      "video_fit": "passed",
+      "integrated_iframe": "passed",
+      "home_links": "passed",
+      "page_errors": []
+    },
+    {
+      "lang": "zh",
+      "width": 390,
+      "playback": "passed",
+      "vtt_cues": 12,
+      "hidden_pause": "passed",
+      "keyboard_isolation": "passed",
+      "video_fit": "passed",
+      "integrated_iframe": "passed",
+      "home_links": "passed",
+      "page_errors": []
+    },
+    {
+      "lang": "en",
+      "width": 1280,
+      "playback": "passed",
+      "vtt_cues": 12,
+      "hidden_pause": "passed",
+      "keyboard_isolation": "passed",
+      "video_fit": "passed",
+      "integrated_iframe": "passed",
+      "home_links": "passed",
+      "page_errors": []
+    },
+    {
+      "lang": "en",
+      "width": 390,
+      "playback": "passed",
+      "vtt_cues": 12,
+      "hidden_pause": "passed",
+      "keyboard_isolation": "passed",
+      "video_fit": "passed",
+      "integrated_iframe": "passed",
+      "home_links": "passed",
+      "page_errors": []
+    }
+  ]
+}

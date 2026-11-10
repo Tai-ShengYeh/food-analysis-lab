@@ -1,51 +1,51 @@
 1
-00:00:00,000 --> 00:00:19,521
+00:00:00,000 --> 00:00:20,109
 Before trusting a wavelength ranking, verify the calculation. This week starts with an extra-sum VIP bug, then explores classification and two complementary outlier diagnostics. All three datasets are the original NB12 teaching simulations, not real inspection results.
 
 2
-00:00:20,250 --> 00:00:38,396
+00:00:20,833 --> 00:00:40,872
 Each latent variable has a vector of wavelength weights. VIP combines their squared contributions, weighted by explained response variation. Correct VIP has mean squared value one across all variables, but that identity need not hold for a small selected subset.
 
 3
-00:00:39,167 --> 00:00:58,487
+00:00:41,583 --> 00:01:01,943
 This example has eighty-one variables. Prematurely summing the wavelength contributions makes every buggy VIP equal nine, with mean square eighty-one. But filling every VIP with one would pass the mean-square check. Also inspect the curve, implementation, and scientific context.
 
 4
-00:00:59,250 --> 00:01:18,016
+00:01:02,667 --> 00:01:24,205
 VIP is nonnegative importance, not causality or a direction of concentration change. Regression coefficients carry signs, interpreted in the context of preprocessing and collinearity. VIP above one is a common above-average heuristic, not a significance test.
 
 5
-00:01:18,750 --> 00:01:37,456
+00:01:24,917 --> 00:01:44,772
 The demo selects eighteen VIP variables from sixty training samples, with twenty samples held out. Selecting on all training data before cross-validation lets validation folds influence selection. Reselect within each fold, or evaluate once on untouched external samples.
 
 6
-00:01:38,167 --> 00:01:56,663
+00:01:45,500 --> 00:02:06,618
 For these data, test RMSE falls from about zero point one six six to zero point one three three after selection, while fixed-mask CV error rises. With only twenty test samples, do not cherry-pick the favorable metric or retune the threshold after seeing test results.
 
 7
-00:01:57,417 --> 00:02:15,353
+00:02:07,333 --> 00:02:27,030
 Encode six oil classes as six columns of zeros and ones. PLS jointly regresses those targets. For a new sample, choose the class with the largest predicted score. These scores are not calibrated probabilities: they can be negative or exceed one.
 
 8
-00:02:16,083 --> 00:02:37,354
+00:02:27,750 --> 00:02:50,639
 Training CV chooses six latent variables. The independent test classifies twenty-four of twenty-seven samples correctly, about eighty-eight point nine percent. Refined olive oil has only two true positives out of four: sensitivity one half. Perfect specificity does not repair those missed positives.
 
 9
-00:02:38,083 --> 00:02:56,120
+00:02:51,417 --> 00:03:10,353
 T squared scales score distance by each retained component's variance. Q is the squared reconstruction residual, measuring variation outside the retained model. Both use the same calibration PCA, but answer different questions. Inspect them together.
 
 10
-00:02:56,833 --> 00:03:17,684
+00:03:11,083 --> 00:03:33,898
 Fit a two-component PCA using only forty calibration samples. The leverage example has T squared about twenty-eight point four but Q below its limit. Simulated instrument-shift samples have ordinary T squared yet Q about thirty-three times its limit. An ordinary score plot does not establish applicability.
 
 11
-00:03:18,417 --> 00:03:40,507
+00:03:34,667 --> 00:03:58,736
 Limits belong to the fitted calibration model, not every instrument or dataset. For this two-component example, the approximate training T-squared limit is six point six six, and the new-sample limit six point eight three. Assumptions and sample size matter. Investigate flagged points; do not delete automatically.
 
 12
-00:03:41,250 --> 00:04:02,870
+00:03:59,500 --> 00:04:22,647
 The Orange route uses PCA plus logistic regression, not the PLS-DA model shown here. Fitting PCA on all data before classifier CV leaks information; fit PCA inside each fold instead. Apply Domain shows projections, while full Q diagnostics require NB12 or this interactive lab.
 
 13
-00:04:03,583 --> 00:04:26,119
+00:04:23,417 --> 00:04:47,399
 Explore correct and buggy VIP, compare selection workflows, inspect classification scores and confusion matrices, then vary T squared and Q. Download evidence and investigation notes. Use class measurements for the assignment, retain reasons for flagged samples, and do not treat simulation results as food-authenticity certification.

@@ -1,7 +1,7 @@
 # W11 光譜前處理與相似度 / Preprocessing and spectral similarity
 
 ## 學生使用 / Student entry points
-- `tour.html`：中文導覽（約 2:49）；`tour.en.html`：English tour (about 2:42).
+- `tour.html`：中文導覽（約 2:59）；`tour.en.html`：English tour (about 2:39).
 - `preprocess_lab.html`：中文六幕互動實驗；`preprocess_lab.en.html`：English interactive lab.
 - 互動實驗可直接在瀏覽器開啟，無 CDN 或網路依賴。學生資料只儲存在該瀏覽器；CSV 與 JSON 可下載，沒有上傳功能。
 - The standalone interactive pages run offline. The full lesson slides retain their existing external Chart.js/font dependencies.
@@ -33,7 +33,7 @@ To rerender the bilingual tours:
 ```bash
 .venv-w11/bin/python scripts/render_w11.py
 ```
-The renderer currently requires WSL with Windows System.Speech voices Microsoft Hanhan Desktop and Microsoft Zira Desktop, and Microsoft JhengHei at the Windows font path or the documented user font cache. Audio stays in scratch; text+voice hashes invalidate stale speech cache. It is not a cross-platform TTS installer.
+Narration is ElevenLabs voice **IAN** (`eleven_v3`, slowed 5 % with ffmpeg `atempo=0.95`), the same voice as the earlier weekly tours, for both Chinese and English. The chosen takes are kept in `scripts/vo/w11/` (`texts.json` holds the subtitle text and, for Chinese, a `tts` spelling with homophones that IAN reads correctly, e.g. 譜→普, 確認→卻任; subtitles always use the original text). `scripts/render_w11.py` reads those MP3s, needs ffmpeg and Microsoft JhengHei, and runs on Windows or WSL with `PYTHONUTF8=1`; changing a narration line makes the renderer stop until that take is regenerated and checked with `scripts/vo_tools.py`. Voice generated with ElevenLabs.
 
 ## Verification scope
 - 389 interactive assertions, independent SciPy ALS/SG comparisons, four language/viewport combinations, offline interaction and actual downloads.

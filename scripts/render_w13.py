@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Bilingual W13 course tours from original NB11 simulated data.
-Requires NumPy/SciPy/scikit-learn/Pillow, ffmpeg and WSL Windows voices.
+Requires NumPy/SciPy/scikit-learn/Pillow, ffmpeg and ElevenLabs takes in scripts/vo/ (voice IAN, eleven_v3).
 """
 from pathlib import Path
 import csv,json,math,subprocess,hashlib
@@ -9,11 +9,14 @@ from scipy.spatial.distance import cdist
 from scipy.signal import savgol_filter
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.model_selection import LeaveOneGroupOut
+import sys;sys.path.insert(0,str(Path(__file__).resolve().parent))
+from course_video_common import vo_wav,cache_dir
 from PIL import Image,ImageDraw,ImageFont
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'labs/w13_pls_acetic/animations';CACHE=Path.home()/'.hermes/cache/scratch/w13-render'
+ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'labs/w13_pls_acetic/animations';CACHE=cache_dir('w13')
 OUT.mkdir(exist_ok=True,parents=True);CACHE.mkdir(exist_ok=True,parents=True)
 FONT=Path('/home/administrator/.local/share/fonts/hermes-food-tests/msjh.ttc')
 if not FONT.exists():FONT=Path('/mnt/c/Windows/Fonts/msjh.ttc')
+if not FONT.exists():FONT=Path('C:/Windows/Fonts/msjh.ttc')
 F={n:ImageFont.truetype(str(FONT),n) for n in [18,20,22,24,26,28,30,34,40]}
 rows=list(csv.DictReader((ROOT/'data/nb11_demo_spectra.csv').open()));fields=list(rows[0])[5:];axis=np.array(list(map(float,fields)));X=np.array([[float(r[f]) for f in fields] for r in rows]);y=np.array([float(r['acidity_pct']) for r in rows]);g=np.array([r['sample_id'] for r in rows]);ids=list(dict.fromkeys(g));pool=[s for s in ids if s!='VINEGAR_WHITE_W4REF'];means=np.array([X[g==s].mean(0) for s in pool]);D=cdist(means,means);a,b=np.unravel_index(D.argmax(),D.shape);chosen=[int(a),int(b)]
 while len(chosen)<12:
@@ -112,18 +115,15 @@ def stamp(sec,sep=','):
  ms=round(sec*1000);h,ms=divmod(ms,3600000);m,ms=divmod(ms,60000);s,ms=divmod(ms,1000);return f'{h:02}:{m:02}:{s:02}{sep}{ms:03}'
 def main():
  timing=[]
- for lang,voice in [('zh','Microsoft Hanhan Desktop'),('en','Microsoft Zira Desktop')]:
+ for lang in ['zh','en']:
   offset=0;subs=[];vtt=['WEBVTT\n'];concat=[]
   for i,s in enumerate(scenes):
-   txt=s[2 if lang=='zh' else 3];wav=CACHE/f'{lang}-{i}.wav';textfile=CACHE/f'{lang}-{i}.txt';sig=CACHE/f'{lang}-{i}.sha256';digest=hashlib.sha256((voice+'\n'+txt).encode()).hexdigest();valid=sig.exists() and sig.read_text()==digest;textfile.write_text(txt,encoding='utf-8-sig')
-   def win(p):return subprocess.check_output(['wslpath','-w',str(p)],text=True).strip()
-   if not wav.exists() or not valid:
-    ps=f"Add-Type -AssemblyName System.Speech; $s=New-Object System.Speech.Synthesis.SpeechSynthesizer; $s.SelectVoice('{voice}'); $s.Rate=0; $s.SetOutputToWaveFile('{win(wav)}'); $s.Speak([System.IO.File]::ReadAllText('{win(textfile)}')); $s.Dispose()";run(['powershell.exe','-NoProfile','-Command',ps]);sig.write_text(digest)
+   txt=s[2 if lang=='zh' else 3];wav=vo_wav('w13',lang,i,txt,CACHE)
    audio=float(subprocess.check_output(['ffprobe','-v','quiet','-show_entries','format=duration','-of','csv=p=0',str(wav)]));dur=math.ceil((audio+.7)*12)/12;clip=CACHE/f'{lang}-{i}.mp4'
-   proc=subprocess.Popen(['ffmpeg','-y','-v','error','-f','rawvideo','-vcodec','rawvideo','-pix_fmt','rgb24','-s','1280x720','-r','12','-i','-','-i',str(wav),'-af','apad','-t',str(dur),'-c:v','libx264','-preset','fast','-crf','24','-pix_fmt','yuv420p','-c:a','aac','-b:a','96k','-movflags','+faststart',str(clip)],stdin=subprocess.PIPE)
+   proc=subprocess.Popen(['ffmpeg','-y','-v','error','-f','rawvideo','-vcodec','rawvideo','-pix_fmt','rgb24','-s','1280x720','-r','12','-i','-','-i',str(wav),'-af','apad','-t',str(dur),'-c:v','libx264','-preset','fast','-crf','24','-pix_fmt','yuv420p','-c:a','aac','-b:a','128k','-movflags','+faststart',str(clip)],stdin=subprocess.PIPE)
    states=[frame(s,lang,(k+1)/24).tobytes() for k in range(24)]
    for k in range(round(dur*12)):proc.stdin.write(states[min(23,int(k/(dur*12)*24))])
-   proc.stdin.close();assert proc.wait()==0;concat.append("file '"+str(clip)+"'");subs.append(f'{i+1}\n{stamp(offset)} --> {stamp(offset+audio)}\n{txt}\n');vtt.append(f'{stamp(offset,".")} --> {stamp(offset+audio,".")}\n{txt}\n');timing.append(dict(lang=lang,scene=i,start=offset,speech_duration=audio,scene_duration=dur));offset+=dur;print(lang,i,'speech',audio,'scene',dur,flush=True)
+   proc.stdin.close();assert proc.wait()==0;concat.append("file '"+clip.as_posix()+"'");subs.append(f'{i+1}\n{stamp(offset)} --> {stamp(offset+audio)}\n{txt}\n');vtt.append(f'{stamp(offset,".")} --> {stamp(offset+audio,".")}\n{txt}\n');timing.append(dict(lang=lang,scene=i,start=offset,speech_duration=audio,scene_duration=dur));offset+=dur;print(lang,i,'speech',audio,'scene',dur,flush=True)
   lst=CACHE/f'{lang}-concat.txt';lst.write_text('\n'.join(concat));run(['ffmpeg','-y','-v','error','-f','concat','-safe','0','-i',str(lst),'-c','copy','-movflags','+faststart',str(OUT/f'w13_tour_{lang}.mp4')]);(OUT/f'w13_tour_{lang}.srt').write_text('\n'.join(subs));(OUT/f'w13_tour_{lang}.vtt').write_text('\n'.join(vtt));(OUT/f'narration_{lang}.txt').write_text('\n\n'.join(s[2 if lang=='zh' else 3] for s in scenes));frame(scenes[0],lang,.95).save(OUT/f'poster_{lang}.jpg')
  (OUT/'timing.json').write_text(json.dumps(timing,indent=2))
 if __name__=='__main__':main()

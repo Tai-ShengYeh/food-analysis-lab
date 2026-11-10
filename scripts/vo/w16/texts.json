@@ -1,0 +1,154 @@
+[
+ {
+  "key": "zh-00",
+  "lang": "zh",
+  "scene": 0,
+  "text": "同一包粉末，PLS 用已知配方學習，NNLS 用純物質光譜擬合。兩種方法可能給出不同答案。本週要比較誤差與假設，還要學會辨認：即使模型吐出數字，也不一定能把它當成含量報告。",
+  "tts": "同一包粉末，PLS 用已知配方學習，NNLS 用純物質光普你合。兩種方法可能給出不同答案。本周要比較誤差與假設，還要學會辨認：即使模型吐出數字，也不一定能把它當成含量報告。"
+ },
+ {
+  "key": "zh-01",
+  "lang": "zh",
+  "scene": 1,
+  "text": "合併全班二十五瓶配方，每瓶兩條光譜，共五十條校正資料。交叉驗證每次留出一整瓶的兩條光譜，共二十五折。欄位 sample_id 是瓶號，group 是配製組，不能混用；七瓶盲樣的十四條光譜留到最後驗證。",
+  "tts": "合併全班二十五瓶配方，每瓶兩條光普，共五十條校正資料。交叉驗證每次留出一整瓶的兩條光普，共二十五折。欄位 sample_id 是瓶號，group 是配製組，不能混用；七瓶盲樣的十四條光普留到最後驗證。"
+ },
+ {
+  "key": "zh-02",
+  "lang": "zh",
+  "scene": 2,
+  "text": "阿斯巴甜和三氯蔗糖各建一個 PLS1，依校正組的分組 RMSECV 選 LV。示範兩者都選到四個，並不表示以後都一樣。PLS2 是另一種共同建模選項，本課沒有用這份結果證明 PLS1 或 PLS2 必然比較好。"
+ },
+ {
+  "key": "zh-03",
+  "lang": "zh",
+  "scene": 3,
+  "text": "比較原始光譜與基線扣除加面積歸一化，兩條路都保留 PLS 的預設尺度化。阿斯巴甜原始路線最佳 RMSECV 約零點七一一，前處理路線約一點三零六；因此這份資料選原始路線。換資料時必須重新比較。",
+  "tts": "比較原始光普與基線扣除加面積歸一化，兩條路都保留 PLS 的預設尺度化。阿斯巴甜原始路線最佳 RMSECV 約零點七一一，前處理路線約一點三零六；因此這份資料選原始路線。換資料時必須重新比較。"
+ },
+ {
+  "key": "zh-04",
+  "lang": "zh",
+  "scene": 4,
+  "text": "鎖定流程後才打開盲樣測試。PLS 的阿斯巴甜 RMSEP 約零點五五七、三氯蔗糖約零點五零三百分點；後者偏差約正零點四零五。RPD 與濃度範圍有關，只有七個獨立盲樣，不能單靠分級宣稱能上產線。"
+ },
+ {
+  "key": "zh-05",
+  "lang": "zh",
+  "scene": 5,
+  "text": "赤藻糖醇比例等於一百減掉兩種甜味劑，所以阿斯巴甜增加時，填充劑一定減少。模型可能借用填充劑的波段預測，這是封閉性造成的間接線索，不是阿斯巴甜自己的峰，更不是因果證明；換填充劑就可能失效。",
+  "tts": "赤藻糖醇比例等於一百減掉兩種甜味劑，所以阿斯巴甜增加時，填充劑一定減少。模型可能借用填充劑的玻段預測，這是封閉性造成的間接線索，不是阿斯巴甜自己的峰，更不是因果證明；換填充劑就可能失效。"
+ },
+ {
+  "key": "zh-06",
+  "lang": "zh",
+  "scene": 6,
+  "text": "NNLS 用三條純物質參考加上一條常數背景，找出非負係數，讓殘差平方和最小。本例沒有強迫係數總和等於一。係數先表示光譜貢獻，只有參考尺度、響應與線性混合假設合理時，才能討論如何換成質量比例。",
+  "tts": "NNLS 用三條純物質參考加上一條常數背景，找出非負係數，讓殘差平方和最小。本例沒有強迫係數總和等於一。係數先表示光普貢獻，只有參考尺度、響應與線性混合假設合理時，才能討論如何換成質量比例。"
+ },
+ {
+  "key": "zh-07",
+  "lang": "zh",
+  "scene": 7,
+  "text": "把每條參考光譜分別歸一化，最小平方仍可能重建得一樣好，但係數會跟著尺度改變。因此不能看到擬合很好，就把新的係數直接乘一百當質量百分比。缺少新成分參考時，NNLS 也可能用錯的成分硬湊答案。",
+  "tts": "把每條參考光普分別歸一化，最小平方仍可能重建得一樣好，但係數會跟著尺度改變。因此不能看到你合很好，就把新的係數直接乘一百當質量百分比。缺少新成分參考時，NNLS 也可能用錯的成分硬湊答案。"
+ },
+ {
+  "key": "zh-08",
+  "lang": "zh",
+  "scene": 8,
+  "text": "同一批十四條盲樣光譜，NNLS 的阿斯巴甜與三氯蔗糖 RMSEP 約零點九七八與零點七六八，比這份 PLS 模型高。但換了儀器、混合非線性、基質或參考品質，結果可能改變。方法比較必須使用相同的獨立樣品。",
+  "tts": "同一批十四條盲樣光普，NNLS 的阿斯巴甜與三氯蔗糖 RMSEP 約零點九七八與零點七六八，比這份 PLS 模型高。但換了儀器、混合非線性、基質或參考品質，結果可能改變。方法比較必須使用相同的獨立樣品。"
+ },
+ {
+  "key": "zh-09",
+  "lang": "zh",
+  "scene": 9,
+  "text": "取校正組中待測成分為零的十條光譜，用折外預測的標準差與預測對實際的斜率估計。阿斯巴甜 LOD 約二點六八、LOQ 約八點一二百分比。零成分樣品仍有另一種甜味劑干擾，這只是教學近似，不是正式方法確效。",
+  "tts": "取校正組中待測成分為零的十條光普，用折外預測的標準差與預測對實際的斜率估計。阿斯巴甜 LOD 約二點六八、LOQ 約八點一二百分比。零成分樣品仍有另一種甜味劑干擾，這只是教學近似，不是正式方法確效。"
+ },
+ {
+  "key": "zh-10",
+  "lang": "zh",
+  "scene": 10,
+  "text": "市售挑戰樣品換了填充劑，PLS 竟預測約四十八點二百分比。T 平方約二百二十四，Q 約三點一三，都遠超模型界限。這時先寫超出模型適用範圍，不報含量；不能因包裝標示一點八，就直接改寫成低於 LOD。"
+ },
+ {
+  "key": "zh-11",
+  "lang": "zh",
+  "scene": 11,
+  "text": "域內樣品也要檢查預測是否低於 LOD、介於 LOD 與 LOQ，或超過校正範圍。保留方法、前處理、LV、誤差、VIP、NNLS 比較與判讀理由。進入六幕實驗操作並下載證據；正式報告換成本班實測與已驗證的方法。"
+ },
+ {
+  "key": "en-00",
+  "lang": "en",
+  "scene": 0,
+  "text": "PLS learns from known blends; NNLS fits pure-reference spectra. The same powder can receive different answers. This week compares their errors and assumptions, then asks when a numerical prediction should not be reported as a concentration."
+ },
+ {
+  "key": "en-01",
+  "lang": "en",
+  "scene": 1,
+  "text": "Combine twenty-five formulations with two spectra per bottle. Leave one whole bottle out in each of twenty-five validation folds. Group by sample_id, not the preparation-group column. Reserve fourteen spectra from seven blind bottles for the final test."
+ },
+ {
+  "key": "en-02",
+  "lang": "en",
+  "scene": 2,
+  "text": "Fit one PLS1 model for each sweetener and choose latent variables using calibration grouped RMSECV. Both select four in this demo, not by a universal rule. PLS2 is a separate joint-model option; these results do not establish that either approach always performs better."
+ },
+ {
+  "key": "en-03",
+  "lang": "en",
+  "scene": 3,
+  "text": "Compare raw spectra with baseline subtraction plus absolute-area normalization. Both retain default PLS scaling. Aspartame's best grouped RMSECV is about zero point seven one one for raw input versus one point three zero six after preprocessing. This dataset chooses raw; other data may differ."
+ },
+ {
+  "key": "en-04",
+  "lang": "en",
+  "scene": 4,
+  "text": "Reveal blind-test errors only after locking the pipeline. PLS test RMSE is about zero point five five seven for aspartame and zero point five zero three percentage points for sucralose; the latter has bias around plus zero point four zero five. Seven independent blind bottles and RPD bands do not establish production fitness."
+ },
+ {
+  "key": "en-05",
+  "lang": "en",
+  "scene": 5,
+  "text": "Erythritol is one hundred percent minus both sweeteners. When aspartame increases, filler decreases. The model can use filler bands as indirect clues through compositional closure. Those are not aspartame-specific peaks or causal proof; changing filler can break the relationship."
+ },
+ {
+  "key": "en-06",
+  "lang": "en",
+  "scene": 6,
+  "text": "NNLS combines three pure spectra and a constant offset using nonnegative coefficients to minimize squared residuals. This demo does not constrain their sum to one. Coefficients describe spectral contributions; mass interpretation requires compatible reference scales, responses, and linear mixing assumptions."
+ },
+ {
+  "key": "en-07",
+  "lang": "en",
+  "scene": 7,
+  "text": "Individually normalizing reference spectra can leave an equally good least-squares reconstruction while changing coefficient scales. A small residual does not justify multiplying the new coefficients by one hundred as mass percentages. Missing components can also force an inappropriate reference combination."
+ },
+ {
+  "key": "en-08",
+  "lang": "en",
+  "scene": 8,
+  "text": "On the same fourteen blind spectra, NNLS test RMSE is about zero point nine seven eight for aspartame and zero point seven six eight for sucralose, higher than PLS here. Instruments, nonlinear mixing, matrices, and reference quality can change that result. Compare methods on the same independent samples."
+ },
+ {
+  "key": "en-09",
+  "lang": "en",
+  "scene": 9,
+  "text": "Use out-of-fold predictions for the ten zero-analyte calibration spectra, their standard deviation, and the prediction-versus-reference slope. Aspartame LOD is about two point six eight percent and LOQ eight point one two percent. Those samples still contain the other sweetener; this is a teaching approximation, not formal method validation."
+ },
+ {
+  "key": "en-10",
+  "lang": "en",
+  "scene": 10,
+  "text": "The simulated commercial challenge changes filler, and PLS predicts about forty-eight point two percent. T squared around two hundred twenty-four and Q around three point one three exceed the model limits. Report outside the model domain and withhold concentration; the label value alone is not grounds for reporting below LOD."
+ },
+ {
+  "key": "en-11",
+  "lang": "en",
+  "scene": 11,
+  "text": "For in-domain samples, check predictions against LOD, LOQ, and calibration range. Retain methods, preprocessing, latent variables, errors, VIP, NNLS comparison, and reporting rationale. Explore the six-act lab and download evidence; use class measurements and validated procedures for formal reporting."
+ }
+]
