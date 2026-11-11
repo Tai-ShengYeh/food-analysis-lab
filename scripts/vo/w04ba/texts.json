@@ -1,0 +1,119 @@
+[
+ {
+  "key": "zh-01",
+  "lang": "zh",
+  "scene": "01",
+  "text": "先看傳統的散布圖。橫軸是手動滴定，縱軸是自動滴定，一個樣品一個點。點幾乎都貼著對角線，相關係數高達零點九九九，看起來兩種方法完全一樣。先猜猜看：四種樣品裡，哪一種兩法差最多？在右邊選一個，第三步揭曉。",
+  "tts": "先看傳統的散布圖。橫妯是手動滴定，縱妯是自動滴定，一個樣品一個點。點幾乎都貼著對角線，相關係數高達零點九九九，看起來兩種方法完全一樣。先猜猜看：四種樣品裡，哪一種兩法差最多？在右邊選一個，第三步揭曉。"
+ },
+ {
+  "key": "zh-02",
+  "lang": "zh",
+  "scene": "02",
+  "text": "這種圖把每個樣品換成兩個數字。橫軸是兩法的平均，因為沒有哪一法是真值；縱軸是差值，一律用自動減手動。例如手動零點八零、自動零點九零。請在右邊先算出平均和差值，再按對答案。",
+  "tts": "這種圖把每個樣品換成兩個數字。橫妯是兩法的平均，因為沒有哪一法是真值；縱妯是差值，一律用自動減手動。例如手動零點八零、自動零點九零。請在右邊先算出平均和差值，再按對答案。"
+ },
+ {
+  "key": "zh-03",
+  "lang": "zh",
+  "scene": "03",
+  "text": "每個點都搬到平均和差值的位置。原本的對角線被放平，變成差值等於零的水平線，垂直方向放大了大約十五倍，差異終於看得見。圈起來的點差最大，是一個優格樣品。跟你剛才猜的一樣嗎？"
+ },
+ {
+  "key": "zh-04",
+  "lang": "zh",
+  "scene": "04",
+  "text": "整體來說，自動滴定比手動偏高、偏低，還是差不多？先在右邊選一個答案。"
+ },
+ {
+  "key": "zh-14",
+  "lang": "zh",
+  "scene": "14",
+  "text": "藍線是所有差值的平均，叫做偏差，這裡是正的零點零三六個百分點，自動滴定平均略高一點。它是否真的不等於零，要用配對檢定來判斷；下一頁會看到，這組數據並不顯著。",
+  "reveal_of_step": 4
+ },
+ {
+  "key": "zh-05",
+  "lang": "zh",
+  "scene": "05",
+  "text": "如果再測一個新樣品，兩法的差大概會落在多寬的範圍？拖動滑桿，畫出你覺得能包住百分之九十五差值的帶子，再按下揭曉按鈕。",
+  "tts": "如果再測一個新樣品，兩法的差大概會落在多寬的範圍？拖動滑桿，畫出你覺得能包住百分之九十五差值的帶子，再按下揭小按鈕。"
+ },
+ {
+  "key": "zh-15",
+  "lang": "zh",
+  "scene": "15",
+  "text": "橘色虛線是一致界線，等於偏差加減一點九六倍的差值標準差，從負零點零九九到正零點一七零。它描述單一樣品的差可能有多大，不是偏差的信賴區間。",
+  "reveal_of_step": 5
+ },
+ {
+  "key": "zh-06",
+  "lang": "zh",
+  "scene": "06",
+  "text": "最後一步：假設事先訂好的容許差是正負零點一零個百分點。依照這張圖，兩法可以直接互換嗎？先選答案。"
+ },
+ {
+  "key": "zh-16",
+  "lang": "zh",
+  "scene": "16",
+  "text": "綠色虛線就是容許差。一致界線的上界零點一七零超出了容許差，所以依這個標準，兩法還不能直接互換。容許差一定要在看數據之前訂好；接下來要找原因：是哪些樣品、哪一種形狀造成的。",
+  "reveal_of_step": 6
+ },
+ {
+  "key": "en-01",
+  "lang": "en",
+  "scene": "01",
+  "text": "Start with the usual scatter plot: manual titration on the x-axis, automatic titration on the y-axis, one point per sample. The points hug the diagonal and r is zero point nine nine nine, so the two methods look identical. First, a guess: of the four sample types, which one shows the biggest difference between the methods? Pick one on the right; the answer comes in step three."
+ },
+ {
+  "key": "en-02",
+  "lang": "en",
+  "scene": "02",
+  "text": "This plot turns each sample into two numbers. The x-value is the mean of the two methods, because neither one is the truth. The y-value is the difference, always automatic minus manual. For example, manual reads zero point eight zero and automatic reads zero point nine zero. Work out the mean and the difference on the right, then press Check."
+ },
+ {
+  "key": "en-03",
+  "lang": "en",
+  "scene": "03",
+  "text": "Each point now moves to its mean and its difference. The diagonal is laid flat and becomes the zero-difference line, and the vertical axis is magnified about fifteen times, so the differences finally become visible. The circled point has the biggest difference, and it is a yogurt sample. Is that what you guessed?"
+ },
+ {
+  "key": "en-04",
+  "lang": "en",
+  "scene": "04",
+  "text": "Overall, does the automatic method read higher than manual, lower, or about the same? Pick an answer on the right first."
+ },
+ {
+  "key": "en-14",
+  "lang": "en",
+  "scene": "14",
+  "text": "The blue line is the mean of all the differences, called the bias. Here it is plus zero point zero three six, so the automatic method reads slightly higher on average. Whether that is really different from zero is decided with a paired test; the next slide shows it is not significant for this data.",
+  "reveal_of_step": 4
+ },
+ {
+  "key": "en-05",
+  "lang": "en",
+  "scene": "05",
+  "text": "If you measured one new sample, how wide a range would the difference between the methods fall in? Drag the slider to draw the band you think holds ninety-five percent of the differences, then press Reveal."
+ },
+ {
+  "key": "en-15",
+  "lang": "en",
+  "scene": "15",
+  "text": "The orange dashed lines are the limits of agreement: the bias plus or minus one point nine six standard deviations of the differences, from minus zero point zero nine nine to plus zero point one seven zero. They describe how large a single sample's difference can be. They are not a confidence interval for the bias.",
+  "reveal_of_step": 5
+ },
+ {
+  "key": "en-06",
+  "lang": "en",
+  "scene": "06",
+  "text": "Last step. Suppose the tolerance, set in advance, is plus or minus zero point one zero percentage points. Based on this plot, can the two methods be used interchangeably? Choose an answer first."
+ },
+ {
+  "key": "en-16",
+  "lang": "en",
+  "scene": "16",
+  "text": "The green dashed lines show the tolerance. The upper limit of agreement, zero point one seven zero, lies outside it, so by this standard the two methods are not yet interchangeable. Always set the tolerance before you look at the data, then find the cause: which samples, and which pattern.",
+  "reveal_of_step": 6
+ }
+]
