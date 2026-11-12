@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>玻璃滴定管 vs 數位滴定器 · W4</title>
+<meta name="description" content="W4 補充實驗講義：玻璃滴定管與 DLAB dTrite 數位滴定器的方法比較（秤重校正、KHP 標定、可滴定酸度、Bland–Altman）">
+<style>
+:root{
+  --bg:#F6F2E7; --surface:#FFFDF6; --ink:#1F2A44; --ink-2:#55607A;
+  --primary:#2848A8; --accent:#C8322B; --ok:#2E7D4F; --hl:#F7D774;
+  --line:#C9C3B3; --wash:#E9EEFB; --warn:#FBEAE8; --okwash:#E3F2E8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141A2A; --surface:#1C2338; --ink:#E8EAF2; --ink-2:#A9B0C4;
+    --primary:#8FA8F0; --accent:#F08A84; --ok:#7CCB98; --hl:#6B5A1E;
+    --line:#39415A; --wash:#232C48; --warn:#3A2326; --okwash:#1F3428;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141A2A; --surface:#1C2338; --ink:#E8EAF2; --ink-2:#A9B0C4;
+  --primary:#8FA8F0; --accent:#F08A84; --ok:#7CCB98; --hl:#6B5A1E;
+  --line:#39415A; --wash:#232C48; --warn:#3A2326; --okwash:#1F3428;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  font-size:16px;line-height:1.7}
+main{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+header.top{border-bottom:3px solid var(--ink);padding-bottom:12px;margin-bottom:20px}
+.kicker{color:var(--primary);font-weight:700;letter-spacing:.05em;font-size:14px}
+h1{font-size:28px;line-height:1.3;margin:4px 0 6px}
+h2{font-size:21px;margin:32px 0 10px;padding-left:10px;border-left:6px solid var(--primary)}
+h3{font-size:17px;margin:20px 0 6px}
+p{margin:8px 0}
+.sub{color:var(--ink-2);margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--ink-2);margin-top:8px}
+.box{background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;margin:12px 0}
+.box.key{background:var(--wash);border-color:var(--primary)}
+.box.warn{background:var(--warn);border-color:var(--accent)}
+.box.ok{background:var(--okwash);border-color:var(--ok)}
+.box > :first-child{margin-top:0}
+.box > :last-child{margin-bottom:0}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;
+  background:var(--primary);color:var(--surface);vertical-align:2px;margin-right:4px}
+.tag.red{background:var(--accent)}
+.tag.green{background:var(--ok)}
+mark{background:var(--hl);color:inherit;padding:0 .1em}
+code,.mono{font-family:"JetBrains Mono",Consolas,monospace;font-size:.92em}
+.formula{font-family:"JetBrains Mono",Consolas,monospace;background:var(--surface);
+  border:1px dashed var(--line);border-radius:8px;padding:8px 12px;margin:8px 0;overflow-x:auto;white-space:nowrap}
+ol,ul{padding-left:1.4em;margin:6px 0}
+li{margin:3px 0}
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:4px 7px;text-align:center;vertical-align:middle}
+th{background:var(--wash);font-weight:700}
+td.l,th.l{text-align:left}
+td.blank{height:30px}
+tr.hl td{background:color-mix(in oklab,var(--hl) 35%,transparent)}
+.small{font-size:13px;color:var(--ink-2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.grid2{grid-template-columns:1fr} h1{font-size:23px}}
+.check li{list-style:none;margin-left:-1.2em}
+.check li::before{content:"☐ ";font-weight:700}
+.answer{border-bottom:1px solid var(--ink-2);display:block;height:28px}
+footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:10px}
+.noprint{}
+@media print{
+  @page{size:A4;margin:14mm 13mm}
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--ink:#000;--ink-2:#333;--wash:#EEF1F8;--warn:#FBEEEC;--okwash:#EEF6F0;--line:#888;--primary:#2848A8;--accent:#C8322B;--ok:#2E7D4F;--hl:#F7D774}
+  body{font-size:11pt;line-height:1.55;background:#fff}
+  main{max-width:none;padding:0}
+  h2{break-after:avoid;margin-top:18px}
+  h3{break-after:avoid}
+  .box,table,.formula,figure{break-inside:avoid}
+  .pb{break-before:page}
+  .noprint{display:none}
+  footer{margin-top:10px;padding-top:6px}
+  .answer{height:24px}
+  table{font-size:9.5pt}
+  .tw{overflow:visible}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<main>
+
+<header class="top">
+  <div class="kicker">食品分析實驗 · W4 補充實驗講義</div>
+  <h1>玻璃滴定管 vs 數位滴定器：同一個終點，換一種量體積的方法</h1>
+  <p class="sub">Glass burette vs DLAB dTrite digital burette — a method-comparison lab for titratable acidity</p>
+  <div class="meta">
+    <span>⏱ 約 2 小時 15 分</span><span>👥 2 人一組，全班 6 組</span>
+    <span>🧪 樣品：白醋、柳橙汁</span><span>📊 分析：秤重校正、RSD、Bland–Altman、配對 t</span>
+  </div>
+  <p class="small noprint"><a href="burette_compare.en.html" hreflang="en" style="color:var(--primary);font-weight:700">English</a> · 列印：瀏覽器「列印」→ A4，每個大段落會自動分頁。</p>
+</header>
+
+<h2>1. 這個實驗在比什麼？</h2>
+<p>W4 主實驗比的是兩種<b>判斷終點的方法</b>：酚酞變色（肉眼）vs 電位滴定（pH 曲線反曲點）。終點不同，兩法之間可能出現系統性偏差。</p>
+<p>今天不一樣：兩支滴定管<b>都用酚酞、都滴到同一個粉紅終點</b>，唯一改變的是 <mark>NaOH 怎麼送出去、體積怎麼讀</mark>：</p>
+<div class="grid2">
+  <div class="box">
+    <h3 style="margin-top:0">玻璃滴定管（50 mL，A 級）</h3>
+    <ul>
+      <li>轉旋塞送液，肉眼讀彎月面</li>
+      <li>最小刻度 0.1 mL，估讀到 <b>0.02 mL</b></li>
+      <li>誤差來源：視差、彎月面判讀、液滴大小、管壁殘液</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3 style="margin-top:0">數位滴定器（DLAB dTrite）</h3>
+    <ul>
+      <li>直接裝在 NaOH 試劑瓶上，活塞送液</li>
+      <li>螢幕直接顯示體積，型錄標示解析度 <b>0.01 mL</b></li>
+      <li>誤差來源：活塞機械精度、管路氣泡、未歸零</li>
+    </ul>
+  </div>
+</div>
+<div class="box key">
+  <p><span class="tag">預期結果</span>因為終點一樣，兩法的<b>平均差（bias）應該接近 0</b>。如果你的 Bland–Altman 圖是一條平平的帶子、沒有顯著偏差，<b>這不是「什麼都沒發生」</b>，而正是這個實驗要證明的事：兩支滴定管可以互換。</p>
+  <p>真正值得看的是：<b>(1) 每支滴定管自己送液準不準（秤重校正）；(2) 重複滴定的精密度（RSD）差多少；(3) 一致界線 LoA 是否落在你事先訂的容許差內。</b></p>
+</div>
+
+<h2>2. 學習目標</h2>
+<ol>
+  <li>用秤重法（W1 的方法）校正兩種滴定管，算出系統誤差與 CV，並和型錄規格比較。</li>
+  <li>分別用兩支滴定管以 KHP 標定 NaOH，再測白醋與柳橙汁的可滴定酸度。</li>
+  <li>在看數據<b>之前</b>，從「一滴的體積」和「讀數誤差」推出合理的容許差。</li>
+  <li>用相對差 Bland–Altman 圖與配對 t 檢定判斷兩法能否互換，並用 RSD 比較精密度。</li>
+  <li>說明為什麼「用同一支滴定管標定與滴定」可以抵銷體積的比例誤差。</li>
+</ol>
+
+<h2>3. 器材與試劑</h2>
+<div class="tw"><table>
+<tr><th class="l">項目</th><th class="l">規格／用量</th><th class="l">備註</th></tr>
+<tr><td class="l">玻璃滴定管</td><td class="l">50 mL，A 級，最小刻度 0.1 mL</td><td class="l">A 級 50 mL 允差 ±0.05 mL</td></tr>
+<tr><td class="l">數位滴定器</td><td class="l">DLAB dTrite（裝在 NaOH 試劑瓶上）</td><td class="l">型錄標示：0.01–99.99 mL、解析度 0.01 mL、準確度 0.2%、CV 0.07%。<b>這是經銷商型錄數字，請依實際機型與說明書核對。</b></td></tr>
+<tr><td class="l">NaOH 溶液</td><td class="l">約 0.1 N，以去 CO₂ 水配製</td><td class="l">玻璃管與 dTrite 用<b>同一瓶</b></td></tr>
+<tr><td class="l">KHP（鄰苯二甲酸氫鉀）</td><td class="l">MW 204.22，105 °C 乾燥後置乾燥器</td><td class="l">每次秤約 0.50 g，記到 0.1 mg</td></tr>
+<tr><td class="l">酚酞指示劑</td><td class="l">1% 乙醇溶液</td><td class="l">易燃，遠離火源</td></tr>
+<tr><td class="l">樣品</td><td class="l">白醋（取 2.00 mL）、無果粒柳橙汁（取 10.00 mL）</td><td class="l">全班用同一批樣品；果汁若有果肉先過濾</td></tr>
+<tr><td class="l">其他</td><td class="l">分析天平（0.1 mg）、溫度計、2 mL 與 10 mL 球形吸管、250 mL 錐形瓶、磁石攪拌器、秤量瓶或小燒杯、去 CO₂ 水</td><td class="l"></td></tr>
+</table></div>
+
+<div class="box warn">
+  <p><span class="tag red">TA 課前檢查</span>dTrite 的安裝、排氣泡、歸零與清洗方式<b>依原廠說明書</b>；本講義只寫原則，不代替說明書。</p>
+  <ul class="check">
+    <li>核對 dTrite 實際型號與規格（解析度是否 0.01 mL）</li>
+    <li>選對瓶口轉接頭，裝上 NaOH 瓶後無滲漏</li>
+    <li>排除管路氣泡，試送幾次確認讀數穩定</li>
+    <li>確認接近終點時能控制到約一滴（≈ 0.05 mL）或更小的送液量</li>
+    <li>電量足夠／充電線備妥</li>
+    <li>先自己做一次完整滴定，計時（決定 Part C 每組能做幾次）</li>
+  </ul>
+</div>
+
+<h2>4. 時間配置</h2>
+<div class="tw"><table>
+<tr><th>時間</th><th class="l">內容</th></tr>
+<tr><td>0:00–0:15</td><td class="l">說明＋<b>先訂容許差</b>（第 5 節），寫在紀錄表上</td></tr>
+<tr><td>0:15–0:45</td><td class="l">Part A 秤重校正：兩人分工，一人做玻璃管、一人做 dTrite，同時進行</td></tr>
+<tr><td>0:45–1:10</td><td class="l">Part B KHP 標定：每支滴定管各 2 次</td></tr>
+<tr><td>1:10–2:00</td><td class="l">Part C 樣品：白醋、柳橙汁 × 3 重複 × 2 支滴定管（共 12 次滴定）</td></tr>
+<tr><td>2:00–2:15</td><td class="l">數據輸入全班彙整表、清洗 dTrite 與玻璃管</td></tr>
+</table></div>
+<p class="small">若併入 W4 主實驗（手動 vs 自動滴定），這份講義就是「手動（指示劑終點）」那一邊的升級版；Part A 也可以移到 W1 容量器具校正那週先做。</p>
+
+<h2 class="pb">5. 先訂容許差（看數據之前）</h2>
+<p>Bland–Altman 判讀的第一步是<b>事先</b>決定「兩法差多少可以接受」，免得看到結果才放寬標準。用兩個量來推：</p>
+<div class="box">
+  <p><b>(a) 一滴的影響。</b>一滴 NaOH 約 0.05 mL。樣品約需 12–15 mL NaOH，所以差一滴的相對誤差約為</p>
+  <div class="formula">0.05 / 14.9 ≈ 0.34%（白醋）　　0.05 / 12.7 ≈ 0.39%（柳橙汁）</div>
+  <p>換成白醋的 % 醋酸：0.1 × 0.05 × 60.05 / (2.00 × 1000) × 100 ≈ <b>0.015%</b>（白醋約 4.5%）。</p>
+  <p><b>(b) 玻璃管的讀數誤差。</b>起點、終點各估讀 ±0.02 mL，最壞情況合計 0.04 mL：</p>
+  <div class="formula">0.04 / 14.9 ≈ 0.27%（白醋）　　0.04 / 12.7 ≈ 0.31%（柳橙汁）</div>
+</div>
+<div class="box key">
+  <p><span class="tag">本講義示範</span>兩種樣品的「一滴」都約等於 0.3–0.4% 的相對誤差，所以用<b>相對差</b>比較最方便。示範採用 <b>容許差 = ±1%（相對差，約 3 滴）</b>。</p>
+  <p>你們這組可以訂不同的數字，但要<b>寫下理由，而且在開始滴定前寫好</b>。</p>
+  <p>我們的容許差：±<span style="display:inline-block;width:60px;border-bottom:1px solid">&nbsp;</span>%　理由：<span class="answer"></span></p>
+</div>
+
+<h2>6. Part A　秤重法校正兩支滴定管</h2>
+<p>原理同 W1：水的質量 × Z 因子 = 實際送出的體積。Z 因子（mL/g）依水溫查表（ISO 8655-6，1013 hPa）：</p>
+<div class="tw"><table>
+<tr><th>水溫 (°C)</th><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td></tr>
+<tr><th>Z (mL/g)</th><td>1.0025</td><td>1.0027</td><td>1.0029</td><td>1.0031</td><td>1.0033</td><td>1.0035</td><td>1.0038</td><td>1.0040</td><td>1.0043</td></tr>
+</table></div>
+<h3>步驟</h3>
+<ol>
+  <li>量水溫並記錄。水、滴定管、秤量瓶都先放在實驗室中達到室溫。</li>
+  <li><b>玻璃管：</b>裝去離子水、趕走尖端氣泡，調到 0.00 附近並讀起點（到 0.02 mL）。放出約 10 mL 到已歸零的秤量瓶，等 30 秒讓管壁液體流下，再讀終點，然後秤重。重複 10 次（每次重新裝滿）。</li>
+  <li><b>dTrite：</b>依說明書排氣泡、歸零，送出顯示值 10.00 mL 到已歸零的秤量瓶，秤重。重複 10 次。</li>
+  <li><b>注意：</b>Part A 用的是<b>水</b>，dTrite 要先裝在水瓶上做；做完再換回 NaOH 瓶並重新排氣泡。如果只有一台 dTrite 而且已經裝了 NaOH，請 TA 課前先用水做完 Part A。</li>
+</ol>
+<h3>計算</h3>
+<div class="formula">V<sub>i</sub> = m<sub>i</sub> × Z　　系統誤差 = mean(V) − 標示體積　　CV = SD(V) / mean(V) × 100%</div>
+<p class="small">玻璃管的「標示體積」是每次讀數差（終點 − 起點）；dTrite 是螢幕顯示的 10.00 mL。</p>
+
+<h3>紀錄表（水溫 ____ °C，Z = ______ mL/g）</h3>
+<div class="tw"><table>
+<tr><th rowspan="2">次</th><th colspan="3">玻璃滴定管</th><th colspan="3">dTrite</th></tr>
+<tr><th>讀數差 (mL)</th><th>質量 (g)</th><th>V = m×Z (mL)</th><th>顯示 (mL)</th><th>質量 (g)</th><th>V = m×Z (mL)</th></tr>
+<tr><td>1</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>2</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>3</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>4</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>5</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>6</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>7</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>8</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>9</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>10</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><th>平均／系統誤差／CV</th><td colspan="3" class="blank"></td><td colspan="3"></td></tr>
+</table></div>
+
+<h2 class="pb">7. Part B　KHP 標定（每支滴定管各 2 次）</h2>
+<ol>
+  <li>秤約 0.50 g 已乾燥 KHP（記到 0.1 mg）到錐形瓶，加約 50 mL 去 CO₂ 水溶解，加 2–3 滴酚酞。</li>
+  <li>用玻璃管滴到淡粉紅持續 30 秒為終點，讀數到 0.02 mL。</li>
+  <li>另秤一份 KHP，改用 dTrite 滴定，記錄顯示體積（0.01 mL）。</li>
+  <li>每支滴定管各做 2 次。<b>兩支滴定管各自算出自己的 N</b>，Part C 計算時用各自的 N。N 記到小數第 5 位：這裡要比較的差異只有 0.1–0.2%，四捨五入到第 4 位會把它蓋掉。</li>
+</ol>
+<div class="formula">N<sub>NaOH</sub> = m(KHP) / (204.22 × V<sub>L</sub>)</div>
+<div class="tw"><table>
+<tr><th>滴定管</th><th>次</th><th>m(KHP) (g)</th><th>V (mL)</th><th>N</th><th>平均 N</th></tr>
+<tr><td rowspan="2">玻璃</td><td>1</td><td class="blank"></td><td></td><td></td><td rowspan="2"></td></tr>
+<tr><td>2</td><td class="blank"></td><td></td><td></td></tr>
+<tr><td rowspan="2">dTrite</td><td>1</td><td class="blank"></td><td></td><td></td><td rowspan="2"></td></tr>
+<tr><td>2</td><td class="blank"></td><td></td><td></td></tr>
+</table></div>
+
+<h2>8. Part C　樣品滴定（白醋、柳橙汁 × 3 × 2 支）</h2>
+<ol>
+  <li><b>白醋：</b>用球形吸管取 2.00 mL 到錐形瓶，加約 50 mL 去 CO₂ 水、2–3 滴酚酞。</li>
+  <li><b>柳橙汁：</b>取 10.00 mL，加約 50 mL 去 CO₂ 水、3 滴酚酞（果汁顏色會讓終點較難判斷，可放一杯未加鹼的同樣品當對照色）。</li>
+  <li>每個樣品各取 6 份：3 份用玻璃管、3 份用 dTrite。</li>
+  <li><b>交替順序</b>（玻璃 → dTrite → 玻璃 → dTrite…），避免「後做的那支比較熟練」造成偏差。</li>
+  <li>終點標準兩支都一樣：<b>淡粉紅持續 30 秒</b>。接近終點時兩支都要放慢到逐滴（或更小）加入。</li>
+</ol>
+<div class="formula">% 酸 = N × V(mL) × 當量重 / (W × 1000) × 100　　白醋以醋酸 60.05，柳橙汁以檸檬酸 64.04</div>
+<p class="small">W 是樣品體積 (mL)，結果為 % (w/v)。</p>
+<div class="tw"><table>
+<tr><th rowspan="2">樣品</th><th rowspan="2">滴定管</th><th colspan="3">V NaOH (mL)</th><th colspan="3">% 酸</th><th rowspan="2">平均</th><th rowspan="2">RSD (%)</th></tr>
+<tr><th>1</th><th>2</th><th>3</th><th>1</th><th>2</th><th>3</th></tr>
+<tr><td rowspan="2">白醋</td><td>玻璃</td><td class="blank"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>dTrite</td><td class="blank"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td rowspan="2">柳橙汁</td><td>玻璃</td><td class="blank"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>dTrite</td><td class="blank"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table></div>
+
+<h2 class="pb">9. 數據分析</h2>
+<h3>9.1 精密度：RSD</h3>
+<p>每組、每個樣品、每支滴定管各算 3 重複的 RSD。全班合併時用<b>均方根</b>：RSD<sub>合併</sub> = √(各組 RSD² 的平均)。</p>
+<h3>9.2 一致性：相對差 Bland–Altman</h3>
+<p>每組每個樣品得到一對數據（玻璃平均、dTrite 平均），全班 6 組 × 2 樣品 = 12 對。差值一律定義為 <mark>dTrite − 玻璃</mark>。</p>
+<div class="formula">x = (玻璃 + dTrite) / 2　　相對差 y = (dTrite − 玻璃) / x × 100%</div>
+<div class="formula">bias = mean(y)　　LoA = bias ± 1.96 × SD(y)</div>
+<p>為什麼用相對差？白醋約 4.5%、柳橙汁約 0.8%，絕對差的大小差了好幾倍，混在同一張圖會變成漏斗形。第 5 節已經看到「一滴」在兩種樣品都約 0.3–0.4%，所以相對差可以放在同一個尺度上比較。</p>
+<h3>9.3 系統偏差：配對 t 檢定</h3>
+<div class="formula">t = bias / (SD(y) / √n)　　df = n − 1</div>
+<p>n = 12 時 df = 11，雙尾 α = 0.05 臨界值 t = 2.201。|t| 小於臨界值 → 沒有顯著的系統偏差。</p>
+<p class="small">工具：EX04 的「5_手動vs自動」工作表做的是同一套 Bland–Altman、配對 t 檢定與 F 檢定，可以把玻璃管當「手動」、dTrite 當「自動」填入；或用 NB04 的 Bland–Altman 段落。注意那裡預設的是絕對差，要比相對差請自己加一欄。</p>
+
+<h2>10. 範例數據與結果（模擬數據，用來對答案）</h2>
+<p class="small">以下數字是依合理誤差設定、用 Python 模擬產生，不是實測值。目的是讓你檢查自己的計算流程。</p>
+
+<h3>Part A　秤重校正（水溫 22.0 °C，Z = 1.0033 mL/g，各 10 次）</h3>
+<div class="tw"><table>
+<tr><th>滴定管</th><th>標示體積平均 (mL)</th><th>實際體積平均 (mL)</th><th>系統誤差</th><th>SD (mL)</th><th>CV</th><th class="l">對照</th></tr>
+<tr><td>玻璃</td><td>10.012</td><td>9.998</td><td>−0.014 mL（−0.14%）</td><td>0.018</td><td>0.18%</td><td class="l">在 A 級允差 ±0.05 mL 內</td></tr>
+<tr><td>dTrite</td><td>10.00</td><td>10.010</td><td>+0.010 mL（+0.10%）</td><td>0.005</td><td>0.054%</td><td class="l">在型錄 0.2%／CV 0.07% 內</td></tr>
+</table></div>
+<p>dTrite 的 CV 約只有玻璃管的 1/3，這是讀數方式的差別：螢幕讀數沒有估讀和視差。</p>
+
+<h3>Part B　KHP 標定</h3>
+<div class="tw"><table>
+<tr><th>滴定管</th><th>m(KHP) (g)</th><th>V (mL)</th><th>N</th><th>平均 N</th></tr>
+<tr><td rowspan="2">玻璃</td><td>0.5105</td><td>24.88</td><td>0.10047</td><td rowspan="2">0.10048</td></tr>
+<tr><td>0.4987</td><td>24.30</td><td>0.10049</td></tr>
+<tr><td rowspan="2">dTrite</td><td>0.5105</td><td>24.83</td><td>0.10067</td><td rowspan="2">0.10069</td></tr>
+<tr><td>0.4987</td><td>24.25</td><td>0.10070</td></tr>
+</table></div>
+<p>兩支滴定管算出的 N 差了約 0.2%：玻璃管讀數偏高 → 算出的 N 偏低；dTrite 實際送得比顯示多 → 算出的 N 偏高。<b>這不是 NaOH 濃度變了，而是兩支滴定管各自的體積誤差被「吸收」進了 N。</b></p>
+
+<h3>Part C　全班 12 對數據（% 酸為 3 重複平均）</h3>
+<div class="tw"><table>
+<tr><th>組</th><th>樣品</th><th>玻璃 V (mL)</th><th>dTrite V (mL)</th><th>玻璃 %</th><th>dTrite %</th><th>RSD 玻璃</th><th>RSD dTrite</th><th>平均 x</th><th>相對差 y (%)</th></tr>
+<tr><td>1</td><td>白醋</td><td>14.92 / 14.96 / 14.94</td><td>14.93 / 14.87 / 14.89</td><td>4.5073</td><td>4.5036</td><td>0.13</td><td>0.21</td><td>4.5054</td><td>−0.082</td></tr>
+<tr><td>2</td><td>白醋</td><td>14.84 / 14.84 / 14.90</td><td>14.83 / 14.89 / 14.85</td><td>4.4831</td><td>4.4915</td><td>0.23</td><td>0.21</td><td>4.4873</td><td>0.187</td></tr>
+<tr><td>3</td><td>白醋</td><td>14.88 / 14.92 / 14.92</td><td>14.83 / 14.86 / 14.85</td><td>4.4972</td><td>4.4885</td><td>0.15</td><td>0.10</td><td>4.4928</td><td>−0.194</td></tr>
+<tr><td>4</td><td>白醋</td><td>14.98 / 14.96 / 14.96</td><td>14.95 / 14.94 / 14.95</td><td>4.5153</td><td>4.5187</td><td>0.08</td><td>0.04</td><td>4.5170</td><td>0.075</td></tr>
+<tr><td>5</td><td>白醋</td><td>14.88 / 14.86 / 14.88</td><td>14.81 / 14.80 / 14.81</td><td>4.4872</td><td>4.4764</td><td>0.08</td><td>0.04</td><td>4.4818</td><td>−0.241</td></tr>
+<tr><td>6</td><td>白醋</td><td>14.82 / 14.80 / 14.90</td><td>14.87 / 14.86 / 14.84</td><td>4.4771</td><td>4.4915</td><td>0.36</td><td>0.10</td><td>4.4843</td><td>0.321</td></tr>
+<tr><td>1</td><td>柳橙汁</td><td>12.62 / 12.72 / 12.74</td><td>12.65 / 12.65 / 12.66</td><td>0.8168</td><td>0.8159</td><td>0.51</td><td>0.05</td><td>0.8164</td><td>−0.110</td></tr>
+<tr><td>2</td><td>柳橙汁</td><td>12.74 / 12.74 / 12.74</td><td>12.69 / 12.78 / 12.71</td><td>0.8198</td><td>0.8206</td><td>0.00</td><td>0.37</td><td>0.8202</td><td>0.098</td></tr>
+<tr><td>3</td><td>柳橙汁</td><td>12.70 / 12.80 / 12.74</td><td>12.73 / 12.74 / 12.76</td><td>0.8202</td><td>0.8217</td><td>0.39</td><td>0.12</td><td>0.8209</td><td>0.183</td></tr>
+<tr><td>4</td><td>柳橙汁</td><td>12.66 / 12.68 / 12.62</td><td>12.69 / 12.60 / 12.70</td><td>0.8142</td><td>0.8166</td><td>0.24</td><td>0.43</td><td>0.8154</td><td>0.294</td></tr>
+<tr><td>5</td><td>柳橙汁</td><td>12.72 / 12.80 / 12.82</td><td>12.77 / 12.73 / 12.76</td><td>0.8224</td><td>0.8224</td><td>0.41</td><td>0.16</td><td>0.8224</td><td>0.000</td></tr>
+<tr><td>6</td><td>柳橙汁</td><td>12.72 / 12.68 / 12.68</td><td>12.67 / 12.63 / 12.66</td><td>0.8168</td><td>0.8159</td><td>0.18</td><td>0.16</td><td>0.8164</td><td>−0.110</td></tr>
+</table></div>
+<p class="small">白醋：W = 2.00 mL、醋酸 60.05；柳橙汁：W = 10.00 mL、檸檬酸 64.04。玻璃管用 N = 0.10048、dTrite 用 N = 0.10069（各用自己的 N）。% 酸先算每一次再取平均。注意同一組的 dTrite 讀數普遍比玻璃管少約 0.2%，但換算成 % 酸之後兩者一致。</p>
+
+<div class="box ok">
+  <p><span class="tag green">範例結論</span></p>
+  <ul>
+    <li><b>精密度：</b>合併 RSD 白醋 玻璃 0.20% vs dTrite 0.14%；柳橙汁 玻璃 0.33% vs dTrite 0.25%。12 個組合中有 9 個是 dTrite 的 RSD 較小。</li>
+    <li><b>相對差 Bland–Altman（n = 12）：</b>bias = +0.035%，SD = 0.187%，LoA = −0.33% ～ +0.40%。</li>
+    <li><b>配對 t：</b>t = 0.65 &lt; 2.201（df = 11），p = 0.53 → 沒有顯著系統偏差。</li>
+    <li><b>判定：</b>LoA 整條落在事先訂的 ±1% 內 → 在這兩種樣品的濃度範圍內，<b>兩支滴定管可以互換</b>。</li>
+  </ul>
+</div>
+<p>注意 Part A 和 Part C 的落差：送液本身 dTrite 的 CV 只有玻璃管的 1/3（0.054% vs 0.18%），但到了實際滴定，RSD 只從 0.20% 降到 0.14%。因為<b>判斷酚酞終點的變異兩支滴定管都有</b>，讀數改善只是總誤差的一部分。</p>
+
+<h2>11. 討論題</h2>
+<ol>
+  <li>為什麼這個實驗預期 bias ≈ 0？舉出兩種會讓 bias 明顯偏離 0 的操作失誤（提示：氣泡、視差、用錯 N）。<span class="answer"></span><span class="answer"></span></li>
+  <li>範例的 Part A 顯示玻璃管讀數比實際多約 0.14%、dTrite 實際送出的比顯示多約 0.10%，Part B 兩支算出的 N 也差了約 0.2%。為什麼 Part C 的 % 酸卻一致？如果改成「用玻璃管標定 NaOH、用 dTrite 滴樣品」，% 酸會偏高還是偏低？大約多少？<span class="answer"></span><span class="answer"></span></li>
+  <li>為什麼 Part A 的 CV 差 3 倍，到了 Part C 的 RSD 差距卻小很多？<span class="answer"></span><span class="answer"></span></li>
+  <li>這組資料的相關係數 r 會非常接近 1。為什麼在這裡 r 幾乎沒有參考價值？（提示：只有兩個濃度水準）<span class="answer"></span><span class="answer"></span></li>
+  <li>如果樣品換成紅酒，dTrite 能解決終點難判斷的問題嗎？應該改用什麼方法？<span class="answer"></span><span class="answer"></span></li>
+  <li>除了數據之外，從安全、操作時間、試劑用量來看，數位滴定器還有什麼優缺點？<span class="answer"></span><span class="answer"></span></li>
+</ol>
+
+<h2>12. 安全與 dTrite 使用注意</h2>
+<div class="box warn">
+  <ul>
+    <li><b>NaOH 具腐蝕性：</b>全程戴護目鏡與手套；沾到皮膚或眼睛立即大量清水沖洗並通知助教。</li>
+    <li><b>酚酞為乙醇溶液：</b>易燃，遠離火源，用完蓋緊。</li>
+    <li><b>NaOH 不可長時間留在活塞與管路內：</b>NaOH 會讓玻璃與活塞卡住。課程結束依說明書用去離子水沖洗 dTrite，長期不用時清空。玻璃滴定管與旋塞也要立即沖洗。</li>
+    <li><b>CO₂：</b>NaOH 瓶開口時間越短越好；若有 CO₂ 吸收管（鹼石灰）就裝上。</li>
+    <li><b>化學相容性：</b>dTrite 用於其他試劑（例如 AgNO₃、有機溶劑）前，先查原廠相容表。</li>
+    <li><b>不要讓活塞空抽：</b>試劑瓶快用完時先停下來換瓶，避免吸入空氣產生氣泡。</li>
+  </ul>
+</div>
+
+<h2>13. 繳交內容</h2>
+<ul class="check">
+  <li>事先訂的容許差與理由（第 5 節）</li>
+  <li>Part A 紀錄表、系統誤差與 CV，以及和 A 級允差、型錄規格的比較</li>
+  <li>Part B 兩支滴定管各自的 N</li>
+  <li>Part C 紀錄表與 % 酸、RSD</li>
+  <li>全班數據的相對差 Bland–Altman 圖、bias、LoA、配對 t 結果，以及「能否互換」的結論</li>
+  <li>討論題 1–6</li>
+</ul>
+
+<footer>
+  食品分析實驗 · W4 補充實驗講義。可滴定酸度原理見 W4 主教材與 Nielsen <i>Food Analysis</i> Ch22；秤重法 Z 因子依 ISO 8655-6。dTrite 規格為經銷商型錄標示，請以原廠說明書為準。範例數據為模擬值。
+</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Glass vs Digital Burette · W4</title>
+<meta name="description" content="W4 supplementary lab handout: method comparison of a glass burette and the DLAB dTrite digital burette (gravimetric check, KHP standardization, titratable acidity, Bland–Altman)">
+<link rel="alternate" hreflang="zh-Hant" href="burette_compare.html">
+<style>
+:root{
+  --bg:#F6F2E7; --surface:#FFFDF6; --ink:#1F2A44; --ink-2:#55607A;
+  --primary:#2848A8; --accent:#C8322B; --ok:#2E7D4F; --hl:#F7D774;
+  --line:#C9C3B3; --wash:#E9EEFB; --warn:#FBEAE8; --okwash:#E3F2E8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141A2A; --surface:#1C2338; --ink:#E8EAF2; --ink-2:#A9B0C4;
+    --primary:#8FA8F0; --accent:#F08A84; --ok:#7CCB98; --hl:#6B5A1E;
+    --line:#39415A; --wash:#232C48; --warn:#3A2326; --okwash:#1F3428;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141A2A; --surface:#1C2338; --ink:#E8EAF2; --ink-2:#A9B0C4;
+  --primary:#8FA8F0; --accent:#F08A84; --ok:#7CCB98; --hl:#6B5A1E;
+  --line:#39415A; --wash:#232C48; --warn:#3A2326; --okwash:#1F3428;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI","Helvetica Neue",Arial,system-ui,sans-serif;
+  font-size:16px;line-height:1.6}
+main{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+header.top{border-bottom:3px solid var(--ink);padding-bottom:12px;margin-bottom:20px}
+.kicker{color:var(--primary);font-weight:700;letter-spacing:.05em;font-size:14px}
+h1{font-size:28px;line-height:1.25;margin:4px 0 6px}
+h2{font-size:21px;margin:32px 0 10px;padding-left:10px;border-left:6px solid var(--primary)}
+h3{font-size:17px;margin:20px 0 6px}
+p{margin:8px 0}
+.sub{color:var(--ink-2);margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--ink-2);margin-top:8px}
+.box{background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;margin:12px 0}
+.box.key{background:var(--wash);border-color:var(--primary)}
+.box.warn{background:var(--warn);border-color:var(--accent)}
+.box.ok{background:var(--okwash);border-color:var(--ok)}
+.box > :first-child{margin-top:0}
+.box > :last-child{margin-bottom:0}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;
+  background:var(--primary);color:var(--surface);vertical-align:2px;margin-right:4px}
+.tag.red{background:var(--accent)}
+.tag.green{background:var(--ok)}
+mark{background:var(--hl);color:inherit;padding:0 .1em}
+code,.mono{font-family:"JetBrains Mono",Consolas,monospace;font-size:.92em}
+.formula{font-family:"JetBrains Mono",Consolas,monospace;background:var(--surface);
+  border:1px dashed var(--line);border-radius:8px;padding:8px 12px;margin:8px 0;overflow-x:auto;white-space:nowrap}
+ol,ul{padding-left:1.4em;margin:6px 0}
+li{margin:3px 0}
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:4px 7px;text-align:center;vertical-align:middle}
+th{background:var(--wash);font-weight:700}
+td.l,th.l{text-align:left}
+td.blank{height:30px}
+.small{font-size:13px;color:var(--ink-2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.grid2{grid-template-columns:1fr} h1{font-size:23px}}
+.check li{list-style:none;margin-left:-1.2em}
+.check li::before{content:"☐ ";font-weight:700}
+.answer{border-bottom:1px solid var(--ink-2);display:block;height:28px}
+.lang{color:var(--primary);font-weight:700}
+footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:10px}
+.noprint{}
+@media print{
+  @page{size:A4;margin:14mm 13mm}
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--ink:#000;--ink-2:#333;--wash:#EEF1F8;--warn:#FBEEEC;--okwash:#EEF6F0;--line:#888;--primary:#2848A8;--accent:#C8322B;--ok:#2E7D4F;--hl:#F7D774}
+  body{font-size:10.5pt;line-height:1.5;background:#fff}
+  main{max-width:none;padding:0}
+  h2{break-after:avoid;margin-top:18px}
+  h3{break-after:avoid}
+  .box,table,.formula,figure{break-inside:avoid}
+  .pb{break-before:page}
+  .noprint{display:none}
+  footer{margin-top:10px;padding-top:6px}
+  .answer{height:24px}
+  table{font-size:9.5pt}
+  .tw{overflow:visible}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<main>
+
+<header class="top">
+  <div class="kicker">Food Analysis Lab · W4 Supplementary Handout</div>
+  <h1>Glass Burette vs Digital Burette: Same Endpoint, a Different Way to Measure Volume</h1>
+  <p class="sub">玻璃滴定管 vs DLAB dTrite 數位滴定器 — a method-comparison lab for titratable acidity</p>
+  <div class="meta">
+    <span>⏱ About 2 h 15 min</span><span>👥 Pairs, 6 groups per class</span>
+    <span>🧪 Samples: white vinegar, orange juice</span><span>📊 Analysis: gravimetric check, RSD, Bland–Altman, paired t</span>
+  </div>
+  <p class="small noprint"><a class="lang" href="burette_compare.html" hreflang="zh-Hant">中文版</a> · To print: browser Print → A4; major sections start on a new page automatically.</p>
+</header>
+
+<h2>1. What are we comparing?</h2>
+<p>The main W4 lab compares two ways of <b>detecting the endpoint</b>: phenolphthalein colour change (by eye) vs potentiometric titration (the inflection point of the pH curve). Because the endpoints differ, the two methods can show a systematic bias.</p>
+<p>Today is different: both burettes <b>use phenolphthalein and stop at the same pink endpoint</b>. The only thing that changes is <mark>how the NaOH is delivered and how its volume is read</mark>:</p>
+<div class="grid2">
+  <div class="box">
+    <h3 style="margin-top:0">Glass burette (50 mL, Class A)</h3>
+    <ul>
+      <li>Deliver by turning the stopcock; read the meniscus by eye</li>
+      <li>Smallest division 0.1 mL; estimate to <b>0.02 mL</b></li>
+      <li>Error sources: parallax, meniscus reading, drop size, liquid left on the wall</li>
+    </ul>
+  </div>
+  <div class="box">
+    <h3 style="margin-top:0">Digital burette (DLAB dTrite)</h3>
+    <ul>
+      <li>Mounts directly on the NaOH reagent bottle; piston delivery</li>
+      <li>Volume shown on a display; catalogue resolution <b>0.01 mL</b></li>
+      <li>Error sources: piston mechanics, air bubbles in the line, not zeroing</li>
+    </ul>
+  </div>
+</div>
+<div class="box key">
+  <p><span class="tag">Expected result</span>Because the endpoint is the same, <b>the mean difference (bias) between the two should be close to 0</b>. If your Bland–Altman plot is a flat band with no significant bias, <b>that is not "nothing happened"</b>. It is exactly what this lab sets out to show: the two burettes are interchangeable.</p>
+  <p>What is really worth looking at: <b>(1) how accurately each burette delivers (gravimetric check); (2) how much the precision of repeat titrations (RSD) differs; (3) whether the limits of agreement (LoA) fall inside the tolerance you set in advance.</b></p>
+</div>
+
+<h2>2. Learning objectives</h2>
+<ol>
+  <li>Calibrate both burettes gravimetrically (the W1 method), calculate systematic error and CV, and compare them with the catalogue specifications.</li>
+  <li>Standardize NaOH against KHP with each burette, then measure the titratable acidity of white vinegar and orange juice.</li>
+  <li>Derive a sensible tolerance from "the volume of one drop" and "the reading error" <b>before</b> looking at any data.</li>
+  <li>Use a relative-difference Bland–Altman plot and a paired t-test to judge whether the methods are interchangeable, and compare precision using RSD.</li>
+  <li>Explain why "standardizing and titrating with the same burette" cancels a proportional volume error.</li>
+</ol>
+
+<h2>3. Equipment and reagents</h2>
+<div class="tw"><table>
+<tr><th class="l">Item</th><th class="l">Specification / amount</th><th class="l">Notes</th></tr>
+<tr><td class="l">Glass burette</td><td class="l">50 mL, Class A, smallest division 0.1 mL</td><td class="l">Class A 50 mL tolerance ±0.05 mL</td></tr>
+<tr><td class="l">Digital burette</td><td class="l">DLAB dTrite (mounted on the NaOH reagent bottle)</td><td class="l">Catalogue: 0.01–99.99 mL, resolution 0.01 mL, accuracy 0.2%, CV 0.07%. <b>These are reseller catalogue figures; check them against your actual model and its manual.</b></td></tr>
+<tr><td class="l">NaOH solution</td><td class="l">About 0.1 N, made with CO₂-free water</td><td class="l">Glass burette and dTrite use the <b>same bottle</b></td></tr>
+<tr><td class="l">KHP (potassium hydrogen phthalate)</td><td class="l">MW 204.22, dried at 105 °C, kept in a desiccator</td><td class="l">About 0.50 g each time, weighed to 0.1 mg</td></tr>
+<tr><td class="l">Phenolphthalein indicator</td><td class="l">1% in ethanol</td><td class="l">Flammable; keep away from flames</td></tr>
+<tr><td class="l">Samples</td><td class="l">White vinegar (2.00 mL aliquots), pulp-free orange juice (10.00 mL aliquots)</td><td class="l">Whole class uses the same batch; filter juice if it has pulp</td></tr>
+<tr><td class="l">Other</td><td class="l">Analytical balance (0.1 mg), thermometer, 2 mL and 10 mL volumetric pipettes, 250 mL Erlenmeyer flasks, magnetic stirrer, weighing bottles or small beakers, CO₂-free water</td><td class="l"></td></tr>
+</table></div>
+
+<div class="box warn">
+  <p><span class="tag red">TA pre-lab check</span>Set up, purge bubbles from, zero, and clean the dTrite <b>according to the manufacturer's manual</b>. This handout gives principles only and does not replace the manual.</p>
+  <ul class="check">
+    <li>Confirm the actual dTrite model and specification (is the resolution 0.01 mL?)</li>
+    <li>Pick the right bottle adapter; no leaks once mounted on the NaOH bottle</li>
+    <li>Purge air from the line and do a few test deliveries to check the reading is stable</li>
+    <li>Confirm you can control delivery near the endpoint to about one drop (≈ 0.05 mL) or less</li>
+    <li>Battery charged / charging cable ready</li>
+    <li>Do one complete titration yourself and time it (decides how many runs each group can do in Part C)</li>
+  </ul>
+</div>
+
+<h2>4. Timetable</h2>
+<div class="tw"><table>
+<tr><th>Time</th><th class="l">Activity</th></tr>
+<tr><td>0:00–0:15</td><td class="l">Briefing + <b>set the tolerance first</b> (Section 5); write it on the record sheet</td></tr>
+<tr><td>0:15–0:45</td><td class="l">Part A gravimetric check: split the work, one partner on the glass burette and one on the dTrite, in parallel</td></tr>
+<tr><td>0:45–1:10</td><td class="l">Part B KHP standardization: 2 runs per burette</td></tr>
+<tr><td>1:10–2:00</td><td class="l">Part C samples: vinegar and orange juice × 3 replicates × 2 burettes (12 titrations in total)</td></tr>
+<tr><td>2:00–2:15</td><td class="l">Enter data into the class summary sheet; clean the dTrite and the glass burette</td></tr>
+</table></div>
+<p class="small">If combined with the main W4 lab (manual vs automatic titration), this handout is an upgraded version of the "manual (indicator endpoint)" side. Part A can also be moved to the W1 week on volumetric glassware calibration.</p>
+
+<h2 class="pb">5. Set the tolerance first (before seeing any data)</h2>
+<p>The first step in reading a Bland–Altman plot is to decide <b>in advance</b> how large a difference between the methods is acceptable, so you are not tempted to loosen the standard after seeing the results. Use two quantities:</p>
+<div class="box">
+  <p><b>(a) The effect of one drop.</b> One drop of NaOH is about 0.05 mL. The samples need about 12–15 mL of NaOH, so a one-drop difference gives a relative error of about</p>
+  <div class="formula">0.05 / 14.9 ≈ 0.34% (vinegar)　　0.05 / 12.7 ≈ 0.39% (orange juice)</div>
+  <p>As % acetic acid in vinegar: 0.1 × 0.05 × 60.05 / (2.00 × 1000) × 100 ≈ <b>0.015%</b> (vinegar is about 4.5%).</p>
+  <p><b>(b) Reading error of the glass burette.</b> The start and end readings are each estimated to ±0.02 mL, so the worst case combined is 0.04 mL:</p>
+  <div class="formula">0.04 / 14.9 ≈ 0.27% (vinegar)　　0.04 / 12.7 ≈ 0.31% (orange juice)</div>
+</div>
+<div class="box key">
+  <p><span class="tag">This handout's example</span>For both samples, "one drop" is roughly a 0.3–0.4% relative error, so comparing <b>relative differences</b> is the most convenient. The example uses <b>tolerance = ±1% (relative difference, about 3 drops)</b>.</p>
+  <p>Your group may choose a different number, but you must <b>write down your reasoning, and do it before you start titrating</b>.</p>
+  <p>Our tolerance: ±<span style="display:inline-block;width:60px;border-bottom:1px solid">&nbsp;</span>%　Reason: <span class="answer"></span></p>
+</div>
+
+<h2>6. Part A　Gravimetric check of both burettes</h2>
+<p>Same principle as W1: mass of water × Z factor = volume actually delivered. Look up Z (mL/g) by water temperature (ISO 8655-6, 1013 hPa):</p>
+<div class="tw"><table>
+<tr><th>Water temp (°C)</th><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td></tr>
+<tr><th>Z (mL/g)</th><td>1.0025</td><td>1.0027</td><td>1.0029</td><td>1.0031</td><td>1.0033</td><td>1.0035</td><td>1.0038</td><td>1.0040</td><td>1.0043</td></tr>
+</table></div>
+<h3>Procedure</h3>
+<ol>
+  <li>Measure and record the water temperature. Let the water, burettes and weighing bottles all equilibrate to room temperature first.</li>
+  <li><b>Glass burette:</b> fill with deionized water, clear the bubble from the tip, set near 0.00 and read the start (to 0.02 mL). Deliver about 10 mL into a tared weighing bottle, wait 30 s for the wall to drain, read the end, then weigh. Repeat 10 times (refill each time).</li>
+  <li><b>dTrite:</b> purge bubbles and zero according to the manual, deliver a displayed 10.00 mL into a tared weighing bottle, and weigh. Repeat 10 times.</li>
+  <li><b>Note:</b> Part A uses <b>water</b>, so the dTrite must be mounted on a water bottle first; afterwards, move it back to the NaOH bottle and purge bubbles again. If there is only one dTrite and it is already on the NaOH bottle, ask the TA to complete Part A with water before class.</li>
+</ol>
+<h3>Calculations</h3>
+<div class="formula">V<sub>i</sub> = m<sub>i</sub> × Z　　Systematic error = mean(V) − nominal volume　　CV = SD(V) / mean(V) × 100%</div>
+<p class="small">For the glass burette the "nominal volume" is each reading difference (end − start); for the dTrite it is the displayed 10.00 mL.</p>
+
+<h3>Record sheet (water temp ____ °C, Z = ______ mL/g)</h3>
+<div class="tw"><table>
+<tr><th rowspan="2">Run</th><th colspan="3">Glass burette</th><th colspan="3">dTrite</th></tr>
+<tr><th>Reading diff. (mL)</th><th>Mass (g)</th><th>V = m×Z (mL)</th><th>Display (mL)</th><th>Mass (g)</th><th>V = m×Z (mL)</th></tr>
+<tr><td>1</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>2</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>3</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>4</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>5</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>6</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>7</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>8</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>9</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><td>10</td><td class="blank"></td><td></td><td></td><td>10.00</td><td></td><td></td></tr>
+<tr><th>Mean / sys. error / CV</th><td colspan="3" class="blank"></td><td colspan="3"></td></tr>
+</table></div>
+
+<h2 class="pb">7. Part B　KHP standardization (2 runs per burette)</h2>
+<ol>
+  <li>Weigh about 0.50 g of dried KHP (to 0.1 mg) into an Erlenmeyer flask, dissolve in about 50 mL of CO₂-free water, and add 2–3 drops of phenolphthalein.</li>
+  <li>Titrate with the glass burette to a faint pink that persists for 30 s; read to 0.02 mL.</li>
+  <li>Weigh a second portion of KHP and titrate it with the dTrite; record the displayed volume (0.01 mL).</li>
+  <li>Do 2 runs with each burette. <b>Each burette gets its own N</b>, and Part C uses each burette's own N. Report N to 5 decimal places: the difference being compared here is only 0.1–0.2%, and rounding to 4 places would hide it.</li>
+</ol>
+<div class="formula">N<sub>NaOH</sub> = m(KHP) / (204.22 × V<sub>L</sub>)</div>
+<div class="tw"><table>
+<tr><th>Burette</th><th>Run</th><th>m(KHP) (g)</th><th>V (mL)</th><th>N</th><th>Mean N</th></tr>
+<tr><td rowspan="2">Glass</td><td>1</td><td class="blank"></td><td></td><td></td><td rowspan="2"></td></tr>
+<tr><td>2</td><td class="blank"></td><td></td><td></td></tr>
+<tr><td rowspan="2">dTrite</td><td>1</td><td class="blank"></td><td></td><td></td><td rowspan="2"></td></tr>
+<tr><td>2</td><td class="blank"></td><td></td><td></td></tr>
+</table></div>
+
+<h2>8. Part C　Sample titrations (vinegar, orange juice × 3 × 2 burettes)</h2>
+<ol>
+  <li><b>Vinegar:</b> pipette 2.00 mL into an Erlenmeyer flask; add about 50 mL of CO₂-free water and 2–3 drops of phenolphthalein.</li>
+  <li><b>Orange juice:</b> pipette 10.00 mL; add about 50 mL of CO₂-free water and 3 drops of phenolphthalein. (The juice colour makes the endpoint harder to see; keep a flask of the same sample without base as a colour reference.)</li>
+  <li>Take 6 aliquots of each sample: 3 for the glass burette and 3 for the dTrite.</li>
+  <li><b>Alternate the order</b> (glass → dTrite → glass → dTrite …) so that "getting better with practice" does not bias whichever burette goes second.</li>
+  <li>Use the same endpoint for both: <b>faint pink persisting for 30 s</b>. Near the endpoint, slow both burettes down to drop-by-drop (or smaller) additions.</li>
+</ol>
+<div class="formula">% acid = N × V(mL) × eq. wt / (W × 1000) × 100　　vinegar as acetic acid 60.05, orange juice as citric acid 64.04</div>
+<p class="small">W is the sample volume (mL); the result is % (w/v).</p>
+<div class="tw"><table>
+<tr><th rowspan="2">Sample</th><th rowspan="2">Burette</th><th colspan="3">V NaOH (mL)</th><th colspan="3">% acid</th><th rowspan="2">Mean</th><th rowspan="2">RSD (%)</th></tr>
+<tr><th>1</th><th>2</th><th>3</th><th>1</th><th>2</th><th>3</th></tr>
+<tr><td rowspan="2">Vinegar</td><td>Glass</td><td class="blank"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>dTrite</td><td class="blank"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td rowspan="2">Orange juice</td><td>Glass</td><td class="blank"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>dTrite</td><td class="blank"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table></div>
+
+<h2 class="pb">9. Data analysis</h2>
+<h3>9.1 Precision: RSD</h3>
+<p>Calculate the RSD of the 3 replicates for each group, sample and burette. When pooling the class, use the <b>root mean square</b>: RSD<sub>pooled</sub> = √(mean of the groups' RSD²).</p>
+<h3>9.2 Agreement: relative-difference Bland–Altman</h3>
+<p>Each group gives one pair of results per sample (glass mean, dTrite mean): 6 groups × 2 samples = 12 pairs for the class. Always define the difference as <mark>dTrite − glass</mark>.</p>
+<div class="formula">x = (glass + dTrite) / 2　　relative difference y = (dTrite − glass) / x × 100%</div>
+<div class="formula">bias = mean(y)　　LoA = bias ± 1.96 × SD(y)</div>
+<p>Why relative differences? Vinegar is about 4.5% and orange juice about 0.8%, so the absolute differences differ several-fold in size and would form a funnel on the same plot. Section 5 already showed that "one drop" is about 0.3–0.4% for both samples, so relative differences put them on the same scale.</p>
+<h3>9.3 Systematic bias: paired t-test</h3>
+<div class="formula">t = bias / (SD(y) / √n)　　df = n − 1</div>
+<p>With n = 12, df = 11 and the two-tailed α = 0.05 critical value is t = 2.201. If |t| is below the critical value, there is no significant systematic bias.</p>
+<p class="small">Tools: the "5_手動vs自動" (manual vs automatic) sheet in EX04 runs the same Bland–Altman, paired t-test and F-test; enter the glass burette as "manual" and the dTrite as "automatic". Or use the Bland–Altman section of NB04. Note that both default to absolute differences; add your own column for relative differences.</p>
+
+<h2>10. Worked example (simulated data, for checking your answers)</h2>
+<p class="small">The numbers below were simulated in Python using realistic error settings; they are not measured values. Use them to check your calculation workflow.</p>
+
+<h3>Part A　Gravimetric check (water 22.0 °C, Z = 1.0033 mL/g, 10 runs each)</h3>
+<div class="tw"><table>
+<tr><th>Burette</th><th>Mean nominal vol. (mL)</th><th>Mean actual vol. (mL)</th><th>Systematic error</th><th>SD (mL)</th><th>CV</th><th class="l">Compared with</th></tr>
+<tr><td>Glass</td><td>10.012</td><td>9.998</td><td>−0.014 mL (−0.14%)</td><td>0.018</td><td>0.18%</td><td class="l">Within Class A tolerance ±0.05 mL</td></tr>
+<tr><td>dTrite</td><td>10.00</td><td>10.010</td><td>+0.010 mL (+0.10%)</td><td>0.005</td><td>0.054%</td><td class="l">Within catalogue 0.2% / CV 0.07%</td></tr>
+</table></div>
+<p>The dTrite's CV is only about 1/3 of the glass burette's. This comes from how the volume is read: a digital display has no estimation and no parallax.</p>
+
+<h3>Part B　KHP standardization</h3>
+<div class="tw"><table>
+<tr><th>Burette</th><th>m(KHP) (g)</th><th>V (mL)</th><th>N</th><th>Mean N</th></tr>
+<tr><td rowspan="2">Glass</td><td>0.5105</td><td>24.88</td><td>0.10047</td><td rowspan="2">0.10048</td></tr>
+<tr><td>0.4987</td><td>24.30</td><td>0.10049</td></tr>
+<tr><td rowspan="2">dTrite</td><td>0.5105</td><td>24.83</td><td>0.10067</td><td rowspan="2">0.10069</td></tr>
+<tr><td>0.4987</td><td>24.25</td><td>0.10070</td></tr>
+</table></div>
+<p>The two burettes give N values about 0.2% apart. The glass burette reads high → its N comes out low; the dTrite delivers more than it displays → its N comes out high. <b>The NaOH concentration has not changed; each burette's own volume error has been "absorbed" into its N.</b></p>
+
+<h3>Part C　Class data, 12 pairs (% acid = mean of 3 replicates)</h3>
+<div class="tw"><table>
+<tr><th>Group</th><th>Sample</th><th>Glass V (mL)</th><th>dTrite V (mL)</th><th>Glass %</th><th>dTrite %</th><th>RSD glass</th><th>RSD dTrite</th><th>Mean x</th><th>Rel. diff. y (%)</th></tr>
+<tr><td>1</td><td>Vinegar</td><td>14.92 / 14.96 / 14.94</td><td>14.93 / 14.87 / 14.89</td><td>4.5073</td><td>4.5036</td><td>0.13</td><td>0.21</td><td>4.5054</td><td>−0.082</td></tr>
+<tr><td>2</td><td>Vinegar</td><td>14.84 / 14.84 / 14.90</td><td>14.83 / 14.89 / 14.85</td><td>4.4831</td><td>4.4915</td><td>0.23</td><td>0.21</td><td>4.4873</td><td>0.187</td></tr>
+<tr><td>3</td><td>Vinegar</td><td>14.88 / 14.92 / 14.92</td><td>14.83 / 14.86 / 14.85</td><td>4.4972</td><td>4.4885</td><td>0.15</td><td>0.10</td><td>4.4928</td><td>−0.194</td></tr>
+<tr><td>4</td><td>Vinegar</td><td>14.98 / 14.96 / 14.96</td><td>14.95 / 14.94 / 14.95</td><td>4.5153</td><td>4.5187</td><td>0.08</td><td>0.04</td><td>4.5170</td><td>0.075</td></tr>
+<tr><td>5</td><td>Vinegar</td><td>14.88 / 14.86 / 14.88</td><td>14.81 / 14.80 / 14.81</td><td>4.4872</td><td>4.4764</td><td>0.08</td><td>0.04</td><td>4.4818</td><td>−0.241</td></tr>
+<tr><td>6</td><td>Vinegar</td><td>14.82 / 14.80 / 14.90</td><td>14.87 / 14.86 / 14.84</td><td>4.4771</td><td>4.4915</td><td>0.36</td><td>0.10</td><td>4.4843</td><td>0.321</td></tr>
+<tr><td>1</td><td>Orange juice</td><td>12.62 / 12.72 / 12.74</td><td>12.65 / 12.65 / 12.66</td><td>0.8168</td><td>0.8159</td><td>0.51</td><td>0.05</td><td>0.8164</td><td>−0.110</td></tr>
+<tr><td>2</td><td>Orange juice</td><td>12.74 / 12.74 / 12.74</td><td>12.69 / 12.78 / 12.71</td><td>0.8198</td><td>0.8206</td><td>0.00</td><td>0.37</td><td>0.8202</td><td>0.098</td></tr>
+<tr><td>3</td><td>Orange juice</td><td>12.70 / 12.80 / 12.74</td><td>12.73 / 12.74 / 12.76</td><td>0.8202</td><td>0.8217</td><td>0.39</td><td>0.12</td><td>0.8209</td><td>0.183</td></tr>
+<tr><td>4</td><td>Orange juice</td><td>12.66 / 12.68 / 12.62</td><td>12.69 / 12.60 / 12.70</td><td>0.8142</td><td>0.8166</td><td>0.24</td><td>0.43</td><td>0.8154</td><td>0.294</td></tr>
+<tr><td>5</td><td>Orange juice</td><td>12.72 / 12.80 / 12.82</td><td>12.77 / 12.73 / 12.76</td><td>0.8224</td><td>0.8224</td><td>0.41</td><td>0.16</td><td>0.8224</td><td>0.000</td></tr>
+<tr><td>6</td><td>Orange juice</td><td>12.72 / 12.68 / 12.68</td><td>12.67 / 12.63 / 12.66</td><td>0.8168</td><td>0.8159</td><td>0.18</td><td>0.16</td><td>0.8164</td><td>−0.110</td></tr>
+</table></div>
+<p class="small">Vinegar: W = 2.00 mL, acetic acid 60.05; orange juice: W = 10.00 mL, citric acid 64.04. Glass uses N = 0.10048 and dTrite uses N = 0.10069 (each its own N). Calculate % acid for each run first, then average. Note that within a group the dTrite volumes are generally about 0.2% lower than the glass volumes, yet the % acid values agree once converted.</p>
+
+<div class="box ok">
+  <p><span class="tag green">Example conclusions</span></p>
+  <ul>
+    <li><b>Precision:</b> pooled RSD, vinegar glass 0.20% vs dTrite 0.14%; orange juice glass 0.33% vs dTrite 0.25%. The dTrite has the smaller RSD in 9 of the 12 group–sample combinations.</li>
+    <li><b>Relative-difference Bland–Altman (n = 12):</b> bias = +0.035%, SD = 0.187%, LoA = −0.33% to +0.40%.</li>
+    <li><b>Paired t:</b> t = 0.65 &lt; 2.201 (df = 11), p = 0.53 → no significant systematic bias.</li>
+    <li><b>Verdict:</b> the whole LoA lies within the ±1% set in advance → over the concentration range of these two samples, <b>the two burettes are interchangeable</b>.</li>
+  </ul>
+</div>
+<p>Notice the gap between Part A and Part C: for delivery alone, the dTrite's CV is only 1/3 of the glass burette's (0.054% vs 0.18%), yet in real titrations the RSD only drops from 0.20% to 0.14%. That is because <b>both burettes share the variability of judging the phenolphthalein endpoint</b>; better reading is only part of the total error.</p>
+
+<h2>11. Discussion questions</h2>
+<ol>
+  <li>Why does this lab expect bias ≈ 0? Give two handling mistakes that would push the bias clearly away from 0. (Hint: bubbles, parallax, using the wrong N.)<span class="answer"></span><span class="answer"></span></li>
+  <li>In the example, Part A shows the glass burette reading about 0.14% more than it delivers and the dTrite delivering about 0.10% more than it displays, and in Part B the two N values differ by about 0.2%. Why do the Part C % acid values still agree? If you instead "standardize the NaOH with the glass burette and titrate samples with the dTrite", would % acid come out high or low? By roughly how much?<span class="answer"></span><span class="answer"></span></li>
+  <li>Why does a 3-fold difference in CV in Part A shrink to a much smaller difference in RSD in Part C?<span class="answer"></span><span class="answer"></span></li>
+  <li>The correlation coefficient r for these data will be very close to 1. Why is r almost meaningless here? (Hint: there are only two concentration levels.)<span class="answer"></span><span class="answer"></span></li>
+  <li>If the sample were red wine, would the dTrite solve the problem of a hard-to-see endpoint? What method should you use instead?<span class="answer"></span><span class="answer"></span></li>
+  <li>Apart from the data, what are the pros and cons of a digital burette in terms of safety, operating time and reagent use?<span class="answer"></span><span class="answer"></span></li>
+</ol>
+
+<h2>12. Safety and dTrite care</h2>
+<div class="box warn">
+  <ul>
+    <li><b>NaOH is corrosive:</b> wear goggles and gloves throughout; if it gets on skin or in the eyes, rinse immediately with plenty of water and tell the TA.</li>
+    <li><b>Phenolphthalein is an ethanol solution:</b> flammable; keep away from flames and cap it after use.</li>
+    <li><b>Do not leave NaOH in the piston and lines for long:</b> NaOH makes glass and pistons seize. At the end of class, flush the dTrite with deionized water according to the manual, and empty it if it will not be used for a long time. Rinse the glass burette and stopcock immediately as well.</li>
+    <li><b>CO₂:</b> keep the NaOH bottle open as briefly as possible; fit a CO₂ absorption tube (soda lime) if you have one.</li>
+    <li><b>Chemical compatibility:</b> before using the dTrite with other reagents (e.g. AgNO₃, organic solvents), check the manufacturer's compatibility table.</li>
+    <li><b>Do not let the piston draw air:</b> when the reagent bottle is nearly empty, stop and change bottles to avoid drawing in air and creating bubbles.</li>
+  </ul>
+</div>
+
+<h2>13. What to hand in</h2>
+<ul class="check">
+  <li>Your pre-set tolerance and the reasoning for it (Section 5)</li>
+  <li>Part A record sheet, systematic error and CV, compared with the Class A tolerance and the catalogue specification</li>
+  <li>Part B: each burette's own N</li>
+  <li>Part C record sheet with % acid and RSD</li>
+  <li>For the class data: relative-difference Bland–Altman plot, bias, LoA, paired t result, and your conclusion on whether the burettes are interchangeable</li>
+  <li>Discussion questions 1–6</li>
+</ul>
+
+<footer>
+  Food Analysis Lab · W4 supplementary handout. For the principles of titratable acidity, see the main W4 materials and Nielsen <i>Food Analysis</i> Ch. 22; Z factors for the gravimetric method follow ISO 8655-6. dTrite specifications are reseller catalogue figures; the manufacturer's manual takes precedence. Example data are simulated.
+</footer>
+</main>
+</body>
+</html>
