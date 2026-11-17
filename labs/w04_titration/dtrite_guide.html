@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>dTrite 使用教學 · W4</title>
+<meta name="description" content="W4 儀器操作卡：DLAB dTrite 數位滴定器的按鍵、組裝、排氣泡、滴定、回收清洗、規格與疑難排解">
+<link rel="alternate" hreflang="en" href="dtrite_guide.en.html">
+<style>
+:root{
+  --bg:#F6F2E7; --surface:#FFFDF6; --ink:#1F2A44; --ink-2:#55607A;
+  --primary:#2848A8; --accent:#C8322B; --ok:#2E7D4F; --hl:#F7D774;
+  --line:#C9C3B3; --wash:#E9EEFB; --warn:#FBEAE8; --okwash:#E3F2E8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141A2A; --surface:#1C2338; --ink:#E8EAF2; --ink-2:#A9B0C4;
+    --primary:#8FA8F0; --accent:#F08A84; --ok:#7CCB98; --hl:#6B5A1E;
+    --line:#39415A; --wash:#232C48; --warn:#3A2326; --okwash:#1F3428;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141A2A; --surface:#1C2338; --ink:#E8EAF2; --ink-2:#A9B0C4;
+  --primary:#8FA8F0; --accent:#F08A84; --ok:#7CCB98; --hl:#6B5A1E;
+  --line:#39415A; --wash:#232C48; --warn:#3A2326; --okwash:#1F3428;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  font-size:16px;line-height:1.7}
+main{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+header.top{border-bottom:3px solid var(--ink);padding-bottom:12px;margin-bottom:20px}
+.kicker{color:var(--primary);font-weight:700;letter-spacing:.05em;font-size:14px}
+h1{font-size:28px;line-height:1.3;margin:4px 0 6px}
+h2{font-size:21px;margin:32px 0 10px;padding-left:10px;border-left:6px solid var(--primary)}
+h3{font-size:17px;margin:20px 0 6px}
+p{margin:8px 0}
+a{color:var(--primary)}
+.sub{color:var(--ink-2);margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--ink-2);margin-top:8px}
+.box{background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;margin:12px 0}
+.box.key{background:var(--wash);border-color:var(--primary)}
+.box.warn{background:var(--warn);border-color:var(--accent)}
+.box.ok{background:var(--okwash);border-color:var(--ok)}
+.box > :first-child{margin-top:0}
+.box > :last-child{margin-bottom:0}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;
+  background:var(--primary);color:var(--surface);vertical-align:2px;margin-right:4px}
+.tag.red{background:var(--accent)}
+.tag.green{background:var(--ok)}
+mark{background:var(--hl);color:inherit;padding:0 .1em}
+code,.mono{font-family:"JetBrains Mono",Consolas,monospace;font-size:.92em}
+kbd{font-family:inherit;font-weight:700;border:1.5px solid var(--ink-2);border-bottom-width:3px;border-radius:6px;
+  padding:0 6px;background:var(--surface);white-space:nowrap}
+ol,ul{padding-left:1.4em;margin:6px 0}
+li{margin:3px 0}
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:4px 7px;text-align:center;vertical-align:middle}
+th{background:var(--wash);font-weight:700}
+td.l,th.l{text-align:left}
+td.nw{white-space:nowrap}
+.small{font-size:13px;color:var(--ink-2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+figure{margin:12px 0;text-align:center}
+figure svg{width:100%;max-width:440px;height:auto}
+figcaption{font-size:13px;color:var(--ink-2)}
+.steps > li{margin:6px 0}
+@media (max-width:640px){.grid2{grid-template-columns:1fr} h1{font-size:23px}}
+.check li{list-style:none;margin-left:-1.2em}
+.check li::before{content:"☐ ";font-weight:700}
+footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:10px}
+@media print{
+  @page{size:A4;margin:14mm 13mm}
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--ink:#000;--ink-2:#333;--wash:#EEF1F8;--warn:#FBEEEC;--okwash:#EEF6F0;--line:#888;--primary:#2848A8;--accent:#C8322B;--ok:#2E7D4F;--hl:#F7D774}
+  body{font-size:11pt;line-height:1.55;background:#fff}
+  main{max-width:none;padding:0}
+  h2{break-after:avoid;margin-top:18px}
+  h3{break-after:avoid}
+  .box,table,figure{break-inside:avoid}
+  .pb{break-before:page}
+  .noprint{display:none}
+  footer{margin-top:10px;padding-top:6px}
+  table{font-size:9.5pt}
+  .tw{overflow:visible}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<main>
+
+<header class="top">
+  <div class="kicker">食品分析實驗 · W4 儀器操作卡</div>
+  <h1>DLAB dTrite 數位滴定器使用教學</h1>
+  <p class="sub">How to use the DLAB dTrite electronic bottle-top titrator</p>
+  <div class="meta">
+    <span>🎯 學生上機：第 1、4、5 節</span><span>🧰 TA 課前：第 2、3、6、9 節</span>
+    <span>📘 依據：原廠說明書 Ver.20211210、原廠示範影片</span>
+  </div>
+  <p class="small noprint"><a href="dtrite_guide.en.html" hreflang="en" style="font-weight:700">English</a> · 學生預習：<a href="dtrite_student.html">學生版教學＋模擬器</a> · 搭配實驗：<a href="burette_compare.html">玻璃滴定管 vs 數位滴定器</a> · 列印：瀏覽器「列印」→ A4。</p>
+</header>
+
+<div class="box key">
+  <p><b>一句話：</b>dTrite 是裝在試劑瓶口、用馬達推活塞送液的滴定管。<mark>終點仍然是你用眼睛看酚酞判斷</mark>，它只把「讀刻度」換成「讀螢幕」，不是自動電位滴定儀。</p>
+</div>
+
+<h2>1. 認識控制器：4 個鍵＋1 個旋鈕</h2>
+<p>整套由三部分組成：裝在瓶口的<b>主機</b>（活塞筒與閥）、有螢幕的<b>控制器</b>、扣在控制器旁的<b>磁石攪拌盤</b>。另附一支<b>遙控手把</b>（功能同旋鈕，線長約 90 cm）。</p>
+
+<figure>
+<svg viewBox="0 0 440 250" role="img" aria-labelledby="pTitle">
+  <title id="pTitle">dTrite 控制面板示意圖：上方螢幕，左側上下兩鍵為吸液與送液，中央旋鈕，右側上下兩鍵為排氣與設定</title>
+  <rect x="60" y="10" width="320" height="230" rx="18" style="fill:var(--surface);stroke:var(--ink);stroke-width:2.5"/>
+  <rect x="110" y="28" width="220" height="70" rx="6" style="fill:var(--wash);stroke:var(--ink-2);stroke-width:1.5"/>
+  <text x="122" y="46" style="fill:var(--ink-2);font-size:12px">st✱</text>
+  <rect x="296" y="36" width="24" height="11" rx="2" style="fill:none;stroke:var(--ink-2);stroke-width:1.2"/>
+  <text x="130" y="82" style="fill:var(--ink);font-size:22px">▼</text>
+  <text x="300" y="82" text-anchor="end" style="fill:var(--ink);font-size:28px;font-family:Consolas,monospace">12.34</text>
+  <text x="306" y="82" style="fill:var(--ink);font-size:14px">mL</text>
+  <g style="stroke:var(--ink);stroke-width:2;fill:var(--surface)">
+    <rect x="90" y="120" width="46" height="38" rx="6"/>
+    <rect x="90" y="172" width="46" height="38" rx="6"/>
+    <rect x="304" y="120" width="46" height="38" rx="6"/>
+    <rect x="304" y="172" width="46" height="38" rx="6"/>
+    <circle cx="220" cy="165" r="40"/>
+    <circle cx="220" cy="165" r="30" style="fill:none;stroke-dasharray:3 4"/>
+  </g>
+  <text x="113" y="146" text-anchor="middle" style="fill:var(--ink);font-size:18px">▲</text>
+  <text x="113" y="198" text-anchor="middle" style="fill:var(--ink);font-size:18px">▼</text>
+  <text x="327" y="147" text-anchor="middle" style="fill:var(--ink);font-size:20px">⟲</text>
+  <text x="327" y="199" text-anchor="middle" style="fill:var(--ink);font-size:20px">⚙</text>
+  <g style="fill:var(--primary);font-size:15px;font-weight:700">
+    <text x="40" y="145" text-anchor="middle">①</text>
+    <text x="40" y="197" text-anchor="middle">②</text>
+    <text x="400" y="145" text-anchor="middle">③</text>
+    <text x="400" y="197" text-anchor="middle">④</text>
+    <text x="220" y="232" text-anchor="middle">⑤</text>
+  </g>
+  <g style="stroke:var(--primary);stroke-width:1.2">
+    <line x1="50" y1="140" x2="88" y2="140"/><line x1="50" y1="192" x2="88" y2="192"/>
+    <line x1="352" y1="140" x2="390" y2="140"/><line x1="352" y1="192" x2="390" y2="192"/>
+    <line x1="220" y1="207" x2="220" y2="218"/>
+  </g>
+</svg>
+<figcaption>控制面板示意圖（自繪，非原廠圖）。編號對應下表。</figcaption>
+</figure>
+
+<div class="tw"><table>
+<tr><th>#</th><th>鍵（位置）</th><th class="l">輕按一下</th><th class="l">按住／長按約 2 秒</th></tr>
+<tr><td>①</td><td class="nw"><kbd>▲</kbd> 吸液<br><span class="small">左上</span></td><td class="l">—</td><td class="l"><b>按住</b>：從瓶中吸 NaOH 進活塞筒；放開就停</td></tr>
+<tr><td>②</td><td class="nw"><kbd>▼</kbd> 送液<br><span class="small">左下</span></td><td class="l">—</td><td class="l"><b>按住</b>：快速送液；放開就停</td></tr>
+<tr><td>③</td><td class="nw"><kbd>⟲</kbd> 排氣<br><span class="small">右上</span></td><td class="l">—</td><td class="l"><b>長按約 2 秒</b>：活塞自動完整吸一次、推一次，把空氣趕出去（<b>管尖會出液</b>）</td></tr>
+<tr><td>④</td><td class="nw"><kbd>⚙</kbd> 設定／攪拌<br><span class="small">右下</span></td><td class="l">攪拌開／關</td><td class="l"><b>長按約 2 秒</b>：進入或離開設定畫面</td></tr>
+<tr class="hl"><td>⑤</td><td class="nw">旋鈕<br><span class="small">中央</span></td><td class="l"><b>累計體積歸零</b></td><td class="l"><b>轉</b>：逐滴送液（越慢越細）；<b>長按約 2 秒</b>：吸液（同 ▲）</td></tr>
+</table></div>
+
+<div class="box warn">
+  <p><span class="tag red">最常犯的錯</span><b>輕按旋鈕＝體積歸零。</b>滴到終點後<mark>先把螢幕數字抄下來，再碰旋鈕</mark>。逐滴時只「轉」、不要「壓」。</p>
+</div>
+
+<h3>螢幕怎麼讀</h3>
+<ul>
+  <li><b>大數字</b>：自上次歸零後累計送出的體積（mL），顯示到小數第二位。累計到 <b>99.99 mL</b> 會自動停止，按旋鈕歸零即可。</li>
+  <li><b>▲／▼ 箭頭</b>：活塞正在動作的方向。</li>
+  <li><b>st✱</b>：攪拌盤運轉中。右上角是電量。</li>
+</ul>
+
+<h3>回流閥（主機側面的小旋鈕）</h3>
+<div class="grid2">
+  <div class="box"><p><b>滴定位置</b>（說明書標為 ①）<br>液體從滴定管尖送出。平常一律放這裡。</p></div>
+  <div class="box"><p><b>回流位置</b>（說明書標為 ②）<br>液體送回試劑瓶；只在下課回收試劑、清洗時使用。影片示範是把閥轉到<b>與管子垂直</b>。</p></div>
+</div>
+<p class="small">說明書掃描檔中閥的方向圖示不清楚，請 TA 在本機上確認後貼標籤（見第 9 節）。</p>
+
+<h2 class="pb">2. 第一次組裝（TA）</h2>
+<p>新機、或長時間收起來的機器，組裝前先檢查兩個閥。<a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=87s">影片 1:27</a></p>
+<ol class="steps">
+  <li><b>檢查閥內小球：</b>用附的工具輕戳<b>送液閥</b>與<b>吸液閥</b>，確認裡面的小球能微微活動（卡死會吸不到或送不出）。</li>
+  <li><b>裝滴定管：</b>滴定管尾端壓進主機的定位槽、推到底，接上送液閥並鎖緊；管尖套上保護蓋。</li>
+  <li><b>裝吸液管：</b>接到吸液閥，長度要能伸到瓶底附近但不碰底。</li>
+  <li><b>上瓶：</b>從 5 種瓶口轉接頭（GL25、GL28、GL32、GL38、S40）選合 NaOH 瓶的那個，先鎖上主機，再鎖上瓶子。<b>每次使用前確認轉接頭鎖緊</b>；操作中不要扳動主機。</li>
+  <li><b>接控制器與攪拌盤：</b>攪拌盤扣進控制器側邊的固定槽、轉到水平卡住定位，再把攪拌盤的 USB 接到控制器；主機與控制器用 USB 線相連。</li>
+  <li><b>開機：</b>控制器背面電源開關（「O」關、「–」開），等自檢完成。面板可往後仰最多 45°。</li>
+  <li>回流閥轉到<b>滴定位置</b>，接著做第 3 節排氣。</li>
+</ol>
+<p class="small">控制器背面由左到右：電源、遙控手把插孔、通訊孔（無功能）、充電／通訊孔、主機插孔。滴定管為 FEP 材質，換試劑前先查第 8 節相容性。</p>
+
+<h2>3. 每次使用前：排氣泡＋設定速度（TA）</h2>
+<div class="box key">
+  <p><b>什麼時候要排氣：</b>新機、超過一週沒用、拆過瓶子或滴定管之後。<a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=183s">影片 3:03</a></p>
+</div>
+<ol class="steps">
+  <li>管尖下放一個<b>廢液杯</b>（排氣會送出液體）。</li>
+  <li>長按 <kbd>⟲</kbd> 約 2 秒，活塞自動吸＋推一輪。</li>
+  <li>重複 3–5 次，直到活塞筒與滴定管內<b>看不到氣泡</b>。偶爾一兩顆小氣泡不影響；大氣泡就再多排幾次，還是不行請找廠商。</li>
+  <li>管尖若掛著一滴，在廢液杯壁上輕碰掉。</li>
+</ol>
+
+<h3>設定速度 <a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=207s" style="font-size:14px;font-weight:400">影片 3:27</a></h3>
+<p>長按 <kbd>⚙</kbd> 約 2 秒進入設定 → 輕按 <kbd>⚙</kbd> 翻頁 → <b>轉旋鈕調整、按旋鈕確認</b> → 在任一頁長按 <kbd>⚙</kbd> 約 2 秒離開。</p>
+<div class="tw"><table>
+<tr><th>頁</th><th>螢幕字樣</th><th>內容</th><th>範圍</th><th class="l">建議</th></tr>
+<tr><td>I</td><td class="mono">Suction Speed</td><td>吸液速度</td><td>1–16（1 最慢）</td><td class="l">6–8（原廠影片建議）</td></tr>
+<tr><td>II</td><td class="mono">Ejection Speed</td><td>送液速度（按住 ▼ 時）</td><td>1–16</td><td class="l">中等；太快容易衝過終點（課程建議）</td></tr>
+<tr><td>III</td><td class="mono">Mixer Speed</td><td>攪拌速度</td><td>off、1–5</td><td class="l">3（原廠影片建議）；接上攪拌盤才有作用</td></tr>
+</table></div>
+
+<h2 class="pb">4. 滴定一份樣品（學生）</h2>
+<p>原廠影片示範的是 HCl＋甲基橙（紅→黃）；本課程是 <b>NaOH 滴定白醋／果汁＋酚酞（無色→淡粉紅）</b>，按鍵操作相同。<a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=277s">影片 4:37</a></p>
+<ol class="steps">
+  <li><b>放瓶、開攪拌：</b>錐形瓶（樣品＋酚酞）放上攪拌盤，丟入攪拌子（最長 20 mm），輕按 <kbd>⚙</kbd> 開始攪拌。轉速以不濺出為準。</li>
+  <li><b>先吸滿：</b>按住 <kbd>▲</kbd>（或長按旋鈕 2 秒）把活塞筒吸滿。<span class="small">每份樣品開始前就吸滿，盡量避免滴到一半才補吸。</span></li>
+  <li><b>對準、歸零：</b>管尖伸到瓶口內，<b>輕按旋鈕</b>，螢幕顯示 <code>0.00 mL</code>。</li>
+  <li><b>快速段：</b>按住 <kbd>▼</kbd> 送液。粉紅色出現後消退得越來越慢時就<b>放開</b>（大約預估終點前 1 mL）。</li>
+  <li><b>逐滴段：</b>改<b>轉旋鈕</b>一格一格加，越接近越慢，直到淡粉紅<b>維持 30 秒不退</b>。</li>
+  <li><b>記錄：</b>螢幕數字就是這份樣品用掉的 NaOH 總體積。<mark>先抄到記錄表（到 0.01 mL）</mark>，再做別的事。</li>
+  <li><b>下一份：</b>輕按 <kbd>⚙</kbd> 停攪拌、換瓶，回到步驟 1。</li>
+</ol>
+<div class="box warn">
+  <p><span class="tag red">滴到一半 NaOH 不夠了</span>放開所有鍵，按住 <kbd>▲</kbd> 補吸，再繼續。補吸後螢幕的累計數字是否接續、會不會跳掉，<b>請 TA 課前實測</b>（第 9 節）；確認前，補吸前後的數字都要記下來。</p>
+</div>
+
+<h2>5. 下課：回收試劑與清洗</h2>
+<h3>把筒內的 NaOH 送回瓶裡 <a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=355s" style="font-size:14px;font-weight:400">影片 5:55</a></h3>
+<ol class="steps">
+  <li>回流閥轉到<b>回流位置</b>。</li>
+  <li>按住 <kbd>▼</kbd>，直到活塞走完、筒內清空（液體流回瓶中，不會從管尖出來）。</li>
+  <li>回流閥轉回<b>滴定位置</b>。</li>
+</ol>
+<h3>清洗活塞筒（課程結束、或要換試劑時）</h3>
+<ol class="steps">
+  <li>主機換裝到一瓶<b>去離子水</b>上（或把吸液管放進水中），回流閥在滴定位置。</li>
+  <li>用 <kbd>▲</kbd> 吸、<kbd>▼</kbd> 送，反覆<b>至少 5 次</b>，送出的水接在廢液杯。</li>
+  <li>長按 <kbd>⟲</kbd> 排氣一次。</li>
+  <li>把吸液管<b>提出水面</b>，按住 <kbd>▲</kbd> 吸空氣到底；回流閥轉到回流位置，按住 <kbd>▼</kbd> 把殘水推出；閥轉回滴定位置。</li>
+  <li>外殼是 ABS 塑膠，用清水擦即可。<b>不可高壓滅菌。</b></li>
+</ol>
+<div class="box warn">
+  <ul>
+    <li><b>NaOH 不可留在筒內過夜</b>（課程規定）：乾掉的結晶會讓活塞卡住（說明書疑難排解把「結晶與沉澱」列為活塞不順的原因）。</li>
+    <li>學生<b>不要自己拆活塞筒或閥</b>；清不乾淨請 TA 聯絡經銷商。送修前要先清空，並告知最後裝過什麼試劑。</li>
+    <li>收納：0–40 °C、濕度 80% 以下。長期不用<b>每月充電一次</b>，電量維持 50% 以上。</li>
+  </ul>
+</div>
+
+<h2 class="pb">6. 規格與這台的出廠品管證書</h2>
+<div class="tw"><table>
+<tr><th class="l">項目</th><th class="l">說明書標示</th></tr>
+<tr><td class="l">準確度／精密度</td><td class="l">R = 0.2%、CV = 0.07%</td></tr>
+<tr><td class="l">體積</td><td class="l">規格表寫「0.1–99.9 mL、增量 100 µL」；但螢幕與操作範例顯示到 0.01 mL、上限 99.99 mL（兩者不一致，見第 9 節）</td></tr>
+<tr><td class="l">速度</td><td class="l">16 段</td></tr>
+<tr><td class="l">電池</td><td class="l">4000 mAh，充滿約 4 小時（用原廠充電器），可工作約 5 小時</td></tr>
+<tr><td class="l">使用條件</td><td class="l">15–40 °C；蒸氣壓 &lt; 500 mbar；黏度 &lt; 500 mm²/s；濕度 20–90%</td></tr>
+</table></div>
+
+<h3>隨機附的品管證書（依 ISO 8655／DIN 12650，21 °C，2023-02-15）</h3>
+<div class="tw"><table>
+<tr><th>設定體積 (µL)</th><th>實測平均 (µL)</th><th>不準確度</th><th>不精密度</th></tr>
+<tr><td>1000.00</td><td>1010.42</td><td>1.03%</td><td>0.04%</td></tr>
+<tr><td>5000.00</td><td>5003.36</td><td>0.07%</td><td>0.02%</td></tr>
+<tr><td>10000.00</td><td>10006.46</td><td>0.06%</td><td>0.01%</td></tr>
+</table></div>
+<div class="box key">
+  <p><b>讀這張表：</b>三個體積都是「實際送得比設定多」。1 mL 時差了約 1%，到 5 mL 以上就降到 0.1% 以下——<mark>同一台儀器，送的體積越小，相對誤差越大</mark>。所以滴定設計要讓終點體積落在 5 mL 以上；Part A 用 10 mL 做秤重查核，正好落在誤差小的範圍。</p>
+</div>
+<p class="small">校正（改寫儀器內的校正值）需要原廠專用軟體、0.01 mg 天平與 20–25 °C 恆溫，由經銷商執行。我們在 <a href="burette_compare.html">Part A</a> 做的秤重是<b>查核</b>，不是校正。</p>
+
+<h2>7. 疑難排解</h2>
+<div class="tw"><table>
+<tr><th class="l">狀況</th><th class="l">可能原因</th><th class="l">處理</th></tr>
+<tr><td class="l">筒內有氣泡／送出量比螢幕少</td><td class="l">沒有吸滿；吸液閥堵塞；回流管沒裝好</td><td class="l">再排氣幾次；TA 檢查吸液閥；仍不行找廠商</td></tr>
+<tr><td class="l">吸不到液</td><td class="l">吸液管沒伸到液面下、鬆脫或破損；吸液閥堵塞</td><td class="l">檢查吸液管；TA 檢查或更換吸液閥</td></tr>
+<tr><td class="l">吸液時管尖回吸</td><td class="l">送液閥髒污或管尖損壞</td><td class="l">TA 檢查送液閥；找廠商</td></tr>
+<tr><td class="l">活塞走得不順、卡卡的</td><td class="l">結晶或沉澱（例如 NaOH 乾掉）</td><td class="l">照第 5 節清洗；不行找廠商</td></tr>
+<tr><td class="l">活塞處漏液</td><td class="l">活塞磨損</td><td class="l">找廠商</td></tr>
+<tr><td class="l">螢幕不亮</td><td class="l">沒電；USB 線沒接好</td><td class="l">充電；重新插 USB</td></tr>
+<tr><td class="l">送到一半自己停了</td><td class="l">累計到 99.99 mL 上限</td><td class="l">先記下數字，按旋鈕歸零</td></tr>
+</table></div>
+
+<h2>8. 化學相容性</h2>
+<p>液體接觸的部分是硼矽玻璃、FEP 與 PTFE。說明書列出可用的試劑（濃度上限 1 mol/L），本課程用到的 <b>NaOH、HCl、醋酸</b>都在表內；另含 KOH、H₂SO₄、HNO₃、EDTA、Na₂S₂O₃ 等。AgNO₃、KMnO₄、碘液等標有「*」，說明書沒有解釋，使用前先問經銷商。</p>
+<ul>
+  <li><b>不可用：</b>氫氟酸；含固體顆粒的混濁液（例如活性碳懸浮液，會堵塞）；二硫化碳。</li>
+  <li><b>會讓塑膠零件膨潤：</b>濃酸、濃鹼，以及苯、甲苯等非極性有機溶劑。</li>
+  <li>不要放在 HCl 煙霧等腐蝕性氣體環境中。</li>
+</ul>
+
+<h2 class="pb">9. TA 課前上機確認清單</h2>
+<p>以下幾點說明書和影片都沒講清楚，或兩者互相矛盾，請在本機上實際試過、把結果寫在這份講義上：</p>
+<ul class="check">
+  <li><b>回流閥：</b>哪個位置是滴定、哪個是回流（影片：與管垂直＝回流），在主機上貼標籤。</li>
+  <li><b>活塞筒單次容量：</b>吸滿後一路送到停，螢幕顯示幾 mL？＿＿＿ mL</li>
+  <li><b>中途補吸：</b>送一半後按 ▲ 補吸再送，累計數字有沒有接續？＿＿＿（KHP 標定約 25 mL，一定會用到）</li>
+  <li><b>旋鈕一格送多少：</b>轉一格看螢幕變化，是 0.01 mL 還是 0.1 mL？＿＿＿（對照規格表「增量 100 µL」的寫法；Part A 的估算以 0.01 mL 為前提）</li>
+  <li><b>按鍵秒數：</b>長按約 2 秒（說明書）還是 3 秒（影片）才觸發？</li>
+  <li><b>NaOH 瓶口規格：</b>用哪一個轉接頭？＿＿＿</li>
+  <li><b>電量：</b>課前充滿（約 4 小時）。</li>
+  <li><b>攪拌盤：</b>接上後設定頁 III 有作用；準備 20 mm 以下的攪拌子。</li>
+</ul>
+<p class="small">Part A 提醒：說明書沒有「預設送出 10.00 mL」的定量模式，學生是用 ▼／旋鈕手動送到接近 10 mL，<b>記錄螢幕實際顯示值</b>即可，不必剛好 10.00。</p>
+
+<h3>影片與說明書不一致的地方（以說明書為準）</h3>
+<ul>
+  <li>長按時間：影片說 3 秒，說明書寫約 2 秒。</li>
+  <li>影片 5:01 字幕說「按住右下鍵快速送液」，但送液鍵在<b>左下</b>（▼）；同一支影片 4:14 也說左下是送液。</li>
+</ul>
+
+<h3>影片章節（原廠示範片，2019 年由個人頻道轉載，英文旁白）</h3>
+<div class="tw"><table>
+<tr><th>時間</th><th class="l">內容</th></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=27s">0:27</a></td><td class="l">三個部件、面板與背面接口、遙控手把</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=87s">1:27</a></td><td class="l">組裝：檢查閥內小球、裝管、選轉接頭、接線</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=183s">3:03</a></td><td class="l">開機、排氣泡</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=207s">3:27</a></td><td class="l">設定吸液／送液／攪拌速度</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=246s">4:06</a></td><td class="l">攪拌、吸液、送液、旋鈕逐滴與歸零</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=277s">4:37</a></td><td class="l">酸鹼滴定示範</td></tr>
+<tr><td><a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=355s">5:55</a></td><td class="l">用回流閥把試劑送回瓶中</td></tr>
+</table></div>
+
+<footer>
+  食品分析實驗 · W4 儀器操作卡。內容依 DLAB《dTrite Electronic Titrator user manual》Ver.20211210 與原廠示範影片（<a href="https://www.youtube.com/watch?v=eVmy-SmpyUk">YouTube</a>）整理改寫；兩者不一致時以說明書為準，標「TA 確認」的項目以本機實測為準。面板圖為自繪示意。
+</footer>
+</main>
+</body>
+</html>

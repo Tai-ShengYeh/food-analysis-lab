@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>dTrite 學生教學 · W4</title>
+<meta name="description" content="食品分析實驗 W4 學生版：DLAB dTrite 數位滴定器怎麼用，含互動模擬器與自我檢測">
+<style>
+:root{
+  --bg:#F6F2E7; --surface:#FFFDF6; --ink:#1F2A44; --ink-2:#55607A;
+  --primary:#2848A8; --accent:#C8322B; --ok:#2E7D4F; --hl:#F7D774;
+  --line:#C9C3B3; --wash:#E9EEFB; --warn:#FBEAE8; --okwash:#E3F2E8;
+  --lcd:#CFE3F7; --lcd-ink:#10284A; --dev:#F2F3F5;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141A2A; --surface:#1C2338; --ink:#E8EAF2; --ink-2:#A9B0C4;
+    --primary:#8FA8F0; --accent:#F08A84; --ok:#7CCB98; --hl:#6B5A1E;
+    --line:#39415A; --wash:#232C48; --warn:#3A2326; --okwash:#1F3428;
+    --lcd:#1E3A5C; --lcd-ink:#D6E8FF; --dev:#262E45;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141A2A; --surface:#1C2338; --ink:#E8EAF2; --ink-2:#A9B0C4;
+  --primary:#8FA8F0; --accent:#F08A84; --ok:#7CCB98; --hl:#6B5A1E;
+  --line:#39415A; --wash:#232C48; --warn:#3A2326; --okwash:#1F3428;
+  --lcd:#1E3A5C; --lcd-ink:#D6E8FF; --dev:#262E45;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  font-size:16px;line-height:1.7}
+main{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+header.top{border-bottom:3px solid var(--ink);padding-bottom:12px;margin-bottom:20px}
+.kicker{color:var(--primary);font-weight:700;letter-spacing:.05em;font-size:14px}
+h1{font-size:28px;line-height:1.3;margin:4px 0 6px}
+h2{font-size:21px;margin:32px 0 10px;padding-left:10px;border-left:6px solid var(--primary)}
+h3{font-size:17px;margin:20px 0 6px}
+p{margin:8px 0}
+a{color:var(--primary)}
+.sub{color:var(--ink-2);margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--ink-2);margin-top:8px}
+.box{background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;margin:12px 0}
+.box.key{background:var(--wash);border-color:var(--primary)}
+.box.warn{background:var(--warn);border-color:var(--accent)}
+.box.ok{background:var(--okwash);border-color:var(--ok)}
+.box > :first-child{margin-top:0}
+.box > :last-child{margin-bottom:0}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;
+  background:var(--primary);color:var(--surface);vertical-align:2px;margin-right:4px}
+.tag.red{background:var(--accent)}
+.tag.green{background:var(--ok)}
+mark{background:var(--hl);color:inherit;padding:0 .1em}
+code,.mono{font-family:"JetBrains Mono",Consolas,monospace;font-size:.92em}
+kbd{font-family:inherit;font-weight:700;border:1.5px solid var(--ink-2);border-bottom-width:3px;border-radius:6px;
+  padding:0 6px;background:var(--surface);white-space:nowrap}
+ol,ul{padding-left:1.4em;margin:6px 0}
+li{margin:3px 0}
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:4px 7px;text-align:center;vertical-align:middle}
+th{background:var(--wash);font-weight:700}
+td.l,th.l{text-align:left}
+.small{font-size:13px;color:var(--ink-2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.grid2{grid-template-columns:1fr} h1{font-size:23px}}
+.steps > li{margin:8px 0}
+.check li{list-style:none;margin-left:-1.2em}
+.check li::before{content:"☐ ";font-weight:700}
+footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:10px}
+
+/* ---------- simulator ---------- */
+.sim{background:var(--surface);border:2px solid var(--primary);border-radius:14px;padding:14px;margin:14px 0}
+.simgrid{display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:start}
+@media (max-width:640px){.simgrid{grid-template-columns:1fr}}
+.rig{display:flex;gap:10px;justify-content:center;align-items:flex-end}
+.rig svg{width:150px;height:auto}
+.barrel{width:30px;height:170px;border:2px solid var(--ink-2);border-radius:6px;position:relative;background:var(--bg);overflow:hidden}
+.barrel i{position:absolute;left:0;right:0;bottom:0;background:#9CC3EA;transition:height .05s linear}
+.barrel-l{font-size:11px;color:var(--ink-2);text-align:center;line-height:1.3;margin-top:4px}
+.dev{background:var(--dev);border:2px solid var(--ink);border-radius:16px;padding:12px;max-width:340px;margin:0 auto}
+.lcd{background:var(--lcd);color:var(--lcd-ink);border-radius:6px;padding:6px 10px;font-family:"JetBrains Mono",Consolas,monospace;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;min-height:64px}
+.lcd .st{font-size:12px;grid-column:1/4;height:16px}
+.lcd .arr{font-size:20px;width:22px}
+.lcd .vol{font-size:30px;text-align:right;letter-spacing:.02em}
+.lcd .unit{font-size:14px;margin-left:6px}
+.pad{display:grid;grid-template-columns:56px 1fr 56px;gap:8px;align-items:center;margin-top:12px}
+.pad .col{display:flex;flex-direction:column;gap:10px}
+.k{font:inherit;font-size:20px;height:46px;border:2px solid var(--ink);border-bottom-width:4px;border-radius:9px;
+  background:var(--surface);color:var(--ink);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.k:active,.k.on{transform:translateY(2px);border-bottom-width:2px;background:var(--wash)}
+.k:focus-visible,.knob:focus-visible,.turn:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.mid{display:flex;flex-direction:column;align-items:center;gap:6px}
+.knob{width:84px;height:84px;border-radius:50%;border:3px solid var(--ink);background:radial-gradient(circle at 40% 35%,#666,#222);
+  color:#eee;font:inherit;font-size:12px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;position:relative}
+.knob::after{content:"";position:absolute;inset:6px;border-radius:50%;border:2px dashed #888}
+.knob.on{filter:brightness(1.4)}
+.turn{font:inherit;font-size:14px;font-weight:700;padding:4px 10px;border-radius:999px;border:2px solid var(--primary);
+  background:var(--wash);color:var(--primary);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
+.keylbl{font-size:11px;color:var(--ink-2);text-align:center;margin-top:-6px}
+.simbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:12px;font-size:14px}
+.simbar input[type=text]{width:92px;font:inherit;padding:3px 6px;border:1.5px solid var(--ink-2);border-radius:6px;background:var(--bg);color:var(--ink)}
+.btn{font:inherit;font-size:14px;font-weight:700;padding:5px 12px;border-radius:8px;border:2px solid var(--primary);
+  background:var(--primary);color:var(--surface);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--primary)}
+.msg{min-height:3.2em;margin-top:10px;padding:8px 12px;border-radius:8px;background:var(--wash);font-size:15px}
+.msg.bad{background:var(--warn)}
+.msg.good{background:var(--okwash)}
+.prog{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:6px}
+.prog li{font-size:13px;padding:2px 10px;border-radius:999px;border:1.5px solid var(--line);color:var(--ink-2);margin:0}
+.prog li.done{border-color:var(--ok);background:var(--okwash);color:var(--ink)}
+.prog li.done::before{content:"✓ ";color:var(--ok);font-weight:700}
+@keyframes spin{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.18)}}
+.stirbar{transform-box:fill-box;transform-origin:center}
+.stirbar.spin{animation:spin .35s linear infinite}
+@keyframes drop{from{transform:translateY(0);opacity:1}to{transform:translateY(46px);opacity:0}}
+.dropdot{transform-box:fill-box;opacity:0}
+.dropdot.go{animation:drop .35s ease-in}
+/* quiz */
+.q{margin:14px 0}
+.q .opts{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.q button{font:inherit;text-align:left;padding:6px 12px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);cursor:pointer}
+.q button.right{border-color:var(--ok);background:var(--okwash)}
+.q button.wrong{border-color:var(--accent);background:var(--warn)}
+.q .fb{font-size:14px;margin-top:6px;min-height:1.4em}
+@media print{
+  @page{size:A4;margin:14mm 13mm}
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--ink:#000;--ink-2:#333;--wash:#EEF1F8;--warn:#FBEEEC;--okwash:#EEF6F0;--line:#888;--primary:#2848A8;--accent:#C8322B;--ok:#2E7D4F;--hl:#F7D774}
+  body{font-size:11pt;line-height:1.55;background:#fff}
+  main{max-width:none;padding:0}
+  h2{break-after:avoid;margin-top:18px}
+  .box,table{break-inside:avoid}
+  .noprint,.sim,#quiz{display:none}
+  a{color:inherit;text-decoration:none}
+}
+@media (prefers-reduced-motion:reduce){.stirbar.spin,.dropdot.go{animation:none}}
+</style>
+</head>
+<body>
+<main>
+
+<header class="top">
+  <div class="kicker">食品分析實驗 · W4 · 學生版</div>
+  <h1>dTrite 數位滴定器：上機前 15 分鐘學會</h1>
+  <p class="sub">給食品營養系的你：用它測白醋與柳橙汁的可滴定酸度</p>
+  <div class="meta">
+    <span>⏱ 預習約 15 分鐘</span><span>🕹 先在模擬器練一次</span><span>✅ 最後有 6 題自我檢測</span>
+  </div>
+  <p class="small noprint">儀器安裝、規格與 TA 檢查請看<a href="dtrite_guide.html">完整版操作卡</a> · 實驗講義：<a href="burette_compare.html">玻璃滴定管 vs 數位滴定器</a></p>
+</header>
+
+<h2>1. 先搞懂：它幫你做什麼、不幫你做什麼</h2>
+<p>可滴定酸度是食品的基本品質指標：它跟酸味、保存性有關，果汁還會拿它和糖度算「糖酸比」判斷成熟度。測法你在 W4 已經學過：用已知濃度的 NaOH 中和樣品中的酸，酚酞從無色變成淡粉紅就是終點，再從用掉的 NaOH 體積算出 % 酸。</p>
+<div class="grid2">
+  <div class="box ok">
+    <p><span class="tag green">它幫你做的</span></p>
+    <ul>
+      <li>用馬達推活塞送 NaOH，<b>體積直接顯示在螢幕上</b>（到 0.01 mL）</li>
+      <li>不用看彎月面，<b>沒有視差、不用估讀</b></li>
+      <li>轉旋鈕就能一小格一小格加，接近終點好控制</li>
+    </ul>
+  </div>
+  <div class="box warn">
+    <p><span class="tag red">它不幫你做的</span></p>
+    <ul>
+      <li><b>判斷終點</b>：還是要你用眼睛看粉紅色持續 30 秒</li>
+      <li><b>記數字</b>：一不小心按到旋鈕，數字就歸零了</li>
+      <li>它不是自動電位滴定儀，不會自己停在終點</li>
+    </ul>
+  </div>
+</div>
+
+<h2>2. 認識面板：你只會用到 4 個動作</h2>
+<div class="tw"><table>
+<tr><th>你要做的事</th><th>怎麼按</th><th class="l">說明</th></tr>
+<tr><td>吸 NaOH 進筒</td><td><kbd>▲</kbd> 按住</td><td class="l">左上鍵。按住吸、放開停。每份樣品開始前先吸滿。</td></tr>
+<tr><td>快速加 NaOH</td><td><kbd>▼</kbd> 按住</td><td class="l">左下鍵。離終點還遠時用；粉紅色開始退得慢就放開。</td></tr>
+<tr><td>一小格一小格加</td><td>旋鈕：<b>轉</b></td><td class="l">接近終點用，越接近轉越慢。</td></tr>
+<tr><td>螢幕歸零</td><td>旋鈕：<b>輕按</b></td><td class="l">每一份開始前按一次。<mark>記錄之前絕對不要按。</mark></td></tr>
+<tr><td>攪拌開／關</td><td><kbd>⚙</kbd> 輕按</td><td class="l">右下鍵。螢幕左上出現 <code>st✱</code> 表示在攪拌。</td></tr>
+</table></div>
+<div class="box warn">
+  <p><span class="tag red">不要碰</span><kbd>⟲</kbd>（右上，排氣，會從管尖噴出 NaOH）、長按 <kbd>⚙</kbd>（設定畫面，速度 TA 已經調好）、主機側面的<b>回流閥</b>。這些由 TA 處理。</p>
+</div>
+
+<h2>3. 先在模擬器練一次</h2>
+<p>這是簡化過的 dTrite。照下面的流程做完一份白醋，再試試柳橙汁（橘色底會讓粉紅色比較難看出來）。<span class="small">模擬器的筒容量 25 mL、旋鈕一格 0.01 mL、粉紅色消退的時間都是示意值，以實機為準。</span></p>
+
+<div class="sim" id="sim" aria-label="dTrite 模擬器">
+  <div class="simgrid">
+    <div>
+      <div class="rig">
+        <svg viewBox="0 0 150 220" aria-hidden="true">
+          <rect x="68" y="0" width="14" height="38" rx="3" fill="#9aa3b5"/>
+          <rect x="72" y="36" width="6" height="18" fill="#9aa3b5"/>
+          <circle class="dropdot" id="dropdot" cx="75" cy="60" r="3.5" fill="#9CC3EA"/>
+          <defs><clipPath id="flaskClip"><path d="M58 70 L58 112 L18 196 Q16 204 26 204 L124 204 Q134 204 132 196 L92 112 L92 70 Z"/></clipPath></defs>
+          <g clip-path="url(#flaskClip)">
+            <rect id="liqBase" x="0" y="150" width="150" height="90" fill="rgba(200,220,240,.45)"/>
+            <rect id="liqPink" x="0" y="150" width="150" height="90" fill="rgb(232,62,140)" fill-opacity="0"/>
+          </g>
+          <path d="M58 70 L58 112 L18 196 Q16 204 26 204 L124 204 Q134 204 132 196 L92 112 L92 70" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--ink)"/>
+          <rect class="stirbar" id="stirbar" x="61" y="194" width="28" height="6" rx="3" fill="#ffffff" stroke="#4a5060" stroke-width="1.5"/>
+          <rect x="6" y="206" width="138" height="12" rx="3" fill="var(--line)"/>
+        </svg>
+        <div>
+          <div class="barrel" title="活塞筒內的 NaOH"><i id="barrelFill" style="height:0%"></i></div>
+          <div class="barrel-l">筒內<br><span id="barrelTxt">0.0</span> mL</div>
+        </div>
+      </div>
+      <div class="small" style="text-align:center">樣品：<b id="sampleName">白醋 2.00 mL</b>　瓶號 <b id="flaskNo">1</b></div>
+    </div>
+
+    <div>
+      <div class="dev">
+        <div class="lcd" aria-live="off">
+          <span class="st" id="lcdSt"></span>
+          <span class="arr" id="lcdArr"></span>
+          <span class="vol" id="lcdVol">0.00</span>
+          <span class="unit">mL</span>
+        </div>
+        <div class="pad">
+          <div class="col">
+            <button class="k" id="kUp" aria-label="吸液，按住">▲</button>
+            <div class="keylbl">吸液</div>
+            <button class="k" id="kDown" aria-label="送液，按住">▼</button>
+            <div class="keylbl">送液</div>
+          </div>
+          <div class="mid">
+            <button class="knob" id="knob" aria-label="旋鈕：輕按歸零">按＝歸零</button>
+            <button class="turn" id="turn" aria-label="轉旋鈕一格，送出 0.01 mL">↻ 轉一格</button>
+          </div>
+          <div class="col">
+            <button class="k" id="kPre" aria-label="排氣（學生不要用）">⟲</button>
+            <div class="keylbl">排氣</div>
+            <button class="k" id="kSet" aria-label="攪拌開關，長按為設定">⚙</button>
+            <div class="keylbl">攪拌／設定</div>
+          </div>
+        </div>
+      </div>
+      <p class="small" style="text-align:center;margin:6px 0 0">「↻ 轉一格」按住會連續轉；滑鼠滾輪在旋鈕上也能轉。鍵盤：Tab 選鍵、空白鍵按住。</p>
+    </div>
+  </div>
+
+  <ul class="prog" id="prog">
+    <li data-s="stir">開攪拌</li><li data-s="fill">吸滿</li><li data-s="zero">歸零</li>
+    <li data-s="fast">▼ 快速段</li><li data-s="drop">旋鈕逐滴</li><li data-s="rec">記錄</li>
+  </ul>
+
+  <div class="simbar">
+    <label>你抄下的體積 <input type="text" id="recIn" inputmode="decimal" placeholder="例 14.85"> mL</label>
+    <button class="btn" id="recBtn">記錄這一瓶</button>
+    <button class="btn ghost" id="nextBtn">換下一瓶</button>
+    <span>下一瓶樣品：
+      <label><input type="radio" name="smp" value="vinegar" checked> 白醋</label>
+      <label><input type="radio" name="smp" value="juice"> 柳橙汁</label>
+    </span>
+  </div>
+  <div class="msg" id="msg" role="status" aria-live="polite">先輕按 ⚙ 開攪拌，再按住 ▲ 把筒吸滿。</div>
+
+  <div class="tw">
+    <table id="resTbl">
+      <thead><tr><th>瓶</th><th>樣品</th><th>你記錄的 V (mL)</th><th>真正終點 (mL)</th><th>差</th><th class="l">評語</th><th>% 酸</th></tr></thead>
+      <tbody><tr class="empty"><td colspan="7" class="small">還沒有紀錄</td></tr></tbody>
+    </table>
+  </div>
+  <p class="small">% 酸 = N × V × 當量重 / (W × 1000) × 100；N = 0.10069，白醋 W = 2.00 mL、醋酸 60.05；柳橙汁 W = 10.00 mL、檸檬酸 64.04（同實驗講義的範例值）。</p>
+</div>
+
+<h2>4. 上機：一份樣品 7 步</h2>
+<div class="box key"><p>上課前 TA 已經把 dTrite 裝在 NaOH 瓶上、排好氣泡、調好速度。你從這裡開始：</p></div>
+<ol class="steps">
+  <li><b>放瓶、開攪拌：</b>錐形瓶（樣品＋約 50 mL 去 CO₂ 水＋酚酞）放上攪拌盤，丟入攪拌子，輕按 <kbd>⚙</kbd>。轉速以不濺出為準。</li>
+  <li><b>吸滿：</b>按住 <kbd>▲</kbd> 直到筒滿。白醋約需 15 mL、柳橙汁約 13 mL，一次吸滿就不用中途補。</li>
+  <li><b>對準、歸零：</b>管尖伸進瓶口但不碰液面，<b>輕按旋鈕</b>，螢幕顯示 <code>0.00 mL</code>。</li>
+  <li><b>快速段：</b>按住 <kbd>▼</kbd>。滴下去的地方開始出現粉紅、而且退得越來越慢時就放開。第一瓶不知道大概要多少，寧可早點放開。</li>
+  <li><b>逐滴段：</b>改成<b>轉旋鈕</b>，一格一格加，每加一格等顏色散開再加下一格。</li>
+  <li><b>判斷終點：</b>整瓶呈淡粉紅、<b>維持 30 秒不退</b>就停。柳橙汁旁邊放一瓶沒加鹼的同樣品對照顏色。</li>
+  <li><b>先記錄：</b>把螢幕數字抄到紀錄表（到 0.01 mL）。<mark>抄完才可以碰旋鈕。</mark>然後輕按 <kbd>⚙</kbd> 停攪拌、換下一瓶，從步驟 1 再來。</li>
+</ol>
+<p class="small">做完三瓶後，第二、三瓶可以參考第一瓶的體積：在預估終點前約 1 mL 就放開 ▼。</p>
+
+<h2>5. 五個最常見的錯</h2>
+<div class="tw"><table>
+<tr><th class="l">錯誤</th><th class="l">後果</th><th class="l">怎麼避免</th></tr>
+<tr><td class="l">記錄前按到旋鈕</td><td class="l">數字歸零，這份要重做</td><td class="l">逐滴時只轉不壓；先抄再碰</td></tr>
+<tr><td class="l">換瓶後忘了歸零</td><td class="l">螢幕數字含上一瓶的量，整份算錯</td><td class="l">每瓶開始前看一眼螢幕是不是 0.00</td></tr>
+<tr><td class="l">一路按住 ▼ 到變色</td><td class="l">衝過頭，粉紅太深</td><td class="l">粉紅色退得慢就放開，改轉旋鈕</td></tr>
+<tr><td class="l">沒開攪拌</td><td class="l">顏色只在局部，看錯終點</td><td class="l">螢幕有 <code>st✱</code> 才開始滴</td></tr>
+<tr><td class="l">滴到一半筒空了</td><td class="l">要中途補吸，容易出錯</td><td class="l">每瓶開始前先吸滿；萬一不夠，<b>先記下目前數字</b>再按 ▲ 補吸，並告訴 TA</td></tr>
+</table></div>
+
+<h2>6. 安全與收尾</h2>
+<div class="box warn">
+  <ul>
+    <li><b>NaOH 有腐蝕性：</b>全程戴護目鏡與手套。沾到皮膚或眼睛立刻用大量清水沖洗，並告訴 TA。</li>
+    <li><b>酚酞是酒精溶液：</b>易燃，遠離火源。</li>
+    <li><b>不要扳動、拆卸主機或瓶子</b>；有氣泡、漏液、按了沒反應，舉手找 TA。</li>
+    <li><b>下課：</b>停攪拌、取出攪拌子洗淨，錐形瓶的廢液倒到指定廢液桶。dTrite 筒內 NaOH 的回收與清洗由 TA 處理（NaOH 不能留在筒內過夜，會結晶卡住活塞）。</li>
+  </ul>
+</div>
+
+<h2 id="quizH">7. 自我檢測</h2>
+<div id="quiz"></div>
+<p class="small" id="quizScore"></p>
+
+<footer>
+  食品分析實驗 · W4 學生版教學。操作依 DLAB《dTrite Electronic Titrator user manual》Ver.20211210 整理改寫；儀器安裝、規格、清洗與 TA 確認項目見<a href="dtrite_guide.html">完整版操作卡</a>。原廠示範影片（英文）：<a href="https://www.youtube.com/watch?v=eVmy-SmpyUk&amp;t=277s">滴定示範 4:37</a>。模擬器數值為示意，範例濃度與實驗講義相同。
+</footer>
+</main>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const CAP = 25;                 // 模擬筒容量（示意）
+  const STEP = 0.01;              // 旋鈕一格（示意）
+  const FAST = 1.0;               // ▼ 送液 mL/s
+  const FILL = 2.5;               // ▲ 吸液 mL/s
+  const N = 0.10069;
+  const SAMPLES = {
+    vinegar:{name:'白醋 2.00 mL', W:2, MW:60.05, lo:14.80, hi:15.00, base:'rgba(200,220,240,.45)'},
+    juice:{name:'柳橙汁 10.00 mL', W:10, MW:64.04, lo:12.60, hi:12.80, base:'rgba(245,160,50,.75)'}
+  };
+  const S = {key:'vinegar', x:0, disp:0, barrel:0, stir:false, veq:0, flash:0, tau:.2,
+             no:1, done:false, prog:{}, dir:'', dispWarned:false, pinkSeen:false};
+
+  function newFlask(first){
+    const r = document.querySelector('input[name=smp]:checked');
+    S.key = r ? r.value : 'vinegar';
+    const sm = SAMPLES[S.key];
+    S.veq = Math.round((sm.lo + Math.random()*(sm.hi-sm.lo))*100)/100;
+    S.x = 0; S.flash = 0; S.done = false; S.prog = {}; S.pinkSeen = false;
+    if(S.stir) S.prog.stir = true;
+    if(S.barrel >= CAP-0.01) S.prog.fill = true;
+    if(!first) S.no++;
+    $('sampleName').textContent = sm.name; $('flaskNo').textContent = S.no;
+    $('liqBase').setAttribute('fill', sm.base);
+    $('recIn').value = '';
+    render();
+  }
+
+  function say(t, cls){ const m=$('msg'); m.textContent=t; m.className='msg'+(cls?' '+cls:''); }
+
+  function add(dv, mode){
+    if(S.done){ say('這一瓶已經記錄完了，按「換下一瓶」。'); return false; }
+    if(S.barrel <= 0.0001){ say('筒內沒有 NaOH 了！放開，按住 ▲ 吸液。實驗時如果滴到一半才發生，先把螢幕數字記下來再補吸，並告訴 TA。','bad'); return false; }
+    if(S.disp >= 99.99){ say('螢幕已到上限 99.99 mL，儀器停止。先記下數字，再輕按旋鈕歸零。','bad'); return false; }
+    dv = Math.min(dv, S.barrel, 99.99 - S.disp);
+    S.barrel -= dv; S.x += dv; S.disp += dv;
+    if(mode==='fast') S.prog.fast = true;
+    if(mode==='drop') S.prog.drop = true;
+    const d = S.veq - S.x;
+    if(d > 0 && d < 2.5){
+      S.flash = Math.max(S.flash, .55);
+      S.tau = Math.min(25, .15/Math.max(d,.006)) * (S.stir?1:3);
+      if(!S.pinkSeen && d < 1.2){ S.pinkSeen = true;
+        say(mode==='fast' ? '注意：滴下去的地方出現粉紅、而且退得越來越慢——該放開 ▼，改用旋鈕了。' : '粉紅色退得越來越慢，繼續一格一格轉。'); }
+    }
+    if(!S.stir && S.x > 0.3 && !S.warnStir){ S.warnStir = true; say('你還沒開攪拌！NaOH 只停在局部，顏色會看錯。輕按 ⚙。','bad'); }
+    const dd = $('dropdot'); dd.classList.remove('go'); void dd.getBBox(); dd.classList.add('go');
+    return true;
+  }
+
+  // ---- hold helper ----
+  function holdable(el, {start, tick, end, long, longMs=2000, tickMs=50}){
+    let t=null, lt=null, t0=0, isLong=false, active=false;
+    function down(e){ if(active) return; active=true; e && e.preventDefault(); el.classList.add('on'); t0=performance.now(); isLong=false;
+      start && start();
+      let lastT=t0; el._flush=()=>{ const n=performance.now(); tick((n-lastT)/1000); lastT=n; };
+      if(tick) t=setInterval(el._flush, tickMs);
+      if(long) lt=setTimeout(()=>{isLong=true; long();}, longMs); }
+    function up(){ if(!active) return; active=false; el.classList.remove('on'); clearInterval(t); clearTimeout(lt); if(tick) el._flush();
+      end && end(isLong, performance.now()-t0); }
+    el.addEventListener('pointerdown', e=>{ el.setPointerCapture && el.setPointerCapture(e.pointerId); down(e); });
+    el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);
+    el.addEventListener('keydown', e=>{ if((e.key===' '||e.key==='Enter') && !e.repeat){ down(e); } });
+    el.addEventListener('keyup', e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); up(); } });
+    el.addEventListener('contextmenu', e=>e.preventDefault());
+  }
+
+  // ▲ fill
+  holdable($('kUp'), {start:()=>{S.dir='up'}, tick:dt=>fill(dt), end:()=>{S.dir=''; afterFill();}});
+  function fill(dt){ if(S.barrel < CAP){ S.barrel = Math.min(CAP, S.barrel + FILL*dt); } }
+  function afterFill(){
+    if(S.barrel >= CAP-0.01){ S.prog.fill = true; say(S.prog.zero ? '筒已吸滿。' : '筒吸滿了。下一步：管尖對準瓶口，輕按旋鈕歸零。'); }
+    else say('還沒吸滿（'+S.barrel.toFixed(1)+' mL）。每瓶開始前先吸滿，避免滴到一半不夠。');
+    render();
+  }
+  // ▼ dispense
+  holdable($('kDown'), {start:()=>{S.dir='down'; checkZero();}, tick:dt=>add(FAST*dt,'fast'), end:()=>{S.dir=''; render();}});
+  function checkZero(){
+    if(!S.done && S.x===0 && S.disp>0.004 && !S.dispWarned){ S.dispWarned=true;
+      say('提醒：螢幕不是 0.00——你換瓶後還沒歸零。（這次讓你繼續，記錄時就會看到後果。）','bad'); }
+  }
+  // knob turn
+  holdable($('turn'), {start:()=>{checkZero(); add(STEP,'drop'); render();}, tick:()=>{}, end:()=>render(),
+    long:()=>{ const iv=setInterval(()=>{ if(!$('turn').classList.contains('on')){clearInterval(iv);return;} add(STEP,'drop'); render(); },120); }, longMs:450});
+  $('knob').addEventListener('wheel', e=>{ e.preventDefault(); checkZero(); add(STEP,'drop'); render(); }, {passive:false});
+  // knob press: short = zero, long = fill
+  function knobFillTick(){ const n=performance.now(); fill((n-S.knobT)/1000); S.knobT=n; }
+  holdable($('knob'), {long:()=>{S.dir='up'; S.knobT=performance.now(); S.knobFill=setInterval(knobFillTick,50);},
+    end:(isLong)=>{ if(isLong) knobFillTick(); clearInterval(S.knobFill); S.dir='';
+      if(isLong){ afterFill(); return; }
+      const lost = !S.done && S.x>0.3;
+      S.disp = 0;
+      if(lost){ say('螢幕歸零了！這瓶加了 NaOH 卻還沒記錄——數字沒了，實驗課這份只能重做。記住：先抄、再碰旋鈕。','bad'); S.lost=true; }
+      else { if(!S.done && S.x===0){ S.prog.zero = true; } say(S.done ? '已歸零。按「換下一瓶」。' : '螢幕 0.00，開始滴定：按住 ▼ 快速送液。'); }
+      render(); }});
+  // pre-fill
+  holdable($('kPre'), {long:()=>{
+      const v = CAP; S.barrel = 0;
+      if(!S.done){ S.x += v; }
+      say('你長按了排氣鍵：活塞自動吸滿再整筒推出——'+v+' mL NaOH 直接打進了樣品！這個鍵由 TA 課前用，下面要放廢液杯。這瓶報廢，按「換下一瓶」。','bad');
+      S.ruined = true; render(); },
+    end:(isLong)=>{ if(!isLong) say('⟲ 是排氣鍵，要長按 2 秒才會動，而且會從管尖噴出 NaOH。學生不需要用它。'); }});
+  // setup / stir
+  holdable($('kSet'), {long:()=>{ say('你進入了設定畫面（吸液／送液／攪拌速度）。這些 TA 已經調好；實機上要再長按 ⚙ 2 秒離開。'); },
+    end:(isLong)=>{ if(isLong) return;
+      S.stir = !S.stir;
+      if(S.stir){ S.prog.stir = true; say(S.prog.fill ? '攪拌開了（螢幕出現 st✱）。' : '攪拌開了（螢幕出現 st✱）。下一步：按住 ▲ 把筒吸滿。'); }
+      else say('攪拌關了。');
+      render(); }});
+
+  // record
+  $('recBtn').addEventListener('click', ()=>{
+    if(S.done){ say('這一瓶已經記錄過了，按「換下一瓶」。'); return; }
+    const raw = $('recIn').value.trim().replace('，','.');
+    const rec = parseFloat(raw);
+    if(isNaN(rec)){ say('先在框裡輸入你從螢幕抄下的體積。','bad'); return; }
+    if(S.x < 0.5){ say('這瓶幾乎還沒加 NaOH，還不能記錄。'); return; }
+    if(Math.abs(rec - S.disp) > 0.005){ say('你輸入的 '+rec.toFixed(2)+' 跟螢幕上的 '+S.disp.toFixed(2)+' 不一樣，再看一次螢幕。（實驗時記錄表上的數字就是唯一的證據）','bad'); return; }
+    const sm = SAMPLES[S.key];
+    let note, cls='', err = S.x - S.veq, pct='—';
+    if(S.ruined){ note='排氣把 NaOH 打進樣品，報廢'; cls='bad'; }
+    else if(S.lost || (S.disp < 0.005)){ note='記錄前歸零，數據遺失'; cls='bad'; }
+    else if(Math.abs(S.disp - S.x) > 0.005){ note='忘了歸零：螢幕含上一瓶 '+(S.disp-S.x).toFixed(2)+' mL'; cls='bad'; }
+    else {
+      if(err < -0.02){ note='還沒到終點（粉紅會退）'; cls='bad'; }
+      else if(err <= 0.03){ note='漂亮！停在終點'; cls='good'; }
+      else if(err <= 0.10){ note='略過頭，約 1–2 格'; }
+      else { note='過頭 '+err.toFixed(2)+' mL，粉紅太深'; cls='bad'; }
+      pct = (N*rec*sm.MW/(sm.W*1000)*100).toFixed(3)+'%';
+    }
+    S.done = true; S.prog.rec = true;
+    const tb = $('resTbl').tBodies[0]; const em = tb.querySelector('.empty'); if(em) em.remove();
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>'+S.no+'</td><td>'+(S.key==='vinegar'?'白醋':'柳橙汁')+'</td><td>'+rec.toFixed(2)+'</td><td>'+S.veq.toFixed(2)+'</td><td>'+(err>=0?'+':'')+err.toFixed(2)+'</td><td class="l">'+note+'</td><td>'+pct+'</td>';
+    tb.appendChild(tr);
+    say('已記錄：'+note+'。現在才可以碰旋鈕。輕按 ⚙ 停攪拌，再按「換下一瓶」。', cls);
+    render();
+  });
+  $('nextBtn').addEventListener('click', ()=>{
+    const wasStir = S.stir;
+    S.lost=false; S.ruined=false; S.warnStir=false; S.dispWarned=false;
+    newFlask(false);
+    say(wasStir ? '換瓶了。小提醒：實機換瓶前先輕按 ⚙ 停攪拌，攪拌子才不會亂跳。下一步：吸滿、歸零。' : '換好新的一瓶。下一步：開攪拌、吸滿、歸零。');
+  });
+  document.querySelectorAll('input[name=smp]').forEach(r=>r.addEventListener('change', ()=>{
+    if(S.x===0 && !S.done){ newFlask(true); say('樣品換成'+SAMPLES[S.key].name+'。'); }
+    else say('下一瓶會換成'+SAMPLES[r.value].name+'；做完這瓶後按「換下一瓶」。');
+  }));
+
+  // render loop
+  let last = performance.now();
+  function frame(now){
+    const dt = Math.min(.1,(now-last)/1000); last = now;
+    if(S.flash>0.001){ S.flash *= Math.exp(-dt/S.tau); } else S.flash = 0;
+    if(S.dir) render(); else paintFlask();
+    requestAnimationFrame(frame);
+  }
+  function paintFlask(){
+    let p = 0;
+    if(S.x >= S.veq) p = Math.min(1, .28 + (S.x - S.veq)/0.35*.72);
+    const a = Math.max(p, S.flash) * (S.key==='juice' ? .6 : 1);
+    $('liqPink').setAttribute('fill-opacity', a.toFixed(3));
+    const lvl = 150 - Math.min(12, S.x*0.4);
+    $('liqBase').setAttribute('y', lvl); $('liqPink').setAttribute('y', lvl);
+  }
+  function render(){
+    $('lcdVol').textContent = S.disp.toFixed(2);
+    $('lcdSt').textContent = S.stir ? 'st✱' : '';
+    $('lcdArr').textContent = S.dir==='up' ? '▲' : (S.dir==='down' ? '▼' : '');
+    $('barrelFill').style.height = (S.barrel/CAP*100)+'%';
+    $('barrelTxt').textContent = S.barrel.toFixed(1);
+    $('stirbar').classList.toggle('spin', S.stir);
+    document.querySelectorAll('#prog li').forEach(li=>li.classList.toggle('done', !!S.prog[li.dataset.s]));
+    paintFlask();
+  }
+  newFlask(true);
+  requestAnimationFrame(frame);
+
+  // ---- quiz ----
+  const Q = [
+    ['滴到終點、粉紅色維持 30 秒了。下一個動作是？',
+      ['輕按旋鈕歸零，準備下一瓶','把螢幕數字抄到紀錄表','按住 ▲ 把筒吸滿'],1,
+      '先抄數字。輕按旋鈕會歸零，抄之前按到這份就沒了。'],
+    ['接近終點時，應該怎麼加 NaOH？',
+      ['繼續按住 ▼，但按短一點','轉旋鈕一格一格加，每格等顏色散開','長按 ⟲ 讓它自動完成'],1,
+      '旋鈕逐滴最好控制；⟲ 是排氣鍵，會整筒噴出。'],
+    ['換了新的一瓶樣品，螢幕顯示 14.88 mL。怎麼辦？',
+      ['沒關係，最後減掉 14.88 就好','開始滴之前輕按旋鈕歸零','按住 ▼ 直接開始'],1,
+      '每瓶開始前歸零，記錄表上的數字才會直接是這一瓶的體積，不用心算。'],
+    ['螢幕左上角沒有出現 st✱，代表？',
+      ['電量不足','攪拌沒開','還沒歸零'],1,
+      'st✱ 是攪拌指示，沒開攪拌 NaOH 會停在局部，顏色判斷會錯。'],
+    ['柳橙汁的終點比白醋難判斷，可以怎麼做？',
+      ['多加 10 滴酚酞','旁邊放一瓶沒加鹼的同樣品對照顏色','加到顏色明顯變深紅再停'],1,
+      '對照瓶讓你看出「多了一點粉紅」；加到深紅就過頭了。'],
+    ['dTrite 讀數精密很多，為什麼全班滴定結果的 RSD 只小一點點？',
+      ['因為 dTrite 的 NaOH 濃度不同','因為判斷酚酞終點的變異，玻璃管和 dTrite 都有','因為螢幕只顯示到 0.1 mL'],1,
+      '讀數誤差變小了，但「人眼判斷終點」這一塊誤差兩支都一樣，所以總誤差只改善一部分。'],
+  ];
+  const box = $('quiz'); let score = 0, answered = 0;
+  Q.forEach((q,i)=>{
+    const d = document.createElement('div'); d.className='q box';
+    d.innerHTML = '<b>Q'+(i+1)+'.</b> '+q[0]+'<div class="opts"></div><div class="fb" aria-live="polite"></div>';
+    const opts = d.querySelector('.opts'), fb = d.querySelector('.fb');
+    q[1].forEach((o,j)=>{
+      const b = document.createElement('button'); b.type='button'; b.textContent = String.fromCharCode(65+j)+'. '+o;
+      b.addEventListener('click', ()=>{
+        if(d.dataset.done) return; d.dataset.done = 1; answered++;
+        if(j===q[2]){ b.classList.add('right'); score++; fb.textContent='✓ 對！'+q[3]; }
+        else { b.classList.add('wrong'); opts.children[q[2]].classList.add('right'); fb.textContent='✗ '+q[3]; }
+        if(answered===Q.length) $('quizScore').textContent = '你答對 '+score+' / '+Q.length+' 題。'+(score===Q.length?'可以上機了！':'錯的題目回到上面對應段落再看一次。');
+      });
+      opts.appendChild(b);
+    });
+    box.appendChild(d);
+  });
+})();
+</script>
+</body>
+</html>
