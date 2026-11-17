@@ -48,10 +48,24 @@ section{margin-top:44px}
 .sub{color:var(--muted);margin:0 0 14px;max-width:80ch}
 
 /* timeline */
-.timeline{display:grid;grid-template-columns:repeat(18,1fr);gap:3px;margin-top:22px}
+.timeline{display:grid;grid-template-columns:repeat(14,1fr);gap:3px;margin-top:22px}
 .tl{font-family:var(--mono);font-size:11px;text-align:center;padding:8px 0;border-radius:3px;background:var(--teal-soft);color:var(--teal)}
 .tl.b{background:var(--accent-soft);color:var(--accent)}
 .tl.x{background:var(--exam);color:var(--exam-ink)}
+.tl.done{background:var(--bg);color:var(--muted);border:1px solid var(--line);text-decoration:line-through}
+.tl.opt{background:transparent;color:var(--muted);border:1px dashed var(--muted)}
+
+/* principles + rhythm */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;counter-reset:st}
+.step{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:8px;padding:12px 14px;font-size:14px}
+.step .t{font-family:var(--mono);font-size:12px;color:var(--teal)}
+.step b{display:block;font-size:15px;margin:2px 0}
+.step p{margin:0;color:var(--muted)}
+.q{display:block;margin-top:4px;font-size:13.5px;color:var(--accent)}
+.q::before{content:"任務問題　";font-weight:700}
+details.old{margin-top:14px}
+details.old>summary{cursor:pointer;font-size:14px;color:var(--teal);padding:8px 0}
+details.old[open]>summary{margin-bottom:8px}
 .tl-legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--muted);margin-top:8px}
 .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 
@@ -103,7 +117,7 @@ tr.part td{background:var(--bg);font-family:var(--serif);font-weight:700;font-si
 footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
 
 @media (max-width:760px){
-  .timeline{grid-template-columns:repeat(9,1fr)}
+  .timeline{grid-template-columns:repeat(7,1fr)}
   .wtable table,.wtable thead,.wtable tbody,.wtable tr,.wtable td{display:block}
   .wtable thead{display:none}
   .wtable tr{padding:12px;border-bottom:1px solid var(--line)}
@@ -119,25 +133,30 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
 
 <div class="wrap">
 <header>
-  <div class="eyebrow">NIELSEN FOOD ANALYSIS 6e · 實驗課 · 18 週</div>
+  <div class="eyebrow">NIELSEN FOOD ANALYSIS 6e · 實驗課 · 動手優先版（W4 之後剩 8 次）</div>
   <h1>食品分析實驗學期規劃</h1>
-  <p class="lede">前半學期做一般成分分析、儀器校正與滴定，並從第一週開始做數據品管：入門用 Excel，進階用 Colab。後半學期用近紅外與拉曼光譜做化學計量學，最後以代糖混合物的 PLS 定量專題收尾。前半學期的參考方法，就是後半學期光譜模型的 Y 值。</p>
+  <p class="lede">前半段做一般成分分析與滴定，後半段用近紅外與拉曼光譜做化學計量學，最後以代糖混合物的 PLS 定量專題收尾。W4 之後改成<b>動手優先</b>：先做，拿到數字，數字出現怪事，再花 5 分鐘講為什麼。理論只在全班看數據時出場，當作解謎的答案。</p>
   <div class="facts">
     <span><b>15 人</b>，分 5 組、每組 3 人</span>
     <span>每次 <b>4 小時</b></span>
-    <span>期中考 <b>W9</b>、期末考 <b>W18</b></span>
-    <span>單台儀器：<b>PASCO 自動滴定、水活性儀、凱氏</b>（需輪站）</span>
+    <span>W1–W4 已完成，接下來 <b>8 次</b>（可伸縮為 7–10 次）</span>
+    <span>期中考 <b>已完成</b>；第 8 次 <b>操作考</b>、第 12 次 <b>代糖發表</b></span>
+    <span>單台儀器：<b>dTrite、PASCO 自動滴定、凱氏蒸餾</b>（一律開並行站，不讓人旁觀）</span>
     <span>拉曼 <b>532 / 785 nm</b></span>
     <span>NIR：<b>Avantes</b>（300–1100、900–1650 nm；另一台 600–1100 nm 待到貨）、<b>InnoSpectra</b> NIR-S-G1、T1、T11、R14（1600–2400 nm）、<b>NeoSpectra</b> Scanner、Micro Development Kit 與光纖模組（1350–2500 nm）、<b>Spectral Engines NIRONE</b> S2.0、S2.2、S2.5</span>
   </div>
-  <div class="timeline" aria-label="18 週時間軸">
-    <div class="tl">1</div><div class="tl">2</div><div class="tl">3</div><div class="tl">4</div><div class="tl">5</div><div class="tl">6</div><div class="tl">7</div><div class="tl">8</div><div class="tl x">9</div>
-    <div class="tl b">10</div><div class="tl b">11</div><div class="tl b">12</div><div class="tl b">13</div><div class="tl b">14</div><div class="tl b">15</div><div class="tl b">16</div><div class="tl b">17</div><div class="tl x">18</div>
+  <div class="timeline" aria-label="課次時間軸：已完成 4 次、接下來 8 次、可加 2 次">
+    <div class="tl done">1</div><div class="tl done">2</div><div class="tl done">3</div><div class="tl done">4</div>
+    <div class="tl">5</div><div class="tl">6</div><div class="tl">7</div><div class="tl x">8</div>
+    <div class="tl b">9</div><div class="tl b">10</div><div class="tl b">11</div><div class="tl x">12</div>
+    <div class="tl opt">+1</div><div class="tl opt">+2</div>
   </div>
   <div class="tl-legend">
-    <span><i class="sw" style="background:var(--teal-soft);border:1px solid var(--teal)"></i>一般成分 × 校正 × 品管</span>
+    <span><i class="sw" style="background:var(--bg);border:1px solid var(--line)"></i>已完成</span>
+    <span><i class="sw" style="background:var(--teal-soft);border:1px solid var(--teal)"></i>一般成分 × 滴定 × 品管</span>
     <span><i class="sw" style="background:var(--accent-soft);border:1px solid var(--accent)"></i>光譜 × 化學計量</span>
-    <span><i class="sw" style="background:var(--exam)"></i>考試</span>
+    <span><i class="sw" style="background:var(--exam)"></i>操作考／發表</span>
+    <span><i class="sw" style="border:1px dashed var(--muted)"></i>課次夠才加</span>
   </div>
 </header>
 
@@ -145,16 +164,122 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
   <h2>四條主線</h2>
   <p class="sub">每週的實驗同時推進這四條主線，所以校正與統計不是獨立的講課週，而是跟著當週的數據走。</p>
   <div class="strands">
-    <div class="strand"><span class="tag">成分</span><h3>一般成分分析</h3><p>水分、灰分、蛋白質、脂肪、碳水化合物、可滴定酸。W2 起全班量同一份共同盲樣，W8 彙整成完整的一般成分表。</p></div>
+    <div class="strand"><span class="tag">成分</span><h3>一般成分分析</h3><p>水分、灰分、蛋白質、脂肪、碳水化合物、可滴定酸。W2 起全班量同一份共同盲樣，第 8 次彙整成一般成分表（脂肪改用助教數據）。</p></div>
     <div class="strand"><span class="tag">校正</span><h3>儀器校正</h3><p>每週一項：天平與容量器具、水活性儀、pH 計、折射計、UV-Vis、拉曼波數、NIR 參考與波長。每項都寫標準品與允收條件。</p></div>
-    <div class="strand"><span class="tag">品管</span><h3>數據品管與統計</h3><p>從平均與 SD 開始，一路到配對檢定、檢量線、管制圖、ANOVA、不確定度。每週一份 Excel 練習檔（入門）與 Colab 筆記本（進階）；後半學期改用 Orange 流程，進階用 Colab 或 R。</p></div>
+    <div class="strand"><span class="tag">品管</span><h3>數據品管與統計</h3><p>每次只留<b>一張圖＋一個判斷</b>，計算交給共用 Excel 自動算。盲樣挑戰的 z-score 每次都用，當作排行榜的計分規則。F 檢定、Grubbs、ANOVA、不確定度改為選修（Colab 進階題）。</p></div>
     <div class="strand"><span class="tag">計量</span><h3>化學計量學</h3><p>光譜前處理、相似度比對、PCA、PLS、VIP、PLS-DA、離群值。工具用 Orange、SpectraView、Colab、R。</p></div>
   </div>
 </section>
 
 <section>
-  <h2>每週進度</h2>
-  <p class="sub">標「輪站」的週次只有一台儀器，5 組依時間表輪流使用，其他時間在實驗桌做平行實驗。影片是課前 5 分鐘的導入，內容查證中。</p>
+  <h2>每次課的節奏</h2>
+  <p class="sub">四個原則：每次一個真實問題，不發步驟講義；單台儀器一律搭並行站，沒有人只能旁觀；每次一個盲樣挑戰，結果上排行榜；理論只在收尾看全班數據時出場。</p>
+  <div class="steps">
+    <div class="step"><span class="t">0:00–0:10</span><b>任務卡＋安全</b><p>只給一個問題和今天的站別，不講原理。</p></div>
+    <div class="step"><span class="t">0:10–3:15</span><b>分站動手</b><p>每組依時間表輪站，每個人至少親手做一次完整操作。</p></div>
+    <div class="step"><span class="t">3:15–3:45</span><b>全班數據投影</b><p>誰最準？誰差最多？為什麼？理論在這裡出場，約 5–10 分鐘。</p></div>
+    <div class="step"><span class="t">3:45–4:00</span><b>出場券＋收拾</b><p>一題判斷題，不考計算。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>接下來 8 次</h2>
+  <p class="sub">課次編號接在 W4 之後；「教材」欄連到原本的週模組，內容沿用。單台儀器的站別配置見下方「並行站安排」。</p>
+  <div class="tbl wtable">
+  <table>
+    <thead><tr><th>次</th><th>主題與任務問題</th><th>動手站別</th><th>收尾：一張圖＋一個判斷</th><th>教材與工具</th></tr></thead>
+    <tbody>
+      <tr class="part"><td colspan="5">已完成　W1 容量器具校正 · W2 水分與水活性 · W3 灰分與鈉 · W4 滴定（11/17，dTrite 數位滴定器＋KHP 標定）</td></tr>
+      <tr class="part"><td colspan="5">一般成分 × 滴定 × 品管</td></tr>
+      <tr>
+        <td class="wk">5<span class="rot">並行站</span></td>
+        <td class="topic"><b>滴定盲樣挑戰</b><span class="q">老師這瓶檸檬酸到底幾 %？</span><span>老師配一瓶未知濃度的無水檸檬酸，各組比誰最接近。每組自己決定取樣量，讓滴定量落在 10–20 mL（W4 取 20 mL 要滴 67 mL，會超過滴定管容量）。</span></td>
+        <td><ul><li>A：dTrite 數位滴定器（每組先用秤水法檢查 dTrite 打出 10 mL 的實際重量，再滴定）</li><li>B：手動滴定管＋酚酞</li><li>C：PASCO 即時 pH 曲線（醋、紅酒）</li><li>D：PAL-30S 折射計測醋酸</li></ul><span class="lbl">開場由助教用 KHP 重新標定全班共用的 NaOH。</span></td>
+        <td>W4 的 NaOH 配成 0.1015 N，KHP 標定只有 0.0908 N，低了約 10%：為什麼一定要標定？是 NaOH 吸水吸 CO₂，還是 dTrite 出液有偏差？A 站秤水的數據回答這題。<br><span class="lbl">「取樣量 vs 滴定量」畫成直線：W4 取 5、10、20 mL，每 mL 樣品都用掉約 3.36–3.40 mL NaOH，回收率約 97.5%。</span></td>
+        <td><div class="chiprow"><a class="c tool" href="labs/w04_titration/index.html">W4 模組</a><a class="c tool" href="labs/w04_titration/dtrite_guide.html">dTrite 操作卡</a><a class="c tool" href="excel/EX04_titration.xlsx" download>Excel EX04</a><a class="c tool" href="labs/wx_vinegar_acid/index.html">醋模組</a></div></td>
+      </tr>
+      <tr>
+        <td class="wk">6<span class="rot">並行站</span></td>
+        <td class="topic"><b>糖：自己帶飲料</b><span class="q">你最常喝的那杯，標示的糖跟實測一樣嗎？</span><span>學生自帶飲料、果汁、冬瓜茶，用折射計測 Brix；酚硫酸法做葡萄糖檢量線測總醣。</span></td>
+        <td><ul><li>A：折射計 Brix（純水歸零、蔗糖標準液檢查）</li><li>B：葡萄糖標準液配製</li><li>C：酚硫酸呈色＋UV-Vis 490 nm（抽風櫃）</li></ul><span class="lbl">安全：濃硫酸與酚都在抽風櫃內操作，戴面罩與耐酸手套；酚廢液另外回收。</span></td>
+        <td>檢量線一張圖：自己那杯有沒有落在線的範圍內？R² 很高就一定準嗎？<br><span class="lbl">乙級的索摩基法、Bertrand 法只做計算題，不操作。</span></td>
+        <td><div class="chiprow"><a class="c tool" href="labs/w07_sugar/index.html">W7 模組</a><a class="c tool" href="excel/EX07_sugar_calibration.xlsx" download>Excel EX07</a><span class="c">FAS 檢量線遊戲</span></div></td>
+      </tr>
+      <tr>
+        <td class="wk">7<span class="rot">並行站</span></td>
+        <td class="topic"><b>蛋白質：凱氏法</b><span class="q">三聚氰胺怎麼騙過蛋白質檢驗？</span><span>助教提前完成消化（8 管：5 組盲樣＋空白＋硫酸銨回收＋高筋麵粉），學生上課負責蒸餾與滴定，等於再練一次滴定。</span></td>
+        <td><ul><li>A：蒸餾（1 套輪流，每管約 10 分鐘）</li><li>B：HCl 標準液標定（dTrite 或手動）</li><li>C：收集液滴定＋換算係數計算</li></ul></td>
+        <td>硫酸銨回收率與試劑空白：哪一組的數字可以信？加了三聚氰胺，凱氏法會算出多少「蛋白質」？</td>
+        <td><div class="chiprow"><a class="c tool" href="labs/w05_kjeldahl/index.html">W5 模組</a><a class="c tool" href="excel/EX05_kjeldahl_protein.xlsx" download>Excel EX05</a></div></td>
+      </tr>
+      <tr class="exam">
+        <td class="wk">8</td>
+        <td class="topic"><b>操作考＋能力試驗</b><span>每人獨立用 KHP 標定一瓶 NaOH，交出濃度；依操作檢核表評分（秤量、轉移、終點判斷、計算）。dTrite 只有一台，多數人用手動滴定管，請先確認滴定管數量。</span></td>
+        <td colspan="2">全班濃度算 z-score 排名；彙整共同盲樣成一般成分表（脂肪用助教數據，碳水化合物用差減法）。管制圖一張，判斷誰需要重做。</td>
+        <td><div class="chiprow"><a class="c tool" href="labs/w08_proficiency/index.html">W8 模組</a><a class="c tool" href="excel/EX08_proficiency_qc.xlsx" download>Excel EX08</a></div></td>
+      </tr>
+      <tr class="part"><td colspan="5">光譜 × 化學計量（建模一律用 Orange 拖拉）</td></tr>
+      <tr class="b">
+        <td class="wk">9</td>
+        <td class="topic"><b>光譜入門：量自己帶的食物</b><span class="q">不開封，看得出這包白色粉末是哪種糖嗎？</span><span>量純物質（蔗糖、阿斯巴甜、三氯蔗糖、赤藻糖醇、麥芽糊精）與自己帶的食物，建一個小光譜庫，再比對未知粉末。</span></td>
+        <td><ul><li>每組固定一台 NIR，不用排隊</li><li>拉曼 532／785 兩台輪用</li><li>白板參考、Si 520.7 cm⁻¹ 校正由各組自己做</li></ul></td>
+        <td>未知粉末和光譜庫裡誰最像？相似度多少才敢說「就是它」？</td>
+        <td><div class="chiprow"><a class="c tool" href="labs/w10_spectro_calib/index.html">W10 模組</a><a class="c tool" href="labs/w11_preprocess_similarity/index.html">W11 模組</a><span class="c tool">SpectraView</span></div></td>
+      </tr>
+      <tr class="b">
+        <td class="wk">10</td>
+        <td class="topic"><b>PCA：食用油</b><span class="q">便宜的油能冒充特級初榨橄欖油嗎？</span><span>特級初榨與精製橄欖油、大豆、芥花、椰子、花生油，量拉曼 785 與 NIR；每個樣品重複裝填 3 次。</span></td>
+        <td><ul><li>各組量自己那台 NIR</li><li>拉曼 785 輪用</li><li>Orange PCA 現場出分數圖</li></ul></td>
+        <td>分數圖上哪些油擠在一起？現場混一瓶橄欖油＋大豆油 1:1，猜它會落在哪，再量量看。</td>
+        <td><div class="chiprow"><a class="c tool" href="labs/w12_pca/index.html">W12 模組</a><a class="c tool" href="tools.html#OR12">Orange OR12</a></div></td>
+      </tr>
+      <tr class="b">
+        <td class="wk">11</td>
+        <td class="topic"><b>代糖專題一：配製與量測</b><span class="q">配得出來，量得出來嗎？</span><span>阿斯巴甜 × 三氯蔗糖 5×5 格點，赤藻糖醇補足；拉丁方格分工，每組配 5 個樣品。助教另配 7 個盲樣。</span></td>
+        <td><ul><li>秤量、研磨、過篩</li><li>樣品架輪轉經過每台 NIR 與拉曼 785</li><li>每瓶每台重裝 2 次、分開存檔</li></ul></td>
+        <td>同一瓶重裝兩次，光譜差多少？這就是取樣變異。</td>
+        <td><div class="chiprow"><a class="c tool" href="labs/w15_sweetener_prep/index.html">W15 模組</a></div></td>
+      </tr>
+      <tr class="exam">
+        <td class="wk">12</td>
+        <td class="topic"><b>代糖專題二：建模＋發表</b><span>用 Orange 建兩個 PLS 模型，預測 7 個盲樣與市售代糖；每組交模型成績單並上台報告。</span></td>
+        <td colspan="2">預測盲樣，誤差最小的組上排行榜。成績單只留 LV 數、RMSEP、預測值 vs 真值圖；VIP 由老師示範。<br><span class="lbl">一次 4 小時要建模又要 5 組發表，偏緊：建模可在第 11 次收尾先開始。</span></td>
+        <td><div class="chiprow"><a class="c tool" href="labs/w16_sweetener_model/index.html">W16 模組</a><a class="c tool" href="labs/w17_presentation/index.html">W17 模組</a><a class="c tool" href="tools.html#OR16">Orange OR16</a></div></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>課次不是 8 次時</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>多出課次：依序加回</h3>
+      <ol>
+        <li><b>+1　醋的 PLS（原 W13）</b>，排在第 10 次之後：用學生自己滴定的醋當 Y，前後半學期連得起來，最值得加回。</li>
+        <li><b>+2　脂肪（原 W6）</b>：只做洋芋片 vs 美乃滋的酸水解對照，助教提前開始萃取。</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>只有 7 次：合併</h3>
+      <p>第 9、10 次合併成「光譜＋PCA」：純物質光譜庫改用助教預量的數據，現場只量食用油。</p>
+      <h3 style="margin-top:12px">刪減或降為示範</h3>
+      <ul>
+        <li>W6 脂肪：影片＋一題計算，一般成分表的脂肪用助教數據</li>
+        <li>W8 能力試驗：併入第 8 次操作考</li>
+        <li>W13 醋 PLS：方法併入代糖 PLS</li>
+        <li>W14 VIP、PLS-DA、T²／Q：第 12 次老師示範</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>原 18 週規劃</h2>
+  <p class="sub">保留作為參考，各週模組的內容仍在原頁面。標「輪站」的週次只有一台儀器，5 組依時間表輪流使用。</p>
+  <details class="old">
+  <summary>展開原 18 週完整規劃</summary>
   <div class="tbl wtable">
   <table>
     <thead><tr><th>週</th><th>主題與實驗</th><th>儀器校正</th><th>數據品管／化學計量</th><th>工具、教材、影片</th></tr></thead>
@@ -287,34 +412,29 @@ footer{margin-top:44px;font-size:12.5px;color:var(--muted);max-width:80ch}
     </tbody>
   </table>
   </div>
+  </details>
 </section>
 
 <section>
-  <h2>單台儀器的輪站安排</h2>
-  <p class="sub">5 組、4 小時（240 分鐘）。扣掉開場講解 30 分鐘與收尾 20 分鐘，單台儀器約有 190 分鐘可排。</p>
+  <h2>並行站安排</h2>
+  <p class="sub">5 組、4 小時。扣掉任務卡 10 分鐘與收尾 45 分鐘，約 185 分鐘可輪站。原則：單台儀器旁邊一定搭別的站，沒有任何一組只能旁觀。</p>
   <div class="grid2">
     <div class="card">
-      <h3>W4 PASCO 自動滴定（1 套）</h3>
-      <p>每組約 30 分鐘：醋與紅酒各跑 1 次。教學型系統加液速度較慢，每次約 8–12 分鐘，實際時間請先試跑確認；重複數由全班 5 組合併取得。</p>
-      <p>沒輪到的組在實驗桌做手動滴定，同一批樣品各 3 重複。KHP 標定 NaOH 由各組手動完成，PASCO 用全班共用的一瓶已標定 NaOH。每組把滴定曲線匯出成 CSV，回家用 Colab 找當量點。</p>
+      <h3>第 5 次　滴定四站（dTrite 1 台、PASCO 1 套）</h3>
+      <p>A dTrite（先秤水再滴定）、B 手動滴定管、C PASCO、D PAL-30S 測醋，4 站、每站約 45 分鐘；5 組時多出的一組在 B 站做盲樣重複，下一輪換手。</p>
+      <p>W4 只有一台 dTrite，多數人在旁邊看；這次每組輪到 A 站時，組內每人至少親手完成一次滴定。PASCO 用全班共用的一瓶已標定 NaOH，曲線匯出成 CSV。</p>
     </div>
     <div class="card">
-      <h3>W2 水活性儀（1 台）</h3>
-      <p>開場由助教示範 4 種飽和鹽驗證，全班共用結果。</p>
-      <p>每組只量 3 個樣品，每次約 5–10 分鐘，每組約 30 分鐘；其他時間做烘箱法與紅外線水分計。</p>
+      <h3>第 7 次　凱氏法（消化 8 管、蒸餾 1 套）</h3>
+      <p>消化爐只能放 8 管：5 組盲樣各 1 管＋空白＋硫酸銨回收＋高筋麵粉，剛好滿。由助教在上課前完成消化，課堂時間只留蒸餾與滴定。</p>
+      <p>蒸餾每管約 10 分鐘輪流；沒輪到的組做 HCl 標定與換算係數計算。</p>
     </div>
     <div class="card">
-      <h3>W5 凱氏法（1 套）</h3>
-      <p>消化爐只能放 8 管：5 組盲樣各 1 管 + 1 空白 + 1 硫酸銨回收 + 1 高筋麵粉 = 8 管，一次上架剛好滿。因此盲樣蛋白質每組只有 1 個數值，W8 的組內重複性改用助教的重複測定。</p>
-      <p>消化約 2 小時，空檔講解換算係數與三聚氰胺案例；蒸餾輪流，每管約 8–10 分鐘。</p>
-    </div>
-    <div class="card">
-      <h3>光譜週（W10–W16）</h3>
-      <p>拉曼 2 台（532、785）加上 12 台 NIR（Avantes 2、InnoSpectra 4、NeoSpectra 3、NIRONE 3；另 1 台 Avantes 待到貨），5 組同時量測不需輪站。</p>
-      <p>每組固定一台 NIR，整學期不換，W13 與 W16 就能比較不同儀器建出的模型。分配時看量測模式：液體（W13）用能裝比色槽的穿透式配置，粉末（W15）用漫反射配置；波段與模式請依各儀器規格表核對。</p>
+      <h3>光譜（第 9–12 次）</h3>
+      <p>拉曼 2 台（532、785）加上 12 台 NIR（Avantes 2、InnoSpectra 4、NeoSpectra 3、NIRONE 3；另 1 台 Avantes 待到貨），每組固定一台 NIR，不需排隊；只有拉曼要輪用。</p>
+      <p>分配時看量測模式：液體用能裝比色槽的穿透式配置，粉末（代糖）用漫反射配置；波段與模式請依各儀器規格表核對。</p>
     </div>
   </div>
-  <p class="warn">W6 Soxhlet 在 4 小時內偏緊：建議萃取 3 小時，或由助教提前開始、學生接手收尾。</p>
 </section>
 
 <section>
