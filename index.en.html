@@ -165,6 +165,12 @@ W.forEach(w => {
     <div><h3>${t}</h3><p>${d}</p>${links.length ? `<div class="links">${links.join("")}</div>` : ""}</div>
     ${st}</div>`;
 });
+// Extra session: stand-alone, not tied to a week
+html += `<div class="part">Extra session: stand-alone (can follow W4)</div>`;
+html += `<div class="wk" id="wx-vinegar">
+    <div class="n">Extra</div>
+    <div><h3>Vinegar acidity: ACID181 vs NaOH titration (+ PAL-30S refractometer)</h3><p>Weight dilution, weighed titration, shared-instrument QC; what salt, sugar and dark colour do to a conductivity meter and a refractometer; Bland–Altman with the manufacturer's spec bands</p><div class="links"><a class="main" href="labs/wx_vinegar_acid/index.html" hreflang="zh-Hant">Lab slides (Chinese only)</a><a href="labs/w04_titration/index.en.html">W4 module home</a></div></div>
+    <span class="st ok">Online</span></div>`;
 document.getElementById("weeks").innerHTML = html;
 </script>
 
