@@ -2209,7 +2209,7 @@ window.LAB_STORYBOARD = {"scene_map": ["預測", "曲線", "酚酞", "斜率", "
   function leave() {
     const msg = { type: 'w04-lab-goto' };
     if (window.parent !== window) window.parent.postMessage(msg, location.origin === 'null' ? '*' : location.origin);
-    else location.href = 'index.html';
+    else location.href = 'slides.html';
   }
 
   el.play.addEventListener('click', () => running ? pause() : play());

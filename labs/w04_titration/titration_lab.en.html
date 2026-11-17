@@ -2346,7 +2346,7 @@ window.LAB_STORYBOARD = {"scene_map": ["Predict", "Curve", "Phenolphthalein", "S
   function leave() {
     const msg = { type: 'w04-lab-goto' };
     if (window.parent !== window) window.parent.postMessage(msg, location.origin === 'null' ? '*' : location.origin);
-    else location.href = 'index.en.html';
+    else location.href = 'slides.en.html';
   }
 
   el.play.addEventListener('click', () => running ? pause() : play());

@@ -9,5 +9,7 @@
   `ffmpeg -i <key>.mp3 -af atempo=0.95 -ac 1 -ar 44100 -b:a 64k ../../../labs/w04_titration/audio/ba_<key>.mp3`
 - 檢查：`PYTHONUTF8=1 python scripts/vo_tools.py check scripts/vo/w04ba`
 - 投影片產生器：`scripts/build_w04_bland_altman.py`（只在本機，`.gitignore` 的 `build_*.py` 不收；從 BA 投影片加入前的版本重建：
-  `git restore --source=5279c8c^ -- labs/w04_titration/index.html labs/w04_titration/index.en.html` 後執行）。
+  `git show 5279c8c^:labs/w04_titration/index.html > labs/w04_titration/slides.html`、
+  `git show 5279c8c^:labs/w04_titration/index.en.html > labs/w04_titration/slides.en.html` 後執行）。
+  2026-11-17 起簡報從 `index*.html` 搬到 `slides*.html`，`index.html` 改為 W4 模組首頁。
 Voice generated with ElevenLabs.
