@@ -79,20 +79,20 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
   <div class="kicker">食品分析實驗 · W4 教學模組</div>
   <h1>可滴定酸度：手動 vs 自動滴定</h1>
   <p class="sub">KHP 標定 NaOH · 酚酞終點 · PASCO 電位滴定 · 數位滴定器 · Bland–Altman 方法比較</p>
-  <div class="meta"><span>⏱ 4 小時課程</span><span>🧪 白醋、柳橙汁</span><span>📚 Nielsen <i>Food Analysis</i> Ch22</span></div>
+  <div class="meta"><span>⏱ 4 小時課程</span><span>🧪 白醋、柳橙汁（本班 11/17 改做檸檬酸，見下方紀錄）</span><span>📚 Nielsen <i>Food Analysis</i> Ch22</span></div>
   <p class="small noprint"><a href="index.en.html" hreflang="en" style="font-weight:700">English</a> · <a href="../../index.html">← 課程首頁</a></p>
 </header>
 
 <div class="hero">
   <div class="box key">
     <p><span class="tag">這週的問題</span><b>兩杯 pH 都是 3.5 的飲料，酸度一樣嗎？</b></p>
-    <p>pH 反映氫離子活性。可滴定酸度由樣品滴到指定終點時消耗的鹼量換算，可用於風味與熟度的判讀。這週用 NaOH 滴定把它量出來，並比較不同滴定方法量出來的數字能不能互換。</p>
+    <p>pH 反映溶液中游離 H⁺ 的活度，也就是當下已經解離出來的酸。可滴定酸度是樣品滴到指定終點時用掉的鹼量，通常換算成主要酸的 %（醋酸、檸檬酸…），跟酸味、保存性、果汁成熟度有關。這週用 NaOH 滴定把它量出來，並比較不同滴定方法量出來的數字能不能互換。</p>
   </div>
   <div>
     <p><b>上完 W4，你應該會：</b></p>
     <ul>
       <li>用 KHP 標定 NaOH，並用 N × V × 當量重 / (W × 1000) × 100 算 % 酸</li>
-      <li>看懂滴定曲線：緩衝區、半當量點、當量點與反曲點</li>
+      <li>看懂滴定曲線：緩衝區、半當量點、當量點，以及三種終點（酚酞、指定 pH、最大斜率）</li>
       <li>完成手動（酚酞）與 PASCO（電位）滴定各一次</li>
       <li>用 Bland–Altman 圖判斷兩種方法是否一致，而不是只看 r</li>
     </ul>
@@ -100,22 +100,31 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
   </div>
 </div>
 
+<h2>本班紀錄（11/17）</h2>
+<div class="box">
+  <ul>
+    <li><b>做了什麼：</b>用 KHP 標定 NaOH，再滴定無水檸檬酸（2 g/100 mL），取樣 5、10、20 mL。NaOH 用 DLAB dTrite 數位滴定器送液，終點看酚酞淡粉紅維持 30 秒。</li>
+    <li><b>數字：</b>NaOH 配成 0.1015 N，KHP 標定只有 <mark>0.0908 N</mark>，低了約 10%。每 mL 樣品用掉約 3.36–3.40 mL NaOH，回收率約 97.5%。</li>
+    <li><b>下一次先猜：</b>0.1015 和 0.0908 差了約 10%，其中有多少是 dTrite 出液的偏差？第 5 次盲樣挑戰的 A 站會先秤水檢查 dTrite，用數據回答這題。<a href="../../plan.html">看第 5 次安排 →</a></li>
+  </ul>
+</div>
+
 <h2>學習路徑</h2>
 <div class="path">
   <section class="stage">
-    <div class="when">① 課前（約 30 分鐘）</div>
+    <div class="when">① 課前（約 10 分鐘）</div>
     <ul>
       <li><a href="https://youtu.be/QDBgHWn-DMQ" target="_blank" rel="noopener">導覽影片 ↗</a><span class="d">2 分鐘：滴定曲線、終點、% 酸怎麼算</span></li>
-      <li><a href="https://tai-shengyeh.github.io/food-analysis-decks/ch22_acidity_soil/index.html#titration-endpoint" target="_blank" rel="noopener">CH22 終點動畫：滴定時，哪一滴才該停？ ↗</a><span class="d">1 分 38 秒。先看酚酞顏色與指定 pH 的判準，再進滴定模擬。實驗中的 PASCO 最大斜率判準依 W4 講義。</span></li>
-      <li><a href="https://tai-shengyeh.github.io/food-analysis-decks/ch22_acidity_soil/index.html" target="_blank" rel="noopener">Ch22 pH 與可滴定酸度 ↗</a><span class="d">理論複習與完整酸度報告練習</span></li>
-      <li><a href="titration_lab.html">滴定實驗室</a><span class="d">互動模擬：預測 → 觀察 → 解釋</span></li>
-      <li><a href="dtrite_student.html">dTrite 學生教學＋模擬器</a><span class="d">15 分鐘，含 6 題自我檢測</span></li>
+      <li><b>帶一題進教室</b><span class="d">兩杯起始 pH 一樣、取樣量也一樣，滴到同一終點時，哪杯需要更多 NaOH？你怎麼知道？寫一句答案。</span></li>
+      <li><a href="https://tai-shengyeh.github.io/food-analysis-decks/ch22_acidity_soil/index.html#titration-endpoint" target="_blank" rel="noopener">CH22 終點動畫：滴定時，哪一滴才該停？ ↗</a><span class="d">選做，1 分 38 秒。先看酚酞顏色與指定 pH 的判準，再進滴定模擬。實驗中的 PASCO 最大斜率判準依 W4 講義。</span></li>
+      <li><a href="titration_lab.html">滴定實驗室</a><span class="d">選做：互動模擬，預測 → 觀察 → 解釋</span></li>
+      <li><a href="https://tai-shengyeh.github.io/food-analysis-decks/ch22_acidity_soil/index.html" target="_blank" rel="noopener">Ch22 pH 與可滴定酸度 ↗</a><span class="d">需要時再查的理論</span></li>
     </ul>
   </section>
   <section class="stage">
     <div class="when">② 課堂</div>
     <ul>
-      <li><a href="slides.html">W4 課堂簡報</a><span class="d">原理、標定、PASCO 輪站、Bland–Altman 互動頁</span></li>
+      <li><a href="slides.html">W4 課堂簡報</a><span class="d">原理、標定、PASCO 輪站；Bland–Altman 必修只有一頁：算一個點、讀一張圖、寫一句判斷</span></li>
       <li><a href="https://www.youtube.com/watch?v=ZCKqbXU0uYs&amp;t=596s" target="_blank" rel="noopener">養樂多產線 QC ↗</a><span class="d">可滴定酸度＋Brix（09:56–11:25）</span></li>
       <li><a href="https://www.youtube.com/watch?v=zFI6oTQLxhM&amp;t=758s" target="_blank" rel="noopener">優格產線 QC ↗</a><span class="d">pH 4.4、可滴定酸度 0.9%（12:38–13:39）</span></li>
     </ul>
@@ -123,6 +132,7 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
   <section class="stage">
     <div class="when">③ 實驗</div>
     <ul>
+      <li><a href="dtrite_student.html">dTrite 學生教學＋模擬器</a><span class="d">上機前 15 分鐘：先在模擬器滴一次（自我檢測不計分）</span></li>
       <li><a href="slides.html">主實驗：手動 vs PASCO</a><span class="d">步驟、分工與輪站在簡報內</span></li>
       <li><a href="burette_compare.html">補充實驗：玻璃滴定管 vs dTrite</a><span class="d">秤重校正、KHP 標定、樣品滴定、紀錄表</span></li>
       <li><a href="dtrite_guide.html">dTrite 操作卡</a><span class="d">按鍵、排氣、回收清洗、疑難排解（TA 必讀）</span></li>
@@ -131,7 +141,7 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
   <section class="stage">
     <div class="when">④ 數據分析</div>
     <ul>
-      <li><a href="../../excel/EX04_titration.xlsx">Excel 練習檔 EX04 ⬇</a><span class="d">標定、% 酸、Bland–Altman、配對 t</span></li>
+      <li><a href="../../excel/EX04_titration.xlsx">Excel 練習檔 EX04 ⬇</a><span class="d">標定、% 酸、Bland–Altman；配對 t 檢定為延伸</span></li>
       <li><a href="https://colab.research.google.com/github/Tai-ShengYeh/food-analysis-lab/blob/main/notebooks/NB04_titration.ipynb" target="_blank" rel="noopener">Colab NB04 ↗</a><span class="d">同一套分析的 Python 版</span></li>
     </ul>
   </section>
@@ -141,10 +151,10 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
 <p>這週的兩個實驗都是「方法比較」，但改變的東西不一樣。先想清楚改了什麼，才知道該預期什麼結果。</p>
 <div class="tw"><table>
 <tr><th>比較</th><th class="l">改變的是</th><th class="l">不變的是</th><th class="l">預期</th><th>在哪做</th></tr>
-<tr><td><b>手動 vs PASCO</b></td><td class="l">終點怎麼判斷：酚酞變色 vs pH 曲線反曲點</td><td class="l">同一瓶 NaOH、同一批樣品</td><td class="l">終點定義不同，可能出現系統偏差（bias）</td><td><a href="slides.html">主實驗</a></td></tr>
+<tr><td><b>手動 vs PASCO</b></td><td class="l">終點怎麼判斷：酚酞變色 vs pH 曲線最大斜率（dpH/dV 峰）</td><td class="l">同一瓶 NaOH、同一批樣品</td><td class="l">終點定義不同，可能出現系統偏差（bias）</td><td><a href="slides.html">主實驗</a></td></tr>
 <tr><td><b>玻璃管 vs dTrite</b></td><td class="l">NaOH 怎麼送、體積怎麼讀：彎月面 vs 螢幕</td><td class="l">終點（都用酚酞淡粉紅 30 秒）</td><td class="l">bias ≈ 0；差在精密度與操作</td><td><a href="burette_compare.html">補充實驗</a></td></tr>
 </table></div>
-<p class="small">兩個比較都用 Bland–Altman 圖判讀：bias（平均差）回答「有沒有系統性偏高或偏低」，LoA（一致界線）回答「單次差異最多可能多大」，再和事先訂的容許差比較。</p>
+<p class="small">兩個比較都用 Bland–Altman 圖判讀：bias（平均差）回答「有沒有系統性偏高或偏低」；LoA（一致界線）回答「單一樣品的差可能多大」，在差值近似常態時，預期約 95% 的配對差值落在這個範圍。最後和事先訂好的容許差比較。差值是兩個 % 酸相減，單位是「百分點」，不是相對百分差。</p>
 
 <h2>儀器</h2>
 <div class="tw"><table>
@@ -162,9 +172,8 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
 
 <h2>上課前確認</h2>
 <ul class="check">
-  <li>看完 2 分鐘導覽影片，能說出「pH 和可滴定酸度差在哪」</li>
-  <li>在滴定實驗室做完一次「預測 → 觀察 → 解釋」</li>
-  <li>dTrite 模擬器完整滴完一瓶白醋，6 題自我檢測全對</li>
+  <li>看完 2 分鐘導覽影片</li>
+  <li>寫下一句答案帶進教室：「兩杯起始 pH 一樣、取樣量也一樣，滴到同一終點時，哪杯需要更多 NaOH？你怎麼知道？」下課前用自己的滴定量再回答一次</li>
   <li>帶工程計算機；護目鏡、手套、實驗衣</li>
 </ul>
 
