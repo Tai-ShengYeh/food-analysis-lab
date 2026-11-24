@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>醋的電位滴定講義</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--ink:#1e293b;--ink-2:#475569;--ink-3:#94a3b8;--line:#e2e8f0;--accent:#0f766e;--accent-2:#db2777;--warn:#b45309;--mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-serif;font-size:17px;line-height:1.75}
+header{background:linear-gradient(135deg,#0f766e,#0369a1);color:#fff;padding:24px 16px 20px}
+header .w,main{max-width:900px;margin:0 auto}
+header h1{margin:0;font-size:1.6rem;font-weight:900}
+header p{margin:4px 0 0;opacity:.92}
+main{padding:18px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+h2{font-size:1.2rem;margin:0 0 8px;color:var(--accent)}
+h3{font-size:1.02rem;margin:14px 0 4px}
+table{border-collapse:collapse;width:100%;margin:8px 0}
+th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;font-size:.95rem;vertical-align:top}
+th{color:var(--ink-3);font-weight:400}
+td.n{text-align:right;font-family:var(--mono)}
+.formula{font-family:var(--mono);background:#f0fdfa;border-left:3px solid var(--accent);padding:10px 14px;border-radius:6px;font-size:.92rem;overflow-x:auto}
+.warn{background:#fffbeb;border-left:3px solid var(--warn);padding:10px 14px;border-radius:6px}
+ol li,ul li{margin:4px 0}
+.tag{display:inline-block;font-size:.8rem;background:#ccfbf1;color:#115e59;border-radius:999px;padding:1px 10px;margin-right:6px}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btns a{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;border-radius:8px;padding:8px 16px;font-weight:700}
+.btns a.ghost{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.toc{columns:2;font-size:.95rem}
+.toc a{color:var(--accent)}
+.muted{color:var(--ink-3);font-size:.88rem}
+@media (max-width:640px){.toc{columns:1}}
+@media print{
+  body{background:#fff;font-size:11pt;line-height:1.55}
+  header{background:none;color:#000;padding:0 0 6px;border-bottom:2px solid #000}
+  .card{border:none;padding:4px 0;margin:0 0 8px;break-inside:avoid}
+  .btns,.noprint{display:none}
+  @page{size:A4;margin:14mm}
+}
+</style>
+</head>
+<body>
+<header><div class="w">
+  <h1>醋的電位滴定：用 pH 計找終點</h1>
+  <p>五專 · 食品分析實驗 · 樣品同 11/24（v10、v11、v62、檸檬醋）· dTrite 送液 ＋ pH 電極讀值</p>
+</div></header>
+<main>
+
+<div class="card noprint">
+  <div class="btns">
+    <a href="ph_titration_record.xlsx" download>⬇ 下載紀錄表（Excel）</a>
+    <a class="ghost" href="hw_1124_5yr.html">等待時：課堂作業</a>
+    <a class="ghost" href="results_1124_5yr.html">回顧：11/24 酚酞結果</a>
+  </div>
+  <p class="muted" style="margin:10px 0 0">列印講義：瀏覽器「列印」即可，按鈕列不會印出。</p>
+</div>
+
+<div class="card">
+  <h2>今天要回答的問題</h2>
+  <ol>
+    <li>v11 巴沙米克醋顏色很深，11/24 第 1 次<b>看錯終點</b>。改用 pH 計判斷，深色還會不會害我們出錯？</li>
+    <li>同一條滴定曲線上，<b>pH 8.20</b>（酚酞變色點）和<b>最大斜率</b>（當量點）差多少？</li>
+    <li>電位滴定的結果，和 11/24 用酚酞做的結果一致嗎？</li>
+  </ol>
+  <p class="muted">先預測：醋酸的當量點 pH 會比 8.20 高還是低？把答案寫在紀錄紙角落，下課前對答案。</p>
+</div>
+
+<div class="card">
+  <h2>原理：為什麼用 pH 計就不怕深色</h2>
+  <p>NaOH 一滴一滴加進醋裡，pH 會慢慢上升；接近<b>當量點</b>（醋酸剛好被中和完）時，一點點 NaOH 就讓 pH 猛跳好幾個單位。把每一點的 <b>(V, pH)</b> 畫成滴定曲線，最陡的地方就是當量點。這個方法只看 pH 讀值，<b>不看顏色</b>，所以深色醋、果汁也能做。</p>
+  <ul>
+    <li><b>V(8.20)</b>：曲線跨過 pH 8.20 的體積，對應酚酞變色，跟 11/24 的方法同一個標準。</li>
+    <li><b>V_eq</b>：ΔpH/ΔV（斜率）最大那一段，是化學上的當量點；醋酸的當量點約 pH 8.7。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>上機前檢查（每瓶都要做）</h2>
+  <table>
+    <tr><th>項目</th><th>標準</th><th>不合格怎麼辦</th></tr>
+    <tr><td>pH 7.00 緩衝液查核</td><td>讀值 6.90–7.10</td><td>告訴老師重新校正，不要自己按校正</td></tr>
+    <tr><td>電極</td><td>玻璃球完全浸入液面；攪拌子碰不到電極</td><td>加去 CO₂ 水，或調整電極高度</td></tr>
+    <tr><td>dTrite</td><td>管路沒有氣泡；螢幕已歸零</td><td>告訴助教排氣（不要自己按 ⟲）</td></tr>
+    <tr><td>攪拌</td><td>液面有小漩渦、不濺出</td><td>調慢攪拌盤</td></tr>
+  </table>
+  <p class="warn">電極不能乾掉：沒在量的時候泡在 pH 7 緩衝液或保存液。沖洗後用拭紙<b>輕吸</b>乾，不要擦玻璃球。</p>
+</div>
+
+<div class="card">
+  <h2>步驟（一瓶約 20 分鐘）</h2>
+  <ol>
+    <li><b>取樣</b>：用定量吸管取醋的稀釋液（10 mL 醋已定容 100 mL）到 150 mL 燒杯，取樣量照老師指定（<b>20 或 25 mL</b>），再加約 50 mL 去 CO₂ 水。</li>
+    <li><b>放好</b>：放攪拌子、開攪拌，裝上電極，dTrite 管尖貼著燒杯內壁。</li>
+    <li><b>起點</b>：dTrite 歸零，記下 V = 0.00 mL 時的 pH。</li>
+    <li><b>加液、記錄</b>：照下表的步距加 NaOH；每次加完等 pH 穩定（10 秒內變化 &lt; 0.02）再記「螢幕累計體積」和 pH。</li>
+    <li><b>不要讓液滴掛在管尖</b>：每次加完，讓液滴碰杯壁流下。0.10 mL 區段掛一滴就差很多。</li>
+    <li><b>滴到 pH 約 10.5 停</b>。</li>
+    <li><b>對照目視</b>：加 3 滴酚酞，再慢慢加 NaOH 到你看到淡粉紅，記下體積（v11 特別重要）。</li>
+    <li><b>收尾</b>：沖洗電極、泡回 pH 7 緩衝液；dTrite 讀數抄完才可以碰旋鈕。</li>
+  </ol>
+
+  <h3>加液步距</h3>
+  <table>
+    <tr><th>區段（V_exp＝預期終點）</th><th>每次加</th><th>大約點數</th></tr>
+    <tr><td>0 → V_exp − 3 mL</td><td>2 mL</td><td class="n">8–12</td></tr>
+    <tr><td>V_exp − 3 → V_exp − 1</td><td>0.5 mL</td><td class="n">4</td></tr>
+    <tr><td><b>V_exp − 1 → V_exp + 1</b></td><td><b>0.10 mL</b></td><td class="n">20</td></tr>
+    <tr><td>V_exp + 1 → pH 約 10.5</td><td>0.5 mL</td><td class="n">4–6</td></tr>
+  </table>
+
+  <h3>各瓶的預期終點 V_exp（mL，由 11/24 結果推算，N ≈ 0.089）</h3>
+  <table>
+    <tr><th>樣品</th><th>取 25 mL 稀釋液</th><th>取 20 mL 稀釋液</th></tr>
+    <tr><td>v10 尼諾巴薩米克醋</td><td class="n">27.7</td><td class="n">22.2</td></tr>
+    <tr><td>v11 凱薩經典巴沙米克醋</td><td class="n">28.4</td><td class="n">22.7</td></tr>
+    <tr><td>v62 五賢醋</td><td class="n">15.7</td><td class="n">12.6</td></tr>
+    <tr><td>檸檬醋</td><td class="n">13.6</td><td class="n">10.9</td></tr>
+  </table>
+  <p class="muted">預期值只是幫你決定什麼時候開始改成 0.10 mL；pH 已經開始快速上升，就提早改小步距。</p>
+</div>
+
+<div class="card">
+  <h2>算終點與酸度</h2>
+  <p>把數據填進<a href="ph_titration_record.xlsx" download>紀錄表</a>，下面的值會自動算出來；也要會手算。</p>
+  <div class="formula">V(8.20) ＝ V₁ ＋ (8.20 − pH₁) ÷ (pH₂ − pH₁) × (V₂ − V₁)<br>
+  　V₁、V₂：跨過 pH 8.20 的前後兩點；兩點體積差必須 ≤ 0.20 mL，否則該次作廢<br><br>
+  V_eq ＝ ΔpH/ΔV 最大那一段的中點體積　（ΔpH/ΔV ＝ 相鄰兩點的 pH 差 ÷ 體積差）<br><br>
+  酸度（g/100 mL，以醋酸計）＝ N × V × 60.05 ÷ 1000 ÷ 原醋 mL × 100<br>
+  　原醋 mL ＝ 10 × 取樣稀釋液 mL ÷ 100（取 20 mL → 2.0；取 25 mL → 2.5）</div>
+  <h3>例（模擬數據，紀錄表「範例」工作表）</h3>
+  <p>22.60 mL 時 pH 7.10，22.70 mL 時 pH 8.49（兩點差 0.10 mL ✓）<br>
+  V(8.20) ＝ 22.60 ＋ (8.20 − 7.10) ÷ (8.49 − 7.10) × 0.10 ＝ <b>22.68 mL</b><br>
+  酸度 ＝ 0.0892 × 22.68 × 60.05 ÷ 1000 ÷ 2.0 × 100 ＝ <b>6.07 g/100 mL</b></p>
+  <p class="muted">同一瓶兩次的相對差（最大 − 最小）÷ 平均要 ≤ 1.0%，超過就做第 3 次。</p>
+</div>
+
+<div class="card">
+  <h2>分工與時程</h2>
+  <h3>上機小組（3–4 人）</h3>
+  <table>
+    <tr><th>角色</th><th>負責</th></tr>
+    <tr><td>操作</td><td>轉 dTrite 加液、讓液滴碰壁、喊出累計體積</td></tr>
+    <tr><td>讀值</td><td>盯 pH 計，穩定後喊出 pH</td></tr>
+    <tr><td>紀錄</td><td>即時輸入紀錄表，看曲線，提醒什麼時候改 0.10 mL</td></tr>
+    <tr><td>品管</td><td>計時 10 秒穩定、做 pH 7 查核、檢查管尖沒有掛滴</td></tr>
+  </table>
+  <h3>四節課（一套 dTrite ＋ pH 計，一瓶約 20 分鐘）</h3>
+  <table>
+    <tr><th>時間</th><th>主站：dTrite ＋ pH</th><th>副站：玻璃滴定管</th><th>其他同學</th></tr>
+    <tr><td>第 1 節 前 20 分</td><td colspan="3">老師講解＋示範空白滴定（75 mL 去 CO₂ 水滴到 pH 8.20）</td></tr>
+    <tr><td>第 1 節 後 30 分</td><td>第 1 組 <b>v11 #1</b></td><td>第 4 組 KHP 標定 ×3</td><td>課堂作業</td></tr>
+    <tr><td>第 2 節</td><td>第 1 組 <b>v11 #2</b>；第 2 組 <b>v10 #1</b></td><td>第 3 組預測曲線形狀</td><td>課堂作業</td></tr>
+    <tr><td>第 3 節</td><td>第 2 組 <b>v10 #2</b>；第 3 組 <b>v62</b></td><td>—</td><td>課堂作業</td></tr>
+    <tr><td>第 4 節 前 25 分</td><td>第 4 組 <b>檸檬醋</b></td><td>—</td><td>課堂作業</td></tr>
+    <tr><td>第 4 節 後 25 分</td><td>機動：兩次差 &gt; 1% 的那瓶重做；都合格就用 KHP 驗 dTrite</td><td colspan="2">全班：比較兩種終點、和 11/24 比較、討論</td></tr>
+  </table>
+  <p class="muted">v11 排第一、做兩次：它是今天要回答的主要問題，出狀況還有時間補。分組依老師現場安排。</p>
+</div>
+
+<div class="card">
+  <h2>常見錯誤</h2>
+  <ul>
+    <li><b>沒等 pH 穩定就記</b>：接近終點時電極反應變慢，讀太早會讓曲線往右偏。</li>
+    <li><b>終點附近步距太大</b>：跨 8.20 的兩點差 &gt; 0.20 mL，該次作廢；V_eq 也會不準。</li>
+    <li><b>管尖掛滴</b>：數字顯示已經加了，NaOH 卻還沒進燒杯。</li>
+    <li><b>NaOH 吸了 CO₂</b>：終點後曲線拖尾、斜率峰變寬。用去 CO₂ 水，dTrite 瓶口要有保護管。</li>
+    <li><b>檸檬醋曲線比較緩</b>：檸檬酸有三個可解離的 H⁺（最後一個 pKa 約 6.4），曲線沒有純醋酸那麼陡，但還是只看到一個終點 —— 下課前討論為什麼。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>下課前要交</h2>
+  <ul>
+    <li>紀錄表（Excel）：每次滴定一張工作表，總表自動彙整。</li>
+    <li>每組一句話：你們那瓶 V_eq 和 V(8.20) 差多少？v11 用 pH 計做，和 11/24 目視的結果差多少？</li>
+  </ul>
+</div>
+
+</main>
+</body>
+</html>

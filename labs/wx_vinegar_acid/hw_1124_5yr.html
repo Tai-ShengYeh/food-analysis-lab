@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>醋酸度課堂作業</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script type="module" src="assess_firebase.js"></script>
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--ink:#1e293b;--ink-2:#475569;--ink-3:#94a3b8;--line:#e2e8f0;--accent:#4f46e5;--accent-2:#db2777;--ok:#059669;--bad:#dc2626;--warn:#b45309;--mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-serif;font-size:17px;line-height:1.7}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:22px 16px 18px}
+header .w{max-width:860px;margin:0 auto}
+header h1{margin:0;font-size:1.5rem;font-weight:900}
+header p{margin:4px 0 0;opacity:.9;font-size:.92rem}
+nav{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
+nav .w{max-width:860px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:8px 12px}
+nav button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-size:.9rem;cursor:pointer;color:var(--ink-2)}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+nav button .d{margin-left:4px}
+main{max-width:860px;margin:0 auto;padding:18px 16px 80px}
+section.task{display:none}section.task.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px;margin-bottom:16px}
+h2{font-size:1.25rem;margin:0 0 4px}
+.sub{color:var(--ink-3);font-size:.85rem;margin-bottom:10px}
+.data{font-family:var(--mono);background:#eef2ff;border-radius:8px;padding:10px 14px;margin:10px 0;line-height:1.9}
+table{border-collapse:collapse;margin:8px 0}
+th,td{border-bottom:1px solid var(--line);padding:5px 12px;text-align:right;font-size:.95rem}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--ink-3);font-weight:400}
+.q{border-top:1px dashed var(--line);padding-top:12px;margin-top:12px}
+.q .lab{font-weight:700}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
+input[type=number],input[type=text],textarea{font:inherit;font-family:var(--mono);padding:8px 10px;border:2px solid var(--line);border-radius:8px;width:11em}
+textarea{width:100%;font-family:inherit;min-height:80px}
+input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+.unit{color:var(--ink-3);font-size:.9rem}
+button.chk{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer}
+button.sol{background:#fff;color:var(--warn);border:1px solid var(--warn);border-radius:8px;padding:7px 12px;font:inherit;font-size:.88rem;cursor:pointer;display:none}
+.fb{font-weight:700;font-size:.95rem}
+.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}
+.solbox{display:none;background:#fffbeb;border-left:3px solid var(--warn);padding:8px 12px;margin-top:8px;font-family:var(--mono);font-size:.9rem;white-space:pre-line}
+.opt{display:block;margin:4px 0;cursor:pointer}
+.opt input{margin-right:8px;accent-color:var(--accent)}
+.hint{color:var(--ink-2);font-size:.9rem}
+.formula{font-family:var(--mono);font-size:.9rem;color:var(--ink-2)}
+.score{font-family:var(--mono);font-size:1.6rem;font-weight:700;color:var(--accent)}
+.lock{color:var(--ink-3)}
+.navbtns{display:flex;justify-content:space-between;margin-top:8px}
+.printbtn{position:absolute;right:16px;top:64px;background:#fff;color:var(--accent);border:none;border-radius:999px;padding:6px 14px;font:inherit;font-size:.9rem;font-weight:700;cursor:pointer}
+header .w{position:relative}
+#print{display:none}
+@media print{
+  body{background:#fff;font-size:11.5pt;line-height:1.55}
+  body>*:not(#print){display:none!important}
+  #print{display:block}
+  #print h1{font-size:15pt;margin:0 0 2px}
+  #print .meta{font-size:10pt;color:#444;margin-bottom:8px;border-bottom:1.5px solid #000;padding-bottom:4px}
+  #print .pt{break-inside:avoid;margin:10px 0 4px;border:1px solid #999;border-radius:6px;padding:6px 10px}
+  #print h2{font-size:12.5pt;margin:0 0 4px}
+  #print table{border-collapse:collapse;margin:4px 0}
+  #print th,#print td{border:1px solid #999;padding:2px 10px;font-size:10.5pt}
+  #print .pq{break-inside:avoid;margin-top:6px}
+  #print .work{border:1px dashed #aaa;height:2.6cm;margin:4px 0;border-radius:4px}
+  #print .work.tall{height:4.2cm}
+  #print .ans{margin:2px 0 6px}
+  #print .opt{display:block;margin:1px 0 1px 1em}
+  #print .lines div{border-bottom:1px solid #999;height:.9cm}
+  #print .hint,#print .formula{font-size:10pt;color:#333}
+  @page{size:A4;margin:14mm 14mm}
+}
+.navbtns button{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer}
+</style>
+</head>
+<body>
+<header><div class="w">
+  <h1>醋酸度・課堂作業</h1>
+  <p>五專 · 等待上機時做 · 每段 10–15 分鐘，隨時可以離開去做實驗，進度會自動保存</p>
+  <button class="printbtn" onclick="printMine()">🖨 列印我的題目</button>
+</div></header>
+<nav><div class="w" id="tabs"></div></nav>
+<main id="main"><div class="card lock">正在載入…（若一直沒出現學號視窗，請重新整理）</div></main>
+
+<script>
+// ───────── 工具 ─────────
+function cyrb(str){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);return h1>>>0}
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const r2=x=>Math.round(x*100)/100, r4=x=>Math.round(x*1e4)/1e4, r5=x=>Math.round(x*1e5)/1e5;
+const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+const sd=a=>{const m=mean(a);return Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/(a.length-1))};
+const f=(x,d)=>x.toFixed(d);
+const CHAPTER='WX-VINEGAR-HW1';
+const QCRIT={3:[0.941,0.970],4:[0.765,0.829],5:[0.642,0.710],6:[0.560,0.625]};
+
+// ───────── 依學號產生變化題 ─────────
+function makeVariant(sid){
+  const R=mulberry(cyrb(sid+'|'+CHAPTER));
+  const v={seed:sid};
+  // A 標定
+  v.m=r4(0.7900+R()*0.0300); v.Ntrue=0.0880+R()*0.0040;
+  v.mmol=v.m*0.2/204.22*1000;
+  v.VA=[0,1,2].map(()=>r2(v.mmol/v.Ntrue*(1+(R()-0.5)*0.006)));
+  // B 醋酸度
+  v.NB=r5(0.0890+R()*0.0025); const tgt=4.0+R()*2.0;
+  v.VB=r2(tgt*2.5/100*1000/60.05/v.NB);
+  // C 三次
+  // 一半合格、一半不合格，且 RSD 離 1% 夠遠，避免四捨五入影響判斷
+  const wide=R()<0.5;
+  for(let k=0;k<200;k++){
+    v.VC=[0,1,2].map(()=>r2(v.VB*(1+(R()-0.5)*(wide?0.05:0.012))));
+    const rr=sd(v.VC)/mean(v.VC)*100; if(rr>=0.15&&(rr<0.8||rr>1.25))break;
+  }
+  // D Q 檢定（n=4）：可疑值＝兩端中間隙較大的那一端；該間隙至少是另一端的 2 倍；Q 離 0.829 至少 0.05
+  for(let k=0;k<500;k++){
+    const base=10+R()*20, s=0.04+R()*0.06, rej=R()<0.5, below=R()<0.5;
+    const cl=[0,1,2].map(()=>r2(base+(R()-0.5)*2*s));
+    const R0=Math.max(...cl)-Math.min(...cl); if(R0<0.03)continue;
+    const Qt=rej?0.88+R()*0.08:0.50+R()*0.25, g=Qt*R0/(1-Qt);
+    const sus=r2(below?Math.min(...cl)-g:Math.max(...cl)+g);
+    const all=[...cl,sus], srt=[...all].sort((a,b)=>a-b), range=srt[3]-srt[0];
+    if(range<=0)continue;
+    const gLo=srt[1]-srt[0], gHi=srt[3]-srt[2];
+    const big=Math.max(gLo,gHi), small=Math.min(gLo,gHi);
+    if(big<2*small+0.005)continue;                 // 可疑值要一眼看得出來
+    const Q=big/range; if(Math.abs(Q-0.829)<0.05)continue;
+    const susV=gHi>gLo?srt[3]:srt[0];
+    const ord=all.map(x=>[R(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+    v.VD=ord; v.sus=susV; v.Q=Q; v.drop=Q>0.829; break;
+  }
+  return v;
+}
+
+// ───────── 題目定義 ─────────
+function buildTasks(v){
+  const NA=mean(v.VA.map(x=>v.mmol/x));
+  const acidB=v.NB*v.VB*60.05/1000/2.5*100;
+  const aC=v.VC.map(x=>v.NB*x*60.05/1000/2.5*100), mC=mean(aC), sC=sd(aC), rC=sC/mC*100;
+  const rel=(e,t)=>x=>Math.abs(x-e)/Math.abs(e)<=t;
+  const abs=(e,t)=>x=>Math.abs(x-e)<=t;
+  return [
+  {id:'A',title:'A｜標定 NaOH',time:'約 12 分',intro:`
+    <p>KHP（鄰苯二甲酸氫鉀，204.22 g/mol）秤 <b>${f(v.m,4)} g</b>，溶解後定容 <b>100 mL</b>，每次取 <b>20 mL</b> 用 NaOH 滴定到酚酞淡粉紅。KHP 與 NaOH 1:1 反應。</p>
+    <table><tr><th>次數</th><th>V NaOH (mL)</th></tr>${v.VA.map((x,i)=>`<tr><td>${i+1}</td><td>${f(x,2)}</td></tr>`).join('')}</table>`,
+   qs:[
+    {id:'A1',lab:'A1. 每次滴定的 20 mL 裡有幾 mmol KHP？（4 位小數）',unit:'mmol',ok:rel(v.mmol,0.003),
+     sol:`KHP／次 = ${f(v.m,4)} × 20/100 = ${f(v.m*0.2,4)} g\n= ${f(v.m*0.2,4)} ÷ 204.22 × 1000 = ${f(v.mmol,4)} mmol`},
+    {id:'A2',lab:'A2. 三次各算一個 N，再取平均：N = ？（5 位小數）',unit:'M',ok:rel(NA,0.003),
+     sol:v.VA.map((x,i)=>`N${i+1} = ${f(v.mmol,4)} ÷ ${f(x,2)} = ${f(v.mmol/x,5)}`).join('\n')+`\n平均 N = ${f(NA,5)} M`}]},
+  {id:'B',title:'B｜算醋酸度',time:'約 12 分',intro:`
+    <p>NaOH 已標定為 <b>N = ${f(v.NB,5)} M</b>。取 <b>10 mL</b> 醋到 100 mL 定量瓶加水到刻度，再取 <b>25 mL</b> 稀釋液滴定，用掉 NaOH <b>${f(v.VB,2)} mL</b>。醋酸 60.05 g/mol，與 NaOH 1:1。</p>`,
+   qs:[
+    {id:'B1',lab:'B1. 每次滴定的 25 mL 稀釋液，相當於幾 mL 原醋？',unit:'mL',ok:abs(2.5,0.01),
+     sol:'10 mL × 25/100 = 2.5 mL 原醋'},
+    {id:'B2',lab:'B2. 醋的酸度（g/100 mL，以醋酸計）= ？（2 位小數）',unit:'g/100 mL',ok:rel(acidB,0.005),
+     sol:`NaOH = ${f(v.NB,5)} × ${f(v.VB,2)} = ${f(v.NB*v.VB,4)} mmol = 醋酸 mmol\n醋酸 = ${f(v.NB*v.VB,4)} × 60.05 = ${f(v.NB*v.VB*60.05,1)} mg\n酸度 = ${f(v.NB*v.VB*60.05/1000,4)} g ÷ 2.5 mL × 100 = ${f(acidB,3)} g/100 mL`}]},
+  {id:'C',title:'C｜精密度 SD・RSD',time:'約 12 分',intro:`
+    <p>同一瓶醋（條件同 B：N = ${f(v.NB,5)} M，每次 2.5 mL 原醋）滴了三次：</p>
+    <table><tr><th>次數</th><th>V NaOH (mL)</th></tr>${v.VC.map((x,i)=>`<tr><td>${i+1}</td><td>${f(x,2)}</td></tr>`).join('')}</table>
+    <p class="formula">SD = √[ Σ(xᵢ − x̄)² ÷ (n − 1) ]　　RSD = SD ÷ x̄ × 100%</p>
+    <p class="hint">先把三次各自換成酸度，<b>保留 4 位小數</b>再算 SD；太早四捨五入，SD 會差很多。</p>`,
+   qs:[
+    {id:'C1',lab:'C1. 三次酸度的平均 x̄（g/100 mL，2 位小數）',unit:'g/100 mL',ok:rel(mC,0.005),
+     sol:aC.map((a,i)=>`第 ${i+1} 次：${f(v.NB,5)} × ${f(v.VC[i],2)} × 60.05 ÷ 1000 ÷ 2.5 × 100 = ${f(a,4)}`).join('\n')+`\n平均 = ${f(mC,4)}`},
+    {id:'C2',lab:'C2. SD（g/100 mL，4 位小數）',unit:'',ok:x=>Math.abs(x-sC)<=Math.max(sC*0.05,0.002),
+     sol:`偏差：${aC.map(a=>f(a-mC,4)).join('、')}\n平方和 ÷ 2 再開根號 = ${f(sC,4)}`},
+    {id:'C3',lab:'C3. RSD（%，2 位小數）',unit:'%',ok:x=>Math.abs(x-rC)<=Math.max(rC*0.05,0.03),
+     sol:`RSD = ${f(sC,4)} ÷ ${f(mC,4)} × 100 = ${f(rC,2)} %`},
+    {id:'C4',lab:'C4. 一般滴定希望 RSD &lt; 1%。這三次合格嗎？',type:'mc',opts:['合格（RSD < 1%）','不合格（RSD ≥ 1%）'],ans:rC<1?0:1,
+     sol:`RSD = ${f(rC,2)} % → ${rC<1?'合格':'不合格'}`}]},
+  {id:'D',title:'D｜Q 檢定：能不能丟？',time:'約 12 分',intro:`
+    <p>某組滴了四次（mL）：<span class="data" style="display:inline-block;padding:4px 10px">${v.VD.map(x=>f(x,2)).join('、')}</span></p>
+    <p>其中有一個看起來怪怪的。用 Dixon Q 檢定判斷：</p>
+    <p class="formula">Q = |可疑值 − 最接近的值| ÷（最大值 − 最小值）　Q &gt; 臨界值 → 可以剔除</p>
+    <table><tr><th>n</th><th>90%</th><th>95%</th></tr>${Object.entries(QCRIT).map(([n,c])=>`<tr><td>${n}</td><td>${c[0]}</td><td>${c[1]}</td></tr>`).join('')}</table>
+    <p class="hint">本題用 95% 信心水準。</p>`,
+   qs:[
+    {id:'D1',lab:'D1. 先找出可疑值（離其他值最遠、落在最兩端的那一個），算它的 Q = ？（3 位小數）',unit:'',ok:abs(v.Q,0.01),
+     sol:(()=>{const s=[...v.VD].sort((a,b)=>a-b);const below=v.sus===s[0];const near=below?s[1]:s[2];return `排序：${s.map(x=>f(x,2)).join('、')}\n可疑值 ${f(v.sus,2)}，最接近的值 ${f(near,2)}\nQ = |${f(v.sus,2)} − ${f(near,2)}| ÷ (${f(s[3],2)} − ${f(s[0],2)}) = ${f(v.Q,3)}`})()},
+    {id:'D2',lab:'D2. 95% 下，可疑值要保留還是剔除？',type:'mc',opts:['保留','剔除'],ans:v.drop?1:0,
+     sol:`Q = ${f(v.Q,3)} ${v.drop?'>':'<'} 0.829（n = 4，95%）→ ${v.drop?'可以剔除':'要保留'}`}]},
+  {id:'E',title:'E｜判讀今天的真實數據',time:'約 10 分',intro:`
+    <p>這一段全班題目相同，用的是 11/24 你們班的實測數據。</p>`,
+   qs:[
+    {id:'E1',lab:'E1. NaOH 標定三次：9.01、8.71、8.70 mL。Q = 0.968，n = 3、95% 的臨界值是 0.970。最合理的做法是？',type:'mc',
+     opts:['剔除 9.01，因為它明顯比較大','保留 9.01，下次標定時補做第 4 次','三次全部重做','改用 90% 信心水準，這樣就能剔除'],ans:1,
+     sol:'0.968 < 0.970 → 統計上要保留。差這麼一點點，代表 n = 3 太少；正確做法是保留並補做一次，而不是換信心水準來得到想要的結果。'},
+    {id:'E2',lab:'E2. v11 巴沙米克醋第 1 次 25.50 mL（另兩次 28.59、28.25），Q = 0.89，小於 0.970。為什麼還是可以排除？',type:'mc',
+     opts:['因為它是最小的值','因為 Q 已經很接近臨界值了','因為紀錄顯示這次終點判讀錯誤（深色醋看不清粉紅，之後又繼續滴）','因為排除後平均比較接近標示 6%'],ans:2,
+     sol:'統計上不能丟；能排除是因為有「找得到的操作原因」，而且要寫進報告。不能因為結果比較好看就丟數據。'},
+    {id:'E3',lab:'E3. 檸檬醋成分中，哪些會消耗 NaOH（滴到酚酞終點）？（複選）',type:'ms',
+     opts:['釀造醋（醋酸）','濃縮檸檬還原果汁（檸檬酸）','果糖','維生素 C','蜂蜜','D-山梨醇'],ans:[0,1,3],
+     sol:'會被中和的是酸：醋酸、檸檬酸、維生素 C（抗壞血酸）。果糖、蜂蜜、山梨醇不是酸。滴定量到的是「總可滴定酸」，再全部以醋酸計。'}]},
+  {id:'F',title:'F｜一句話反思',time:'約 5 分',intro:`<p>不計分，但老師會看。</p>`,
+   qs:[{id:'F1',type:'text',lab:'用一句話說明：什麼時候「可以」把一筆滴定數據剔除？今天哪一題你最不確定？'}]}
+  ];
+}
+
+// ───────── 狀態 ─────────
+let SID=null, V=null, TASKS=null, ST=null, cur='A';
+const key=()=>'hw1124_5yr_'+SID;
+function load(){try{ST=JSON.parse(localStorage.getItem(key()))||{}}catch(e){ST={}}ST.q=ST.q||{};ST.tab=ST.tab||'A'}
+function save(){try{localStorage.setItem(key(),JSON.stringify(ST))}catch(e){}}
+function qs(id){return ST.q[id]||(ST.q[id]={tries:0,done:false,first:null,val:null})}
+function log(o){try{window.AssessFB&&window.AssessFB.log(o)}catch(e){}}
+
+// ───────── 畫面 ─────────
+function graded(){return TASKS.flatMap(t=>t.qs).filter(q=>q.type!=='text')}
+function taskDone(t){return t.qs.every(q=>q.type==='text'?qs(q.id).done:qs(q.id).done)}
+function renderTabs(){
+  document.getElementById('tabs').innerHTML=TASKS.map(t=>`<button class="${t.id===cur?'on':''}" onclick="go('${t.id}')">${t.id}<span class="d">${taskDone(t)?'✅':''}</span></button>`).join('')+
+    `<button class="${cur==='S'?'on':''}" onclick="go('S')">成績</button>`;
+}
+function inputHTML(q){
+  const s=qs(q.id);
+  if(q.type==='mc'||q.type==='ms'){const t=q.type==='mc'?'radio':'checkbox';
+    return q.opts.map((o,i)=>`<label class="opt"><input type="${t}" name="${q.id}" value="${i}" ${(Array.isArray(s.val)?s.val.includes(i):s.val===i)?'checked':''} ${s.done?'disabled':''}>${o}</label>`).join('')}
+  if(q.type==='text')return `<textarea id="in-${q.id}" ${s.done?'disabled':''}>${s.val||''}</textarea>`;
+  return `<input type="number" step="any" id="in-${q.id}" value="${s.val??''}" ${s.done?'disabled':''}> <span class="unit">${q.unit||''}</span>`;
+}
+function renderTask(t){
+  return `<section class="task on"><div class="card"><h2>${t.title}</h2><div class="sub">${t.time}</div>${t.intro}
+  ${t.qs.map(q=>{const s=qs(q.id);return `<div class="q"><div class="lab">${q.lab}</div><div class="row">${inputHTML(q)}</div>
+    <div class="row"><button class="chk" onclick="check('${q.id}')" ${s.done?'style="display:none"':''}>${q.type==='text'?'送出':'檢查'}</button>
+    <span class="fb ${s.done?'ok':''}" id="fb-${q.id}">${s.done?(q.type==='text'?'已送出 ✓':'答對 ✓'+(s.first?'（一次就對）':`（第 ${s.tries} 次答對）`)):''}</span>
+    ${q.sol?`<button class="sol" id="sb-${q.id}" onclick="document.getElementById('sl-${q.id}').style.display='block'" ${(s.tries>=2||s.done)?'style="display:inline-block"':''}>看解法</button>`:''}</div>
+    ${q.sol?`<div class="solbox" id="sl-${q.id}">${q.sol}</div>`:''}</div>`}).join('')}
+  </div><div class="navbtns"><button onclick="step(-1)">← 上一段</button><button onclick="step(1)">下一段 →</button></div></section>`;
+}
+function renderScore(){
+  const g=graded(), done=g.filter(q=>qs(q.id).done).length, first=g.filter(q=>qs(q.id).first).length;
+  return `<section class="task on"><div class="card"><h2>你的進度</h2>
+  <p>學號 <b>${SID}</b>　·　完成 <span class="score">${done}</span> / ${g.length} 題　·　一次就答對 <span class="score">${first}</span> 題</p>
+  <table><tr><th>段落</th><th>完成</th><th>一次答對</th></tr>${TASKS.filter(t=>t.id!=='F').map(t=>{const q=t.qs;return `<tr><td>${t.title}</td><td>${q.filter(x=>qs(x.id).done).length}/${q.length}</td><td>${q.filter(x=>qs(x.id).first).length}</td></tr>`}).join('')}</table>
+  <p class="hint">「一次答對」才是老師看的學習成效；答錯沒關係，看完解法再算一次。</p>
+  <p><button class="chk" onclick="printMine()">🖨 列印我的題目（紙本計算紙）</button></p></div></section>`;
+}
+function render(){renderTabs();document.getElementById('main').innerHTML=cur==='S'?renderScore():renderTask(TASKS.find(t=>t.id===cur));window.scrollTo(0,0)}
+function go(id){cur=id;ST.tab=id;save();render()}
+function step(d){const ids=[...TASKS.map(t=>t.id),'S'];go(ids[Math.max(0,Math.min(ids.length-1,ids.indexOf(cur)+d))])}
+
+function check(id){
+  const q=TASKS.flatMap(t=>t.qs).find(x=>x.id===id), s=qs(id), fb=document.getElementById('fb-'+id);
+  let val, ok;
+  if(q.type==='text'){val=document.getElementById('in-'+id).value.trim();if(val.length<4){fb.className='fb bad';fb.textContent='請多寫一點';return}
+    s.val=val;s.done=true;save();log({event_type:'self_check',question_id:id,qtype:'text',detail:{text:val}});render();return}
+  if(q.type==='mc'){const c=document.querySelector(`input[name="${id}"]:checked`);if(!c){fb.className='fb bad';fb.textContent='請先選一個';return}val=+c.value;ok=val===q.ans}
+  else if(q.type==='ms'){val=[...document.querySelectorAll(`input[name="${id}"]:checked`)].map(c=>+c.value);if(!val.length){fb.className='fb bad';fb.textContent='請至少選一個';return}
+    ok=val.length===q.ans.length&&q.ans.every(a=>val.includes(a))}
+  else{const raw=document.getElementById('in-'+id).value;if(raw===''){fb.className='fb bad';fb.textContent='請先填數字';return}val=+raw;ok=q.ok(val)}
+  s.tries++;s.val=val;if(s.tries===1)s.first=ok;if(ok)s.done=true;save();
+  log({event_type:'answer',question_id:id,is_correct:ok,attempts:s.tries,qtype:q.type||'num',topic:'醋酸度',detail:{given:val,first:s.first,variant:{m:V.m,VA:V.VA,NB:V.NB,VB:V.VB,VC:V.VC,VD:V.VD}}});
+  if(ok){render();
+    if(graded().every(x=>qs(x.id).done)&&!ST.completed){ST.completed=true;save();
+      log({event_type:'attempt_complete',final_score:graded().filter(x=>qs(x.id).first).length,total:graded().length})}}
+  else{fb.className='fb bad';fb.textContent=`再想想（第 ${s.tries} 次）`;if(s.tries>=2)document.getElementById('sb-'+id).style.display='inline-block'}
+}
+
+// ───────── 列印我的題目（同一學號＝同一組數據；不印答案）─────────
+function printMine(){
+  if(!TASKS)return;
+  const stripTags=h=>h.replace(/<span class="data"[^>]*>/g,'<b>').replace(/<\/span>/g,'</b>');
+  const body=TASKS.map(t=>`<div class="pt"><h2>${t.title}</h2>${stripTags(t.intro)}
+    ${t.qs.map(q=>`<div class="pq"><div><b>${q.lab}</b></div>${
+      q.type==='mc'||q.type==='ms'?q.opts.map(o=>`<span class="opt">☐ ${o}</span>`).join('')+(q.type==='ms'?'<div class="hint">（複選）</div>':'')
+      :q.type==='text'?'<div class="lines"><div></div><div></div><div></div></div>'
+      :`<div class="work ${/C2|C3|D1/.test(q.id)?'tall':''}"></div><div class="ans">答案：＿＿＿＿＿＿＿＿ ${q.unit||''}</div>`}</div>`).join('')}</div>`).join('');
+  let el=document.getElementById('print');
+  if(!el){el=document.createElement('div');el.id='print';document.body.appendChild(el)}
+  el.innerHTML=`<h1>醋酸度・課堂作業（紙本）</h1>
+    <div class="meta">學號：<b>${SID}</b>　姓名：＿＿＿＿＿＿＿＿　日期：＿＿＿＿＿　｜　這份數據依你的學號產生，和網頁版相同；算式寫在虛線框，答案可再輸入網頁檢查。</div>${body}`;
+  log({event_type:'self_check',question_id:'PRINT',qtype:'print'});
+  setTimeout(()=>window.print(),50);
+}
+
+// ───────── 啟動 ─────────
+async function start(){
+  for(let i=0;i<50&&!window.AssessFB;i++)await new Promise(r=>setTimeout(r,100));
+  if(window.AssessFB){await window.AssessFB.init({chapter:CHAPTER,game:'homework'});SID=window.AssessFB.getStudentId()}
+  if(!SID){SID=prompt('請輸入學號（無法連線，作答只存在這台裝置）')||'guest'}
+  V=makeVariant(SID.toUpperCase());TASKS=buildTasks(V);load();cur=ST.tab;
+  if(!ST.started){ST.started=true;save();log({event_type:'session_start',detail:{variant:{m:V.m,VA:V.VA,NB:V.NB,VB:V.VB,VC:V.VC,VD:V.VD}}})}
+  render();
+}
+start();
+</script>
+</body>
+</html>

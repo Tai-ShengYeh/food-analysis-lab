@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>醋酸度作業看板</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f8fc;--ink:#1e293b;--ink-2:#475569;--ink-3:#94a3b8;--line:#e2e8f0;--accent:#4f46e5;--ok:#059669;--bad:#dc2626;--warn:#b45309;--mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-serif;font-size:16px}
+header{background:#1e293b;color:#fff;padding:16px}
+header .w,main{max-width:1100px;margin:0 auto}
+header h1{margin:0;font-size:1.3rem}
+main{padding:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;overflow-x:auto}
+h2{font-size:1.1rem;margin:0 0 10px}
+button{font:inherit;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:700}
+button.ghost{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.kpi{display:flex;flex-wrap:wrap;gap:12px}
+.kpi div{flex:1 1 160px;background:#eef2ff;border-radius:10px;padding:10px 14px}
+.kpi b{display:block;font-family:var(--mono);font-size:1.6rem;color:var(--accent)}
+table{border-collapse:collapse;width:100%}
+th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right;font-size:.92rem;white-space:nowrap}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
+th{color:var(--ink-3);font-weight:400;cursor:pointer}
+.bar{display:inline-block;height:10px;border-radius:5px;background:var(--accent);vertical-align:middle;margin-right:6px}
+.low{color:var(--bad);font-weight:700}
+.muted{color:var(--ink-3);font-size:.88rem}
+.err{color:var(--bad);white-space:pre-line}
+td.wrap{white-space:normal;text-align:left;min-width:280px}
+</style>
+</head>
+<body>
+<header><div class="w"><h1>醋酸度課堂作業・老師看板</h1><div class="muted" style="color:#cbd5e1">五專 · chapter WX-VINEGAR-HW1 · 只有授權的老師帳號能讀取資料</div></div></header>
+<main>
+  <div class="card" id="auth"><button id="login">用 Google 登入</button> <span class="muted" id="who"></span></div>
+  <div id="out"></div>
+</main>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js';
+import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
+
+// 與 assess_firebase.js 相同的公開設定（只是專案識別，不是密鑰；讀取權限由 Firestore 規則把關）
+const cfg={apiKey:"AIzaSyCTLhRf7jcJH_AwUzbV4MawkrKNPrIVG5Y",authDomain:"my-teaching-tools-517a0.firebaseapp.com",projectId:"my-teaching-tools-517a0",
+  storageBucket:"my-teaching-tools-517a0.firebasestorage.app",messagingSenderId:"244288457011",appId:"1:244288457011:web:4b3ff8a846a6c50b169646"};
+const app=initializeApp(cfg), auth=getAuth(app), db=getFirestore(app);
+const CHAPTER='WX-VINEGAR-HW1';
+const QLABEL={A1:'A1 KHP mmol',A2:'A2 N 平均',B1:'B1 原醋 mL',B2:'B2 酸度',C1:'C1 平均',C2:'C2 SD',C3:'C3 RSD',C4:'C4 RSD 合格?',D1:'D1 Q 值',D2:'D2 保留/剔除',E1:'E1 9.01 處理',E2:'E2 v11 排除理由',E3:'E3 檸檬醋成分'};
+const QIDS=Object.keys(QLABEL);
+const $=id=>document.getElementById(id);
+let ROWS=[];
+
+$('login').onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(e=>{$('out').innerHTML=`<div class="card err">登入失敗：${e.code}\n若是 auth/unauthorized-domain，請到 Firebase console → Authentication → Settings → Authorized domains 加入 tai-shengyeh.github.io</div>`});
+const DEMO=new URLSearchParams(location.search).has('demo');
+onAuthStateChanged(auth,u=>{
+  if(DEMO)return;
+  if(!u){$('who').textContent='';$('login').style.display='';return}
+  $('login').style.display='none';
+  $('who').innerHTML=`已登入 ${u.email}　<button class="ghost" id="lo">登出</button>　<button class="ghost" id="rf">重新整理數據</button>`;
+  $('lo').onclick=()=>signOut(auth).then(()=>{$('out').innerHTML=''});
+  $('rf').onclick=loadData; loadData();
+});
+
+async function loadData(){
+  $('out').innerHTML='<div class="card muted">讀取中…</div>';
+  try{
+    const snap=await getDocs(query(collection(db,'student_events'),where('chapter','==',CHAPTER)));
+    ROWS=snap.docs.map(d=>d.data()).filter(r=>r.student_id).map(r=>({...r,student_id:String(r.student_id).toUpperCase()}));
+    render();
+  }catch(e){
+    $('out').innerHTML=`<div class="card err">讀不到資料：${e.code||e.message}\n${e.code==='permission-denied'?'Firestore 規則還沒允許這個帳號讀取 student_events。請依說明在 Firebase console 加上老師讀取規則。':''}</div>`;
+  }
+}
+const ts=r=>r.timestamp?.toMillis?.()??r._t??0;
+
+// ?demo：用假資料預覽版面（不登入、不讀資料庫）
+if(DEMO){
+  let t=0;const R=()=>Math.random();
+  for(let s=1;s<=8;s++){const id='DEMO0'+s;
+    for(const q of QIDS){if(R()<0.15)continue;const p=q.startsWith('C')||q==='D1'?0.5:0.8;let k=1;
+      while(true){const ok=R()<p||k>=3;ROWS.push({student_id:id,event_type:'answer',question_id:q,is_correct:ok,attempts:k,_t:t++});if(ok)break;k++}}
+    if(R()<0.6)ROWS.push({student_id:id,event_type:'self_check',question_id:'F1',detail:{text:'有操作紀錄可以說明原因時才能剔除；Q 檢定最不確定。'},_t:t++})}
+  $('auth').innerHTML='<span class="muted">示範模式：以下是隨機假資料</span>';render();
+}
+
+function render(){
+  const ids=[...new Set(ROWS.map(r=>r.student_id))].filter(s=>!/^TEST/i.test(s)).sort();
+  const ans=ROWS.filter(r=>r.event_type==='answer'&&ids.includes(r.student_id)).sort((a,b)=>ts(a)-ts(b));
+  // 每人每題：第一次是否答對、答對時第幾次
+  const per={};
+  for(const r of ans){const k=r.student_id+'|'+r.question_id;const p=per[k]||(per[k]={first:r.is_correct,tries:0,done:false});
+    p.tries=Math.max(p.tries,r.attempts||p.tries+1);if(r.is_correct&&!p.done){p.done=true;p.solvedAt=r.attempts}}
+  const stu=ids.map(id=>{const q=QIDS.map(qid=>per[id+'|'+qid]);
+    return {id,done:q.filter(x=>x&&x.done).length,first:q.filter(x=>x&&x.first).length,q}});
+  const refl=ROWS.filter(r=>r.event_type==='self_check'&&r.question_id==='F1'&&ids.includes(r.student_id));
+  const items=QIDS.map(qid=>{const a=ids.map(id=>per[id+'|'+qid]).filter(Boolean);
+    const firstOK=a.filter(x=>x.first).length, solved=a.filter(x=>x.done);
+    return {qid,n:a.length,rate:a.length?firstOK/a.length:null,avg:solved.length?solved.reduce((s,x)=>s+x.solvedAt,0)/solved.length:null}});
+  const totFirst=stu.reduce((s,x)=>s+x.first,0), totAns=items.reduce((s,x)=>s+x.n,0);
+  const pct=x=>x==null?'—':(x*100).toFixed(0)+'%';
+  $('out').innerHTML=`
+  <div class="card kpi">
+    <div>作答學生<b>${ids.length}</b></div>
+    <div>全部完成<b>${stu.filter(s=>s.done===QIDS.length).length}</b></div>
+    <div>整體一次答對率<b>${totAns?pct(totFirst/totAns):'—'}</b></div>
+  </div>
+  <div class="card"><h2>各題：一次就答對的比例</h2>
+    <p class="muted">低於 60% 標紅：代表這個觀念全班普遍卡住，值得下次課堂講解。</p>
+    <table><tr><th>題目</th><th>作答人數</th><th class="l">一次答對率</th><th>答對平均嘗試次數</th></tr>
+    ${items.map(it=>`<tr><td>${QLABEL[it.qid]}</td><td>${it.n}</td><td class="l ${it.rate!=null&&it.rate<0.6?'low':''}"><span class="bar" style="width:${(it.rate||0)*160}px"></span>${pct(it.rate)}</td><td>${it.avg==null?'—':it.avg.toFixed(1)}</td></tr>`).join('')}</table>
+  </div>
+  <div class="card"><h2>每位學生</h2>
+    <p class="muted">✓＝一次答對　○＝之後才答對　✗＝還沒答對　空白＝沒作答</p>
+    <table><tr><th>學號</th><th>完成</th><th>一次答對</th>${QIDS.map(q=>`<th>${q}</th>`).join('')}</tr>
+    ${stu.map(s=>`<tr><td>${s.id}</td><td>${s.done}/${QIDS.length}</td><td>${s.first}</td>${s.q.map(x=>`<td>${!x?'':x.first?'✓':x.done?'○':'✗'}</td>`).join('')}</tr>`).join('')}</table>
+    <p><button class="ghost" id="csv">下載 CSV</button></p>
+  </div>
+  <div class="card"><h2>反思（F1）</h2>
+    <table><tr><th>學號</th><th class="l">內容</th></tr>${refl.map(r=>`<tr><td>${r.student_id}</td><td class="wrap">${(r.detail?.text||'').replace(/</g,'&lt;')}</td></tr>`).join('')||'<tr><td colspan="2" class="muted">尚無</td></tr>'}</table>
+  </div>`;
+  $('csv').onclick=()=>{
+    const head=['student_id','completed','first_try_correct',...QIDS.map(q=>q+'_first'),...QIDS.map(q=>q+'_tries')];
+    const lines=[head.join(',')].concat(stu.map(s=>[s.id,s.done,s.first,...s.q.map(x=>x?(x.first?1:0):''),...s.q.map(x=>x?x.tries:'')].join(',')));
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+lines.join('\n')],{type:'text/csv'}));a.download='hw_1124_5yr.csv';a.click();
+  };
+}
+</script>
+</body>
+</html>
