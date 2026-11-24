@@ -308,11 +308,15 @@ function bars(id,cats,vals,ymax,ylab,opt={}){
   const gap=pw/vals.length,bw=Math.min(70,gap*.55);
   vals.forEach((v,i)=>{const cx=L+gap*(i+.5),yy=y(v),col=(opt.flag||[]).includes(i)?'rgba(255,184,0,.85)':'rgba(0,212,255,.75)';
     s+=`<rect x="${cx-bw/2}" y="${y(0)}" width="${bw}" height="0" rx="6" fill="${col}"><animate attributeName="y" from="${y(0)}" to="${yy}" dur=".7s" fill="freeze"/><animate attributeName="height" from="0" to="${y(0)-yy}" dur=".7s" fill="freeze"/></rect>`;
-    if(opt.err){const e=opt.err[i];s+=`<line x1="${cx}" x2="${cx}" y1="${y(v+e)}" y2="${y(v-e)}" stroke="#eef3ff" stroke-width="2"/><line x1="${cx-8}" x2="${cx+8}" y1="${y(v+e)}" y2="${y(v+e)}" stroke="#eef3ff" stroke-width="2"/>`}
     if(opt.ref){const r=opt.ref[i],ry=y(r);s+=`<line x1="${cx-bw/2-8}" x2="${cx+bw/2+8}" y1="${ry}" y2="${ry}" stroke="#ff006e" stroke-width="2.5" stroke-dasharray="5 3"/>`}
-    s+=`<text x="${cx}" y="${yy-(opt.err?opt.err[i]/ymax*ph+8:10)}" fill="#eef3ff" font-size="15" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">${opt.fmt?opt.fmt(v):v}</text>`;
+    let top=yy;
+    if(opt.err){const e=opt.err[i],y1=y(v+e),y2=y(v-e),c=13;
+      const seg=(st,w)=>`<line x1="${cx}" x2="${cx}" y1="${y1}" y2="${y2}" stroke="${st}" stroke-width="${w}" stroke-linecap="round"/><line x1="${cx-c}" x2="${cx+c}" y1="${y1}" y2="${y1}" stroke="${st}" stroke-width="${w}" stroke-linecap="round"/><line x1="${cx-c}" x2="${cx+c}" y1="${y2}" y2="${y2}" stroke="${st}" stroke-width="${w}" stroke-linecap="round"/>`;
+      s+=seg('#0a0e27',7)+seg('#ffb800',3.5);top=Math.min(y1,yy)-8;
+      s+=`<text x="${cx}" y="${top}" fill="#ffb800" font-size="13" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">±${e.toFixed(3)}</text>`;top-=10}
+    s+=`<text x="${cx}" y="${top-8}" fill="#eef3ff" font-size="15" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">${opt.fmt?opt.fmt(v):v}</text>`;
     s+=`<text x="${cx}" y="${H-B+24}" fill="#b8c5e0" font-size="14" text-anchor="middle">${cats[i]}</text>`});
-  if(opt.legend)s+=`<text x="${W-R}" y="${T-16}" fill="#ff006e" font-size="13" text-anchor="end">${opt.legend}</text>`;
+  if(opt.legend)s+=`<text x="${W-R}" y="${T-16}" font-size="13" text-anchor="end"><tspan fill="#ff006e">— — 粉紅虛線＝瓶上標示</tspan><tspan fill="#ffb800">　工字線＝±1 SD</tspan></text>`;
   document.getElementById(id).innerHTML=s+'</svg>';
 }
 
