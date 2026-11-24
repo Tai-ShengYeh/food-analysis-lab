@@ -91,7 +91,7 @@ ol li,ul li{margin:4px 0}
 <div class="card">
   <h2>步驟（一瓶約 20 分鐘）</h2>
   <ol>
-    <li><b>取樣</b>：用定量吸管取醋的稀釋液（10 mL 醋已定容 100 mL）到 150 mL 燒杯，取樣量照老師指定（<b>20 或 25 mL</b>），再加約 50 mL 去 CO₂ 水。</li>
+    <li><b>取樣</b>：用定量吸管取醋的稀釋液（10 mL 醋已定容 100 mL）到 150 mL 燒杯，<b>25 mL</b>（＝ 2.5 mL 原醋，和 11/24 相同），再加約 50 mL 去 CO₂ 水。dTrite 筒是 50 mL，一次滴完不用中途補充。</li>
     <li><b>放好</b>：放攪拌子、開攪拌，裝上電極，dTrite 管尖貼著燒杯內壁。</li>
     <li><b>起點</b>：dTrite 歸零，記下 V = 0.00 mL 時的 pH。</li>
     <li><b>加液、記錄</b>：照下表的步距加 NaOH；每次加完等 pH 穩定（10 秒內變化 &lt; 0.02）再記「螢幕累計體積」和 pH。</li>
@@ -110,13 +110,13 @@ ol li,ul li{margin:4px 0}
     <tr><td>V_exp + 1 → pH 約 10.5</td><td>0.5 mL</td><td class="n">4–6</td></tr>
   </table>
 
-  <h3>各瓶的預期終點 V_exp（mL，由 11/24 結果推算，N ≈ 0.089）</h3>
+  <h3>各瓶的預期終點 V_exp（取 25 mL 稀釋液；由 11/24 結果推算，N ≈ 0.089）</h3>
   <table>
-    <tr><th>樣品</th><th>取 25 mL 稀釋液</th><th>取 20 mL 稀釋液</th></tr>
-    <tr><td>v10 尼諾巴薩米克醋</td><td class="n">27.7</td><td class="n">22.2</td></tr>
-    <tr><td>v11 凱薩經典巴沙米克醋</td><td class="n">28.4</td><td class="n">22.7</td></tr>
-    <tr><td>v62 五賢醋</td><td class="n">15.7</td><td class="n">12.6</td></tr>
-    <tr><td>檸檬醋</td><td class="n">13.6</td><td class="n">10.9</td></tr>
+    <tr><th>樣品</th><th>V_exp (mL)</th><th>開始每 0.10 mL 加</th></tr>
+    <tr><td>v10 尼諾巴薩米克醋</td><td class="n">27.7</td><td class="n">26.7</td></tr>
+    <tr><td>v11 凱薩經典巴沙米克醋</td><td class="n">28.4</td><td class="n">27.4</td></tr>
+    <tr><td>v62 五賢醋</td><td class="n">15.7</td><td class="n">14.7</td></tr>
+    <tr><td>檸檬醋</td><td class="n">13.6</td><td class="n">12.6</td></tr>
   </table>
   <p class="muted">預期值只是幫你決定什麼時候開始改成 0.10 mL；pH 已經開始快速上升，就提早改小步距。</p>
 </div>
@@ -128,11 +128,11 @@ ol li,ul li{margin:4px 0}
   　V₁、V₂：跨過 pH 8.20 的前後兩點；兩點體積差必須 ≤ 0.20 mL，否則該次作廢<br><br>
   V_eq ＝ ΔpH/ΔV 最大那一段的中點體積　（ΔpH/ΔV ＝ 相鄰兩點的 pH 差 ÷ 體積差）<br><br>
   酸度（g/100 mL，以醋酸計）＝ N × V × 60.05 ÷ 1000 ÷ 原醋 mL × 100<br>
-  　原醋 mL ＝ 10 × 取樣稀釋液 mL ÷ 100（取 20 mL → 2.0；取 25 mL → 2.5）</div>
+  　原醋 mL ＝ 10 × 25 ÷ 100 ＝ 2.5 mL</div>
   <h3>例（模擬數據，紀錄表「範例」工作表）</h3>
-  <p>22.60 mL 時 pH 7.10，22.70 mL 時 pH 8.49（兩點差 0.10 mL ✓）<br>
-  V(8.20) ＝ 22.60 ＋ (8.20 − 7.10) ÷ (8.49 − 7.10) × 0.10 ＝ <b>22.68 mL</b><br>
-  酸度 ＝ 0.0892 × 22.68 × 60.05 ÷ 1000 ÷ 2.0 × 100 ＝ <b>6.07 g/100 mL</b></p>
+  <p>28.30 mL 時 pH 7.20，28.40 mL 時 pH 8.58（兩點差 0.10 mL ✓）<br>
+  V(8.20) ＝ 28.30 ＋ (8.20 − 7.20) ÷ (8.58 − 7.20) × 0.10 ＝ <b>28.37 mL</b><br>
+  酸度 ＝ 0.0892 × 28.37 × 60.05 ÷ 1000 ÷ 2.5 × 100 ＝ <b>6.08 g/100 mL</b></p>
   <p class="muted">同一瓶兩次的相對差（最大 − 最小）÷ 平均要 ≤ 1.0%，超過就做第 3 次。</p>
 </div>
 
