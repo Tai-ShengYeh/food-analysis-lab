@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>醋的酸度：11/24 實測</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+html,body{font-size:18px;margin:0;height:100%;overflow:hidden;background:#0a0e27;color:#eef3ff;font-family:'Noto Sans TC',sans-serif}
+:root{
+  --bg:#0a0e27;--bg-2:#11163a;--ink:#eef3ff;--ink-2:#b8c5e0;--ink-3:#7a8bb8;--ink-4:#4a5680;
+  --accent:#00d4ff;--accent-2:#ff006e;--warn:#ffb800;--ok:#3ddc97;
+  --mono:'JetBrains Mono',monospace;
+}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .4s;z-index:10}
+#section-tag{position:fixed;top:16px;left:24px;font-family:var(--mono);font-size:.8rem;color:var(--accent);letter-spacing:.1em;z-index:10}
+#pageInfo{position:fixed;bottom:16px;right:24px;font-family:var(--mono);font-size:.8rem;color:var(--ink-3);z-index:10}
+#hint{position:fixed;bottom:16px;left:24px;font-family:var(--mono);font-size:.72rem;color:var(--ink-4);z-index:10}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:64px 90px;box-sizing:border-box;opacity:0;pointer-events:none;transform:translateY(16px);transition:opacity .5s,transform .5s;overflow:auto}
+.slide.active{opacity:1;pointer-events:auto;transform:none}
+.inner{width:100%;max-width:1280px}
+.kicker{font-family:var(--mono);color:var(--accent);font-size:clamp(.75rem,1.1vw,.95rem);letter-spacing:.15em;margin-bottom:8px}
+h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;margin:0 0 16px;line-height:1.2}
+h2{font-size:clamp(1.4rem,3vw,2.5rem);font-weight:900;margin:0 0 24px;line-height:1.25}
+p,li{font-size:clamp(.9rem,1.4vw,1.15rem);line-height:1.7;color:var(--ink-2)}
+.note{font-size:clamp(.75rem,1.05vw,.95rem);color:var(--ink-3)}
+.hl{color:var(--accent);font-weight:700}.hl2{color:var(--accent-2);font-weight:700}
+.big{font-family:var(--mono);font-size:clamp(2.2rem,6vw,4.4rem);font-weight:700;color:var(--accent);line-height:1}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:22px 24px;backdrop-filter:blur(10px)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.grid22{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.step-n{font-family:var(--mono);color:var(--accent-2);font-size:.9rem}
+.card h3{margin:4px 0 8px;font-size:clamp(1rem,1.6vw,1.3rem)}
+.card p{margin:0}
+table{border-collapse:collapse;width:100%}
+th,td{font-size:clamp(.8rem,1.1vw,1rem);padding:10px 12px;text-align:right;border-bottom:1px solid rgba(255,255,255,.1)}
+th{color:var(--ink-3);font-weight:400}
+td:first-child,th:first-child{text-align:left}
+tr.sum td{color:var(--accent);font-weight:700;border-bottom:none}
+.formula{font-family:var(--mono);background:rgba(0,212,255,.07);border-left:3px solid var(--accent);padding:12px 16px;border-radius:6px;font-size:clamp(.8rem,1.15vw,1rem);color:var(--ink);line-height:1.9;overflow-x:auto}
+.chartbox{position:relative;height:min(52vh,420px)}
+button{font-family:inherit;font-size:clamp(.85rem,1.2vw,1rem);background:var(--accent);color:#04112a;border:none;border-radius:8px;padding:10px 20px;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+input{font-family:var(--mono);font-size:1rem;width:7em;padding:8px 10px;border-radius:6px;border:1px solid var(--ink-4);background:var(--bg-2);color:var(--ink)}
+label{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0;font-size:clamp(.85rem,1.2vw,1rem);color:var(--ink-2)}
+.reveal{display:none}.reveal.show{display:block;animation:fade .5s}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.vs .card.bad{border-color:rgba(255,0,110,.5)}.vs .card.good{border-color:rgba(0,212,255,.5)}
+.check li{list-style:none;margin-left:-1.2em}
+.check input{width:auto;margin-right:10px;accent-color:var(--accent)}
+.fb{font-weight:700;margin-left:8px}
+.cover-bg{position:absolute;inset:0;background:radial-gradient(circle at 75% 55%,rgba(255,0,110,.18),transparent 45%),radial-gradient(circle at 70% 40%,rgba(0,212,255,.15),transparent 50%),var(--bg)}
+.cover-svg{position:absolute;right:6%;bottom:6%;height:82vh;opacity:.95}
+svg text{font-family:'Noto Sans TC',sans-serif}
+@media (max-width:820px){
+  .slide{padding:56px 18px;align-items:flex-start}
+  .grid2,.grid22,.vs{grid-template-columns:1fr}
+  .cover-svg{opacity:.25;height:60vh}
+  #hint{display:none}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="section-tag"></div>
+<div id="pageInfo"></div>
+<div id="hint">← → 切頁 · F 全螢幕 · 點畫面兩側翻頁</div>
+
+<!-- 1 封面 -->
+<section class="slide active" data-section="引起動機">
+  <div class="cover-bg"></div>
+  <svg class="cover-svg" viewBox="0 0 300 520" aria-hidden="true">
+    <defs><linearGradient id="pk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc2dc"/><stop offset="1" stop-color="#ff8fbd"/></linearGradient></defs>
+    <!-- burette -->
+    <rect x="140" y="10" width="20" height="250" rx="4" fill="rgba(255,255,255,.08)" stroke="#7a8bb8"/>
+    <rect x="142" y="60" width="16" height="198" fill="rgba(0,212,255,.25)"/>
+    <path d="M140 260 h20 l-6 22 h-8 z" fill="rgba(255,255,255,.1)" stroke="#7a8bb8"/>
+    <rect x="128" y="268" width="44" height="8" rx="3" fill="#00d4ff"/>
+    <rect x="148" y="282" width="4" height="28" fill="#7a8bb8"/>
+    <circle cx="150" cy="330" r="5" fill="#00d4ff"><animate attributeName="cy" values="316;380;316" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="1.6s" repeatCount="indefinite"/></circle>
+    <!-- flask -->
+    <path d="M125 380 v40 L60 500 h180 L175 420 v-40 z" fill="rgba(255,255,255,.06)" stroke="#b8c5e0" stroke-width="2"/>
+    <path d="M86 468 L67 494 h166 L214 468 z" fill="url(#pk)" opacity=".75"/>
+  </svg>
+  <div class="inner" style="position:relative">
+    <div class="kicker">食品分析實驗 · 2026-11-24 · 本班實測</div>
+    <h1>這瓶醋有多酸？</h1>
+    <p style="max-width:34em">用 KHP 標定 NaOH，再滴定白鶴牌烏醋。<br>今天的數字，自己算、自己驗證。</p>
+  </div>
+</section>
+
+<!-- 2 問句 -->
+<section class="slide" data-section="引起動機">
+  <div class="inner" style="text-align:center">
+    <div class="kicker">驅動問題</div>
+    <h1>標示 <span class="hl2">4.2%</span>，可信嗎？</h1>
+    <p>瓶上的數字是廠商說的。<br>我們手上只有一支滴定管、一瓶 NaOH、一包 KHP —— 夠不夠自己查證？</p>
+    <p class="note" style="margin-top:32px">先在紙上寫下你的猜測：實測會比 4.2% 高、低，還是差不多？</p>
+  </div>
+</section>
+
+<!-- 3 流程 -->
+<section class="slide" data-section="維持注意">
+  <div class="inner">
+    <div class="kicker">今天的流程</div>
+    <h2>今天怎麼做</h2>
+    <div class="grid22">
+      <div class="card"><div class="step-n">STEP 1</div><h3>KHP 標定 NaOH</h3><p>0.8050 g KHP 定容 100 mL，取 20 mL，滴三次</p></div>
+      <div class="card"><div class="step-n">STEP 2</div><h3>稀釋烏醋</h3><p>10 mL 醋 → 100 mL 定量瓶，加水到刻度</p></div>
+      <div class="card"><div class="step-n">STEP 3</div><h3>滴定醋</h3><p>取 25 mL 稀釋液，以酚酞滴到淡粉紅持續 30 秒，三次</p></div>
+      <div class="card"><div class="step-n">STEP 4</div><h3>PAL-30S 折射計</h3><p>讀三種醋的原液，對照標示</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 標定 -->
+<section class="slide" data-section="維持注意">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker">STEP 1 · 標定</div>
+      <h2>先標定 NaOH</h2>
+      <table>
+        <tr><th>次數</th><th>V NaOH (mL)</th><th>N (M)</th></tr>
+        <tr><td>1</td><td>8.66</td><td>0.09104</td></tr>
+        <tr><td>2</td><td>8.67</td><td>0.09093</td></tr>
+        <tr><td>3</td><td>8.62</td><td>0.09146</td></tr>
+        <tr class="sum"><td>平均</td><td>8.650</td><td>0.09114</td></tr>
+      </table>
+      <div class="formula" style="margin-top:18px">KHP／次 = 0.8050 × 20/100 = 0.1610 g<br>= 0.1610 ÷ 204.22 = 0.7884 mmol<br>N = 0.7884 ÷ 8.650 = <span class="hl">0.09114 M</span></div>
+      <p class="note">KHP：NaOH = 1:1　·　RSD 0.31%</p>
+    </div>
+    <div class="card"><div class="chartbox"><canvas id="chStd"></canvas></div></div>
+  </div>
+</section>
+
+<!-- 5 預測 -->
+<section class="slide" data-section="維持注意">
+  <div class="inner" style="text-align:center">
+    <div class="kicker">換你預測</div>
+    <h2>標籤寫 0.1 N，實際呢？</h2>
+    <p>NaOH 瓶上寫「0.1 N」。標定前，先猜：實際濃度會是多少？為什麼？</p>
+    <button onclick="document.getElementById('rv5').classList.add('show')">翻開答案</button>
+    <div id="rv5" class="reveal" style="margin-top:28px">
+      <div class="big">0.0911 M</div>
+      <p>比標籤低約 <span class="hl2">9%</span>。NaOH 會吸收空氣中的 CO₂、也會吸水，<br>配好後濃度會慢慢下降 —— 所以<span class="hl">每天都要用 KHP 標定</span>，不能相信標籤。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 稀釋 -->
+<section class="slide" data-section="維持注意">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker">STEP 2 · 稀釋</div>
+      <h2>醋要稀釋多少</h2>
+      <p>醋太濃，直接滴要用掉一大管 NaOH。先稀釋 10 倍，再取一部分。</p>
+      <div class="formula">每次滴到的醋原液<br>= 10 mL × 25/100 = <span class="hl">2.5 mL</span></div>
+      <p class="note">定量吸管、定量瓶都要用「到刻度」的玻璃器具，體積才準。</p>
+    </div>
+    <svg viewBox="0 0 520 300" style="width:100%">
+      <g fill="none" stroke="#b8c5e0" stroke-width="2">
+        <!-- pipette 10 -->
+        <path d="M60 20 v70 q-12 10 -12 30 v70 q0 18 12 24 v50"/><path d="M68 20 v70 q12 10 12 30 v70 q0 18 -12 24 v50"/>
+        <!-- flask 100 -->
+        <path d="M220 40 v100 q-60 30 -60 80 q0 50 70 50 h12 q70 0 70 -50 q0 -50 -60 -80 v-100"/>
+        <line x1="214" y1="80" x2="250" y2="80" stroke="#00d4ff"/>
+        <!-- pipette 25 -->
+        <path d="M380 20 v60 q-16 12 -16 36 v70 q0 18 14 26 v50"/><path d="M390 20 v60 q16 12 16 36 v70 q0 18 -14 26 v50"/>
+        <!-- erlenmeyer -->
+        <path d="M452 200 v26 l-30 56 h76 l-30 -56 v-26"/>
+      </g>
+      <path d="M52 140 h24 v50 q0 18 -12 24 q-12 -6 -12 -24z" fill="#5a3a26" opacity=".85"/>
+      <path d="M168 200 q0 -30 50 -55 h24 q50 25 50 55 q0 46 -62 46 q-62 0 -62 -46z" fill="rgba(160,110,70,.35)"/>
+      <path d="M368 150 h36 v36 q0 18 -14 26 h-8 q-14 -8 -14 -26z" fill="rgba(160,110,70,.35)"/>
+      <path d="M432 262 l-8 18 h72 l-8 -18z" fill="rgba(160,110,70,.35)"/>
+      <g fill="#ff006e" font-size="22" font-weight="700"><text x="110" y="160">→</text><text x="320" y="160">→</text><text x="420" y="160">→</text></g>
+      <g fill="#eef3ff" font-size="16" text-anchor="middle"><text x="64" y="298">醋 10 mL</text><text x="230" y="298">定容 100 mL</text><text x="385" y="298">取 25 mL</text><text x="462" y="196" font-size="13">滴定</text></g>
+    </svg>
+  </div>
+</section>
+
+<!-- 7 酸度 -->
+<section class="slide" data-section="維持注意">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker">STEP 3 · 滴定醋</div>
+      <h2>算出酸度</h2>
+      <table>
+        <tr><th>次數</th><th>V NaOH (mL)</th><th>酸度 (g/100 mL)</th></tr>
+        <tr><td>1</td><td>19.29</td><td>4.223</td></tr>
+        <tr><td>2</td><td>19.20</td><td>4.203</td></tr>
+        <tr><td>3</td><td>19.17</td><td>4.197</td></tr>
+        <tr class="sum"><td>平均</td><td>19.22</td><td>4.21</td></tr>
+      </table>
+      <div class="formula" style="margin-top:18px">酸度 = N × V × 60.05 ÷ 1000 ÷ 2.5 × 100<br>= 0.09114 × 19.22 × 60.05 ÷ 1000 ÷ 2.5 × 100<br>= <span class="hl">4.21 g/100 mL</span>（以醋酸計）</div>
+      <p class="note">標示 4.2% → 實測只差 +0.2%</p>
+    </div>
+    <div class="card"><div class="chartbox"><canvas id="chVin"></canvas></div></div>
+  </div>
+</section>
+
+<!-- 8 精密度計算器 -->
+<section class="slide" data-section="維持注意">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker">精密度</div>
+      <h2>三次夠一致嗎？</h2>
+      <p><span class="hl">SD</span>（標準差）告訴你三次結果散開多少；<span class="hl">RSD</span> = SD ÷ 平均，把它變成百分比，不同大小的數字才能比。</p>
+      <p>今天：RSD <span class="hl">0.32%</span>。一般滴定希望 RSD &lt; 1%。</p>
+      <p class="note">試試看：把其中一次改成 19.60 mL（過了終點），RSD 會變多大？</p>
+    </div>
+    <div class="card">
+      <label>N NaOH (M)<input id="cN" type="number" step="0.00001" value="0.09114"></label>
+      <label>V₁ (mL)<input class="cV" type="number" step="0.01" value="19.29"></label>
+      <label>V₂ (mL)<input class="cV" type="number" step="0.01" value="19.20"></label>
+      <label>V₃ (mL)<input class="cV" type="number" step="0.01" value="19.17"></label>
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,.1);margin:16px 0">
+      <label>平均酸度 (g/100 mL)<span id="cMean" class="hl" style="font-family:var(--mono)"></span></label>
+      <label>SD<span id="cSD" style="font-family:var(--mono)"></span></label>
+      <label>RSD<span id="cRSD" class="hl2" style="font-family:var(--mono)"></span></label>
+    </div>
+  </div>
+</section>
+
+<!-- 9 用錯 N -->
+<section class="slide" data-section="維持注意">
+  <div class="inner">
+    <div class="kicker">比較</div>
+    <h2>用錯 N 會怎樣</h2>
+    <div class="vs">
+      <div class="card bad"><div class="step-n">直接用標籤 0.1 N</div><div class="big" style="color:var(--accent-2)">4.62</div><p>g/100 mL · 偏高約 <b>10%</b>，<br>還會誤以為「比標示更酸」</p></div>
+      <div class="card good"><div class="step-n">用標定值 0.09114 M</div><div class="big">4.21</div><p>g/100 mL · 和標示 4.2% 吻合</p></div>
+    </div>
+    <p style="margin-top:24px">三次滴定再一致（RSD 0.32%），<span class="hl2">N 錯了，三次一起錯</span>。精密 ≠ 準確。</p>
+  </div>
+</section>
+
+<!-- 10 PAL-30S -->
+<section class="slide" data-section="喚起行動">
+  <div class="inner grid2">
+    <div>
+      <div class="kicker">STEP 4 · ATAGO PAL-30S</div>
+      <h2>折射計讀到 HHH</h2>
+      <p><span class="hl2">HHH</span> = 超出量程。巴薩米克醋、檸檬醋含糖多，原液太濃，要先稀釋再讀。</p>
+      <p class="note">下一步：用重量法稀釋（記毛重），讀值再乘稀釋倍數。</p>
+    </div>
+    <div class="card">
+      <table>
+        <tr><th>樣品</th><th>溫度 °C</th><th>讀值</th><th>標示酸度</th></tr>
+        <tr><td>巴諾巴薩米克醋</td><td>25.0</td><td class="hl2">HHH</td><td>—</td></tr>
+        <tr><td>檸檬醋</td><td>25.5</td><td class="hl2">HHH</td><td>2.5%</td></tr>
+        <tr><td>白鶴牌烏醋</td><td>25.3</td><td>15.6</td><td>4.2%</td></tr>
+      </table>
+      <p class="note" style="margin-top:12px">紀錄單另記碳水化合物：檸檬醋 64.5、白鶴牌烏醋 8.3（照紀錄單抄錄）</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 練習 -->
+<section class="slide" data-section="喚起行動">
+  <div class="inner grid2">
+    <div class="card">
+      <div class="kicker">換你算算看</div>
+      <p style="margin-top:0">另一組：KHP <b>0.8120 g</b> 定容 100 mL 取 20 mL，用掉 NaOH <b>8.80 mL</b>。<br>醋一樣 10→100 mL 取 25 mL，用掉 NaOH <b>18.50 mL</b>。</p>
+      <label>NaOH N (M)<input id="pN" type="number" step="0.00001" placeholder="0.0xxxx"></label>
+      <label>酸度 (g/100 mL)<input id="pA" type="number" step="0.01" placeholder="x.xx"></label>
+      <div style="display:flex;gap:10px;margin-top:12px"><button onclick="checkPractice()">對答案</button><button class="ghost" onclick="document.getElementById('rv11').classList.toggle('show')">看算式</button></div>
+      <p id="pFb" style="min-height:1.6em"></p>
+      <div id="rv11" class="reveal formula"></div>
+    </div>
+    <div>
+      <h2>今天你應該能…</h2>
+      <ul class="check">
+        <li><label style="justify-content:flex-start"><input type="checkbox">用 KHP 算出 NaOH 的 N</label></li>
+        <li><label style="justify-content:flex-start"><input type="checkbox">算出每次滴定用了幾 mL 醋原液</label></li>
+        <li><label style="justify-content:flex-start"><input type="checkbox">把滴定體積換成 g/100 mL 醋酸</label></li>
+        <li><label style="justify-content:flex-start"><input type="checkbox">用 RSD 判斷三次是否一致</label></li>
+        <li><label style="justify-content:flex-start"><input type="checkbox">說明為什麼不能直接用標籤的 N</label></li>
+      </ul>
+      <p class="note">未做空白滴定；若空白約 0.03 mL，結果約差 0.3%。</p>
+    </div>
+  </div>
+</section>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];let cur=0;const charts={};
+function show(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  document.getElementById('section-tag').textContent='— '+slides[cur].dataset.section+' —';
+  document.getElementById('pageInfo').textContent=(cur+1)+' / '+slides.length;
+  if(cur===3)mk('chStd','NaOH 體積 (mL)',[8.66,8.67,8.62],10);
+  if(cur===6)mk('chVin','酸度 (g/100 mL)',[4.223,4.203,4.197],5,4.2);
+}
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(cur+1)}
+  if(['ArrowLeft','PageUp'].includes(e.key))show(cur-1);
+  if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+});
+document.addEventListener('click',e=>{
+  if(e.target.closest('button,input,label,canvas,a'))return;
+  if(e.clientX>innerWidth*.8)show(cur+1);else if(e.clientX<innerWidth*.2)show(cur-1);
+});
+function mk(id,label,data,ymax,ref){
+  if(charts[id])return; charts[id]=1;
+  const W=520,H=400,L=64,R=20,T=40,B=50,pw=W-L-R,ph=H-T-B,y=v=>T+ph-(v/ymax)*ph;
+  let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%">`;
+  for(let k=0;k<=5;k++){const v=ymax*k/5,yy=y(v);
+    s+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="rgba(255,255,255,.07)"/><text x="${L-8}" y="${yy+5}" fill="#7a8bb8" font-size="13" text-anchor="end" font-family="JetBrains Mono">${v}</text>`}
+  s+=`<text transform="translate(16 ${T+ph/2}) rotate(-90)" fill="#b8c5e0" font-size="14" text-anchor="middle">${label}</text>`;
+  const bw=70,gap=pw/data.length;
+  data.forEach((v,i)=>{const cx=L+gap*(i+.5),yy=y(v);
+    s+=`<rect x="${cx-bw/2}" y="${y(0)}" width="${bw}" height="0" rx="6" fill="rgba(0,212,255,.75)"><animate attributeName="y" from="${y(0)}" to="${yy}" dur=".7s" fill="freeze"/><animate attributeName="height" from="0" to="${y(0)-yy}" dur=".7s" fill="freeze"/></rect>`;
+    s+=`<text x="${cx}" y="${yy-10}" fill="#eef3ff" font-size="16" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">${v}</text>`;
+    s+=`<text x="${cx}" y="${H-B+26}" fill="#b8c5e0" font-size="14" text-anchor="middle">第 ${i+1} 次</text>`});
+  if(ref){const yy=y(ref);s+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="#ff006e" stroke-width="2" stroke-dasharray="6 4"/><text x="${W-R}" y="${T-14}" fill="#ff006e" font-size="14" text-anchor="end">--- 標示 ${ref}%</text>`}
+  document.getElementById(id).outerHTML=`<div id="${id}" style="height:100%">${s}</svg></div>`;
+}
+// calculator
+function calc(){
+  const N=+document.getElementById('cN').value;
+  const a=[...document.querySelectorAll('.cV')].map(i=>N*(+i.value)*60.05/1000/2.5*100);
+  const m=a.reduce((s,v)=>s+v,0)/a.length;
+  const sd=Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/(a.length-1));
+  document.getElementById('cMean').textContent=m.toFixed(3);
+  document.getElementById('cSD').textContent=sd.toFixed(4);
+  document.getElementById('cRSD').textContent=(sd/m*100).toFixed(2)+' %';
+}
+document.querySelectorAll('#cN,.cV').forEach(i=>i.addEventListener('input',calc));calc();
+// practice
+const PK=0.8120*20/100, PN=PK/204.22*1000/8.80, PA=PN*18.50*60.05/1000/2.5*100;
+document.getElementById('rv11').innerHTML=
+ `KHP／次 = 0.8120 × 20/100 = ${PK.toFixed(4)} g = ${(PK/204.22*1000).toFixed(4)} mmol<br>N = ${(PK/204.22*1000).toFixed(4)} ÷ 8.80 = ${PN.toFixed(5)} M<br>酸度 = ${PN.toFixed(5)} × 18.50 × 60.05 ÷ 1000 ÷ 2.5 × 100 = ${PA.toFixed(2)} g/100 mL`;
+function checkPractice(){
+  const n=+document.getElementById('pN').value,a=+document.getElementById('pA').value,fb=document.getElementById('pFb');
+  const okN=Math.abs(n-PN)/PN<0.005,okA=Math.abs(a-PA)/PA<0.005;
+  fb.innerHTML=(okN?'<span style="color:var(--ok)">N 正確 ✓</span>':'<span style="color:var(--accent-2)">N 再算一次 ✗</span>')+'　'+
+               (okA?'<span style="color:var(--ok)">酸度正確 ✓</span>':'<span style="color:var(--accent-2)">酸度再算一次 ✗</span>');
+}
+show(0);
+</script>
+</body>
+</html>
