@@ -175,7 +175,7 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
 <h2>2. 認識面板：你只會用到 4 個動作</h2>
 <div class="tw"><table>
 <tr><th>你要做的事</th><th>怎麼按</th><th class="l">說明</th></tr>
-<tr><td>吸 NaOH 進筒</td><td><kbd>▲</kbd> 按住</td><td class="l">左上鍵。按住吸、放開停。每份樣品開始前先吸滿。</td></tr>
+<tr><td>吸 NaOH 進筒</td><td><kbd>▲</kbd> 按住</td><td class="l">左上鍵。按住吸、放開停。活塞一次只裝 10 mL：每份樣品開始前先吸滿，用完再補吸，螢幕會繼續累計。</td></tr>
 <tr><td>快速加 NaOH</td><td><kbd>▼</kbd> 按住</td><td class="l">左下鍵。離終點還遠時用；粉紅色開始退得慢就放開。</td></tr>
 <tr><td>一小格一小格加</td><td>旋鈕：<b>轉</b></td><td class="l">接近終點用，越接近轉越慢。</td></tr>
 <tr><td>螢幕歸零</td><td>旋鈕：<b>輕按</b></td><td class="l">每一份開始前按一次。<mark>記錄之前絕對不要按。</mark></td></tr>
@@ -186,7 +186,7 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
 </div>
 
 <h2>3. 先在模擬器練一次</h2>
-<p>這是簡化過的 dTrite。照下面的流程做完一份白醋，再試試柳橙汁（橘色底會讓粉紅色比較難看出來）。<span class="small">模擬器的筒容量 25 mL、旋鈕一格 0.01 mL、粉紅色消退的時間都是示意值，以實機為準。</span></p>
+<p>這是簡化過的 dTrite。照下面的流程做完一份白醋，再試試柳橙汁（橘色底會讓粉紅色比較難看出來）。<span class="small">模擬器的筒容量 10 mL 與實機活塞相同（DLAB 規格），所以兩種樣品都要中途補吸一次；旋鈕一格 0.01 mL、粉紅色消退的時間是示意值，以實機為準。</span></p>
 
 <div class="sim" id="sim" aria-label="dTrite 模擬器">
   <div class="simgrid">
@@ -273,7 +273,7 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
 <div class="box key"><p>上課前 TA 已經把 dTrite 裝在 NaOH 瓶上、排好氣泡、調好速度。你從這裡開始：</p></div>
 <ol class="steps">
   <li><b>放瓶、開攪拌：</b>錐形瓶（樣品＋約 50 mL 去 CO₂ 水＋酚酞）放上攪拌盤，丟入攪拌子，輕按 <kbd>⚙</kbd>。轉速以不濺出為準。</li>
-  <li><b>吸滿：</b>按住 <kbd>▲</kbd> 直到筒滿。白醋約需 15 mL、柳橙汁約 13 mL，一次吸滿就不用中途補。</li>
+  <li><b>吸滿：</b>按住 <kbd>▲</kbd> 直到筒滿（活塞 10 mL）。白醋約需 15 mL、柳橙汁約 13 mL，<b>每瓶中途都要補吸一次</b>：筒空了先放開 <kbd>▼</kbd>，按住 <kbd>▲</kbd> 吸滿，看管路沒有氣泡再繼續。螢幕會<b>繼續累計</b>，不用歸零、也不用另外記。</li>
   <li><b>對準、歸零：</b>管尖伸進瓶口但不碰液面，<b>輕按旋鈕</b>，螢幕顯示 <code>0.00 mL</code>。</li>
   <li><b>快速段：</b>按住 <kbd>▼</kbd>。滴下去的地方開始出現粉紅、而且退得越來越慢時就放開。第一瓶不知道大概要多少，寧可早點放開。</li>
   <li><b>逐滴段：</b>改成<b>轉旋鈕</b>，一格一格加，每加一格等顏色散開再加下一格。</li>
@@ -289,7 +289,7 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
 <tr><td class="l">換瓶後忘了歸零</td><td class="l">螢幕數字含上一瓶的量，整份算錯</td><td class="l">每瓶開始前看一眼螢幕是不是 0.00</td></tr>
 <tr><td class="l">一路按住 ▼ 到變色</td><td class="l">衝過頭，粉紅太深</td><td class="l">粉紅色退得慢就放開，改轉旋鈕</td></tr>
 <tr><td class="l">沒開攪拌</td><td class="l">顏色只在局部，看錯終點</td><td class="l">螢幕有 <code>st✱</code> 才開始滴</td></tr>
-<tr><td class="l">滴到一半筒空了</td><td class="l">要中途補吸，容易出錯</td><td class="l">每瓶開始前先吸滿；萬一不夠，<b>先記下目前數字</b>再按 ▲ 補吸，並告訴 TA</td></tr>
+<tr><td class="l">補吸時按到旋鈕</td><td class="l">短按會歸零，累計數字沒了，整份重做</td><td class="l">補吸只按 <kbd>▲</kbd>；補吸前先把目前數字記在紀錄表角落備查</td></tr>
 </table></div>
 
 <h2>6. 安全與收尾</h2>
@@ -314,7 +314,7 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
 <script>
 (function(){
   const $ = id => document.getElementById(id);
-  const CAP = 25;                 // 模擬筒容量（示意）
+  const CAP = 10;                 // 活塞容量 10 mL（DLAB 規格）
   const STEP = 0.01;              // 旋鈕一格（示意）
   const FAST = 1.0;               // ▼ 送液 mL/s
   const FILL = 2.5;               // ▲ 吸液 mL/s
@@ -345,7 +345,7 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
 
   function add(dv, mode){
     if(S.done){ say('這一瓶已經記錄完了，按「換下一瓶」。'); return false; }
-    if(S.barrel <= 0.0001){ say('筒內沒有 NaOH 了！放開，按住 ▲ 吸液。實驗時如果滴到一半才發生，先把螢幕數字記下來再補吸，並告訴 TA。','bad'); return false; }
+    if(S.barrel <= 0.0001){ say('筒內 10 mL 用完了。放開 ▼，按住 ▲ 補吸到滿（螢幕會繼續累計，不用歸零），確認沒有氣泡再繼續。','bad'); return false; }
     if(S.disp >= 99.99){ say('螢幕已到上限 99.99 mL，儀器停止。先記下數字，再輕按旋鈕歸零。','bad'); return false; }
     dv = Math.min(dv, S.barrel, 99.99 - S.disp);
     S.barrel -= dv; S.x += dv; S.disp += dv;
@@ -384,8 +384,8 @@ footer{margin-top:40px;font-size:13px;color:var(--ink-2);border-top:1px solid va
   holdable($('kUp'), {start:()=>{S.dir='up'}, tick:dt=>fill(dt), end:()=>{S.dir=''; afterFill();}});
   function fill(dt){ if(S.barrel < CAP){ S.barrel = Math.min(CAP, S.barrel + FILL*dt); } }
   function afterFill(){
-    if(S.barrel >= CAP-0.01){ S.prog.fill = true; say(S.prog.zero ? '筒已吸滿。' : '筒吸滿了。下一步：管尖對準瓶口，輕按旋鈕歸零。'); }
-    else say('還沒吸滿（'+S.barrel.toFixed(1)+' mL）。每瓶開始前先吸滿，避免滴到一半不夠。');
+    if(S.barrel >= CAP-0.01){ S.prog.fill = true; say(S.prog.zero ? (S.x>0 && !S.done ? '補吸完成。螢幕繼續累計（'+S.disp.toFixed(2)+' mL），不用歸零，繼續滴定。' : '筒已吸滿。') : '筒吸滿了。下一步：管尖對準瓶口，輕按旋鈕歸零。'); }
+    else say('還沒吸滿（'+S.barrel.toFixed(1)+' / 10 mL）。按住 ▲ 直到滿。');
     render();
   }
   // ▼ dispense
