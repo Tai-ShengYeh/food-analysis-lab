@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 抓錯練習：醋酸滴定</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--ink:#1e293b;--ink-2:#475569;--ink-3:#94a3b8;--line:#e2e8f0;--accent:#4f46e5;--accent-2:#db2777;--ok:#059669;--bad:#dc2626;--warn:#b45309;--mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans TC',sans-serif;font-size:17px;line-height:1.7}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:22px 16px 18px}
+header .w{max-width:820px;margin:0 auto}
+header h1{margin:0;font-size:1.5rem;font-weight:900}
+header p{margin:4px 0 0;opacity:.9;font-size:.92rem}
+main{max-width:820px;margin:0 auto;padding:18px 16px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;overflow-wrap:anywhere}
+.check{background:#fffbeb;border:1px solid #fde68a;border-left:4px solid var(--warn)}
+.check h2{margin:0 0 6px;font-size:1.1rem;color:var(--warn)}
+.check ul{margin:0;padding-left:1.3em}
+h2.it{font-size:1.25rem;margin:0 0 8px}
+.qbox{background:#eef2ff;border-radius:8px;padding:10px 14px;margin:8px 0;white-space:pre-wrap}
+.lab{font-weight:700;margin-top:14px}
+.cap{color:var(--ink-3);font-size:.85rem;margin-bottom:6px}
+.ai{border:1px dashed var(--line);border-radius:10px;padding:6px 14px;background:#fcfcfd;overflow-x:auto}
+.ai h1,.ai h2,.ai h3,.ai h4{font-size:1.05rem;margin:.8em 0 .3em}
+.ai p{margin:.5em 0}
+.ai blockquote{margin:.5em 0;padding-left:12px;border-left:3px solid var(--line);color:var(--ink-2)}
+.ai pre{white-space:pre-wrap}
+.tw{overflow-x:auto}
+.ai table{border-collapse:collapse;margin:8px 0}
+.ai th,.ai td{border:1px solid var(--line);padding:4px 10px;font-size:.95rem}
+.katex-display{overflow-x:auto;overflow-y:hidden;max-width:100%;padding:2px 0}
+.mine{border-top:1px dashed var(--line);margin-top:14px;padding-top:10px}
+.mine label.opt{margin-right:18px;cursor:pointer}
+.mine input[type=radio]{accent-color:var(--accent);margin-right:4px}
+textarea,input[type=text]{font:inherit;padding:8px 10px;border:2px solid var(--line);border-radius:8px;width:100%}
+textarea{min-height:90px}
+input[type=text]{margin-top:2px}
+textarea:focus,input:focus{outline:none;border-color:var(--accent)}
+.fld{margin-top:8px}.fld span{display:block;font-weight:700;font-size:.95rem}
+button.pb{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 18px;font:inherit;font-weight:700;cursor:pointer}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.who .full{grid-column:1/-1}
+select{font:inherit;padding:8px 10px;border:2px solid var(--line);border-radius:8px;width:100%;background:#fff}
+.conf{margin-top:8px}
+.msg{margin-top:10px;font-weight:700}.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.miss{outline:3px solid #fca5a5;outline-offset:2px}
+button.pb:disabled{opacity:.5;cursor:default}
+@media(max-width:520px){.who{grid-template-columns:1fr}}
+.badge{display:inline-block;padding:2px 12px;border-radius:999px;color:#fff;font-weight:700;font-size:.95rem}
+.badge.ok{background:var(--ok)}.badge.bad{background:var(--bad)}
+.tag{display:inline-block;background:#eef2ff;color:var(--accent);border-radius:6px;padding:0 8px;margin:0 4px 4px 0;font-size:.85rem}
+.keybox{background:#fffbeb;border-left:4px solid var(--warn);border-radius:8px;padding:10px 14px;margin-top:12px}
+.keybox ul{margin:4px 0;padding-left:1.3em}
+.src{color:var(--ink-3);font-size:.8rem;font-family:var(--mono)}
+.teach{color:var(--accent-2);font-weight:700}
+@media print{
+  body{background:#fff;font-size:11.5pt;line-height:1.55}
+  header{background:#fff;color:#000;padding:0 0 6px;border-bottom:1.5px solid #000}
+  .noprint,button{display:none!important}
+  .card{border:1px solid #999;border-radius:6px;box-shadow:none}
+  .item{break-inside:avoid-page}
+  .item .qbox,.item .lab,.item .cap{break-after:avoid}
+  textarea{border:1px solid #666;min-height:3.2cm;resize:none}
+  input[type=text]{border:0;border-bottom:1px solid #000;border-radius:0}
+  .ai{overflow:visible}
+  @page{size:A4;margin:14mm}
+}
+</style>
+</head>
+<body data-mode="student">
+<header><div class="w"><h1>AI 抓錯練習：醋酸滴定</h1><p>找出「AI 同學」解答裡的錯誤</p></div></header>
+<main>
+<div class="card"><p style="margin:0">下面 8 份解答是「AI 同學」（在老師電腦上跑的小型開源模型）寫的，原文照登，文字和排版都沒改。有的對、有的錯。每題判斷：這份解答對不對？錯在哪一步？正確答案是多少？說不出錯在哪就不要只猜「錯」。</p><p class="noprint" style="margin:10px 0 0"><button class="pb" onclick="window.print()">列印</button></p></div>
+<div class="card"><div class="who"><div class="fld"><span>學號</span><input type="text" id="sid" autocomplete="off"></div><div class="fld"><span>姓名</span><input type="text" id="sname" autocomplete="off"></div><div class="fld full"><span>班級</span><select id="course"><option value="">請選班級</option><option>五專五甲 食品分析實驗二</option><option>四技 食品分析實驗</option><option>五專四 食品分析實驗一</option></select></div></div></div>
+<div class="card check"><h2>抓錯檢查清單</h2><ul><li>單位（mL↔L、g/100 mL）</li><li>取了多少：分取（20 mL / 100 mL）與稀釋倍數</li><li>莫耳比 1:1</li><li>每一步按計算機重算</li><li>有效數字與四捨五入</li><li>結果合不合理（食用醋約 4–6 g/100 mL）</li><li>理由對不對，不只看結論</li></ul></div>
+<section class="card item" id="item1">
+<h2 class="it">第 1 題</h2>
+<div class="qbox">要配 0.1 M 的 NaOH 溶液 500 mL。NaOH 分子量 40.00 g/mol，手上的 NaOH 固體純度是 97.0%。請問要秤多少 g 的 NaOH 固體？</div>
+<div class="lab">AI 同學的解答</div>
+<div class="cap">模型：gemma4:e4b</div>
+<div class="ai" id="ai1"><pre style="white-space:pre-wrap">這是一個典型的**溶液配製計算題**，你需要根據目標的溶液濃度、體積和物質的純度，來計算需要稱取的溶質質量。
+
+我會用繁體中文，一步一步地為您詳細計算過程。
+
+---
+
+## 📝 計算步驟詳解
+
+### 🎯 題目資訊整理 (Identify Given Values)
+
+1. **目標溶液濃度 ($C$):** $0.1 \text{ M}$ (摩爾濃度)
+2. **目標溶液體積 ($V$):** $500 \text{ mL}$
+3. **NaOH 分子量 ($\text{MW}$):** $40.00 \text{ g/mol}$
+4. **NaOH 固體純度 ($\text{P}$):** $97.0\%$ (或 $0.970$)
+
+### 🧪 第一步：單位換算 (Unit Conversion)
+
+首先，體積的單位必須統一。由於濃度單位是 $\text{mol/L}$，所以體積 $V$ 必須換算成 **公升 ($\text{L}$)**。
+
+$$\text{體積 } V = 500 \text{ mL} \times \left(\frac{1 \text{ L}}{1000 \text{ mL}}\right) = 0.500 \text{ L}$$
+
+### 🧪 第二步：計算所需 $\text{NaOH}$ 的理論物質量 (Calculate Moles Needed)
+
+根據摩爾濃度 ($\text{M}$) 的定義：
+$$\text{濃度 } (M) = \frac{\text{物質量 } (n)}{\text{體積 } (V \text{ in L})}$$
+
+我們可以重新排列公式來求所需的物質量 ($n$):
+$$\text{所需物質量 } (n) = \text{目標濃度 } (M) \times \text{體積 } (V \text{ in L})$$
+
+$$\text{所需 } n = 0.1 \text{ mol/L} \times 0.500 \text{ L} = 0.05 \text{ moles}$$
+
+### 🧪 第三步：計算所需純 $\text{NaOH}$ 的質量 (Calculate Mass of Pure NaOH)
+
+現在，利用物質量和分子量來計算配製 $0.05$ 摩爾所需 $\text{NaOH}$ 的質量 ($\text{Mass}_{\text{pure}}$)。
+
+$$\text{質量} = \text{物質量} \times \text{分子量}$$
+
+$$\text{所需純 } \text{NaOH} \text{ 質量} (\text{g}) = 0.05 \text{ mol} \times 40.00 \text{ g/mol} = 2.00 \text{ g}$$
+
+**💡 這是指如果 $\text{NaOH}$ 是 $100\%$ 純度時，你需要使用的質量。**
+
+### 🧪 第四步：考慮試劑純度，計算需稱取的總質量 (Account for Purity)
+
+你手上的 $\text{NaOH}$ 固體只有 $97.0\%$ 的純度，這意味著你稱取的總質量 ($\text{Mass}_{\text{total}}$) 中，只有 $97.0\%$ 是實際的 $\text{NaOH}$。
+
+$$\text{純質量} = \text{總稱取質量} \times \text{純度}$$
+
+因此，要得到 $2.00 \text{ g}$ 的純 $\text{NaOH}$，我們需要計算：
+$$\text{總稱取質量 } (\text{Mass}_{\text{total}}) = \frac{\text{所需純質量}}{\text{純度}}$$
+
+$$\text{總稱取質量} = \frac{2.00 \text{ g}}{0.970} \approx 2.061855... \text{ g}$$
+
+---
+
+## 🏆 最終答案 (Final Answer)
+
+保留適當的小數點位數（通常與題目給的數據精度一致，這裡保留三位小數）：
+
+**要秤取的 $\text{NaOH}$ 固體質量約為 $\mathbf{2.062 \text{ g}}$。**</pre></div>
+<div class="mine" id="mine1"><div><b>這份解答：</b><label class="opt"><input type="radio" name="v1" value="對"> 對</label><label class="opt"><input type="radio" name="v1" value="錯"> 錯</label></div><div class="conf"><b>我的把握：</b><label class="opt"><input type="radio" name="c1" value="1"> 用猜的</label><label class="opt"><input type="radio" name="c1" value="2"> 有點把握</label><label class="opt"><input type="radio" name="c1" value="3"> 很確定</label></div><div class="fld"><span>錯在哪一步？為什麼？（選「對」可以不寫）</span><textarea id="why1"></textarea></div><div class="fld"><span>正確答案</span><input type="text" id="ans1"></div></div>
+</section>
+<section class="card item" id="item2">
+<h2 class="it">第 2 題</h2>
+<div class="qbox">KHP（鄰苯二甲酸氫鉀，分子量 204.22 g/mol）秤 1.0212 g，溶解後在定量瓶定容到 100 mL。每次取 20 mL 用 NaOH 滴定到酚酞淡粉紅色，用掉 NaOH 10.92 mL。KHP 與 NaOH 是 1:1 反應。請問 NaOH 的濃度是多少 M？（4 位有效數字）</div>
+<div class="lab">AI 同學的解答</div>
+<div class="cap">模型：gpt-oss:20b</div>
+<div class="ai" id="ai2"><pre style="white-space:pre-wrap">**步驟 1：計算 20 mL 取樣中 KHP 的質量**  
+
+- KHP 的總質量：\(1.0212\ \text{g}\)  
+- 定量瓶容量：\(100\ \text{mL}\)  
+
+\[
+\text{KHP 濃度（質量/體積）}= \frac{1.0212\ \text{g}}{100\ \text{mL}}
+= 0.010212\ \frac{\text{g}}{\text{mL}}
+\]
+
+取 20 mL：
+
+\[
+\text{質量}_{\text{KHP,20 mL}} = 0.010212\ \frac{\text{g}}{\text{mL}}\times 20\ \text{mL}
+= 0.20424\ \text{g}
+\]
+
+---
+
+**步驟 2：計算 20 mL 取樣中 KHP 的摩爾數**  
+
+KHP 的分子量 \(M_{\text{KHP}} = 204.22\ \text{g mol}^{-1}\)
+
+\[
+n_{\text{KHP}} = \frac{0.20424\ \text{g}}{204.22\ \text{g mol}^{-1}}
+= 0.001000098\ \text{mol}
+\]
+
+---
+
+**步驟 3：利用滴定體積求 NaOH 的摩爾數**  
+
+滴定時 NaOH 的體積 \(V_{\text{NaOH}} = 10.92\ \text{mL} = 0.01092\ \text{L}\)
+
+由於 KHP 與 NaOH 的化學計量比為 1:1，  
+\[
+n_{\text{NaOH}} = n_{\text{KHP}} = 0.001000098\ \text{mol}
+\]
+
+---
+
+**步驟 4：計算 NaOH 溶液的濃度**  
+
+\[
+C_{\text{NaOH}} = \frac{n_{\text{NaOH}}}{V_{\text{NaOH}}}
+= \frac{0.001000098\ \text{mol}}{0.01092\ \text{L}}
+= 0.091724\ \text{mol L}^{-1}
+\]
+
+四個有效數字：
+
+\[
+\boxed{0.09172\ \text{M}}
+\]</pre></div>
+<div class="mine" id="mine2"><div><b>這份解答：</b><label class="opt"><input type="radio" name="v2" value="對"> 對</label><label class="opt"><input type="radio" name="v2" value="錯"> 錯</label></div><div class="conf"><b>我的把握：</b><label class="opt"><input type="radio" name="c2" value="1"> 用猜的</label><label class="opt"><input type="radio" name="c2" value="2"> 有點把握</label><label class="opt"><input type="radio" name="c2" value="3"> 很確定</label></div><div class="fld"><span>錯在哪一步？為什麼？（選「對」可以不寫）</span><textarea id="why2"></textarea></div><div class="fld"><span>正確答案</span><input type="text" id="ans2"></div></div>
+</section>
+<section class="card item" id="item3">
+<h2 class="it">第 3 題</h2>
+<div class="qbox">NaOH 濃度 0.09114 M。取 10 mL 烏醋到 100 mL 定量瓶，加水到刻度。再取 25 mL 稀釋液滴定，用掉 NaOH 17.42 mL；空白試驗用掉 0.06 mL。醋酸分子量 60.05 g/mol，與 NaOH 1:1 反應。請算這瓶烏醋的酸度（g/100 mL，以醋酸計）。</div>
+<div class="lab">AI 同學的解答</div>
+<div class="cap">模型：gemma4:e4b</div>
+<div class="ai" id="ai3"><pre style="white-space:pre-wrap">這是一個典型的酸鹼滴定計算題，目的是利用已知濃度的標準溶液 ($\text{NaOH}$) 來計算未知酸液（烏醋）的酸度。
+
+請按照以下步驟一步一步計算：
+
+---
+
+### 步驟一：理解滴定反應與計算所需反應體積
+
+**1. 確定化學反應方程式：**
+醋酸 ($\text{CH}_3\text{COOH}$) 與氫氧化鈉 ($\text{NaOH}$) 的反應是酸與鹼的反應，反應比例為 $1:1$。
+$$\text{CH}_3\text{COOH} + \text{NaOH} \rightarrow \text{CH}_3\text{COONa} + \text{H}_2\text{O}$$
+
+**2. 計算實際用於滴定的 $\text{NaOH}$ 體積：**
+實驗中，實際用來滴定樣本的 $\text{NaOH}$ 體積是：
+$$\text{實際用量} = (\text{用掉的 } \text{NaOH} \text{ 體積}) - (\text{空白試驗用掉的 } \text{NaOH} \text{ 體積})$$
+$$\text{實際用量} = 17.42 \text{ mL} - 0.06 \text{ mL} = 17.36 \text{ mL}$$
+
+---
+
+### 步驟二：計算滴定過程中反應的物質的「當量數」（或摩爾數）
+
+在滴定中，當點達到當量時，酸的物質量等於鹼的物質量。
+
+**1. 計算 $\text{NaOH}$ 提供的 $\text{OH}^-$ 物質量（或等當量）：**
+$$\text{物質量} (\text{mol}) = \text{濃度} (\text{M}) \times \text{體積} (\text{L})$$
+$$\text{NaOH} \text{ 的物質量} = 0.09114 \text{ M} \times \left( \frac{17.36 \text{ mL}}{1000 \text{ mL/L}} \right)$$
+$$\text{NaOH} \text{ 的物質量} = 0.09114 \times 0.01736 \text{ mol}$$
+$$\text{NaOH} \text{ 的物質量} \approx 0.0015799 \text{ mol}$$
+
+**2. 計算反應的醋酸 ($\text{CH}_3\text{COOH}$) 物質量：**
+因為反應比例為 $1:1$，所以：
+$$\text{醋酸的物質量} = \text{NaOH} \text{ 的物質量} \approx 0.0015799 \text{ mol}$$
+
+---
+
+### 步驟三：計算樣本中醋酸的質量
+
+**1. 計算醋酸的質量（克）：**
+$$\text{質量} (\text{g}) = \text{物質量} (\text{mol}) \times \text{分子量} (\text{g/mol})$$
+$$\text{醋酸的質量} = 0.0015799 \text{ mol} \times 60.05 \text{ g/mol}$$
+$$\text{醋酸的質量} \approx 0.09486 \text{ g}$$
+
+**注意：** 這個 $0.09486 \text{ g}$ 是在**最初的 $10 \text{ mL}$ 烏醋**中，經過稀釋到 $100 \text{ mL}$ 後，**樣本體積為 $25 \text{ mL}$** 所代表的醋酸的質量。
+
+---
+
+### 步驟四：計算原始烏醋的酸度（$\text{g}/100 \text{ mL}$）
+
+題目要求的是「這瓶烏醋的酸度（$\text{g}/100 \text{ mL}$，以醋酸計）」。
+
+1. **計算在 $100 \text{ mL}$ 稀釋液中，$25 \text{ mL}$ 樣品所代表的醋酸質量佔的比例：**
+   $$\text{比例} = \frac{\text{樣本體積}}{\text{定容體積}} = \frac{25 \text{ mL}}{100 \text{ mL}} = 0.25$$
+
+2. **計算 $100 \text{ mL}$ 總體積中，原始醋酸的總質量：**
+   $$\text{總質量} (\text{g}) = \frac{\text{步驟三計算出的質量}}{\text{比例}} = \frac{0.09486 \text{ g}}{0.25}$$
+   $$\text{總質量} (\text{g}) \approx 0.37944 \text{ g}$$
+
+這個 $0.37944 \text{ g}$ 就是 $100 \text{ mL}$ 稀釋液中，代表的原始醋酸質量。
+
+**因此，這瓶烏醋的酸度為 $0.3794 \text{ g}/100 \text{ mL}$。**
+
+---
+
+### 最終答案
+
+這瓶烏醋的酸度為 **$0.379 \text{ g}/100 \text{ mL}$** (保留三位有效數字)。</pre></div>
+<div class="mine" id="mine3"><div><b>這份解答：</b><label class="opt"><input type="radio" name="v3" value="對"> 對</label><label class="opt"><input type="radio" name="v3" value="錯"> 錯</label></div><div class="conf"><b>我的把握：</b><label class="opt"><input type="radio" name="c3" value="1"> 用猜的</label><label class="opt"><input type="radio" name="c3" value="2"> 有點把握</label><label class="opt"><input type="radio" name="c3" value="3"> 很確定</label></div><div class="fld"><span>錯在哪一步？為什麼？（選「對」可以不寫）</span><textarea id="why3"></textarea></div><div class="fld"><span>正確答案</span><input type="text" id="ans3"></div></div>
+</section>
+<section class="card item" id="item4">
+<h2 class="it">第 4 題</h2>
+<div class="qbox">同一瓶醋滴定了五次，NaOH 用量（mL）：18.42、18.38、18.61、18.40、18.45。請用 Dixon Q 檢定，在 95% 信心水準下判斷 18.61 要保留還是剔除。（Q = |可疑值 − 最接近的值| ÷（最大值 − 最小值）；95% 臨界值：n=3 為 0.970，n=4 為 0.829，n=5 為 0.710）</div>
+<div class="lab">AI 同學的解答</div>
+<div class="cap">模型：gpt-oss:20b</div>
+<div class="ai" id="ai4"><pre style="white-space:pre-wrap">**步驟 1：列出所有測量值並找出最大值與最小值**
+
+| 取樣次數 | NaOH 用量 (mL) |
+|----------|----------------|
+| 1 | 18.42 |
+| 2 | 18.38 |
+| 3 | 18.61 |
+| 4 | 18.40 |
+| 5 | 18.45 |
+
+- 最大值 \( \text{max} = 18.61 \)  
+- 最小值 \( \text{min} = 18.38 \)
+
+**步驟 2：計算「可疑值」18.61 與最接近的值之差**
+
+可疑值 = 18.61  
+找出與 18.61 最接近的其它測量值：
+
+- \( |18.61-18.42| = 0.19 \)  
+- \( |18.61-18.38| = 0.23 \)  
+- \( |18.61-18.40| = 0.21 \)  
+- \( |18.61-18.45| = 0.16 \)
+
+最小差值為 \(0.16\)（對應 18.45）。  
+因此  
+\[
+| \text{可疑值} - \text{最近值} | = 0.16
+\]
+
+**步驟 3：計算範圍（最大值 - 最小值）**
+
+\[
+\text{範圍} = \text{max} - \text{min} = 18.61 - 18.38 = 0.23
+\]
+
+**步驟 4：算出 Dixon Q 值**
+
+\[
+Q = \frac{| \text{可疑值} - \text{最近值} |}{\text{範圍}} = \frac{0.16}{0.23} \approx 0.6957
+\]
+
+**步驟 5：比較 Q 與 95% 信心水準下的臨界值**
+
+- 樣本數 \(n = 5\)  
+- 95% 臨界值 \(Q_{\text{crit}} = 0.710\)
+
+因為  
+\[
+Q_{\text{計算值}} = 0.6957 \;&lt;\; Q_{\text{crit}} = 0.710
+\]
+
+**結論：**  
+Q 值未超過臨界值，說明 18.61 不符合「可疑值」的標準，**不應剔除**，應保留。
+
+---
+
+**答案**：18.61 的測量值應保留。</pre></div>
+<div class="mine" id="mine4"><div><b>這份解答：</b><label class="opt"><input type="radio" name="v4" value="對"> 對</label><label class="opt"><input type="radio" name="v4" value="錯"> 錯</label></div><div class="conf"><b>我的把握：</b><label class="opt"><input type="radio" name="c4" value="1"> 用猜的</label><label class="opt"><input type="radio" name="c4" value="2"> 有點把握</label><label class="opt"><input type="radio" name="c4" value="3"> 很確定</label></div><div class="fld"><span>錯在哪一步？為什麼？（選「對」可以不寫）</span><textarea id="why4"></textarea></div><div class="fld"><span>正確答案</span><input type="text" id="ans4"></div></div>
+</section>
+<section class="card item" id="item5">
+<h2 class="it">第 5 題</h2>
+<div class="qbox">一瓶白醋標示酸度 4.5 g/100 mL（以醋酸計，醋酸分子量 60.05 g/mol）。實驗時取 5 mL 白醋稀釋到 50 mL，再取 20 mL 稀釋液，用 0.0916 M 的 NaOH 滴定。請預估大約要用掉多少 mL 的 NaOH？</div>
+<div class="lab">AI 同學的解答</div>
+<div class="cap">模型：gemma4:e4b</div>
+<div class="ai" id="ai5"><pre style="white-space:pre-wrap">同學你好，這是一個典型的**溶液稀釋與滴定**的化學計算問題。我會一步一步用繁體中文為你詳細解析計算過程，最後給出答案。
+
+---
+
+### 🧪 問題分析與步驟規劃
+
+本題的目標是「預估用掉的 $\text{NaOH}$ 體積」。這需要經過三個主要的步驟：
+
+1. **計算原始白醋中的酸的量（或濃度）。**
+2. **計算經過兩次稀釋後，最終溶液中的酸的濃度。**
+3. **利用酸鹼中和的化學計量關係（滴定），計算反應所需的 $\text{NaOH}$ 體積。**
+
+---
+
+### 🔢 第一步：計算原始白醋的酸濃度（初步）
+
+題目給定：
+* 原始白醋酸度：$4.5 \text{ g} / 100 \text{ mL}$ （以醋酸計）
+* 醋酸分子量 $(\text{MM})$：$60.05 \text{ g/mol}$
+
+**計算原始醋酸的質量濃度 $(\text{g/L})$：**
+$$\text{濃度} (\text{g/L}) = \frac{4.5 \text{ g}}{100 \text{ mL}} \times \frac{1000 \text{ mL}}{1 \text{ L}} = 45 \text{ g/L}$$
+
+**將質量濃度 $\text{g/L}$ 轉換為莫耳濃度 $\text{M}$：**
+$$\text{初始濃度} (\text{M}) = \frac{\text{質量濃度} (\text{g/L})}{\text{分子量} (\text{g/mol})} = \frac{45 \text{ g/L}}{60.05 \text{ g/mol}} \approx 0.7492 \text{ M}$$
+
+---
+
+### 💧 第二步：計算稀釋後的酸濃度（兩次稀釋）
+
+這是一個分階段的稀釋過程，我們需要連續使用**稀釋定律**：$C_1V_1 = C_2V_2$。
+
+**第一次稀釋：**
+* 原始溶液濃度 ($C_1$)：$0.7492 \text{ M}$
+* 取樣體積 ($V_1$)：$5 \text{ mL}$
+* 稀釋到體積 ($V_2$)：$50 \text{ mL}$
+* 第一次稀釋後的濃度 ($C_{2A}$):
+$$C_{2A} = C_1 \times \frac{V_1}{V_2} = 0.7492 \text{ M} \times \frac{5 \text{ mL}}{50 \text{ mL}} = 0.7492 \text{ M} \times 0.1$$
+$$C_{2A} \approx 0.07492 \text{ M}$$
+
+**第二次稀釋：**
+* 溶液濃度 ($C_1$)：$0.07492 \text{ M}$
+* 取樣體積 ($V_1$)：$20 \text{ mL}$
+* 稀釋到體積 ($V_2$)：$50 \text{ mL}$ (假設第二次稀釋的總體積也是 $50 \text{ mL}$，這是標準的實驗操作假設)
+* 最終溶液濃度 ($C_{\text{final}}$):
+$$C_{\text{final}} = C_{2A} \times \frac{V_1}{V_2} = 0.07492 \text{ M} \times \frac{20 \text{ mL}}{50 \text{ mL}}$$
+$$C_{\text{final}} = 0.07492 \text{ M} \times 0.4 \approx 0.02997 \text{ M}$$
+
+**【檢核：如果題目沒有指定第二次稀釋的最終體積，通常會假設取樣的體積就是最終體積，但這裡給了 $20 \text{ mL}$ 取到 $50 \text{ mL}$，所以我們使用 $0.4$ 的稀釋係數是正確的。】**
+
+最終的酸濃度約為 $0.0300 \text{ M}$。
+
+---
+
+### 🧪 第三步：利用滴定反應計算 $\text{NaOH}$ 體積
+
+白醋中的酸是醋酸 ($\text{CH}_3\text{COOH}$)，它與鹼 ($\text{NaOH}$) 發生酸鹼中和反應：
+
+$$\text{CH}_3\text{COOH} \text{ (aq)} + \text{NaOH} \text{ (aq)} \longrightarrow \text{CH}_3\text{COONa} \text{ (aq)} + \text{H}_2\text{O} \text{ (l)}$$
+
+反應的化學計量比是 $1:1$。
+
+**根據滴定原理：**
+$$\text{酸的物質量} (n_{\text{acid}}) = \text{鹼的物質量} (n_{\text{base}})$$
+$$C_{\text{acid}} \times V_{\text{acid}} = C_{\text{base}} \times V_{\text{base}}$$
+
+**已知條件：**
+* $C_{\text{acid}}$ (最終酸濃度) $\approx 0.02997 \text{ M}$
+* $V_{\text{acid}}$ (反應體積，即最終溶液體積) $= 20 \text{ mL}$ (題目說「取 $20 \text{ mL}$ 稀釋液，用 $\text{NaOH}$ 滴定」，所以體積是 $20 \text{ mL}$)
+* $C_{\text{base}}$ ($\text{NaOH}$ 濃度) $= 0.0916 \text{ M}$
+* $V_{\text{base}}$ ($\text{NaOH}$ 體積) $=$ 待求
+
+**代入公式計算 $V_{\text{base}}$：**
+$$V_{\text{base}} = \frac{C_{\text{acid}} \times V_{\text{acid}}}{C_{\text{base}}}$$
+$$V_{\text{base}} = \frac{0.02997 \text{ mol/L} \times 20 \text{ mL}}{0.0916 \text{ mol/L}}$$
+
+$$V_{\text{base}} = \frac{0.5994 \text{ mmol}}{0.0916 \text{ mmol/mL}} \approx 6.54 \text{ mL}$$
+
+---
+
+### 📝 最終答案總結
+
+根據上述逐步計算，預估用掉的 $\text{NaOH}$ 體積約為 $6.54 \text{ mL}$。
+
+**答案：大約要用掉 $\mathbf{6.54 \text{ mL}}$ 的 $\text{NaOH}$。**</pre></div>
+<div class="mine" id="mine5"><div><b>這份解答：</b><label class="opt"><input type="radio" name="v5" value="對"> 對</label><label class="opt"><input type="radio" name="v5" value="錯"> 錯</label></div><div class="conf"><b>我的把握：</b><label class="opt"><input type="radio" name="c5" value="1"> 用猜的</label><label class="opt"><input type="radio" name="c5" value="2"> 有點把握</label><label class="opt"><input type="radio" name="c5" value="3"> 很確定</label></div><div class="fld"><span>錯在哪一步？為什麼？（選「對」可以不寫）</span><textarea id="why5"></textarea></div><div class="fld"><span>正確答案</span><input type="text" id="ans5"></div></div>
+</section>
+<section class="card item" id="item6">
+<h2 class="it">第 6 題</h2>
+<div class="qbox">用天平稱取白醋 5.126 g（密度 1.006 g/mL），全部洗入 50 mL 定量瓶，加水到刻度。取 20 mL 稀釋液，用 0.09159 M 的 NaOH 滴定，用掉 18.55 mL。醋酸分子量 60.05 g/mol，與 NaOH 1:1 反應。請算這瓶白醋的酸度，分別用重量百分比（% w/w）和 g/100 mL 表示。</div>
+<div class="lab">AI 同學的解答</div>
+<div class="cap">模型：gpt-oss:20b</div>
+<div class="ai" id="ai6"><pre style="white-space:pre-wrap">**步驟 1：把白醋的體積算出來**
+
+\[
+\rho_{\text{醋}} = 1.006\; \text{g·mL}^{-1}
+\qquad
+m_{\text{醋}} = 5.126\; \text{g}
+\]
+
+\[
+V_{\text{醋}} = \frac{m_{\text{醋}}}{\rho_{\text{醋}}}
+              = \frac{5.126}{1.006}
+              = 5.090\; \text{mL}
+\]
+
+（實際上把 5.090 mL 的醋倒入 50 mL 定量瓶，加入水到刻度，得到 50 mL 的稀釋溶液。）
+
+---
+
+**步驟 2：計算 20 mL 稀釋液中酵酸的摩爾數**
+
+滴定使用 0.09159 M 的 NaOH，消耗 18.55 mL：
+
+\[
+n_{\text{NaOH}} = C_{\text{NaOH}}\times V_{\text{NaOH}}
+                 = 0.09159\;\text{mol L}^{-1}\times 0.01855\;\text{L}
+                 = 1.699\times10^{-3}\;\text{mol}
+\]
+
+酵酸與 NaOH 的反應比 1:1，故：
+
+\[
+n_{\text{acetic acid (20 mL)}} = 1.699\times10^{-3}\;\text{mol}
+\]
+
+---
+
+**步驟 3：求 50 mL 稀釋液中酵酸的摩爾濃度**
+
+\[
+C_{\text{acetic acid}} = \frac{n}{V}
+                       = \frac{1.699\times10^{-3}\;\text{mol}}{0.020\;\text{L}}
+                       = 8.495\times10^{-2}\;\text{mol L}^{-1}
+\]
+
+---
+
+**步驟 4：求 50 mL 稀釋液中酵酸的摩爾數**
+
+\[
+n_{\text{acetic acid (50 mL)}} = C_{\text{acetic acid}}\times V
+                               = 8.495\times10^{-2}\;\text{mol L}^{-1}\times 0.050\;\text{L}
+                               = 4.2475\times10^{-3}\;\text{mol}
+\]
+
+---
+
+**步驟 5：把摩爾數換成質量**
+
+酵酸分子量 \(M_{\text{acetic acid}} = 60.05\;\text{g mol}^{-1}\)
+
+\[
+m_{\text{acetic acid}} = n_{\text{acetic acid}}\times M_{\text{acetic acid}}
+                       = 4.2475\times10^{-3}\;\text{mol}\times 60.05\;\text{g mol}^{-1}
+                       = 0.2554\;\text{g}
+\]
+
+---
+
+**步驟 6：計算酸度（重量百分比）**
+
+\[
+\%\,w/w = \frac{m_{\text{acetic acid}}}{m_{\text{醋}}}\times 100
+        = \frac{0.2554}{5.126}\times 100
+        = 4.98\%
+\]
+
+---
+
+**步驟 7：計算 g/100 mL**
+
+50 mL 的稀釋液中含 0.2554 g 酵酸，故 100 mL 的濃度：
+
+\[
+\frac{0.2554\;\text{g}}{50\;\text{mL}}\times 100\;\text{mL}
+= 0.5108\;\text{g}\;\text{per 100 mL}
+\]
+
+---
+
+### 最終答案
+
+| 酸度表現 | 結果 |
+|----------|------|
+| **重量百分比（% w/w）** | **4.98 %** |
+| **g / 100 mL** | **0.511 g / 100 mL** |
+
+（數值四捨五入至小數點後三位。）</pre></div>
+<div class="mine" id="mine6"><div><b>這份解答：</b><label class="opt"><input type="radio" name="v6" value="對"> 對</label><label class="opt"><input type="radio" name="v6" value="錯"> 錯</label></div><div class="conf"><b>我的把握：</b><label class="opt"><input type="radio" name="c6" value="1"> 用猜的</label><label class="opt"><input type="radio" name="c6" value="2"> 有點把握</label><label class="opt"><input type="radio" name="c6" value="3"> 很確定</label></div><div class="fld"><span>錯在哪一步？為什麼？（選「對」可以不寫）</span><textarea id="why6"></textarea></div><div class="fld"><span>正確答案</span><input type="text" id="ans6"></div></div>
+</section>
+<section class="card item" id="item7">
+<h2 class="it">第 7 題</h2>
+<div class="qbox">同一瓶醋三次測得酸度（g/100 mL）：5.06、5.02、5.11。請算平均值、標準差 SD（樣本標準差）和相對標準差 RSD（%）。</div>
+<div class="lab">AI 同學的解答</div>
+<div class="cap">模型：gemma4:e4b</div>
+<div class="ai" id="ai7"><pre style="white-space:pre-wrap">同學你好，別擔心！這類統計計算在實驗課是很常見的題目。我會用繁體中文，一步一步地為你詳細計算平均值、樣本標準差（SD）和相對標準差（RSD）。
+
+---
+
+### 題目資訊整理
+
+* **測量數據 ($x_i$)：** 5.06、5.02、5.11 ($\text{g/100 mL}$)
+* **數據點數量 ($n$)：** 3
+
+---
+
+### 第一步：計算平均值 ($\bar{x}$)
+
+平均值是用所有數據加總後，除以數據的個數。
+
+**公式：**
+$$\bar{x} = \frac{\sum x_i}{n}$$
+
+**計算步驟：**
+1. **加總所有數據：**
+   $$\sum x_i = 5.06 + 5.02 + 5.11 = 15.19$$
+2. **除以數據個數：**
+   $$\bar{x} = \frac{15.19}{3} \approx 5.06333\dots$$
+
+**結果取用四位小數（通常在分析報告中是這樣處理的）：**
+$$\text{平均值} (\bar{x}) = 5.063 \text{ g/100 mL}$$
+
+---
+
+### 第二步：計算樣本標準差 ($SD$)
+
+樣本標準差用於估計整個母體的分散程度，它比母體標準差多了一步除以 $(n-1)$。
+
+**公式：**
+$$SD = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n-1}}$$
+
+**計算步驟：**
+
+**1. 計算每個數據點與平均值的差的平方 $\sum (x_i - \bar{x})^2$：**
+* **$x_1 = 5.06$：** $(5.06 - 5.06333)^2 = (-0.00333)^2 \approx 0.000011$
+* **$x_2 = 5.02$：** $(5.02 - 5.06333)^2 = (-0.04333)^2 \approx 0.001878$
+* **$x_3 = 5.11$：** $(5.11 - 5.06333)^2 = (0.04667)^2 \approx 0.002178$
+
+**2. 將這些平方差加總：**
+$$\sum (x_i - \bar{x})^2 = 0.000011 + 0.001878 + 0.002178 = 0.004067$$
+
+**3. 除以 $(n-1)$：**
+$$n-1 = 3 - 1 = 2$$
+$$\text{變異數} (s^2) = \frac{0.004067}{2} = 0.0020335$$
+
+**4. 開根號求標準差：**
+$$SD = \sqrt{0.0020335} \approx 0.045094$$
+
+**結果取用四位小數：**
+$$\text{標準差} (SD) = 0.0451 \text{ g/100 mL}$$
+
+---
+
+### 第三步：計算相對標準差 ($RSD$)
+
+相對標準差 (Relative Standard Deviation, RSD) 是指標準差佔平均值的百分比，用來衡量數據的變異性相對於平均值的大小。
+
+**公式：**
+$$RSD (\%) = \frac{SD}{\bar{x}} \times 100\%$$
+
+**計算步驟：**
+1. **將 $SD$ 除以 $\bar{x}$：**
+   $$\frac{SD}{\bar{x}} = \frac{0.045094}{5.06333} \approx 0.008918$$
+2. **轉換為百分比：**
+   $$RSD (\%) = 0.008918 \times 100\% \approx 0.8918\%$$
+
+**結果取用兩位小數：**
+$$\text{相對標準差} (RSD) = 0.89\%$$
+
+---
+
+## 最終答案總結
+
+根據您提供的三次測量數據 (5.06、5.02、5.11 $\text{g/100 mL}$)，計算結果如下：
+
+1. **平均值 ($\bar{x}$):** $\mathbf{5.063 \text{ g/100 mL}}$
+2. **標準差 ($SD$):** $\mathbf{0.0451 \text{ g/100 mL}}$
+3. **相對標準差 ($RSD$):** $\mathbf{0.89\%}$</pre></div>
+<div class="mine" id="mine7"><div><b>這份解答：</b><label class="opt"><input type="radio" name="v7" value="對"> 對</label><label class="opt"><input type="radio" name="v7" value="錯"> 錯</label></div><div class="conf"><b>我的把握：</b><label class="opt"><input type="radio" name="c7" value="1"> 用猜的</label><label class="opt"><input type="radio" name="c7" value="2"> 有點把握</label><label class="opt"><input type="radio" name="c7" value="3"> 很確定</label></div><div class="fld"><span>錯在哪一步？為什麼？（選「對」可以不寫）</span><textarea id="why7"></textarea></div><div class="fld"><span>正確答案</span><input type="text" id="ans7"></div></div>
+</section>
+<section class="card item" id="item8">
+<h2 class="it">第 8 題</h2>
+<div class="qbox">同學做醋酸度：取 5 mL 白醋稀釋到 50 mL，再取 20 mL 稀釋液滴定，算出醋酸 0.1012 g。他寫：酸度 = 0.1012 ÷ 20 × 100 = 0.506 g/100 mL。這個結果合理嗎？如果不合理，錯在哪裡？正確答案大約是多少？</div>
+<div class="lab">AI 同學的解答</div>
+<div class="cap">模型：gpt-oss:20b</div>
+<div class="ai" id="ai8"><pre style="white-space:pre-wrap">**題目簡述**
+
+1. 先把 5 mL 的白醋（純醋酸）稀釋到 50 mL，得到 10 倍稀釋液。  
+2. 從這個稀釋液取 20 mL 進行滴定，結果得到的醋酸量為 **0.1012 g**。  
+3. 同學寫成「酸度 = 0.1012 ÷ 20 × 100 = 0.506 g/100 mL」。
+
+我們要先檢查這個計算是否正確，若不正確，說明錯誤所在，並算出正確的「醋酸度」(即 100 mL 原液中醋酸的質量)。
+
+---
+
+## 1. 先把操作流程寫成數學式
+
+| 步驟 | 內容 | 公式 |
+|------|------|------|
+| ① | 白醋 5 mL → 50 mL 稀釋 | 稀釋倍數 \(k = \dfrac{50}{5}=10\) |
+| ② | 取 20 mL 稀釋液滴定 → 0.1012 g 醋酸 | 這 20 mL 的醋酸量 \(m_{20}=0.1012\) g |
+
+---
+
+## 2. 先找出 50 mL 原液中總醋酸量
+
+因為 20 mL 稀釋液的醋酸量已知，我們先算 50 mL 稀釋液的醋酸量：
+
+\[
+m_{50} = m_{20}\times \frac{50}{20}
+       = 0.1012\; \text{g} \times 2.5
+       = 0.2530\; \text{g}
+\]
+
+---
+
+## 3. 再算 5 mL 原白醋中醋酸量
+
+原白醋是 5 mL，稀釋後 50 mL，稀釋倍數是 10，所以：
+
+\[
+m_{\text{原白醋}} = \frac{m_{50}}{10}
+                    = \frac{0.2530\; \text{g}}{10}
+                    = 0.02530\; \text{g}
+\]
+
+---
+
+## 4. 計算「醋酸度」＝100 mL 原液中醋酸的質量
+
+「醋酸度」通常指的是 100 mL 原液中含有多少 g 醋酸。因為我們已經知道 50 mL 原液中有 0.2530 g，比例為 1 : 2：
+
+\[
+\text{醋酸度} = 0.2530\; \text{g} \times 2
+               = 0.5060\; \text{g}
+\]
+
+即 **0.506 g/100 mL**。
+
+---
+
+## 5. 為什麼同學的計算是正確的？
+
+- **計算步驟**：  
+  1. 先把 20 mL 稀釋液的醋酸量 0.1012 g 換算成 50 mL 稀釋液中的醋酸量 → 0.2530 g。  
+  2. 再把 50 mL 稀釋液中的醋酸量換算成 100 mL 原液 → 0.506 g。  
+- **公式簡化**：  
+  \[
+  \frac{0.1012}{20}\times 50\times 2 = 0.506
+  \]
+  這與同學的「0.1012 ÷ 20 × 100」結果相同，因為 \(\frac{50\times 2}{20}=100\)。
+
+---
+
+## 6. 結論
+
+- **答案合理**：計算得到的「醋酸度」0.506 g/100 mL 是合理的。  
+- **錯誤原因**：若有人認為不合理，可能是因為忽略了稀釋倍數（5 mL → 50 mL）而直接把 20 mL 的 0.1012 g 乘 100 產生錯誤。  
+- **正確答案**：**0.506 g/100 mL**（約 0.51 g/100 mL）。  
+
+如需進一步驗證，可用以下步驟再次檢查：
+
+1. 20 mL 稀釋液 → 0.1012 g  
+2. 50 mL 稀釋液 → 0.2530 g  
+3. 100 mL 原液 → 0.5060 g  
+
+這樣就能確定計算無誤。</pre></div>
+<div class="mine" id="mine8"><div><b>這份解答：</b><label class="opt"><input type="radio" name="v8" value="對"> 對</label><label class="opt"><input type="radio" name="v8" value="錯"> 錯</label></div><div class="conf"><b>我的把握：</b><label class="opt"><input type="radio" name="c8" value="1"> 用猜的</label><label class="opt"><input type="radio" name="c8" value="2"> 有點把握</label><label class="opt"><input type="radio" name="c8" value="3"> 很確定</label></div><div class="fld"><span>錯在哪一步？為什麼？（選「對」可以不寫）</span><textarea id="why8"></textarea></div><div class="fld"><span>正確答案</span><input type="text" id="ans8"></div></div>
+</section>
+<div class="card noprint"><div class="mine" id="oaibox" style="border:0;margin:0 0 12px;padding:0"><b>這次作答有沒有用其他 AI 工具（ChatGPT、Gemini 等）？</b><div class="cap">照實填就好，不影響分數，老師只是想知道大家怎麼做。</div><label class="opt"><input type="radio" name="oai" value="沒有"> 沒有</label><label class="opt"><input type="radio" name="oai" value="查觀念"> 有，用來查觀念或公式</label><label class="opt"><input type="radio" name="oai" value="貼題目"> 有，把題目或解答貼給它</label></div><button class="pb" id="send">送出給老師</button><div class="msg" id="msg"></div><p class="cap" style="margin:8px 0 0">作答會自動存在這台裝置上；按「送出給老師」才會交出去。</p></div>
+</main>
+<script type="application/json" id="data">[{"no": 1, "src": "gemma4-e4b-nothink_Q11_11", "response": "這是一個典型的**溶液配製計算題**，你需要根據目標的溶液濃度、體積和物質的純度，來計算需要稱取的溶質質量。\n\n我會用繁體中文，一步一步地為您詳細計算過程。\n\n---\n\n## 📝 計算步驟詳解\n\n### 🎯 題目資訊整理 (Identify Given Values)\n\n1. **目標溶液濃度 ($C$):** $0.1 \\text{ M}$ (摩爾濃度)\n2. **目標溶液體積 ($V$):** $500 \\text{ mL}$\n3. **NaOH 分子量 ($\\text{MW}$):** $40.00 \\text{ g/mol}$\n4. **NaOH 固體純度 ($\\text{P}$):** $97.0\\%$ (或 $0.970$)\n\n### 🧪 第一步：單位換算 (Unit Conversion)\n\n首先，體積的單位必須統一。由於濃度單位是 $\\text{mol/L}$，所以體積 $V$ 必須換算成 **公升 ($\\text{L}$)**。\n\n$$\\text{體積 } V = 500 \\text{ mL} \\times \\left(\\frac{1 \\text{ L}}{1000 \\text{ mL}}\\right) = 0.500 \\text{ L}$$\n\n### 🧪 第二步：計算所需 $\\text{NaOH}$ 的理論物質量 (Calculate Moles Needed)\n\n根據摩爾濃度 ($\\text{M}$) 的定義：\n$$\\text{濃度 } (M) = \\frac{\\text{物質量 } (n)}{\\text{體積 } (V \\text{ in L})}$$\n\n我們可以重新排列公式來求所需的物質量 ($n$):\n$$\\text{所需物質量 } (n) = \\text{目標濃度 } (M) \\times \\text{體積 } (V \\text{ in L})$$\n\n$$\\text{所需 } n = 0.1 \\text{ mol/L} \\times 0.500 \\text{ L} = 0.05 \\text{ moles}$$\n\n### 🧪 第三步：計算所需純 $\\text{NaOH}$ 的質量 (Calculate Mass of Pure NaOH)\n\n現在，利用物質量和分子量來計算配製 $0.05$ 摩爾所需 $\\text{NaOH}$ 的質量 ($\\text{Mass}_{\\text{pure}}$)。\n\n$$\\text{質量} = \\text{物質量} \\times \\text{分子量}$$\n\n$$\\text{所需純 } \\text{NaOH} \\text{ 質量} (\\text{g}) = 0.05 \\text{ mol} \\times 40.00 \\text{ g/mol} = 2.00 \\text{ g}$$\n\n**💡 這是指如果 $\\text{NaOH}$ 是 $100\\%$ 純度時，你需要使用的質量。**\n\n### 🧪 第四步：考慮試劑純度，計算需稱取的總質量 (Account for Purity)\n\n你手上的 $\\text{NaOH}$ 固體只有 $97.0\\%$ 的純度，這意味著你稱取的總質量 ($\\text{Mass}_{\\text{total}}$) 中，只有 $97.0\\%$ 是實際的 $\\text{NaOH}$。\n\n$$\\text{純質量} = \\text{總稱取質量} \\times \\text{純度}$$\n\n因此，要得到 $2.00 \\text{ g}$ 的純 $\\text{NaOH}$，我們需要計算：\n$$\\text{總稱取質量 } (\\text{Mass}_{\\text{total}}) = \\frac{\\text{所需純質量}}{\\text{純度}}$$\n\n$$\\text{總稱取質量} = \\frac{2.00 \\text{ g}}{0.970} \\approx 2.061855... \\text{ g}$$\n\n---\n\n## 🏆 最終答案 (Final Answer)\n\n保留適當的小數點位數（通常與題目給的數據精度一致，這裡保留三位小數）：\n\n**要秤取的 $\\text{NaOH}$ 固體質量約為 $\\mathbf{2.062 \\text{ g}}$。**"}, {"no": 2, "src": "gpt-oss-20b-low_Q1_22", "response": "**步驟 1：計算 20 mL 取樣中 KHP 的質量**  \n\n- KHP 的總質量：\\(1.0212\\ \\text{g}\\)  \n- 定量瓶容量：\\(100\\ \\text{mL}\\)  \n\n\\[\n\\text{KHP 濃度（質量/體積）}= \\frac{1.0212\\ \\text{g}}{100\\ \\text{mL}}\n= 0.010212\\ \\frac{\\text{g}}{\\text{mL}}\n\\]\n\n取 20 mL：\n\n\\[\n\\text{質量}_{\\text{KHP,20 mL}} = 0.010212\\ \\frac{\\text{g}}{\\text{mL}}\\times 20\\ \\text{mL}\n= 0.20424\\ \\text{g}\n\\]\n\n---\n\n**步驟 2：計算 20 mL 取樣中 KHP 的摩爾數**  \n\nKHP 的分子量 \\(M_{\\text{KHP}} = 204.22\\ \\text{g mol}^{-1}\\)\n\n\\[\nn_{\\text{KHP}} = \\frac{0.20424\\ \\text{g}}{204.22\\ \\text{g mol}^{-1}}\n= 0.001000098\\ \\text{mol}\n\\]\n\n---\n\n**步驟 3：利用滴定體積求 NaOH 的摩爾數**  \n\n滴定時 NaOH 的體積 \\(V_{\\text{NaOH}} = 10.92\\ \\text{mL} = 0.01092\\ \\text{L}\\)\n\n由於 KHP 與 NaOH 的化學計量比為 1:1，  \n\\[\nn_{\\text{NaOH}} = n_{\\text{KHP}} = 0.001000098\\ \\text{mol}\n\\]\n\n---\n\n**步驟 4：計算 NaOH 溶液的濃度**  \n\n\\[\nC_{\\text{NaOH}} = \\frac{n_{\\text{NaOH}}}{V_{\\text{NaOH}}}\n= \\frac{0.001000098\\ \\text{mol}}{0.01092\\ \\text{L}}\n= 0.091724\\ \\text{mol L}^{-1}\n\\]\n\n四個有效數字：\n\n\\[\n\\boxed{0.09172\\ \\text{M}}\n\\]"}, {"no": 3, "src": "gemma4-e4b-nothink_Q10_11", "response": "這是一個典型的酸鹼滴定計算題，目的是利用已知濃度的標準溶液 ($\\text{NaOH}$) 來計算未知酸液（烏醋）的酸度。\n\n請按照以下步驟一步一步計算：\n\n---\n\n### 步驟一：理解滴定反應與計算所需反應體積\n\n**1. 確定化學反應方程式：**\n醋酸 ($\\text{CH}_3\\text{COOH}$) 與氫氧化鈉 ($\\text{NaOH}$) 的反應是酸與鹼的反應，反應比例為 $1:1$。\n$$\\text{CH}_3\\text{COOH} + \\text{NaOH} \\rightarrow \\text{CH}_3\\text{COONa} + \\text{H}_2\\text{O}$$\n\n**2. 計算實際用於滴定的 $\\text{NaOH}$ 體積：**\n實驗中，實際用來滴定樣本的 $\\text{NaOH}$ 體積是：\n$$\\text{實際用量} = (\\text{用掉的 } \\text{NaOH} \\text{ 體積}) - (\\text{空白試驗用掉的 } \\text{NaOH} \\text{ 體積})$$\n$$\\text{實際用量} = 17.42 \\text{ mL} - 0.06 \\text{ mL} = 17.36 \\text{ mL}$$\n\n---\n\n### 步驟二：計算滴定過程中反應的物質的「當量數」（或摩爾數）\n\n在滴定中，當點達到當量時，酸的物質量等於鹼的物質量。\n\n**1. 計算 $\\text{NaOH}$ 提供的 $\\text{OH}^-$ 物質量（或等當量）：**\n$$\\text{物質量} (\\text{mol}) = \\text{濃度} (\\text{M}) \\times \\text{體積} (\\text{L})$$\n$$\\text{NaOH} \\text{ 的物質量} = 0.09114 \\text{ M} \\times \\left( \\frac{17.36 \\text{ mL}}{1000 \\text{ mL/L}} \\right)$$\n$$\\text{NaOH} \\text{ 的物質量} = 0.09114 \\times 0.01736 \\text{ mol}$$\n$$\\text{NaOH} \\text{ 的物質量} \\approx 0.0015799 \\text{ mol}$$\n\n**2. 計算反應的醋酸 ($\\text{CH}_3\\text{COOH}$) 物質量：**\n因為反應比例為 $1:1$，所以：\n$$\\text{醋酸的物質量} = \\text{NaOH} \\text{ 的物質量} \\approx 0.0015799 \\text{ mol}$$\n\n---\n\n### 步驟三：計算樣本中醋酸的質量\n\n**1. 計算醋酸的質量（克）：**\n$$\\text{質量} (\\text{g}) = \\text{物質量} (\\text{mol}) \\times \\text{分子量} (\\text{g/mol})$$\n$$\\text{醋酸的質量} = 0.0015799 \\text{ mol} \\times 60.05 \\text{ g/mol}$$\n$$\\text{醋酸的質量} \\approx 0.09486 \\text{ g}$$\n\n**注意：** 這個 $0.09486 \\text{ g}$ 是在**最初的 $10 \\text{ mL}$ 烏醋**中，經過稀釋到 $100 \\text{ mL}$ 後，**樣本體積為 $25 \\text{ mL}$** 所代表的醋酸的質量。\n\n---\n\n### 步驟四：計算原始烏醋的酸度（$\\text{g}/100 \\text{ mL}$）\n\n題目要求的是「這瓶烏醋的酸度（$\\text{g}/100 \\text{ mL}$，以醋酸計）」。\n\n1. **計算在 $100 \\text{ mL}$ 稀釋液中，$25 \\text{ mL}$ 樣品所代表的醋酸質量佔的比例：**\n   $$\\text{比例} = \\frac{\\text{樣本體積}}{\\text{定容體積}} = \\frac{25 \\text{ mL}}{100 \\text{ mL}} = 0.25$$\n\n2. **計算 $100 \\text{ mL}$ 總體積中，原始醋酸的總質量：**\n   $$\\text{總質量} (\\text{g}) = \\frac{\\text{步驟三計算出的質量}}{\\text{比例}} = \\frac{0.09486 \\text{ g}}{0.25}$$\n   $$\\text{總質量} (\\text{g}) \\approx 0.37944 \\text{ g}$$\n\n這個 $0.37944 \\text{ g}$ 就是 $100 \\text{ mL}$ 稀釋液中，代表的原始醋酸質量。\n\n**因此，這瓶烏醋的酸度為 $0.3794 \\text{ g}/100 \\text{ mL}$。**\n\n---\n\n### 最終答案\n\n這瓶烏醋的酸度為 **$0.379 \\text{ g}/100 \\text{ mL}$** (保留三位有效數字)。"}, {"no": 4, "src": "gpt-oss-20b-low_Q4_33", "response": "**步驟 1：列出所有測量值並找出最大值與最小值**\n\n| 取樣次數 | NaOH 用量 (mL) |\n|----------|----------------|\n| 1 | 18.42 |\n| 2 | 18.38 |\n| 3 | 18.61 |\n| 4 | 18.40 |\n| 5 | 18.45 |\n\n- 最大值 \\( \\text{max} = 18.61 \\)  \n- 最小值 \\( \\text{min} = 18.38 \\)\n\n**步驟 2：計算「可疑值」18.61 與最接近的值之差**\n\n可疑值 = 18.61  \n找出與 18.61 最接近的其它測量值：\n\n- \\( |18.61-18.42| = 0.19 \\)  \n- \\( |18.61-18.38| = 0.23 \\)  \n- \\( |18.61-18.40| = 0.21 \\)  \n- \\( |18.61-18.45| = 0.16 \\)\n\n最小差值為 \\(0.16\\)（對應 18.45）。  \n因此  \n\\[\n| \\text{可疑值} - \\text{最近值} | = 0.16\n\\]\n\n**步驟 3：計算範圍（最大值 - 最小值）**\n\n\\[\n\\text{範圍} = \\text{max} - \\text{min} = 18.61 - 18.38 = 0.23\n\\]\n\n**步驟 4：算出 Dixon Q 值**\n\n\\[\nQ = \\frac{| \\text{可疑值} - \\text{最近值} |}{\\text{範圍}} = \\frac{0.16}{0.23} \\approx 0.6957\n\\]\n\n**步驟 5：比較 Q 與 95% 信心水準下的臨界值**\n\n- 樣本數 \\(n = 5\\)  \n- 95% 臨界值 \\(Q_{\\text{crit}} = 0.710\\)\n\n因為  \n\\[\nQ_{\\text{計算值}} = 0.6957 \\;<\\; Q_{\\text{crit}} = 0.710\n\\]\n\n**結論：**  \nQ 值未超過臨界值，說明 18.61 不符合「可疑值」的標準，**不應剔除**，應保留。\n\n---\n\n**答案**：18.61 的測量值應保留。"}, {"no": 5, "src": "gemma4-e4b-nothink_Q12_33", "response": "同學你好，這是一個典型的**溶液稀釋與滴定**的化學計算問題。我會一步一步用繁體中文為你詳細解析計算過程，最後給出答案。\n\n---\n\n### 🧪 問題分析與步驟規劃\n\n本題的目標是「預估用掉的 $\\text{NaOH}$ 體積」。這需要經過三個主要的步驟：\n\n1. **計算原始白醋中的酸的量（或濃度）。**\n2. **計算經過兩次稀釋後，最終溶液中的酸的濃度。**\n3. **利用酸鹼中和的化學計量關係（滴定），計算反應所需的 $\\text{NaOH}$ 體積。**\n\n---\n\n### 🔢 第一步：計算原始白醋的酸濃度（初步）\n\n題目給定：\n* 原始白醋酸度：$4.5 \\text{ g} / 100 \\text{ mL}$ （以醋酸計）\n* 醋酸分子量 $(\\text{MM})$：$60.05 \\text{ g/mol}$\n\n**計算原始醋酸的質量濃度 $(\\text{g/L})$：**\n$$\\text{濃度} (\\text{g/L}) = \\frac{4.5 \\text{ g}}{100 \\text{ mL}} \\times \\frac{1000 \\text{ mL}}{1 \\text{ L}} = 45 \\text{ g/L}$$\n\n**將質量濃度 $\\text{g/L}$ 轉換為莫耳濃度 $\\text{M}$：**\n$$\\text{初始濃度} (\\text{M}) = \\frac{\\text{質量濃度} (\\text{g/L})}{\\text{分子量} (\\text{g/mol})} = \\frac{45 \\text{ g/L}}{60.05 \\text{ g/mol}} \\approx 0.7492 \\text{ M}$$\n\n---\n\n### 💧 第二步：計算稀釋後的酸濃度（兩次稀釋）\n\n這是一個分階段的稀釋過程，我們需要連續使用**稀釋定律**：$C_1V_1 = C_2V_2$。\n\n**第一次稀釋：**\n* 原始溶液濃度 ($C_1$)：$0.7492 \\text{ M}$\n* 取樣體積 ($V_1$)：$5 \\text{ mL}$\n* 稀釋到體積 ($V_2$)：$50 \\text{ mL}$\n* 第一次稀釋後的濃度 ($C_{2A}$):\n$$C_{2A} = C_1 \\times \\frac{V_1}{V_2} = 0.7492 \\text{ M} \\times \\frac{5 \\text{ mL}}{50 \\text{ mL}} = 0.7492 \\text{ M} \\times 0.1$$\n$$C_{2A} \\approx 0.07492 \\text{ M}$$\n\n**第二次稀釋：**\n* 溶液濃度 ($C_1$)：$0.07492 \\text{ M}$\n* 取樣體積 ($V_1$)：$20 \\text{ mL}$\n* 稀釋到體積 ($V_2$)：$50 \\text{ mL}$ (假設第二次稀釋的總體積也是 $50 \\text{ mL}$，這是標準的實驗操作假設)\n* 最終溶液濃度 ($C_{\\text{final}}$):\n$$C_{\\text{final}} = C_{2A} \\times \\frac{V_1}{V_2} = 0.07492 \\text{ M} \\times \\frac{20 \\text{ mL}}{50 \\text{ mL}}$$\n$$C_{\\text{final}} = 0.07492 \\text{ M} \\times 0.4 \\approx 0.02997 \\text{ M}$$\n\n**【檢核：如果題目沒有指定第二次稀釋的最終體積，通常會假設取樣的體積就是最終體積，但這裡給了 $20 \\text{ mL}$ 取到 $50 \\text{ mL}$，所以我們使用 $0.4$ 的稀釋係數是正確的。】**\n\n最終的酸濃度約為 $0.0300 \\text{ M}$。\n\n---\n\n### 🧪 第三步：利用滴定反應計算 $\\text{NaOH}$ 體積\n\n白醋中的酸是醋酸 ($\\text{CH}_3\\text{COOH}$)，它與鹼 ($\\text{NaOH}$) 發生酸鹼中和反應：\n\n$$\\text{CH}_3\\text{COOH} \\text{ (aq)} + \\text{NaOH} \\text{ (aq)} \\longrightarrow \\text{CH}_3\\text{COONa} \\text{ (aq)} + \\text{H}_2\\text{O} \\text{ (l)}$$\n\n反應的化學計量比是 $1:1$。\n\n**根據滴定原理：**\n$$\\text{酸的物質量} (n_{\\text{acid}}) = \\text{鹼的物質量} (n_{\\text{base}})$$\n$$C_{\\text{acid}} \\times V_{\\text{acid}} = C_{\\text{base}} \\times V_{\\text{base}}$$\n\n**已知條件：**\n* $C_{\\text{acid}}$ (最終酸濃度) $\\approx 0.02997 \\text{ M}$\n* $V_{\\text{acid}}$ (反應體積，即最終溶液體積) $= 20 \\text{ mL}$ (題目說「取 $20 \\text{ mL}$ 稀釋液，用 $\\text{NaOH}$ 滴定」，所以體積是 $20 \\text{ mL}$)\n* $C_{\\text{base}}$ ($\\text{NaOH}$ 濃度) $= 0.0916 \\text{ M}$\n* $V_{\\text{base}}$ ($\\text{NaOH}$ 體積) $=$ 待求\n\n**代入公式計算 $V_{\\text{base}}$：**\n$$V_{\\text{base}} = \\frac{C_{\\text{acid}} \\times V_{\\text{acid}}}{C_{\\text{base}}}$$\n$$V_{\\text{base}} = \\frac{0.02997 \\text{ mol/L} \\times 20 \\text{ mL}}{0.0916 \\text{ mol/L}}$$\n\n$$V_{\\text{base}} = \\frac{0.5994 \\text{ mmol}}{0.0916 \\text{ mmol/mL}} \\approx 6.54 \\text{ mL}$$\n\n---\n\n### 📝 最終答案總結\n\n根據上述逐步計算，預估用掉的 $\\text{NaOH}$ 體積約為 $6.54 \\text{ mL}$。\n\n**答案：大約要用掉 $\\mathbf{6.54 \\text{ mL}}$ 的 $\\text{NaOH}$。**"}, {"no": 6, "src": "gpt-oss-20b-low_Q13_33", "response": "**步驟 1：把白醋的體積算出來**\n\n\\[\n\\rho_{\\text{醋}} = 1.006\\; \\text{g·mL}^{-1}\n\\qquad\nm_{\\text{醋}} = 5.126\\; \\text{g}\n\\]\n\n\\[\nV_{\\text{醋}} = \\frac{m_{\\text{醋}}}{\\rho_{\\text{醋}}}\n              = \\frac{5.126}{1.006}\n              = 5.090\\; \\text{mL}\n\\]\n\n（實際上把 5.090 mL 的醋倒入 50 mL 定量瓶，加入水到刻度，得到 50 mL 的稀釋溶液。）\n\n---\n\n**步驟 2：計算 20 mL 稀釋液中酵酸的摩爾數**\n\n滴定使用 0.09159 M 的 NaOH，消耗 18.55 mL：\n\n\\[\nn_{\\text{NaOH}} = C_{\\text{NaOH}}\\times V_{\\text{NaOH}}\n                 = 0.09159\\;\\text{mol L}^{-1}\\times 0.01855\\;\\text{L}\n                 = 1.699\\times10^{-3}\\;\\text{mol}\n\\]\n\n酵酸與 NaOH 的反應比 1:1，故：\n\n\\[\nn_{\\text{acetic acid (20 mL)}} = 1.699\\times10^{-3}\\;\\text{mol}\n\\]\n\n---\n\n**步驟 3：求 50 mL 稀釋液中酵酸的摩爾濃度**\n\n\\[\nC_{\\text{acetic acid}} = \\frac{n}{V}\n                       = \\frac{1.699\\times10^{-3}\\;\\text{mol}}{0.020\\;\\text{L}}\n                       = 8.495\\times10^{-2}\\;\\text{mol L}^{-1}\n\\]\n\n---\n\n**步驟 4：求 50 mL 稀釋液中酵酸的摩爾數**\n\n\\[\nn_{\\text{acetic acid (50 mL)}} = C_{\\text{acetic acid}}\\times V\n                               = 8.495\\times10^{-2}\\;\\text{mol L}^{-1}\\times 0.050\\;\\text{L}\n                               = 4.2475\\times10^{-3}\\;\\text{mol}\n\\]\n\n---\n\n**步驟 5：把摩爾數換成質量**\n\n酵酸分子量 \\(M_{\\text{acetic acid}} = 60.05\\;\\text{g mol}^{-1}\\)\n\n\\[\nm_{\\text{acetic acid}} = n_{\\text{acetic acid}}\\times M_{\\text{acetic acid}}\n                       = 4.2475\\times10^{-3}\\;\\text{mol}\\times 60.05\\;\\text{g mol}^{-1}\n                       = 0.2554\\;\\text{g}\n\\]\n\n---\n\n**步驟 6：計算酸度（重量百分比）**\n\n\\[\n\\%\\,w/w = \\frac{m_{\\text{acetic acid}}}{m_{\\text{醋}}}\\times 100\n        = \\frac{0.2554}{5.126}\\times 100\n        = 4.98\\%\n\\]\n\n---\n\n**步驟 7：計算 g/100 mL**\n\n50 mL 的稀釋液中含 0.2554 g 酵酸，故 100 mL 的濃度：\n\n\\[\n\\frac{0.2554\\;\\text{g}}{50\\;\\text{mL}}\\times 100\\;\\text{mL}\n= 0.5108\\;\\text{g}\\;\\text{per 100 mL}\n\\]\n\n---\n\n### 最終答案\n\n| 酸度表現 | 結果 |\n|----------|------|\n| **重量百分比（% w/w）** | **4.98 %** |\n| **g / 100 mL** | **0.511 g / 100 mL** |\n\n（數值四捨五入至小數點後三位。）"}, {"no": 7, "src": "gemma4-e4b-nothink_Q9_11", "response": "同學你好，別擔心！這類統計計算在實驗課是很常見的題目。我會用繁體中文，一步一步地為你詳細計算平均值、樣本標準差（SD）和相對標準差（RSD）。\n\n---\n\n### 題目資訊整理\n\n* **測量數據 ($x_i$)：** 5.06、5.02、5.11 ($\\text{g/100 mL}$)\n* **數據點數量 ($n$)：** 3\n\n---\n\n### 第一步：計算平均值 ($\\bar{x}$)\n\n平均值是用所有數據加總後，除以數據的個數。\n\n**公式：**\n$$\\bar{x} = \\frac{\\sum x_i}{n}$$\n\n**計算步驟：**\n1. **加總所有數據：**\n   $$\\sum x_i = 5.06 + 5.02 + 5.11 = 15.19$$\n2. **除以數據個數：**\n   $$\\bar{x} = \\frac{15.19}{3} \\approx 5.06333\\dots$$\n\n**結果取用四位小數（通常在分析報告中是這樣處理的）：**\n$$\\text{平均值} (\\bar{x}) = 5.063 \\text{ g/100 mL}$$\n\n---\n\n### 第二步：計算樣本標準差 ($SD$)\n\n樣本標準差用於估計整個母體的分散程度，它比母體標準差多了一步除以 $(n-1)$。\n\n**公式：**\n$$SD = \\sqrt{\\frac{\\sum (x_i - \\bar{x})^2}{n-1}}$$\n\n**計算步驟：**\n\n**1. 計算每個數據點與平均值的差的平方 $\\sum (x_i - \\bar{x})^2$：**\n* **$x_1 = 5.06$：** $(5.06 - 5.06333)^2 = (-0.00333)^2 \\approx 0.000011$\n* **$x_2 = 5.02$：** $(5.02 - 5.06333)^2 = (-0.04333)^2 \\approx 0.001878$\n* **$x_3 = 5.11$：** $(5.11 - 5.06333)^2 = (0.04667)^2 \\approx 0.002178$\n\n**2. 將這些平方差加總：**\n$$\\sum (x_i - \\bar{x})^2 = 0.000011 + 0.001878 + 0.002178 = 0.004067$$\n\n**3. 除以 $(n-1)$：**\n$$n-1 = 3 - 1 = 2$$\n$$\\text{變異數} (s^2) = \\frac{0.004067}{2} = 0.0020335$$\n\n**4. 開根號求標準差：**\n$$SD = \\sqrt{0.0020335} \\approx 0.045094$$\n\n**結果取用四位小數：**\n$$\\text{標準差} (SD) = 0.0451 \\text{ g/100 mL}$$\n\n---\n\n### 第三步：計算相對標準差 ($RSD$)\n\n相對標準差 (Relative Standard Deviation, RSD) 是指標準差佔平均值的百分比，用來衡量數據的變異性相對於平均值的大小。\n\n**公式：**\n$$RSD (\\%) = \\frac{SD}{\\bar{x}} \\times 100\\%$$\n\n**計算步驟：**\n1. **將 $SD$ 除以 $\\bar{x}$：**\n   $$\\frac{SD}{\\bar{x}} = \\frac{0.045094}{5.06333} \\approx 0.008918$$\n2. **轉換為百分比：**\n   $$RSD (\\%) = 0.008918 \\times 100\\% \\approx 0.8918\\%$$\n\n**結果取用兩位小數：**\n$$\\text{相對標準差} (RSD) = 0.89\\%$$\n\n---\n\n## 最終答案總結\n\n根據您提供的三次測量數據 (5.06、5.02、5.11 $\\text{g/100 mL}$)，計算結果如下：\n\n1. **平均值 ($\\bar{x}$):** $\\mathbf{5.063 \\text{ g/100 mL}}$\n2. **標準差 ($SD$):** $\\mathbf{0.0451 \\text{ g/100 mL}}$\n3. **相對標準差 ($RSD$):** $\\mathbf{0.89\\%}$"}, {"no": 8, "src": "gpt-oss-20b-low_Q6_22", "response": "**題目簡述**\n\n1. 先把 5 mL 的白醋（純醋酸）稀釋到 50 mL，得到 10 倍稀釋液。  \n2. 從這個稀釋液取 20 mL 進行滴定，結果得到的醋酸量為 **0.1012 g**。  \n3. 同學寫成「酸度 = 0.1012 ÷ 20 × 100 = 0.506 g/100 mL」。\n\n我們要先檢查這個計算是否正確，若不正確，說明錯誤所在，並算出正確的「醋酸度」(即 100 mL 原液中醋酸的質量)。\n\n---\n\n## 1. 先把操作流程寫成數學式\n\n| 步驟 | 內容 | 公式 |\n|------|------|------|\n| ① | 白醋 5 mL → 50 mL 稀釋 | 稀釋倍數 \\(k = \\dfrac{50}{5}=10\\) |\n| ② | 取 20 mL 稀釋液滴定 → 0.1012 g 醋酸 | 這 20 mL 的醋酸量 \\(m_{20}=0.1012\\) g |\n\n---\n\n## 2. 先找出 50 mL 原液中總醋酸量\n\n因為 20 mL 稀釋液的醋酸量已知，我們先算 50 mL 稀釋液的醋酸量：\n\n\\[\nm_{50} = m_{20}\\times \\frac{50}{20}\n       = 0.1012\\; \\text{g} \\times 2.5\n       = 0.2530\\; \\text{g}\n\\]\n\n---\n\n## 3. 再算 5 mL 原白醋中醋酸量\n\n原白醋是 5 mL，稀釋後 50 mL，稀釋倍數是 10，所以：\n\n\\[\nm_{\\text{原白醋}} = \\frac{m_{50}}{10}\n                    = \\frac{0.2530\\; \\text{g}}{10}\n                    = 0.02530\\; \\text{g}\n\\]\n\n---\n\n## 4. 計算「醋酸度」＝100 mL 原液中醋酸的質量\n\n「醋酸度」通常指的是 100 mL 原液中含有多少 g 醋酸。因為我們已經知道 50 mL 原液中有 0.2530 g，比例為 1 : 2：\n\n\\[\n\\text{醋酸度} = 0.2530\\; \\text{g} \\times 2\n               = 0.5060\\; \\text{g}\n\\]\n\n即 **0.506 g/100 mL**。\n\n---\n\n## 5. 為什麼同學的計算是正確的？\n\n- **計算步驟**：  \n  1. 先把 20 mL 稀釋液的醋酸量 0.1012 g 換算成 50 mL 稀釋液中的醋酸量 → 0.2530 g。  \n  2. 再把 50 mL 稀釋液中的醋酸量換算成 100 mL 原液 → 0.506 g。  \n- **公式簡化**：  \n  \\[\n  \\frac{0.1012}{20}\\times 50\\times 2 = 0.506\n  \\]\n  這與同學的「0.1012 ÷ 20 × 100」結果相同，因為 \\(\\frac{50\\times 2}{20}=100\\)。\n\n---\n\n## 6. 結論\n\n- **答案合理**：計算得到的「醋酸度」0.506 g/100 mL 是合理的。  \n- **錯誤原因**：若有人認為不合理，可能是因為忽略了稀釋倍數（5 mL → 50 mL）而直接把 20 mL 的 0.1012 g 乘 100 產生錯誤。  \n- **正確答案**：**0.506 g/100 mL**（約 0.51 g/100 mL）。  \n\n如需進一步驗證，可用以下步驟再次檢查：\n\n1. 20 mL 稀釋液 → 0.1012 g  \n2. 50 mL 稀釋液 → 0.2530 g  \n3. 100 mL 原液 → 0.5060 g  \n\n這樣就能確定計算無誤。"}]</script>
+<script type="application/json" id="cfg">{"set": "vinegar-v2", "url": "https://script.google.com/macros/s/AKfycbz0RGi3DTu0V2ftiIHJImln2PgazNndRm4ZoXZiG9SJ7DClXRzEsh-gH3GDKdR3Vol2/exec"}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+(function(){
+var DATA = JSON.parse(document.getElementById('data').textContent);
+var STUDENT = document.body.dataset.mode === 'student';
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+var MATH_RE = /\\\[[\s\S]*?\\\]|\$\$[\s\S]*?\$\$|\\\([\s\S]*?\\\)|\$[^$\n]+?\$/g;
+function renderMd(text){
+  var maths = [];
+  var t = text.replace(MATH_RE, function(m){ maths.push(m); return 'MATHPH' + (maths.length-1) + 'XEND'; });
+  var out = marked.parse(t);
+  out = out.replace(/MATHPH(\d+)XEND/g, function(_,i){ return esc(maths[+i]); });
+  return out;
+}
+function render(el, text){
+  try{
+    if (typeof marked === 'undefined') throw new Error('no marked');
+    el.innerHTML = renderMd(text);
+    el.querySelectorAll('table').forEach(function(tb){
+      var w = document.createElement('div'); w.className = 'tw';
+      tb.parentNode.insertBefore(w, tb); w.appendChild(tb);
+    });
+    if (typeof renderMathInElement === 'function'){
+      renderMathInElement(el, {delimiters:[
+        {left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},
+        {left:'\\(',right:'\\)',display:false},{left:'$',right:'$',display:false}],
+        throwOnError:false});
+    }
+  }catch(e){
+    el.innerHTML = '';
+    var p = document.createElement('pre'); p.style.whiteSpace = 'pre-wrap'; p.textContent = text;
+    el.appendChild(p);
+  }
+}
+DATA.forEach(function(d){
+  var el = document.getElementById('ai' + d.no);
+  if (el) render(el, d.response);
+});
+function sget(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function sset(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+if (STUDENT){
+  var CFG = JSON.parse(document.getElementById('cfg').textContent);
+  var P = 'aiHunt_' + CFG.set + '_';
+  function bind(el, key){
+    var v = sget(P + key);
+    if (v !== null) el.value = v;
+    el.addEventListener('input', function(){ sset(P + key, el.value); });
+    el.addEventListener('change', function(){ sset(P + key, el.value); });
+  }
+  function bindRadio(name, key){
+    var v = sget(P + key);
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function(r){
+      if (v && r.value === v) r.checked = true;
+      r.addEventListener('change', function(){ sset(P + key, r.value); });
+    });
+  }
+  function radio(name){ var r = document.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : ''; }
+  ['sid','sname','course'].forEach(function(id){ bind(document.getElementById(id), id); });
+  bindRadio('oai', 'oai');
+  DATA.forEach(function(d){
+    var n = d.no;
+    bindRadio('v' + n, n + '_v'); bindRadio('c' + n, n + '_c');
+    bind(document.getElementById('why' + n), n + '_why');
+    bind(document.getElementById('ans' + n), n + '_ans');
+  });
+  var btn = document.getElementById('send'), msg = document.getElementById('msg');
+  function say(t, ok){ msg.textContent = t; msg.className = 'msg ' + (ok ? 'ok' : 'bad'); }
+  var done = sget(P + 'sent');
+  if (done && msg) say('上次已送出（' + done + '）。修改後可以再送一次，老師會看到每一次。', true);
+  if (btn) btn.addEventListener('click', function(){
+    document.querySelectorAll('.miss').forEach(function(e){ e.classList.remove('miss'); });
+    var sid = document.getElementById('sid').value.trim().toUpperCase();
+    var name = document.getElementById('sname').value.trim();
+    var course = document.getElementById('course').value;
+    var bad = null;
+    function miss(el){ el.classList.add('miss'); if (!bad) bad = el; }
+    if (!/^[A-Z]?\d{6,10}$/.test(sid)) miss(document.getElementById('sid'));
+    if (!name) miss(document.getElementById('sname'));
+    if (!course) miss(document.getElementById('course'));
+    var items = DATA.map(function(d){
+      var n = d.no, it = {no: n, src: d.src, verdict: radio('v' + n), conf: radio('c' + n),
+        why: document.getElementById('why' + n).value.trim(), ans: document.getElementById('ans' + n).value.trim()};
+      if (!it.verdict || !it.conf || (it.verdict === '錯' && it.why.length < 4)) miss(document.getElementById('mine' + n));
+      return it;
+    });
+    var oai = radio('oai');
+    if (!oai) miss(document.getElementById('oaibox'));
+    if (bad){
+      say('還有沒填的地方（紅框）：學號、姓名、班級；每題要選對或錯、選把握程度；選「錯」要寫錯在哪一步；最後一題有沒有用其他 AI。', false);
+      bad.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    btn.disabled = true; say('送出中…', true);
+    fetch(CFG.url, {method:'POST', credentials:'omit', redirect:'follow',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({kind:'ai_error_hunt', set: CFG.set, sid: sid, name: name, course: course, other_ai: oai, items: items})})
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      var j = null; try{ j = JSON.parse(t); }catch(e){}
+      if (j && j.ok === true){
+        var when = new Date().toLocaleString('zh-TW', {hour12:false});
+        sset(P + 'sent', when + '，第 ' + j.nth + ' 次');
+        say('已送出 ' + j.saved + ' 題（第 ' + j.nth + ' 次，' + when + '）。老師收到了。', true);
+      } else {
+        say('沒有送成功：' + ((j && j.error) || '伺服器沒有正常回應。') + ' 你的作答還留在這台裝置上，請再按一次，或舉手找老師。', false);
+      }
+    })
+    .catch(function(){ say('沒有送成功：網路連線有問題。你的作答還留在這台裝置上，請再按一次，或按「列印」交紙本。', false); })
+    .then(function(){ btn.disabled = false; });
+  });
+}
+})();
+</script>
+</body>
+</html>
